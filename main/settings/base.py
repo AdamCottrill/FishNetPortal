@@ -38,7 +38,7 @@ DJANGO_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'django.contrib.humanize',
+    'django.contrib.humanize',
 )
 
 THIRDPARTY_APPS = (
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, '../templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -110,8 +110,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-
+#USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

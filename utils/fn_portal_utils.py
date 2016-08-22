@@ -21,7 +21,7 @@ def query_for_id(sql, keys, trg_db):
 
     Arguments:
 
-    - `sql`:a sql statement that is intended to retrieve
+    - `sql`:a sql statement that is intended t oretrieve
     the id of a parent record.  The sql string should return a scalar
     value (id)
 

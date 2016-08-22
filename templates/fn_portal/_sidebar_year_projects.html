@@ -1,0 +1,39 @@
+<h4>Projects:</h4>
+
+{% regroup projects by year as year_list %}
+<ul id="projaccordion">
+    {% for proj in year_list %}
+    <li>
+        <a href="#" onclick="toggle_accordion('project-year-{{ proj.grouper }}');">{{ proj.grouper }}</a>
+        <div class="project_list" id="project-year-{{ proj.grouper }}"  style="display: none">
+            <ul>
+                {% for item in proj.list %}
+                <li><a href="{{ item.get_absolute_url }}">{{  item.prj_cd }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+
+<script type="text/javascript">
+ <!--
+ function toggle_accordion(id) {
+     // set all of the projct_list elements to none:
+     //var lists = getElementsByClassName('project_list');
+     //lists.style.display = 'none';
+     var project_lists = $('[id^="project-year-"]');
+
+     for (var i=0; i <project_lists.length; i++) {
+         project_lists[i].style.display = "none";
+     }
+
+     var e = document.getElementById(id);
+     if(e.style.display == 'block')
+         e.style.display = 'none';
+     else
+         e.style.display = 'block';
+ }
+ //-->
+</script>

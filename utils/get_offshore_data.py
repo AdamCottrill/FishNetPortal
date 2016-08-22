@@ -215,9 +215,11 @@ common_flds = [
 table = 'FN123'
 trg_parent_key_field = 'effort_id'
 
+fk_fields = ['spc']
+
 parent_keys = ['prj_cd', 'sam', 'eff']
 common_flds = [
-    'spc',
+    #'spc',
     'grp',
     'catcnt',
     'biocnt',
@@ -236,7 +238,7 @@ common_flds = [
 ]
 
 trg_table = 'fn_portal_{}'.format(table)
-all_flds = parent_keys + common_flds
+all_flds = parent_keys + fk_fields + common_flds
 
 #get the data from our source database:
 sql = 'select {0} from [{1}{2}]'.format(
@@ -290,9 +292,11 @@ for record in records2:
     key_dict = {k:record[v].upper() for k,v in zip(parent_keys, key_index)}
     if table == 'FN122':
         fk_id = get_sample_id(key_dict, TRG_DB)
-    else:
-        #fn123
+    elif table == 'FN123':
         fk_id = get_effort_id(key_dict, TRG_DB)
+    else:
+        #fn125
+        fk_id = get_catch_id(key_dict, TRG_DB)
 
     record.append(fk_id)
     if 'spc' in all_flds:
@@ -341,6 +345,5 @@ print('Done adding {} records (n={})'.format(table, len(records)))
 
 #FN125
 
-for record in records2:
-    if record[16] is None:
-        record[16] = 214
+
+#
