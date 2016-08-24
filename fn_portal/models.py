@@ -48,6 +48,10 @@ class FN011(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.prj_cd, self.prj_nm)
 
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
+        return '{}'.format(self.prj_cd)
+
     def get_absolute_url(self):
         return reverse('fn_portal.views.project_catch_counts2',
                        args=[str(self.slug)])
@@ -117,6 +121,11 @@ class FN121(models.Model):
     def __str__(self):
         return '{}-{}'.format(self.project.prj_cd, self.sam)
 
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
+        return '{}-{}'.format(self.project.prj_cd, self.sam)
+
+
     def get_absolute_url(self):
         return reverse('fn_portal.views.sample_detail',
                        args=[str(self.project.slug), str(self.sam)])
@@ -171,6 +180,11 @@ class FN122(models.Model):
         return '{}-{}'.format(self.sample,
                                  self.eff)
 
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
+        return '{}-{}'.format(self.sample,
+                                 self.eff)
+
 
 class FN123(models.Model):
     ''' a table for catch counts.
@@ -191,6 +205,12 @@ class FN123(models.Model):
         unique_together = ('effort', 'species', 'grp')
 
     def __str__(self):
+        return '{}-{}-{}'.format(self.effort,
+                              self.species.species_code,
+                              self.grp)
+
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
         return '{}-{}-{}'.format(self.effort,
                               self.species.species_code,
                               self.grp)
@@ -221,8 +241,13 @@ class FN125(models.Model):
         pass
 
     def __str__(self):
-        pass
+        return '{}-{}'.format(self.catch,
+                              self.fish)
 
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
+        return '{}-{}'.format(self.catch,
+                              self.fish)
 
 class FN127(models.Model):
     '''A table for age interpretations collected from fish
@@ -249,6 +274,10 @@ class FN127(models.Model):
         return '{}-{}({})'.format(self.fish,
                               self.agea,
                               self.ageid)
+
+    def fishnet_keys(self):
+        '''return the fish-net II key fields for this record'''
+        return '{}-{}'.format(self.fish, self.ageid)
 
 
 #class FN_Lamprey(models.Model):

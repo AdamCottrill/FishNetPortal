@@ -76,6 +76,11 @@
                         <td id="sidep-filter">None</td>
                     </tr>
                     <tr>
+                        <td>Lift Date Filter:</td>
+                        <td id="effdt1-filter">None</td>
+                    </tr>
+
+                    <tr>
                         <td>Gear Filter:</td>
                         <td id="gear-filter">None</td>
                     </tr>
@@ -129,6 +134,18 @@
         </div>
     </div>
 
+
+    <div class="row">
+        <div class="col-md-10" >
+            <div id="effdt1-chart">
+                <strong>Lift Date</strong>
+                <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+
     <br />
     <hr />
 
@@ -158,6 +175,7 @@
      var effCatchChart = dc.rowChart('#eff-catch-chart');
      var sidepChart = dc.barChart('#sidep-chart');
      var gearCatchChart = dc.rowChart('#gear-catch-chart');
+     var effdt1Chart = dc.barChart('#effdt1-chart');
      //var recordCount = dc.dataCount('.dc-data-count');
      var dataTable = dc.dataTable('#data-table2');
 
@@ -172,9 +190,9 @@
          var lat = 45
          var lon = -82
          var zoom = 7
-         var mydateformat = d3.time.format('%B %d, %Y')
+         var mydateformat = d3.time.format('%B %d, %Y');
 
-             var isodateformat = d3.time.format.iso;
+         var isodateformat = d3.time.format.iso;
 
          data.forEach(function(d){
              d.prj_cd =  d.prj_cd;
@@ -219,6 +237,7 @@
          var samDim = catches.dimension(function(d) { return d.sam; });
          var netDim = catches.dimension(function(d) { return d.net; });
          var effDim = catches.dimension(function(d) { return d.eff; });
+         var effdt1Dim = catches.dimension(function(d) { return d.lift_date; });
          var speciesDim = catches.dimension(function(d) { return d.species; });
          var sidepDim = catches.dimension(function(d) { return d.sidep; });
          //var grpDim = catches.dimension(function(d) { return d.grp; });
@@ -229,6 +248,7 @@
          var samGroup = samDim.group();
          var netGroup = netDim.group();
          var effGroup = effDim.group();
+         var effdt1Group = effdt1Dim.group();
          var speciesGroup = speciesDim.group();
          //var grpGroup = grpDim.group();
          var sidepGroup = sidepDim.group();
@@ -241,6 +261,7 @@
          var speciesCatchGroup = speciesDim.group().reduceSum(function(d) {return d.catcnt;});
          var gearCatchGroup = gearDim.group().reduceSum(function(d) {return d.catcnt;});
 
+         var effdt1Catch = effdt1Dim.group().reduceSum(function(d) {return d.catcnt;});
 
          netCount.valueAccessor(function (x) {return x; })
                                   .group(bin_counter(netGroup));
@@ -308,6 +329,7 @@
                    .dimension(sidepDim)
                    .group(sidepGroup)
                    .x(d3.scale.linear().domain([0,100]))
+                   .yAxisLabel('Total Catch')
                    .elasticX(true)
                    .render();
 
@@ -343,7 +365,45 @@
                      d3.select("#gear-filter").text(myfilters);
                  }
              });
+         });
+
+
+         var minDate = effdt1Dim.bottom(1)[0].lift_date;
+         var maxDate = effdt1Dim.top(1)[0].lift_date;
+
+         function prettyDateFilter(filter){
+             myformat = d3.time.format('%b %d');
+             dates = filter[0];
+             start_date = d3.time.format.iso.parse(dates[0]);
+             end_date = d3.time.format.iso.parse(dates[1]);
+             pretty = myformat(start_date) + ' - ' + myformat(end_date);
+             return pretty;
+         }
+
+
+         effdt1Chart.width(width * 2)
+                   .height(height)
+                   .dimension(effdt1Dim)
+                   .group(effdt1Group)
+                    .x(d3.time.scale().domain([minDate,maxDate]))
+                    .yAxisLabel('Total Catch')
+                   .elasticX(true)
+                   .render();
+
+         //update the filter elements on the page to show the current filters
+         effdt1Chart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#effdt1-filter").text('None');
+                 } else {
+                     prettyFilters = prettyDateFilter(myfilters);
+                     d3.select("#effdt1-filter").text(prettyFilters);
+                 }
+             });
          })
+
+
 
 
          function get_net_set_points(x){
