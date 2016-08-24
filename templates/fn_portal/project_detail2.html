@@ -1,0 +1,521 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+{% load staticfiles %}
+
+{% block extrahead  %}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/reductio/0.6.3/reductio.js"></script>  -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+    <script src="{% static 'leaflet-bubble.js' %}"></script>
+
+{% endblock %}
+
+{% block sidebar %}
+
+{% sidebar_projects %}
+
+{% endblock %}
+
+    {% block content  %}
+
+    <h2>{{ object.prj_nm }}({{ object.prj_cd }})</h2>
+
+    <h4>Net Sets</h4>
+    <div id="maprow" class="row" >
+        <div class="col-md-10" >
+            <div id="map" style="width: 900px; height: 700px;"></div>
+        </div>
+    </div>
+
+    <br />
+    <hr />
+
+    <div class="row">
+        <div id="tally_row" class="row" >
+            <div id="tallies" class="col-md-5" >
+                <table>
+                    <tr>
+                        <td>Nets:</td>
+                        <td id="net-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Species:</td>
+                        <td id="species-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Total Catch:</td>
+                        <td id="total-catch"></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="filters" class="col-md-5" >
+                <table>
+                    <tr>
+                        <td>Species Filter(s):</td>
+                        <td id="species-filter">None</td>
+                    </tr>
+                    <tr>
+                        <td>Mesh Filter(s):</td>
+                        <td id="mesh-filter">None</td>
+                    </tr>
+                    <tr>
+                        <td>Depth Filter:</td>
+                        <td id="sidep-filter">None</td>
+                    </tr>
+                    <tr>
+                        <td>Gear Filter:</td>
+                        <td id="gear-filter">None</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="filters" class="col-md-2" >
+                    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm">Reset All</a>
+            </div>
+
+        </div>
+    </div>
+    <hr />
+
+
+    <div id="first-plot-row" class="row" >
+
+        <div class="col-md-6" >
+            <div id="catch-pie-chart">
+                <strong>Species Composition</strong>
+                    <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="col-md-6" >
+            <div id="eff-catch-chart">
+                <strong>Catch By Mesh</strong>
+                <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6" >
+            <div id="sidep-chart">
+                <strong>Net Set Depth (m)</strong>
+                <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="col-md-6" >
+            <div id="gear-catch-chart">
+                <strong>Catch By Gear Type</strong>
+                <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <hr />
+
+    <h4>Catch Count Records</h4>
+    <div class="row">
+        <table class="table table-hover dc-data-table" id="data-table2">
+            <thead>
+                <tr class='header'>
+                    <th>Project Code</th>
+                    <th>Sample</th>
+                    <th>Effort</th>
+                    <th>Species</th>
+                    <th>Group</th>
+                    <th>Catch</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+     // instantiate charts outside of d3 call:
+
+     var catchPieChart = dc.pieChart('#catch-pie-chart');
+     var effCatchChart = dc.rowChart('#eff-catch-chart');
+     var sidepChart = dc.barChart('#sidep-chart');
+     var gearCatchChart = dc.rowChart('#gear-catch-chart');
+     //var recordCount = dc.dataCount('.dc-data-count');
+     var dataTable = dc.dataTable('#data-table2');
+
+     var netCount = dc.numberDisplay("#net-count");
+     var speciesCount = dc.numberDisplay("#species-count");
+     var totalCatch = dc.numberDisplay("#total-catch");
+
+
+     d3.json("{% url 'project_catch_counts2_json' object.slug %}", function (error, data) {
+         //var catch_data = data.response.beers.items;
+
+         var lat = 45
+         var lon = -82
+         var zoom = 7
+         var mydateformat = d3.time.format('%B %d, %Y')
+
+             var isodateformat = d3.time.format.iso;
+
+         data.forEach(function(d){
+             d.prj_cd =  d.prj_cd;
+             d.sam =  d.sam;
+             d.net = d.prj_cd + '-' + d.sam;
+             d.grp =  d.grp;
+             d.catcnt = +d.catch;
+             d.lat = +d.dd_lat;
+             d.dd_lon = +d.dd_lon;
+             d.eff = d.eff;
+             d.effdst = d.effdst;
+             d.effst = +d.effst;
+             d.gear =  d.gear;
+             d.grdep =  +d.grdep;
+             d.lift_date = isodateformat.parse(d.lift_date);
+             d.sidep =  +d.sidep;
+             d.species =  d.spc;
+         });
+
+
+         // helper function count unique values (from:http://stackoverflow.com/questions/29018259/)
+         function bin_counter(group) {
+             return {
+                 value: function() {
+                     return group.all().filter(function(kv) {
+                         return kv.value > 0;
+                     }).length;
+                 }
+             };
+         }
+
+
+         // set up our filters and dimensions:
+         var catches = crossfilter(data);
+
+         var all = catches.groupAll();
+         var allcatches = all.reduceSum(function(d){return d.catcnt;});
+         //var allDim = catches.dimension(function(d) {return d;});
+
+
+         //var prjcdDim = catches.dimension(function(d) { return d.prj_cd; });
+         var samDim = catches.dimension(function(d) { return d.sam; });
+         var netDim = catches.dimension(function(d) { return d.net; });
+         var effDim = catches.dimension(function(d) { return d.eff; });
+         var speciesDim = catches.dimension(function(d) { return d.species; });
+         var sidepDim = catches.dimension(function(d) { return d.sidep; });
+         //var grpDim = catches.dimension(function(d) { return d.grp; });
+         var gearDim = catches.dimension(function(d) { return d.gear; });
+         //var effstDim = catches.dimension(function(d) { return d.effst; });
+
+         //var prjcdGroup = prjcdDim.group();
+         var samGroup = samDim.group();
+         var netGroup = netDim.group();
+         var effGroup = effDim.group();
+         var speciesGroup = speciesDim.group();
+         //var grpGroup = grpDim.group();
+         var sidepGroup = sidepDim.group();
+         var gearGroup = gearDim.group();
+         //var effstGroup = effstDim.group();
+
+
+         //var allCatchGroup = allDim.group().reduceSum(function(d) {return d.catcnt;});
+         var effCatchGroup = effDim.group().reduceSum(function(d) {return d.catcnt;});
+         var speciesCatchGroup = speciesDim.group().reduceSum(function(d) {return d.catcnt;});
+         var gearCatchGroup = gearDim.group().reduceSum(function(d) {return d.catcnt;});
+
+
+         netCount.valueAccessor(function (x) {return x; })
+                                  .group(bin_counter(netGroup));
+
+         speciesCount.valueAccessor(function (x) { return x; })
+                     .group(bin_counter(speciesCatchGroup));
+
+         totalCatch.valueAccessor(function (x) { return x; })
+                   .formatNumber(d3.format(',d'))
+                   .group(allcatches);
+
+
+         // =================
+         //     CHARTS
+
+         var width = 500;
+         var height = 500;
+         var radius = (width * 0.8)/2;
+
+         catchPieChart.width(width)
+                      .height(height)
+                      .radius(radius)
+                      .dimension(speciesDim)
+                      .group(speciesCatchGroup)
+                      .render();
+
+         //update the filter elements on the page to show the current filters
+         catchPieChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=catchPieChart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#species-filter").text('None');
+                 } else {
+                     d3.select("#species-filter").text(myfilters);
+                     d3.select("#species-count").text(myfilters.length);
+
+                 }
+             });
+         });
+
+
+         effCatchChart.width(width)
+                      .height(height)
+                      .dimension(effDim)
+                      .group(effCatchGroup)
+                      .x(d3.scale.linear().domain([0,100]))
+                      .elasticX(true)
+                      .render();
+
+         //update the filter elements on the page to show the current filters
+         effCatchChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#mesh-filter").text('None');
+                 } else {
+                     d3.select("#mesh-filter").text(myfilters);
+                 }
+             });
+         })
+
+
+         sidepChart.width(width)
+                   .height(height)
+                   .dimension(sidepDim)
+                   .group(sidepGroup)
+                   .x(d3.scale.linear().domain([0,100]))
+                   .elasticX(true)
+                   .render();
+
+         //update the filter elements on the page to show the current filters
+         sidepChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#sidep-filter").text('None');
+                 } else {
+                     d3.select("#sidep-filter").text(myfilters);
+                 }
+             });
+         })
+
+
+         gearCatchChart.width(width)
+                       .height(height)
+                       .dimension(gearDim)
+                       .group(gearCatchGroup)
+                       .x(d3.scale.linear().domain([0,100]))
+                       .elasticX(true)
+             //.colors(d3.scale.ordinal().range('blue'))
+                       .render();
+
+         //update the filter elements on the page to show the current filters
+         gearCatchChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#gear-filter").text('None');
+                 } else {
+                     d3.select("#gear-filter").text(myfilters);
+                 }
+             });
+         })
+
+
+         function get_net_set_points(x){
+             // give a list/array, extract format the elements
+             // for use with leaflet.
+             var len = x.length
+             var points={};
+             for (var i = 0; i < len; i++) {
+                 var tmp = x[i];
+                 if (points[tmp.net]!=undefined) {
+                     points[tmp.net].catcnt += tmp.catch;
+                 } else {
+                     points[tmp.net] = {
+                         netid: tmp.net,
+                         dd_lat: tmp.dd_lat,
+                         dd_lon: tmp.dd_lon,
+                         sidep: tmp.sidep,
+                         lift_date: tmp.lift_date,
+                         catcnt: tmp.catch
+                     };
+                 }
+             }
+             return points
+         }
+
+
+         function points_to_geojson(points){
+             // this function takes a list of points and converts it to geoJson format
+             // required by leaflet-bubble.js
+             var features = []
+             _.each(points, function (d){
+                 features.push({
+                     "type": "Feature",
+                     "geometry":{
+                         "type": "Point",
+                         "coordinates": [d.dd_lon, d.dd_lat]},
+                     "properties":{
+                         "netid": d.netid,
+                         "sidep": d.sidep,
+                         "lift_date": mydateformat(d.lift_date),
+                         "catcnt": d.catcnt
+                     }});
+             });
+
+             var geojson =  {"type": "FeatureCollection",
+                             "features": features };
+
+             return geojson
+         }
+
+
+         // =================
+         //     MAP
+
+         var  map = new L.map('map').setView([lat,lon], zoom);
+
+         function drawMap(){
+
+             function onEachFeature(feature, layer) {
+                 if (feature.properties && feature.properties.popup_text) {
+                     layer.bindPopup(feature.properties.popup_text);
+                 }
+             };
+
+             L.mapbox.accessToken = 'pk.eyJ1IjoiYWNvdHRyaWxsIiwiYSI6ImNpazVmb3Q2eDAwMWZpZm0yZTQ1cjF3NTkifQ.Pb1wCYs0lKgjnTGz43DjVQ';
+             // Replace 'mapbox.streets' with your map id.
+             var mapboxTiles = L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
+                 attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+             }).addTo(map);
+
+             var netsetMarkers = new L.FeatureGroup();
+             // this will get a point for each of the original net sets:
+             var netsetPoints = get_net_set_points(data);
+
+             netsetMarkers.clearLayers();
+             _.each(netsetPoints, function (d) {
+                 var netid = d.netid
+                 var lift_date = mydateformat(d.lift_date);
+                 var marker = L.circle([d.dd_lat, d.dd_lon], 25, {
+                     color:'red',
+                     fillColor: 'red',
+                     fillOpacity: 1
+                 });
+                 marker.bindPopup("<p>" + netid + " " + lift_date + " " + d.sidep + " (m) Total Catch: " + d.catcnt +"</p>");
+                 netsetMarkers.addLayer(marker);
+             });
+
+             var bubbleMarkers = new L.FeatureGroup();
+             // samDim will response to filters and only include the
+             // selected records
+             var catchcntPoints = get_net_set_points(samDim.top(Infinity));
+             var geojsonPts = points_to_geojson(catchcntPoints);
+
+             bubbleMarkers.clearLayers();
+             bubbles = L.bubbleLayer(geojsonPts, { property: "catcnt",
+                                                   legend: false,
+                                                   max_radius : 40,
+                                                   scale: 'YlGnBu',
+                                                   tooltip : true
+             });
+
+             // add the bubbles first so that the net centroid markers are on top
+             bubbleMarkers.addLayer(bubbles);
+             map.addLayer(bubbles);
+
+             map.addLayer(netsetMarkers);
+             map.fitBounds(netsetMarkers.getBounds());
+
+         }
+
+         drawMap();
+
+         // refresh our map each time one of the charts change
+         dcCharts = [catchPieChart, effCatchChart, sidepChart, gearCatchChart];
+
+         _.each(dcCharts, function (dcChart) {
+             dcChart.on("filtered", function (chart, filter) {
+                 map.eachLayer(function (layer) {
+                     map.removeLayer(layer)
+                 });
+                 drawMap();
+             });
+         });
+
+
+
+//         recordCount /* dc.dataCount('.dc-data-count', 'chartGroup'); */
+//                          .dimension(catches)
+//                          .group(all);
+             // (_optional_) `.html` sets different html when some records or all records are selected.
+             // `.html` replaces everything in the anchor with the html given using the following function.
+             // `%filter-count` and `%total-count` are replaced with the values obtained.
+             //                          .html({
+             //                              some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
+             //                                    ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a>',
+             //                              all: 'All records selected. Please click on the graph to apply filters.'
+             //                          });
+
+         // ===========================
+         //        DATA TABLE
+
+
+         dataTable.dimension(speciesDim)
+                              .group(function(d){ return "Catch Table"})
+                              .size(100)
+                              .columns([
+                                  function (d) { return d.prj_cd; },
+                                  function (d) { return d.sam; },
+                                  function (d) { return d.eff; },
+                                  function (d) { return d.spc; },
+                                  function (d) { return d.grp; },
+                                  function (d) { return d.catcnt; }
+                              ])
+                              .sortBy(function(d){
+                                  return [d.prj_cd, d.sam, d.eff, d.spc].join();
+                              })
+                              .order(d3.descending);
+         //                  .on('renderlet', function (table) {
+         //                      // each time table is rendered remove nasty extra row dc.js insists on adding
+         //                      table.selectAll('.dc-table-group').exit().remove();
+         //                      table.selectAll('.dc-table-group').classed('info', true);
+         //                  });
+
+         dataTable.on("renderlet", function(table) {
+             table.selectAll('.dc-table-group').remove();
+         });
+
+         dc.renderAll();
+
+     });
+
+    </script>
+
+
+    {% endblock %}

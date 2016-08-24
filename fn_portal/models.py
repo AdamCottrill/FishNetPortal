@@ -49,7 +49,8 @@ class FN011(models.Model):
         return '{} - {}'.format(self.prj_cd, self.prj_nm)
 
     def get_absolute_url(self):
-        return reverse('fn_portal.views.project_detail', args=[str(self.slug)])
+        return reverse('fn_portal.views.project_catch_counts2',
+                       args=[str(self.slug)])
 
 
     def total_catch(self):
