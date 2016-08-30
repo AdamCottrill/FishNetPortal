@@ -1,0 +1,386 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+{% load staticfiles %}
+
+{% block extrahead  %}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/reductio/0.6.3/reductio.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+    <script src="{% static 'leaflet-bubble.js' %}"></script>
+
+{% endblock %}
+
+{% block sidebar %}
+
+{% sidebar_projects %}
+
+{% endblock %}
+
+{% block content  %}
+
+<h2>Catch in Projects like "{{ project.prj_cd|slice:":6" }}YY{{ project.prj_cd|slice:"8:" }}"</h2>
+
+<style type="text/css" media="screen">
+ .dc-chart g.row text {fill: black;}
+</style>
+
+
+<div id="catch-row" class="row" >
+    <div id="catch" class="col-md-12" >
+        <div id="catch-over-time">
+            <strong>Catch-Over-Time</strong>
+            <a class="reset" href="javascript:catchTimeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<div id="catch-row" class="row" >
+    <div id="catch" class="col-md-6" >
+        <div id="spc-catch-row">
+            <strong>Species Catch:</strong>
+            <a class="reset" href="javascript:spcCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+
+<div id="filter-row" class="row" >
+    <div class="col-md-6" >
+        <div id="sidep-chart">
+            <strong>Site Depth(m):</strong>
+            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="col-md-6" >
+        <div id="month-chart">
+            <strong>Month:</strong>
+            <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<script type="text/javascript">
+
+    // instantiate charts and count objects outside of d3 call:
+
+ var catchTimeChart = dc.lineChart('#catch-over-time');
+ //var catchTimeChart = dc.barChart('#catch-over-time');
+// var spcCatchChart = dc.rowChart('#spc-catch-row');
+ var spcCatchChart = dc.pieChart('#spc-catch-row');
+ var sidepChart = dc.barChart('#sidep-chart');
+ var monthChart = dc.barChart('#month-chart');
+
+
+     // helper function count unique values (from:http://stackoverflow.com/questions/29018259/)
+     // remaining in filtered data set
+//     function bin_counter(group) {
+//         return {
+//             value: function() {
+//                 return group.all().filter(function(kv) {
+//                     return kv.value > 0;
+//                 }).length;
+//             }
+//         };
+//     }
+//
+
+
+//     function is_index_mesh(x){
+//         if (~INDEX_EFFS.indexOf(x.eff)){
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+//
+//
+//     function mono_or_multi(x){
+//         var mesh_type;
+//         switch (x.gear){
+//             case "GL":
+//             case "GL01":
+//             mesh_type = 'multifilament';
+//             break;
+//             mesh_type = 'monofilament';
+//         }
+//         return mesh_type;
+//     }
+//
+
+
+ d3.json("{% url 'project_catch_over_time_json' project.slug %}", function (error, data) {
+
+     var mydateformat = d3.time.format('%B %d, %Y');
+     var isodateformat = d3.time.format.iso;
+     var TOP_COUNT=15;
+//     var INDEX_EFFS=['038', '051', '076', '089', '102', '114', '127'];
+
+
+     function top_spc_or_other(x){
+         if (~top_species.indexOf(x.spc)){
+             return x.spc;
+         } else {
+             return 'other';
+         }
+     }
+
+
+     data.forEach(function(d){
+         d.year =  +d.year;
+         d.net = d.prj_cd + '-' + d.sam;
+         d.catcnt = +d.catch;
+         // if spc code is not 0, effort distance should be:
+         d.effdst = d.spc_code!==0 ? 0 : d.effdst;
+         d.grdep =  +d.grdep;
+         d.lift_date = isodateformat.parse(d.lift_date);
+         d.sidep =  +d.sidep;
+         d.species =  d.spc;
+         d.spc_code =  d.spc_code;
+     });
+
+
+     // in most project there are way to0 many species - before we pass the data to crossfilter
+     // find the most common species, and recode all of the others to 'other'
+     // this seems unnecessarily complicated - but that's the js way.
+
+     var species = {};
+     for (var i=0; i<data.length; i++){
+         var species_name = data[i].spc;
+         var catch_count = data[i].catcnt;
+         if(species[species_name]){
+             species[species_name] += catch_count;
+         } else {
+             species[species_name] = catch_count;
+         }
+     }
+
+     //convert our js object to an array so that we can sort it:
+     var sortable = [];
+     for (var spc in species){
+         sortable.push([spc, species[spc]]);
+     }
+
+     //sort by the catch count (second element)
+     sortable.sort(function(a, b) {return b[1] - a[1];});
+
+     var top_species = [];
+     for (var i=0; i<TOP_COUNT; i++){
+         top_species.push(sortable[i][0]);
+     }
+
+     // Add element for for spc_code=000 to ensure that cpue calculations/filters work.
+     top_species.push("Multiple Species");
+
+     data.forEach(function(d){
+         //d.top_species = top_species.indexOf(d.spc) ? 'other' : d.spc;
+         d.top_species = top_spc_or_other(d);
+         //d.index_mesh = is_index_mesh(d);
+         //d.mesh_type = mono_or_multi(d);
+         d.month = d.lift_date.getMonth();
+     })
+
+
+
+     // set up our filters and dimensions:
+     var catches = crossfilter(data);
+
+     var all = catches.groupAll();
+     var allcatches = all.reduceSum(function(d){return d.catcnt;});
+
+     var yearDim = catches.dimension(function(d) { return d.year; });
+
+//     var samDim = catches.dimension(function(d) { return d.sam; });
+//     var netDim = catches.dimension(function(d) { return d.net; });
+//     var effDim = catches.dimension(function(d) { return d.eff; });
+
+     var topspeciesDim = catches.dimension(function(d) { return d.top_species; });
+     var sidepDim = catches.dimension(function(d) { return d.sidep; });
+     var monthDim = catches.dimension(function(d) { return d.month; });
+
+     var sidepGroup = sidepDim.group();
+     var monthGroup = monthDim.group();
+     var yearGroup = yearDim.group();
+
+     var speciesCatchGroup = topspeciesDim.group().reduceSum(function(d) {return d.catcnt;});
+
+     /*
+      * custom reduce functions to calculate cpue
+      * */
+     function reduceAddcpue(p, v) {
+         p.catch += v.catcnt;
+         p.effort_m += v.effdst;
+         p.cpue = p.effort_m ? 100 * p.catch / p.effort_m : 0;
+         return p;
+     }
+
+     function reduceRemovecpue(p, v) {
+         p.catch -= v.catcnt;
+         p.effort_m -= v.effdst;
+         p.cpue = p.effort_m ? 100 * p.catch / p.effort_m : 0;
+         return p;
+     }
+
+     function reduceInitialcpue() {
+         return {catch: 0,
+                 effort_m: 0,
+                 cpue: 0};
+     }
+
+
+//     var netcpue = netDim.group().reduce(reduceAddCpue,
+//                                         reduceRemoveCpue,
+//                                         reduceInitCpue);
+
+     var yearcpue = yearDim.group().reduce(reduceAddcpue,
+                                     reduceRemovecpue,
+                                     reduceInitialcpue);
+
+
+         // =================
+         //     CHARTS
+
+     var WIDTH = 500;
+     var HEIGHT = 500;
+     var RADIUS = (WIDTH * 0.8)/2;
+
+     var first_year = yearDim.bottom(1)[0].year;
+     var last_year = yearDim.top(1)[0].year;
+
+//     function get_stack(i) {
+//              return function(d) {
+//                  return d.value[i];
+//              };
+//          }
+//
+//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+     catchTimeChart.width(WIDTH * 2)
+                          .height(HEIGHT)
+                          .x(d3.scale.linear()
+                               .domain([first_year, last_year]))
+                          .brushOn(false)
+                            .clipPadding(10)
+                          .yAxisLabel("CPUE (Number per 100m)")
+                          .elasticY(true)
+                            .dimension(yearDim)
+                            //.group(speciesCatchGroup);
+                            .group(yearcpue)
+                            .valueAccessor(function(p) {
+                                return p.value.cpue;
+                            });
+
+     catchTimeChart.render();
+//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+
+
+      spcCatchChart.width(WIDTH)
+                      .height(HEIGHT)
+                      .radius(RADIUS)
+                      .dimension(topspeciesDim)
+                      .group(speciesCatchGroup)
+                      .render();
+
+
+//     spcCatchChart.width(WIDTH * 2)
+//                     .height(HEIGHT*2)
+//                     .dimension(topspeciesDim)
+//                     .group(speciesCatchGroup)
+//                     .x(d3.scale.linear().domain([0,100]))
+//                     .elasticX(true)
+//                     .render();
+//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+
+//// we need a custom filterHandler for the species chart - if there is a filter, we need to make sure that
+//// spc_code 0 is included for the cpue calculation to work.
+//     spcCatchChart.filterHandler(function(dimension, filter){
+//         //if the filter is not null and does contain the value corresponding to spc_code=000; add it in.
+//         //         // if the filter is null, or already contains 000, return it as is.
+//         newFilter = filter;
+//         if (newFilter.length === 0){
+//             dimension.filter(null);
+//         } else {
+//             if (newFilter.indexOf('Multiple Species') < 0){
+//                 newFilter.push('Multiple Species');
+//             };
+//             dimension.filter(newFilter);
+//         };
+//         return newFilter;
+//        });
+//
+//
+
+
+     spcCatchChart.filterHandler(function (dimension, filters) {
+         console.log('filters before: ' + filters);
+         dimension.filter(null);
+         if (filters.length === 0) {
+             dimension.filter(null);
+         } else {
+             dimension.filterFunction(function (d) {
+                 if (filters.indexOf('Multiple Species') < 0){
+                     filters.push('Multiple Species');
+                 }
+                 for (var i = 0; i < filters.length; i++) {
+                     var filter = filters[i];
+                     if (filter.isFiltered && filter.isFiltered(d)) {
+                         return true;
+                     } else if (filter <= d && filter >= d) {
+                         return true;
+                     }
+                 }
+                 return false;
+             });
+         }
+         console.log('filters after: ' + filters);
+         return filters;
+     });
+
+
+     sidepChart.width(WIDTH)
+               .height(HEIGHT)
+               .dimension(sidepDim)
+               .group(sidepGroup)
+               .x(d3.scale.linear().domain([0,100]))
+               .yAxisLabel('Total Catch')
+               .elasticX(true)
+               .render();
+
+     monthChart.width(WIDTH)
+               .height(HEIGHT)
+               .dimension(monthDim)
+               .group(monthGroup)
+               .x(d3.scale.linear().domain([0,100]))
+               .yAxisLabel('Total Catch')
+               .elasticX(true)
+               .render();
+
+         dc.renderAll();
+//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+
+     });
+
+    </script>
+
+
+    {% endblock %}

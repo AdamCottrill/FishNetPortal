@@ -169,14 +169,13 @@
 
     <script type="text/javascript">
 
-     // instantiate charts outside of d3 call:
+     // instantiate charts and count objects outside of d3 call:
 
      var catchPieChart = dc.pieChart('#catch-pie-chart');
      var effCatchChart = dc.rowChart('#eff-catch-chart');
      var sidepChart = dc.barChart('#sidep-chart');
      var gearCatchChart = dc.rowChart('#gear-catch-chart');
      var effdt1Chart = dc.barChart('#effdt1-chart');
-     //var recordCount = dc.dataCount('.dc-data-count');
      var dataTable = dc.dataTable('#data-table2');
 
      var netCount = dc.numberDisplay("#net-count");
@@ -185,13 +184,11 @@
 
 
      d3.json("{% url 'project_catch_counts2_json' object.slug %}", function (error, data) {
-         //var catch_data = data.response.beers.items;
 
          var lat = 45
          var lon = -82
          var zoom = 7
          var mydateformat = d3.time.format('%B %d, %Y');
-
          var isodateformat = d3.time.format.iso;
 
          data.forEach(function(d){
@@ -214,6 +211,7 @@
 
 
          // helper function count unique values (from:http://stackoverflow.com/questions/29018259/)
+         // remaining in filtered data set
          function bin_counter(group) {
              return {
                  value: function() {
@@ -404,8 +402,6 @@
          })
 
 
-
-
          function get_net_set_points(x){
              // give a list/array, extract format the elements
              // for use with leaflet.
@@ -517,7 +513,7 @@
          drawMap();
 
          // refresh our map each time one of the charts change
-         dcCharts = [catchPieChart, effCatchChart, sidepChart, gearCatchChart];
+         dcCharts = [catchPieChart, effCatchChart, sidepChart, gearCatchChart, effdt1Chart];
 
          _.each(dcCharts, function (dcChart) {
              dcChart.on("filtered", function (chart, filter) {
@@ -528,23 +524,8 @@
              });
          });
 
-
-
-//         recordCount /* dc.dataCount('.dc-data-count', 'chartGroup'); */
-//                          .dimension(catches)
-//                          .group(all);
-             // (_optional_) `.html` sets different html when some records or all records are selected.
-             // `.html` replaces everything in the anchor with the html given using the following function.
-             // `%filter-count` and `%total-count` are replaced with the values obtained.
-             //                          .html({
-             //                              some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
-             //                                    ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'>Reset All</a>',
-             //                              all: 'All records selected. Please click on the graph to apply filters.'
-             //                          });
-
          // ===========================
          //        DATA TABLE
-
 
          dataTable.dimension(speciesDim)
                               .group(function(d){ return "Catch Table"})
@@ -561,11 +542,6 @@
                                   return [d.prj_cd, d.sam, d.eff, d.spc].join();
                               })
                               .order(d3.descending);
-         //                  .on('renderlet', function (table) {
-         //                      // each time table is rendered remove nasty extra row dc.js insists on adding
-         //                      table.selectAll('.dc-table-group').exit().remove();
-         //                      table.selectAll('.dc-table-group').classed('info', true);
-         //                  });
 
          dataTable.on("renderlet", function(table) {
              table.selectAll('.dc-table-group').remove();

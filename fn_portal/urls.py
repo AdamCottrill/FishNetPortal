@@ -11,14 +11,27 @@ urlpatterns = [
     views.project_catch_counts2_json,
     name='project_catch_counts2_json'),
 
+    # urls for catch-counts within a project
     url(r'^catcnts2/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$',
     views.project_catch_counts2,
     name='project_catch_counts2'),
 
-
     url(r'^api/catcnts/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$',
     views.project_catch_counts_json,
     name='project_catch_counts_json'),
+
+
+
+    # urls for catch-counts through time for projects with matching prj_cd
+    url(r'^catch_over_time/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$',
+    views.project_catch_over_time,
+    name='project_catch_over_time'),
+
+    url(r'^api/catch_over_time/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$',
+    views.project_catch_over_time_json,
+    name='project_catch_over_time_json'),
+
+
 
 
     url(r'^api/catcnts/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/(?P<sam>[\w-]+)/$',
