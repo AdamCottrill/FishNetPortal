@@ -21,6 +21,14 @@
 
     <script src="{% static 'leaflet-bubble.js' %}"></script>
 
+    <style type="text/css" media="screen">
+    #filter-buttons a {
+        margin-bottom: 3px;
+     }
+     .dc-chart g.row text {fill: black;}
+    </style>
+
+
 {% endblock %}
 
 {% block sidebar %}
@@ -30,6 +38,9 @@
 {% endblock %}
 
     {% block content  %}
+
+
+
 
     <h2>{{ object.prj_nm }}({{ object.prj_cd }})</h2>
 
@@ -72,6 +83,11 @@
                         <td id="mesh-filter">None</td>
                     </tr>
                     <tr>
+                        <td>Index Meshes:</td>
+                        <td id="index-mesh-filter">All Meshes</td>
+                    </tr>
+
+                    <tr>
                         <td>Depth Filter:</td>
                         <td id="sidep-filter">None</td>
                     </tr>
@@ -87,10 +103,12 @@
                 </table>
             </div>
 
-            <div id="filters" class="col-md-2" >
-                    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm">Reset All</a>
+            <div id="filter-buttons" class="col-md-2" >
+                <span>
+                    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
+                    <a href="{% url 'project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
+                </span>
             </div>
-
         </div>
     </div>
     <hr />
@@ -110,6 +128,14 @@
                 <strong>Catch By Mesh</strong>
                 <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                 <div class="clearfix"></div>
+                <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                        <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -168,6 +194,18 @@
 
 
     <script type="text/javascript">
+        $( document ).ready(function() {
+        // prepare the sidebar by expanding just the current year
+        var my_year={{ object.year }}{{object.project.year}};
+        var div_name = "#project-year-" + my_year;
+        $(div_name).show();
+
+        });
+    </script>
+
+
+
+    <script type="text/javascript">
 
      // instantiate charts and count objects outside of d3 call:
 
@@ -182,6 +220,18 @@
      var speciesCount = dc.numberDisplay("#species-count");
      var totalCatch = dc.numberDisplay("#total-catch");
 
+     var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
+
+
+     function is_index_mesh(x){
+         if (~INDEX_EFFS.indexOf(x.eff)){
+             return true;
+         } else {
+             return false;
+         }
+     }
+
+
 
      d3.json("{% url 'project_catch_counts2_json' object.slug %}", function (error, data) {
 
@@ -193,20 +243,16 @@
 
          data.forEach(function(d){
              d.prj_cd =  d.prj_cd;
-             d.sam =  d.sam;
              d.net = d.prj_cd + '-' + d.sam;
-             d.grp =  d.grp;
              d.catcnt = +d.catch;
-             d.lat = +d.dd_lat;
+             d.dd_lat = +d.dd_lat;
              d.dd_lon = +d.dd_lon;
-             d.eff = d.eff;
-             d.effdst = d.effdst;
              d.effst = +d.effst;
-             d.gear =  d.gear;
              d.grdep =  +d.grdep;
              d.lift_date = isodateformat.parse(d.lift_date);
              d.sidep =  +d.sidep;
              d.species =  d.spc;
+             d.index_mesh = is_index_mesh(d);
          });
 
 
@@ -235,6 +281,7 @@
          var samDim = catches.dimension(function(d) { return d.sam; });
          var netDim = catches.dimension(function(d) { return d.net; });
          var effDim = catches.dimension(function(d) { return d.eff; });
+         var indexMeshDim = catches.dimension(function(d) { return d.index_mesh; });
          var effdt1Dim = catches.dimension(function(d) { return d.lift_date; });
          var speciesDim = catches.dimension(function(d) { return d.species; });
          var sidepDim = catches.dimension(function(d) { return d.sidep; });
@@ -549,7 +596,24 @@
 
          dc.renderAll();
 
+
+         //update the index mesh filter using the button group change (click) event.
+         $("#mesh-group-btn :input").change(function() {
+             if (this.id==='index_only'){
+                 indexMeshDim.filter(function(d) {return d===true;});
+                 d3.select("#index-mesh-filter").text('Index Meshes Only');
+             } else {
+                 indexMeshDim.filterAll();
+                 d3.select("#index-mesh-filter").text('All Meshes');
+             }
+             dc.renderAll();
+         });
+
+
      });
+
+
+
 
     </script>
 

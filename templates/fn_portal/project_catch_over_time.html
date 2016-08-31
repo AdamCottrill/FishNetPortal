@@ -160,7 +160,7 @@
      var TOP_COUNT=15;
 
 
-     var monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 
 
@@ -411,9 +411,8 @@
 
      dc.renderAll();
 
-     /*
-        update the index mesh filter using the button group change (click) event.
-     */
+
+     //update the index mesh filter using the button group change (click) event.
     $("#mesh-group-btn :input").change(function() {
         if (this.id==='index_only'){
             indexMeshDim.filter(function(d) {return d===true;});
