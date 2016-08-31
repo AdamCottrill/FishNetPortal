@@ -35,10 +35,13 @@
 
 <style type="text/css" media="screen">
  .dc-chart g.row text {fill: black;}
+}
+
 </style>
 
 
 <div id="catch-row" class="row" >
+                        <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right">Reset All</a>
     <div id="catch" class="col-md-12" >
         <div id="catch-over-time">
             <strong>Catch-Over-Time</strong>
@@ -56,6 +59,24 @@
             <div class="clearfix"></div>
         </div>
     </div>
+
+
+    <div id="mesh-size" class="col-md-6" >
+        <div id="eff-catch-row">
+            <strong>Mesh Size (EFF):</strong>
+            <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+            <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                </label>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -70,7 +91,7 @@
 
     <div class="col-md-6" >
         <div id="month-chart">
-            <strong>Month:</strong>
+            <strong>By Month:</strong>
             <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
             <div class="clearfix"></div>
         </div>
@@ -87,11 +108,13 @@
 
  var catchTimeChart = dc.lineChart('#catch-over-time');
  //var catchTimeChart = dc.barChart('#catch-over-time');
-// var spcCatchChart = dc.rowChart('#spc-catch-row');
+//  var spcCatchChart = dc.rowChart('#spc-catch-row');
  var spcCatchChart = dc.pieChart('#spc-catch-row');
+ var effCatchChart = dc.rowChart('#eff-catch-row');
  var sidepChart = dc.barChart('#sidep-chart');
  var monthChart = dc.barChart('#month-chart');
 
+ var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
 
      // helper function count unique values (from:http://stackoverflow.com/questions/29018259/)
      // remaining in filtered data set
@@ -107,15 +130,15 @@
 //
 
 
-//     function is_index_mesh(x){
-//         if (~INDEX_EFFS.indexOf(x.eff)){
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
-//
-//
+ function is_index_mesh(x){
+     if (~INDEX_EFFS.indexOf(x.eff)){
+         return true;
+     } else {
+         return false;
+     }
+ }
+
+
 //     function mono_or_multi(x){
 //         var mesh_type;
 //         switch (x.gear){
@@ -135,7 +158,10 @@
      var mydateformat = d3.time.format('%B %d, %Y');
      var isodateformat = d3.time.format.iso;
      var TOP_COUNT=15;
-//     var INDEX_EFFS=['038', '051', '076', '089', '102', '114', '127'];
+
+
+     var monthNames = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" ];
 
 
      function top_spc_or_other(x){
@@ -196,11 +222,10 @@
      data.forEach(function(d){
          //d.top_species = top_species.indexOf(d.spc) ? 'other' : d.spc;
          d.top_species = top_spc_or_other(d);
-         //d.index_mesh = is_index_mesh(d);
+         d.index_mesh = is_index_mesh(d);
          //d.mesh_type = mono_or_multi(d);
-         d.month = d.lift_date.getMonth();
+         d.month = monthNames[d.lift_date.getMonth()];
      })
-
 
 
      // set up our filters and dimensions:
@@ -213,7 +238,8 @@
 
 //     var samDim = catches.dimension(function(d) { return d.sam; });
 //     var netDim = catches.dimension(function(d) { return d.net; });
-//     var effDim = catches.dimension(function(d) { return d.eff; });
+     var effDim = catches.dimension(function(d) { return d.eff; });
+     var indexMeshDim = catches.dimension(function(d) { return d.index_mesh; });
 
      var topspeciesDim = catches.dimension(function(d) { return d.top_species; });
      var sidepDim = catches.dimension(function(d) { return d.sidep; });
@@ -224,6 +250,7 @@
      var yearGroup = yearDim.group();
 
      var speciesCatchGroup = topspeciesDim.group().reduceSum(function(d) {return d.catcnt;});
+     var effCatchGroup = effDim.group().reduceSum(function(d) {return d.catcnt;});
 
      /*
       * custom reduce functions to calculate cpue
@@ -274,24 +301,33 @@
 //              };
 //          }
 //
-//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+     //     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+
+     let commaformat = d3.format(',');
+
      catchTimeChart.width(WIDTH * 2)
                           .height(HEIGHT)
-                          .x(d3.scale.linear()
-                               .domain([first_year, last_year]))
+                   .x(d3.scale.linear()
+                        //.tickFormat(d3.format("d"))
+                        .domain([first_year, last_year]))
                           .brushOn(false)
                             .clipPadding(10)
                           .yAxisLabel("CPUE (Number per 100m)")
-                          .elasticY(true)
+                            .elasticY(true)
                             .dimension(yearDim)
                             //.group(speciesCatchGroup);
                             .group(yearcpue)
-                            .valueAccessor(function(p) {
-                                return p.value.cpue;
-                            });
+                            .valueAccessor(function(p) { return p.value.cpue;})
+         //.title(function(p) { return p.key + ': ' + p.value.cpue; });
+                            .title(function(d) {
+                                return d.data.key + '\n'
+                                     + "CPUE: " + d.data.value.cpue.toFixed(2) + '\n'
+                                     + "Total Catch: " + commaformat(d.data.value.catch) + '\n'
+                                     + "Effort: " + commaformat(d.data.value.effort_m) + 'm'; });
+
+     catchTimeChart.xAxis().tickFormat(d3.format("d"));
 
      catchTimeChart.render();
-//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
 
 
       spcCatchChart.width(WIDTH)
@@ -311,28 +347,10 @@
 //                     .render();
 //     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
 
-//// we need a custom filterHandler for the species chart - if there is a filter, we need to make sure that
-//// spc_code 0 is included for the cpue calculation to work.
-//     spcCatchChart.filterHandler(function(dimension, filter){
-//         //if the filter is not null and does contain the value corresponding to spc_code=000; add it in.
-//         //         // if the filter is null, or already contains 000, return it as is.
-//         newFilter = filter;
-//         if (newFilter.length === 0){
-//             dimension.filter(null);
-//         } else {
-//             if (newFilter.indexOf('Multiple Species') < 0){
-//                 newFilter.push('Multiple Species');
-//             };
-//             dimension.filter(newFilter);
-//         };
-//         return newFilter;
-//        });
-//
-//
 
-
+     // a custome filterHandler that will always include Multiple Species if a filter exists.
+     // Multiple species records contain efffort information and are needed to calculate cpue.
      spcCatchChart.filterHandler(function (dimension, filters) {
-         console.log('filters before: ' + filters);
          dimension.filter(null);
          if (filters.length === 0) {
              dimension.filter(null);
@@ -352,9 +370,18 @@
                  return false;
              });
          }
-         console.log('filters after: ' + filters);
          return filters;
      });
+
+
+     effCatchChart.width(WIDTH)
+                      .height(HEIGHT)
+                      .dimension(effDim)
+                      .group(effCatchGroup)
+                      .x(d3.scale.linear().domain([0,100]))
+                      .elasticX(true)
+                      .render();
+     effCatchChart.xAxis().ticks(4)
 
 
      sidepChart.width(WIDTH)
@@ -364,23 +391,42 @@
                .x(d3.scale.linear().domain([0,100]))
                .yAxisLabel('Total Catch')
                .elasticX(true)
+               .elasticY(true)
                .render();
+
+     sidepChart.margins().left = 50;
 
      monthChart.width(WIDTH)
                .height(HEIGHT)
                .dimension(monthDim)
                .group(monthGroup)
-               .x(d3.scale.linear().domain([0,100]))
+               .x(d3.scale.ordinal().domain(monthNames))
+               .xUnits(dc.units.ordinal)
                .yAxisLabel('Total Catch')
                .elasticX(true)
+               .elasticY(true)
                .render();
 
-         dc.renderAll();
-//     console.log('yearcpue.top(10): ' +  yearcpue.top(10));
+     monthChart.margins().left = 60;
+
+     dc.renderAll();
+
+     /*
+        update the index mesh filter using the button group change (click) event.
+     */
+    $("#mesh-group-btn :input").change(function() {
+        if (this.id==='index_only'){
+            indexMeshDim.filter(function(d) {return d===true;});
+        } else {
+            indexMeshDim.filterAll();
+        }
+        dc.renderAll();
+    });
+
 
      });
 
-    </script>
 
+</script>
 
     {% endblock %}
