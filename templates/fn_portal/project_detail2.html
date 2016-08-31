@@ -252,6 +252,7 @@
              d.lift_date = isodateformat.parse(d.lift_date);
              d.sidep =  +d.sidep;
              d.species =  d.spc;
+             d.spc_code =  +d.spc_code;
              d.index_mesh = is_index_mesh(d);
          });
 
@@ -454,10 +455,17 @@
              // for use with leaflet.
              var len = x.length
              var points={};
+
              for (var i = 0; i < len; i++) {
                  var tmp = x[i];
                  if (points[tmp.net]!=undefined) {
-                     points[tmp.net].catcnt += tmp.catch;
+                     points[tmp.net].total_catch += tmp.catch;
+                     // add the species specific catch counts too:
+                     if(points[tmp.net].species[tmp.species]!=undefined){
+                         points[tmp.net].species[tmp.species] += tmp.catch;
+                     } else {
+                         points[tmp.net].species[tmp.species] = tmp.catch;
+                     }
                  } else {
                      points[tmp.net] = {
                          netid: tmp.net,
@@ -465,19 +473,39 @@
                          dd_lon: tmp.dd_lon,
                          sidep: tmp.sidep,
                          lift_date: tmp.lift_date,
-                         catcnt: tmp.catch
+                         total_catch: tmp.catch
                      };
+                     points[tmp.net].species = {};
+                     points[tmp.net].species[tmp.species] = tmp.catch;
                  }
              }
              return points
          }
 
 
+         function get_spc_list(pt){
+             var species_string = '';
+             if (Object.keys(pt.species)){
+                 species_names = Object.keys(pt.species);
+                 species_string += '<ul>';
+                 for (spc in species_names){
+                     species_string += '<li>' + species_names[spc] + ':' + pt.species[species_names[spc]] + '</li>';
+                 }
+                 species_string += '</ul>';
+             } else {
+                 species_string = 'None';
+             }
+             return species_string;
+         }
+
          function points_to_geojson(points){
              // this function takes a list of points and converts it to geoJson format
              // required by leaflet-bubble.js
              var features = []
              _.each(points, function (d){
+
+                 spc_list = get_spc_list(d);
+
                  features.push({
                      "type": "Feature",
                      "geometry":{
@@ -487,7 +515,8 @@
                          "netid": d.netid,
                          "sidep": d.sidep,
                          "lift_date": mydateformat(d.lift_date),
-                         "catcnt": d.catcnt
+                         "total_catch": d.total_catch,
+                         'species':spc_list
                      }});
              });
 
@@ -530,7 +559,7 @@
                      fillColor: 'red',
                      fillOpacity: 1
                  });
-                 marker.bindPopup("<p>" + netid + " " + lift_date + " " + d.sidep + " (m) Total Catch: " + d.catcnt +"</p>");
+                 marker.bindPopup("<p>" + netid + " " + lift_date + " " + d.sidep + " (m) Total Catch: " + d.total_catch +"</p>");
                  netsetMarkers.addLayer(marker);
              });
 
@@ -541,11 +570,11 @@
              var geojsonPts = points_to_geojson(catchcntPoints);
 
              bubbleMarkers.clearLayers();
-             bubbles = L.bubbleLayer(geojsonPts, { property: "catcnt",
+             bubbles = L.bubbleLayer(geojsonPts, { property: "total_catch",
                                                    legend: false,
                                                    max_radius : 40,
                                                    scale: 'YlGnBu',
-                                                   tooltip : true
+                                                   tooltip : "species"
              });
 
              // add the bubbles first so that the net centroid markers are on top

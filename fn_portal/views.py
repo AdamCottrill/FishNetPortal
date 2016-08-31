@@ -99,10 +99,14 @@ def sample_catch_counts_json(request, slug, sam):
 
 
 def project_catch_counts2(request, slug):
-    """
+    """This view is used to display the catch count information for a
+    single project. The template contains linked, interactive maps and
+    graphics.  Data for the map and graphics are provide by a complimentary json
+    request (project_catch_counts2_json)
 
     Arguments:
     - `request`:
+
     """
 
     project = get_object_or_404(FN011, slug=slug)
@@ -115,10 +119,18 @@ def project_catch_counts2(request, slug):
 
 
 def project_catch_counts2_json(request, slug):
-    """
+    """THis view returns the catch count data for the project detail
+    pages.  Data returned is a combination of the 121, 122 and 123 data
+    for a SINGLE project.
+
+    records with spc_code of 0 ('000') are excluded because they do
+    not actually contain any catch information - they are only used to
+    provide effort in cpue calculations.
 
     Arguments:
     - `request`:
+    - `slug`: a unique slug identifies a project (lowercase project code)
+
     """
 
     catcnts = FN123.objects.\
@@ -134,11 +146,13 @@ def project_catch_counts2_json(request, slug):
           annotate(effdst=F('effort__effdst')).\
           annotate(grdep=F('effort__grdep')).\
           annotate(spc=F('species__common_name')).\
+          annotate(spc_code=F('species__species_code')).\
           annotate(catch=F('catcnt')).\
           values('prj_cd','lift_date', 'dd_lat', 'dd_lon', 'sam', 'gear',
                  'effst', 'sidep', 'eff', 'grp', 'effdst', 'grdep', 'spc',
-                 'catch').\
-          filter(effort__sample__project__slug=slug).all()
+                 'spc_code', 'catch').\
+          filter(effort__sample__project__slug=slug).\
+          exclude(spc_code=0).all()
 
     return JsonResponse(list(catcnts), safe=False)
 
@@ -149,6 +163,7 @@ def project_catch_counts2_json(request, slug):
 def project_catch_over_time(request, slug):
     """Given a project slug, find all of the projects that have the same
     project prefix, project type and suffix (only the year changes)
+
 
     Arguments:
     - `request`:
@@ -173,6 +188,7 @@ def project_catch_over_time_json(request, slug):
     """turns the catch count and effort information for all data matching
     a particular project code for trend through time.
 
+    Data from this view is used in trend though time views/templates.
 
     Arguments:
     - `request`:
