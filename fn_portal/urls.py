@@ -22,6 +22,17 @@ urlpatterns = [
 
 
 
+    # urls for  biodata for a particular species and project
+    url(r'^biodata/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<spc>\d{2,3})/$',
+    views.project_spc_biodata,
+    name='project_spc_biodata'),
+
+
+    url(r'^api/biodata/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<spc>\d{2,3})/$',
+    views.project_spc_biodata_json,
+    name='project_spc_biodata_json'),
+
+
     # urls for catch-counts through time for projects with matching prj_cd
     url(r'^catch_over_time/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$',
     views.project_catch_over_time,

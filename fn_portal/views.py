@@ -1,11 +1,13 @@
-
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Sum,F
 from django.http import JsonResponse
 from django.template import RequestContext
+from django.core import serializers
+from django.db import connection
+import json
+#from datetime import datetime
 
-#import json
 
 from fn_portal.models import *
 
@@ -157,6 +159,104 @@ def project_catch_counts2_json(request, slug):
     return JsonResponse(list(catcnts), safe=False)
 
 
+
+
+
+def project_spc_biodata(request, slug, spc):
+    """This view is used to display the biological data for a
+    particular species caught in a single project. The template
+    contains linked, interactive graphics that can be used to filter
+    the other figures.  The data for the graphics are provide by a
+    complimentary json request (project_spc_biodata_json)
+
+    Arguments:
+    - `request`:
+    - `slug`: a unique slug that identifies a project (lowercase project code)
+    - `spc`: - a 2 or 3 digit MNR species code
+
+
+    """
+
+    project = get_object_or_404(FN011, slug=slug)
+    species = get_object_or_404(Species, species_code=spc)
+
+    return render_to_response('fn_portal/project_spc_biodata.html',
+                              {'project': project,
+                               'species': species,
+                              },
+                              context_instance=RequestContext(request))
+
+
+def dictfetchall(cursor):
+    """Return all rows from a cursor as a dict
+    from: https://docs.djangoproject.com/en/1.10/topics/db/sql/"""
+
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    '''to serialize dates using json.dumps.
+    Copied from: http://stackoverflow.com/questions/11875770
+    '''
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
+def project_spc_biodata_json(request, slug, spc):
+    """THis view returns the biological data for the species caught in a
+    single project. Data is presented in the project spc_diodata
+    template.  Data returned is a combination of the 121, 122 123, and
+    125 data for a SINGLE project.  The 121-123 data is used to filter
+    the other records.
+
+    Arguments:
+    - `request`:
+    - `slug`: a unique slug identifies a project (lowercase project code)
+    - `spc`: - a 2 or 3 digit MNR species code
+
+    """
+
+    sql = """SELECT fn125.id, sam,
+               effdt1 as lift_date,
+               substr(effdt1, 1,4) as yr,
+               sidep,
+               eff,
+               species.species_code,
+               species.common_name,
+               flen, tlen, rwt, sex, mat, agea, xagem
+          FROM fn_portal_fn125 fn125
+                    left outer JOIN
+               fn_portal_fn127 fn127 ON fn125.id = fn127.fish_id
+                 JOIN
+               fn_portal_fn123 fn123 ON fn123.id = fn125.catch_id
+               JOIN
+               fn_portal_fn122 fn122 ON fn122.id = fn123.effort_id
+               JOIN
+               fn_portal_fn121 fn121 ON fn121.id = fn122.sample_id
+               JOIN
+               fn_portal_fn011 fn011 ON fn011.id = fn121.project_id
+               JOIN
+               fn_portal_species species ON species.id = fn123.species_id
+         WHERE slug = %s and species_code=%s and (accepted=1 or accepted is null)
+         ORDER BY sam,
+                  eff;
+        """
+
+    #cursor = connection.cursor()
+    with connection.cursor() as cursor:
+        cursor.execute(sql, [slug, spc])
+        data = dictfetchall(cursor)
+
+    return JsonResponse(data,
+                        safe=False)
 
 
 

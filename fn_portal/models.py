@@ -166,7 +166,7 @@ class FN122(models.Model):
     '''
     sample = models.ForeignKey(FN121, related_name="effort")
     #sam = models.CharField(max_length=5, blank=True, null=True)
-    eff = models.CharField(max_length=4, blank=True, null=True)
+    eff = models.CharField(max_length=4, db_index=True, default=1)
     effdst = models.FloatField(blank=True, null=True)
     grdep = models.FloatField(blank=True, null=True)
     grtem0 = models.FloatField(blank=True, null=True)
@@ -193,10 +193,10 @@ class FN123(models.Model):
     effort = models.ForeignKey(FN122, related_name="catch")
     species = models.ForeignKey(Species, related_name="species")
 
-    grp = models.CharField(max_length=3, default='00')
+    grp = models.CharField(max_length=3, default='00', db_index=True)
     catcnt = models.IntegerField(blank=True, null=True)
+    catwt = models.FloatField(blank=True, null=True)
     biocnt = models.IntegerField(default=0, blank=True, null=True)
-    #these are text and probably shouldn't be:
     comment = models.TextField(blank=True, null=True)
 
 
@@ -222,16 +222,19 @@ class FN125(models.Model):
 
     catch = models.ForeignKey(FN123, related_name="fish")
 
-    fish = models.CharField(max_length=6)
+    fish = models.CharField(max_length=6, db_index=True)
     flen = models.IntegerField(blank=True, null=True)
     tlen = models.IntegerField(blank=True, null=True)
     rwt = models.IntegerField(blank=True, null=True)
+    girth = models.IntegerField(blank=True, null=True)
     clipc = models.CharField(max_length=6, blank=True, null=True)
     sex = models.CharField(max_length=2, blank=True, null=True)
     mat = models.CharField(max_length=2, blank=True, null=True)
     gon = models.CharField(max_length=4, blank=True, null=True)
     noda = models.CharField(max_length=6, blank=True, null=True)
     nodc = models.CharField(max_length=6, blank=True, null=True)
+    agest = models.CharField(max_length=6, blank=True, null=True)
+    fate = models.CharField(max_length=2, blank=True, null=True)
     comment5 = models.CharField(max_length=50, blank=True, null=True)
 
 
@@ -256,14 +259,15 @@ class FN127(models.Model):
     fish = models.ForeignKey(FN125, related_name="age_estimates")
 
     ageid = models.IntegerField()
-    agea = models.IntegerField(blank=True, null=True)
-    accepted = models.BooleanField(default=False)
+    agea = models.IntegerField(blank=True, null=True, db_index=True)
+    accepted = models.BooleanField(default=False, db_index=True)
     agest = models.CharField(max_length=5, blank=True, null=True)
     xagem = models.CharField(max_length=2, blank=True, null=True)
     agemt = models.CharField(max_length=5)
     edge = models.CharField(max_length=2, blank=True, null=True)
     conf = models.IntegerField(blank=True, null=True)
     nca = models.IntegerField(blank=True, null=True)
+    comment7 = models.TextField(blank=True, null=True)
 
     class Meta:
         #ordering = ['last_name', 'first_name']
