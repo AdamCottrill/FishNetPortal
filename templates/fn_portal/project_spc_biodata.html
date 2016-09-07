@@ -245,23 +245,29 @@
      var sexDim = biodata.dimension(function(d) { return d.sex; });
      var maturityDim = biodata.dimension(function(d) { return d.mat; });
 
-     var sidepGroup = sidepDim.group();
-     var liftDateGroup = liftDateDim.group();
-     var effGroup = effDim.group();
-
+     // our biological attributes
      var ageGroup = ageDim.group();
      var lengthGroup = lengthDim.group();
      var weightGroup = weightDim.group();
+
+
+     // our filtering groups:
+     var sidepGroup = sidepDim.group();
+     var liftDateGroup = liftDateDim.group();
+     var effGroup = effDim.group();
      var sexGroup = sexDim.group();
      var maturityGroup = maturityDim.group();
 
 
+     // cross dimpensions and groups for size-at-age and weight-length
      var sizeagedim = biodata.dimension(function(d){ return [+d.agea, +d.flen]; });
      var sizeagegroup = sizeagedim.group();
 
      var wtlendim = biodata.dimension(function(d){ return [+d.flen, +d.rwt]; });
      var wtlengroup = wtlendim.group();
 
+
+     // a helper function to return only those groups with data (we used -99 as null place holder above)
      function remove_missing_values(source_group) {
          return {
              all:function () {
@@ -273,7 +279,8 @@
      }
 
 
-
+     // a helper function to return only those groups with data (we used -99 as null place holder above)
+     // this one is used for groups of 2-dimensional crosses
      function remove_missing_values2(source_group) {
          return {
              all:function () {
@@ -283,7 +290,6 @@
              }
          };
      }
-
 
      var ageGroup2 = remove_missing_values(ageGroup);
      var lengthGroup2 = remove_missing_values(lengthGroup);
@@ -297,14 +303,58 @@
      var minDate = liftDateDim.bottom(1)[0].lift_date;
      var maxDate = liftDateDim.top(1)[0].lift_date;
 
-     var minage = ageDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].agea;
-     var maxage = ageDim.filterFunction(function (d){ return d > 0;}).top(1)[0].agea;
+     try {
+         var minage = ageDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].agea;
+         ageDim.fillterAll();
+     } catch (e) {
+         var minage = 0;
+     }
+     ageDim.filterAll();
 
-     var minweight = weightDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].rwt;
-     var maxweight = weightDim.filterFunction(function (d){ return d > 0;}).top(1)[0].rwt;
+     try {
+         var maxage = ageDim.filterFunction(function (d){ return d > 0;}).top(1)[0].agea;
+         ageDim.fillterAll();
+     } catch (e) {
+         var maxage = 10;
+     }
+     ageDim.filterAll();
 
-     var maxlength = lengthDim.filterFunction(function (d){ return d > 0;}).top(1)[0].flen;
-     var minlength = lengthDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].flen;
+     try {
+         var minweight = weightDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].rwt;
+
+     } catch (e) {
+         var minweight = 0;
+     }
+     weightDim.filterAll();
+
+     try {
+         var maxweight = weightDim.filterFunction(function (d){ return d > 0;}).top(1)[0].rwt;
+     } catch (e) {
+         var maxweight = 1000;
+     }
+     weightDim.filterAll();
+
+     try {
+         var minlength = lengthDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].flen;
+     } catch (e) {
+         var minlength = 0;
+     }
+     lengthDim.filterAll();
+
+     try {
+         var maxlength = lengthDim.filterFunction(function (d){ return d > 0;}).top(1)[0].flen;
+
+     } catch (e) {
+         var maxlength = 450;
+     }
+     lengthDim.filterAll();
+
+
+
+
+
+
+
 
 
      // =================
@@ -334,10 +384,33 @@
                 .render();
 
 
+     lengthChart.filterHandler(function (dimension, filters) {
+         if (filters.length === 0) {
+             dimension.filter(flen >=0);
+         } else {
+             dimension.filterFunction(function (d) {
+                 //if (filters.indexOf('Multiple Species') < 0){
+                 //    filters.push('Multiple Species');
+                 //}
+                 for (var i = 0; i < filters.length; i++) {
+                     var filter = filters[i];
+                     if (filter.isFiltered && filter.isFiltered(d)) {
+                         return true;
+                     } else if (filter <= d && filter >= d) {
+                         return true;
+                     }
+                 }
+                 return false;
+             });
+         }
+         return filters;
+     });
+
+
      sizeAtAgeAllChart.width(WIDTH)
                       .height(HEIGHT)
                       .dimension(sizeagedim)
-                      .group(sizeagegroup2)
+                      .group(sizeagegroup)
                       .x(d3.scale.linear().range([0, maxage]).domain([0,maxage+1]))
                       .y(d3.scale.linear().range([0, maxlength]).domain([0,maxlength*1.05]))
                       .yAxisLabel('Fork Length (mm)')
