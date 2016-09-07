@@ -54,142 +54,200 @@
     <br />
     <hr />
 
-    <div class="row">
-        <div id="tally_row" class="row" >
-            <div id="tallies" class="col-md-5" >
-                <table>
-                    <tr>
-                        <td>Nets:</td>
-                        <td id="net-count"></td>
-                    </tr>
-                    <tr>
-                        <td>Species:</td>
-                        <td id="species-count"></td>
-                    </tr>
-                    <tr>
-                        <td>Total Catch:</td>
-                        <td id="total-catch"></td>
-                    </tr>
-                </table>
+
+    <div>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+            <li role="presentation"><a href="#catcnts" aria-controls="catch-counts" role="tab" data-toggle="tab">Catch Counts</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="graphs">
+
+
+                <div class="row">
+                    <div id="tally_row" class="row" >
+                        <div id="tallies" class="col-md-5" >
+                            <table>
+                                <tr>
+                                    <td>Nets:</td>
+                                    <td id="net-count"></td>
+                                </tr>
+                                <tr>
+                                    <td>Species:</td>
+                                    <td id="species-count"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Catch:</td>
+                                    <td id="total-catch"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="filters" class="col-md-5" >
+                            <table>
+                                <tr>
+                                    <td>Species Filter(s):</td>
+                                    <td id="species-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Mesh Filter(s):</td>
+                                    <td id="mesh-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Index Meshes:</td>
+                                    <td id="index-mesh-filter">All Meshes</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Depth Filter:</td>
+                                    <td id="sidep-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Lift Date Filter:</td>
+                                    <td id="effdt1-filter">None</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Gear Filter:</td>
+                                    <td id="gear-filter">None</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div id="filter-buttons" class="col-md-2" >
+                            <span>
+                                <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
+                                <a href="{% url 'project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+
+                <div id="first-plot-row" class="row" >
+
+                    <div class="col-md-6" >
+                        <div id="catch-pie-chart">
+                            <strong>Species Composition</strong>
+                            <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" >
+                        <div id="eff-catch-chart">
+                            <strong>Catch By Mesh</strong>
+                            <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                            <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                                <label class="btn btn-primary active">
+                                    <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6" >
+                        <div id="sidep-chart">
+                            <strong>Net Set Depth (m)</strong>
+                            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" >
+                        <div id="gear-catch-chart">
+                            <strong>Catch By Gear Type</strong>
+                            <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-10" >
+                        <div id="effdt1-chart">
+                            <strong>Lift Date</strong>
+                            <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
-            <div id="filters" class="col-md-5" >
-                <table>
-                    <tr>
-                        <td>Species Filter(s):</td>
-                        <td id="species-filter">None</td>
-                    </tr>
-                    <tr>
-                        <td>Mesh Filter(s):</td>
-                        <td id="mesh-filter">None</td>
-                    </tr>
-                    <tr>
-                        <td>Index Meshes:</td>
-                        <td id="index-mesh-filter">All Meshes</td>
-                    </tr>
+            <div role="tabpanel" class="tab-pane" id="catcnts">
 
-                    <tr>
-                        <td>Depth Filter:</td>
-                        <td id="sidep-filter">None</td>
-                    </tr>
-                    <tr>
-                        <td>Lift Date Filter:</td>
-                        <td id="effdt1-filter">None</td>
-                    </tr>
+                <div class="row">
+                    <table class="table tablesorter" id="data-table1">
+                        <thead>
+                            <tr class='header'>
+                                <th>Species (Species Code)</th>
+                                <th>Catch Counts</th>
+                                <th>Bio-Counts</th>
+                            </tr>
+                        </thead>
 
-                    <tr>
-                        <td>Gear Filter:</td>
-                        <td id="gear-filter">None</td>
-                    </tr>
-                </table>
-            </div>
+                        {% for species in object.catch_counts %}
+                        <tr>
+                            <td>
+                                {% if species.biocnts == 0 %}
+                                {{ species.species }} ({{ species.species_code }})
+                                {% else %}
+                                <a href="{% url 'project_spc_biodata' object.slug species.species_code %}">{{ species.species }} ({{ species.species_code }})</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ species.catcnts }}
+                            </td>
+                            <td>
+                                {{ species.biocnts }}
+                            </td>
 
-            <div id="filter-buttons" class="col-md-2" >
-                <span>
-                    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
-                    <a href="{% url 'project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
-                </span>
-            </div>
-        </div>
-    </div>
-    <hr />
+                        </tr>
+                        {% endfor %}
 
 
-    <div id="first-plot-row" class="row" >
 
-        <div class="col-md-6" >
-            <div id="catch-pie-chart">
-                <strong>Species Composition</strong>
-                    <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="col-md-6" >
-            <div id="eff-catch-chart">
-                <strong>Catch By Mesh</strong>
-                <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div class="clearfix"></div>
-                <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
-                    <label class="btn btn-primary active">
-                        <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
-                    </label>
-                    <label class="btn btn-primary">
-                        <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
-                    </label>
+                    </table>
+
+
+
                 </div>
             </div>
+
         </div>
 
-    </div>
 
+        <br />
+        <hr />
 
-    <div class="row">
-        <div class="col-md-6" >
-            <div id="sidep-chart">
-                <strong>Net Set Depth (m)</strong>
-                <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div class="clearfix"></div>
-            </div>
+        <h4>Catch Count Records</h4>
+        <div class="row">
+            <table class="table table-hover dc-data-table" id="data-table2">
+                <thead>
+                    <tr class='header'>
+                        <th>Project Code</th>
+                        <th>Sample</th>
+                        <th>Effort</th>
+                        <th>Species</th>
+                        <th>Group</th>
+                        <th>Catch</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
-
-        <div class="col-md-6" >
-            <div id="gear-catch-chart">
-                <strong>Catch By Gear Type</strong>
-                <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-10" >
-            <div id="effdt1-chart">
-                <strong>Lift Date</strong>
-                <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <br />
-    <hr />
-
-    <h4>Catch Count Records</h4>
-    <div class="row">
-        <table class="table table-hover dc-data-table" id="data-table2">
-            <thead>
-                <tr class='header'>
-                    <th>Project Code</th>
-                    <th>Sample</th>
-                    <th>Effort</th>
-                    <th>Species</th>
-                    <th>Group</th>
-                    <th>Catch</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
 
 
 
@@ -640,9 +698,6 @@
 
 
      });
-
-
-
 
     </script>
 

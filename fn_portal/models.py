@@ -79,9 +79,13 @@ class FN011(models.Model):
         """
 
         catcnts = FN121.objects.filter(project=self).\
-              annotate(species=F('effort__catch__species__common_name')).\
-              values('species').\
-              annotate(total=Sum('effort__catch__catcnt')).order_by('species')
+                  filter(effort__catch__species__species_code__gt=0).\
+                  annotate(species=F('effort__catch__species__common_name')).\
+                  annotate(species_code=F('effort__catch__species__species_code')).\
+                  values('species', 'species_code').\
+                  annotate(catcnts=Sum('effort__catch__catcnt')).\
+                  annotate(biocnts=Sum('effort__catch__biocnt')).\
+                  order_by('species')
 
         return catcnts
 
