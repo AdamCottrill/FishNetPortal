@@ -147,16 +147,13 @@
  var ageChart = dc.barChart('#age-chart');
  var lengthChart = dc.barChart('#length-chart');
  var sizeAtAgeAllChart = dc.scatterPlot('#size-at-age-all-chart');
-// var sizeAtAgeSexChart = dc.barChart('#sizeAtAge-sex-chart');
  var weightLengthChart = dc.scatterPlot('#weight-length-chart');
+ // TODO:
+// var sizeAtAgeSexChart = dc.barChart('#sizeAtAge-sex-chart');
 // var matAtAgeChart = dc.barChart('#sizeAtAge-sex-chart');
-
-
 
  //charts to filter our data:
  var effChart = dc.rowChart('#eff-chart');
-// var sexChart = dc.barChart('#sex-chart');
-// var maturityChart = dc.barChart('#maturity-chart');
  var sidepChart = dc.barChart('#sidep-chart');
 // var monthChart = dc.barChart('#month-chart');
  var liftDateChart = dc.barChart('#liftdate-chart');
@@ -164,7 +161,7 @@
  var maturityChart = dc.rowChart('#maturity-chart');
 
  var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
-
+ var BINWIDTH = 25;
 
  function is_index_mesh(x){
      if (~INDEX_EFFS.indexOf(x.eff)){
@@ -203,13 +200,31 @@
  }
 
 
+ function get_stats(dim, x){
+     // a little function to calculate and return summary statistics of a dimention
+     // x is the name of the response variable to calculate the statistics on
+     // missing values are assumed to ave been recoded as -99 (or some other negative number)
+     var mu = d3.mean(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
+     var sigma = d3.deviation(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
+     var n = dim.top(Infinity).length;
+     var sem = sigma / Math.sqrt(n);
+     var dimMin = d3.min(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
+     var dimMax = d3.max(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
+     var ret = {"mu": mu,
+                "sigma": sigma,
+                "n": n,
+                "min": dimMin,
+                "max": dimMax};
+     return ret;
+ }
+
+
+
 
  d3.json("{% url 'project_spc_biodata_json' project.slug species.species_code %}", function (error, data) {
 
      var mydateformat = d3.time.format('%B %d, %Y');
      var isodateformat = d3.time.format.iso;
-
-
 
      data.forEach(function(d){
          d.yr = +d.yr;
@@ -224,7 +239,6 @@
          d.index_mesh = is_index_mesh(d);
          //d.mesh_type = mono_or_multi(d);
      });
-
 
      // set up our filters and dimensions:
      var biodata = crossfilter(data);
@@ -247,9 +261,14 @@
 
      // our biological attributes
      var ageGroup = ageDim.group();
-     var lengthGroup = lengthDim.group();
+     //var lengthGroup = lengthDim.group();
      var weightGroup = weightDim.group();
 
+     // Length Bins for flen-histogram
+     var lenbinDim = biodata.dimension( function(d){
+         return BINWIDTH * Math.floor(d.flen/BINWIDTH);
+     })
+     var lenbinGroup = lenbinDim.group();
 
      // our filtering groups:
      var sidepGroup = sidepDim.group();
@@ -265,6 +284,7 @@
 
      var wtlendim = biodata.dimension(function(d){ return [+d.flen, +d.rwt]; });
      var wtlengroup = wtlendim.group();
+
 
 
      // a helper function to return only those groups with data (we used -99 as null place holder above)
@@ -292,8 +312,9 @@
      }
 
      var ageGroup2 = remove_missing_values(ageGroup);
-     var lengthGroup2 = remove_missing_values(lengthGroup);
+     //var lengthGroup2 = remove_missing_values(lengthGroup);
      var weightGroup2 = remove_missing_values(weightGroup);
+     //var lengthBins2 = remove_missing_values(lengthBins);
 
      var sizeagegroup2 = remove_missing_values2(sizeagegroup);
      var wtlenGroup2 = remove_missing_values2(wtlengroup);
@@ -350,62 +371,36 @@
      lengthDim.filterAll();
 
 
-
-
-
-
-
-
-
      // =================
          //     CHARTS
 
      var WIDTH = 500;
      var HEIGHT = 500;
 
+
      ageChart.width(WIDTH)
              .height(HEIGHT)
              .dimension(ageDim)
              .group(ageGroup2)
-             .x(d3.scale.linear().domain([0,100]))
+             .x(d3.scale.linear().range([0, maxage+1]).domain([0,maxage+1]))
              .yAxisLabel('Number')
-             .elasticX(true)
              .elasticY(true)
+             .centerBar(true)
              .render();
+     ageChart.xAxis().scale(ageChart.x());
+     ageChart.on('renderlet', print_stats);
 
      lengthChart.width(WIDTH)
                 .height(HEIGHT)
-                .dimension(lengthDim)
-                .group(lengthGroup2)
+                .dimension(lenbinDim)
+                .group(lenbinGroup)
                 .x(d3.scale.linear().domain([0,100]))
                 .yAxisLabel('Number')
                 .elasticX(true)
                 .elasticY(true)
                 .render();
 
-
-     lengthChart.filterHandler(function (dimension, filters) {
-         if (filters.length === 0) {
-             dimension.filter(flen >=0);
-         } else {
-             dimension.filterFunction(function (d) {
-                 //if (filters.indexOf('Multiple Species') < 0){
-                 //    filters.push('Multiple Species');
-                 //}
-                 for (var i = 0; i < filters.length; i++) {
-                     var filter = filters[i];
-                     if (filter.isFiltered && filter.isFiltered(d)) {
-                         return true;
-                     } else if (filter <= d && filter >= d) {
-                         return true;
-                     }
-                 }
-                 return false;
-             });
-         }
-         return filters;
-     });
-
+     lengthChart.xUnits(dc.units.fp.precision(BINWIDTH));
 
      sizeAtAgeAllChart.width(WIDTH)
                       .height(HEIGHT)
@@ -480,24 +475,47 @@
                   .render();
 
 
+     //     });
 
 
+
+     // refresh our statistics each time one of the charts change
+     // dcCharts = [ ageChart,
+     //              lengthChart,
+     //              sizeAtAgeAllChart,
+     //              weightLengthChart,
+     //              effChart,
+     //              sidepChart,
+     //              liftDateChart,
+     //              sexChart,
+     //              maturityChart]
+     //
+     //     _.each(dcCharts, function (dcChart) {
+     //         dcChart.on("filtered", function (chart, filter) {
+     //             print_stats();
+     // });
 
 
      dc.renderAll();
 
+
      //update the index mesh filter using the button group change (click) event.
-    $("#mesh-group-btn :input").change(function() {
-        if (this.id==='index_only'){
-            indexMeshDim.filter(function(d) {return d===true;});
-        } else {
-            indexMeshDim.filterAll();
-        }
-        dc.renderAll();
-    });
-
-
+     $("#mesh-group-btn :input").change(function() {
+         if (this.id==='index_only'){
+             indexMeshDim.filter(function(d) {return d===true;});
+             d3.select("#index-mesh-filter").text('Index Meshes Only');
+         } else {
+             indexMeshDim.filterAll();
+             d3.select("#index-mesh-filter").text('All Meshes');
+         }
+         dc.renderAll();
      });
+
+
+ }); // d3.json
+
+
+
 
 
 </script>
