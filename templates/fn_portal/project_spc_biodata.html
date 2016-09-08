@@ -27,7 +27,8 @@
 
 {% block content  %}
 
-<h2>Biological Attributes of {{ species.common_name}} sampled in {{ project.prj_cd }}</h2>
+    <h2>Biological Attributes of {{ species.common_name}} sampled in {{ project.prj_cd }}</h2>
+    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right" role="button">Reset All</a>
 
 <style type="text/css" media="screen">
  .dc-chart g.row text {fill: black;}
@@ -206,12 +207,14 @@
      // missing values are assumed to ave been recoded as -99 (or some other negative number)
      var mu = d3.mean(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
      var sigma = d3.deviation(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
-     var n = dim.top(Infinity).length;
+     //var n = dim.top(Infinity).length;
+     var n = dim.top(Infinity).filter(function(d) { return d[x]>=0 ? d[x] : null; }).length;
      var sem = sigma / Math.sqrt(n);
      var dimMin = d3.min(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
      var dimMax = d3.max(dim.top(Infinity), function(d) { return d[x]>=0 ? d[x] : null; });
      var ret = {"mu": mu,
                 "sigma": sigma,
+                "sem":sem,
                 "n": n,
                 "min": dimMin,
                 "max": dimMax};
@@ -219,6 +222,38 @@
  }
 
 
+
+ function get_dim_max (dim, x, alt){
+     // given a dimention and field name, find the largest value
+     // If the maximum cannot be found, return the alternate
+     // value
+     var mymax = dim.filterFunction(function (d) { return d > 0 ;}).top(1)[0][x];
+     dim.filterAll();
+     return mymax ? mymax : alt;
+ }
+
+ function get_dim_min (dim, x, alt){
+     // given a dimention and field name, find the smallest value (excluding negative
+     // values used as place holders) If the minimum cannot be found, return the alternate
+     // value
+     var mymin = dim.filterFunction(function (d) { return d > 0 ;}).bottom(1)[0][x];
+     dim.filterAll();
+     return mymin ? mymin : alt;
+ }
+
+ function stats_txt (stats){
+     // given our summary statistics, return a 3-element array containing
+     // format strings corresponding to our summary label (mean, N and range)
+     var mu = stats.mu ? stats.mu.toFixed(2) : '---';
+     var sem = stats.sem ? stats.sem.toFixed(2) : '---';
+     var n = stats.n ? stats.n : '---';
+     var mymin = stats.min ? stats.min : '---';
+     var mymax = stats.max ? stats.max : '---';
+     var txt = ["Mean = " + mu + '+/-' + sem,
+                "N = " + n,
+                "Range = " + mymin + "-" + mymax];
+     return txt;
+ }
 
 
  d3.json("{% url 'project_spc_biodata_json' project.slug species.species_code %}", function (error, data) {
@@ -324,51 +359,17 @@
      var minDate = liftDateDim.bottom(1)[0].lift_date;
      var maxDate = liftDateDim.top(1)[0].lift_date;
 
-     try {
-         var minage = ageDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].agea;
-         ageDim.fillterAll();
-     } catch (e) {
-         var minage = 0;
-     }
-     ageDim.filterAll();
 
-     try {
-         var maxage = ageDim.filterFunction(function (d){ return d > 0;}).top(1)[0].agea;
-         ageDim.fillterAll();
-     } catch (e) {
-         var maxage = 10;
-     }
-     ageDim.filterAll();
+     var minweight = get_dim_min(weightDim, 'rwt', 0);
+     var maxweight = get_dim_max(weightDim, 'rwt', 1000);
 
-     try {
-         var minweight = weightDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].rwt;
+     var minlength = get_dim_min(lengthDim, 'flen', 0);
+     var maxlength = get_dim_max(lengthDim, 'flen', 450);
 
-     } catch (e) {
-         var minweight = 0;
-     }
-     weightDim.filterAll();
+     var minage = get_dim_min(ageDim, 'agea', 0);
+     var maxage = get_dim_max(ageDim, 'agea', 10);
 
-     try {
-         var maxweight = weightDim.filterFunction(function (d){ return d > 0;}).top(1)[0].rwt;
-     } catch (e) {
-         var maxweight = 1000;
-     }
-     weightDim.filterAll();
 
-     try {
-         var minlength = lengthDim.filterFunction(function (d){ return d > 0;}).bottom(1)[0].flen;
-     } catch (e) {
-         var minlength = 0;
-     }
-     lengthDim.filterAll();
-
-     try {
-         var maxlength = lengthDim.filterFunction(function (d){ return d > 0;}).top(1)[0].flen;
-
-     } catch (e) {
-         var maxlength = 450;
-     }
-     lengthDim.filterAll();
 
 
      // =================
@@ -387,8 +388,28 @@
              .elasticY(true)
              .centerBar(true)
              .render();
+
      ageChart.xAxis().scale(ageChart.x());
-     ageChart.on('renderlet', print_stats);
+     ageChart.on('renderlet',
+                 function(chart) {
+                     var X = 0.85 * chart.xAxisLength();
+                     var Y = 0.1 * chart.yAxisHeight();
+                     stats = get_stats(ageDim, 'agea');
+                     stats_text = stats_txt(stats);
+                     svg= chart.svg();
+
+                     chart.selectAll('#stats').remove();
+
+                     for (i = 0; i < stats_text.length; i++) {
+                         svg.append('text').attr('id','stats')
+                            .text(stats_text[i])
+                            .attr('x', X)
+                            .attr('y', Y)
+                            .attr('dy', i + "em")
+                     }
+
+                 } );
+
 
      lengthChart.width(WIDTH)
                 .height(HEIGHT)
@@ -401,6 +422,26 @@
                 .render();
 
      lengthChart.xUnits(dc.units.fp.precision(BINWIDTH));
+
+     lengthChart.on('renderlet',
+                 function(chart) {
+                     var X = 0.85 * chart.xAxisLength();
+                     var Y = 0.1 * chart.yAxisHeight();
+                     stats = get_stats(lengthDim, 'flen');
+                     stats_text = stats_txt(stats);
+                     svg= chart.svg();
+                     // remove any existing stats
+                     chart.selectAll('#stats').remove();
+                     // add the new ones
+                     for (i = 0; i < stats_text.length; i++) {
+                         svg.append('text').attr('id','stats')
+                            .text(stats_text[i])
+                            .attr('x', X)
+                            .attr('y', Y)
+                            .attr('dy', i + "em")
+                     }
+                 } );
+
 
      sizeAtAgeAllChart.width(WIDTH)
                       .height(HEIGHT)
