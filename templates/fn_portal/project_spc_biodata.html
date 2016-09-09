@@ -439,6 +439,7 @@
      //var lengthGroup2 = remove_missing_values(lengthGroup);
      var weightGroup2 = remove_missing_values(weightGroup);
      //var lengthBins2 = remove_missing_values(lengthBins);
+     var lenbinGroup2 = remove_missing_values(lenbinGroup);
 
      var sizeagegroup2 = remove_missing_values2(sizeagegroup);
      var wtlenGroup2 = remove_missing_values2(wtlengroup);
@@ -503,7 +504,7 @@
      lengthChart.width(WIDTH)
                 .height(HEIGHT)
                 .dimension(lenbinDim)
-                .group(lenbinGroup)
+                .group(lenbinGroup2)
                 .x(d3.scale.linear().domain([0,100]))
                 .yAxisLabel('Number')
                 .elasticX(true)
