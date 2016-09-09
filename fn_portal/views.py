@@ -224,14 +224,14 @@ def project_spc_biodata_json(request, slug, spc):
 
     """
 
-    sql = """SELECT fn125.id, sam,
+    sql = """SELECT fn125.id, sam, grp,
                effdt1 as lift_date,
                substr(effdt1, 1,4) as yr,
                sidep,
                eff,
                species.species_code,
                species.common_name,
-               flen, tlen, rwt, sex, mat, agea, xagem
+               flen, tlen, rwt, sex, mat, agea, xagem, clipc
           FROM fn_portal_fn125 fn125
                     left outer JOIN
                fn_portal_fn127 fn127 ON fn125.id = fn127.fish_id

@@ -27,14 +27,23 @@
 
 {% block content  %}
 
+
+    <style type="text/css" media="screen">
+     .dc-chart g.row text {fill: black;}
+     }
+
+    </style>
+
+
     <h2>Biological Attributes of {{ species.common_name}} sampled in {{ project.prj_cd }}</h2>
-    <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right" role="button">Reset All</a>
 
-<style type="text/css" media="screen">
- .dc-chart g.row text {fill: black;}
-}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right" role="button">Reset All</a>
+        </div>
+    </div>
 
-</style>
+
 
 
 <div id="age-length-row" class="row">
@@ -60,10 +69,17 @@
 <div id="growth-row" class="row">
     <div id="growth-column" class="col-md-6" >
         <div id="size-at-age-all-chart">
-            <strong>Size At Age:</strong>
+            <strong>Size At Age (all fish):</strong> (<a href="#" id="vonB">by sex</a>)
             <a class="reset" href="javascript:sizeAtAgeAllChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        </div>
+
+        <div id="size-at-age-sex-chart">
+            <strong>Size At Age by Sex:</strong>(<a href="#" id="vonB">all</a>)
+            <a class="reset" href="javascript:sizeAtAgeSexChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
         </div>
+
+
     </div>
 
     <div id="weight-length-column" class="col-md-6" >
@@ -73,6 +89,11 @@
         </div>
     </div>
 </div>
+
+
+
+
+
 
 
 
@@ -136,6 +157,40 @@
 </div>
 
 
+<div id="clipc-grp-row" class="row">
+    <div id="clipc-column" class="col-md-6" >
+        <div id="clipc-chart">
+            <strong>Clip-on-Capture (CLIPC):</strong>
+            <a class="reset" href="javascript:clipcChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        </div>
+    </div>
+
+    <div id="grp-column" class="col-md-6" >
+        <div id="grp-chart">
+            <strong>Group Code (GRP):</strong>
+            <a class="reset" href="javascript:grpChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+ // hide the size at age by sex plot first, but make it visible if the use clicks
+ // on the hyperlink.
+ $(window).load(function(){
+     $('#size-at-age-sex-chart').hide();
+ });
+ $(function() {
+     $('a#vonB').click(function(){
+         $('#size-at-age-sex-chart, #size-at-age-all-chart').toggle();
+         return false;
+     });
+ });
+</script>
 
 
 
@@ -150,8 +205,7 @@
  var sizeAtAgeAllChart = dc.scatterPlot('#size-at-age-all-chart');
  var weightLengthChart = dc.scatterPlot('#weight-length-chart');
  // TODO:
-// var sizeAtAgeSexChart = dc.barChart('#sizeAtAge-sex-chart');
-// var matAtAgeChart = dc.barChart('#sizeAtAge-sex-chart');
+ var sizeAtAgeSexChart = dc.scatterPlot('#size-at-age-sex-chart');
 
  //charts to filter our data:
  var effChart = dc.rowChart('#eff-chart');
@@ -160,6 +214,11 @@
  var liftDateChart = dc.barChart('#liftdate-chart');
  var sexChart = dc.rowChart('#sex-chart');
  var maturityChart = dc.rowChart('#maturity-chart');
+
+
+ var clipcChart = dc.rowChart('#clipc-chart');
+ var grpChart = dc.pieChart('#grp-chart');
+
 
  var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
  var BINWIDTH = 25;
@@ -180,6 +239,16 @@
          return -99;
      }
  }
+
+
+ function if_missing_str(x){
+     if(x){
+         return x;
+     } else {
+         return 'Not Sampled';
+     }
+ }
+
 
 
  function recode_sex(x){
@@ -227,8 +296,13 @@
      // given a dimention and field name, find the largest value
      // If the maximum cannot be found, return the alternate
      // value
-     var mymax = dim.filterFunction(function (d) { return d > 0 ;}).top(1)[0][x];
-     dim.filterAll();
+     try {
+         var mymax = dim.filterFunction(function (d) { return d > 0 ;}).top(1)[0][x];
+     } catch (e) {
+         var mymax= false;
+     } finally{
+         dim.filterAll();
+     }
      return mymax ? mymax : alt;
  }
 
@@ -236,8 +310,14 @@
      // given a dimention and field name, find the smallest value (excluding negative
      // values used as place holders) If the minimum cannot be found, return the alternate
      // value
-     var mymin = dim.filterFunction(function (d) { return d > 0 ;}).bottom(1)[0][x];
-     dim.filterAll();
+
+     try {
+         var mymin = dim.filterFunction(function (d) { return d > 0 ;}).bottom(1)[0][x];
+     } catch (e) {
+         var mymin = false;
+     } finally{
+         dim.filterAll();
+     }
      return mymin ? mymin : alt;
  }
 
@@ -272,6 +352,8 @@
          d.sex = recode_sex(d.sex);
          d.mat = recode_maturity(d.mat);
          d.index_mesh = is_index_mesh(d);
+         d.grp = +if_missing(d.grp);
+         d.clipc = +if_missing_str(d.clipc);
          //d.mesh_type = mono_or_multi(d);
      });
 
@@ -294,6 +376,10 @@
      var sexDim = biodata.dimension(function(d) { return d.sex; });
      var maturityDim = biodata.dimension(function(d) { return d.mat; });
 
+     var grpDim = biodata.dimension(function(d) { return d.grp; });
+     var clipcDim = biodata.dimension(function(d) { return d.clipc; });
+
+
      // our biological attributes
      var ageGroup = ageDim.group();
      //var lengthGroup = lengthDim.group();
@@ -311,7 +397,8 @@
      var effGroup = effDim.group();
      var sexGroup = sexDim.group();
      var maturityGroup = maturityDim.group();
-
+     var grpGroup = grpDim.group();
+     var clipcGroup = clipcDim.group();
 
      // cross dimpensions and groups for size-at-age and weight-length
      var sizeagedim = biodata.dimension(function(d){ return [+d.agea, +d.flen]; });
@@ -320,6 +407,8 @@
      var wtlendim = biodata.dimension(function(d){ return [+d.flen, +d.rwt]; });
      var wtlengroup = wtlendim.group();
 
+     var sizeagesexdim = biodata.dimension(function(d){ return [+d.agea, +d.flen, d.sex]; });
+     var sizeagesexgroup = sizeagesexdim.group();
 
 
      // a helper function to return only those groups with data (we used -99 as null place holder above)
@@ -377,7 +466,7 @@
 
      var WIDTH = 500;
      var HEIGHT = 500;
-
+     var RADIUS = (WIDTH * 0.8)/2;
 
      ageChart.width(WIDTH)
              .height(HEIGHT)
@@ -468,6 +557,33 @@
      weightLengthChart.xAxis().scale(weightLengthChart.x());
 
 
+     var colorScale = d3.scale.ordinal()
+                        .domain(["Male", "Female", "Unknown"]) // sex/gender names
+                        .range(["#07779C", "#FF0000", "##cccccc"]); // color
+
+
+
+     sizeAtAgeSexChart.width(WIDTH)
+                      .height(HEIGHT)
+                      .dimension(sizeagesexdim)
+                      .group(sizeagesexgroup)
+                      .brushOn(false)
+                      .x(d3.scale.linear().range([0, maxage]).domain([0,maxage+1]))
+                      .y(d3.scale.linear().range([0, maxlength]).domain([0,maxlength*1.05]))
+                      .yAxisLabel('Fork Length (mm)')
+                      .render();
+
+     sizeAtAgeSexChart.yAxis().scale(sizeAtAgeSexChart.y());
+
+     sizeAtAgeSexChart.colorAccessor(function (d) {
+                          return d ? d.key[2] : 'Unknown';
+                      })
+                      .colors(function (d) {
+                          return colorScale(d);
+                      })
+
+
+
      effChart.width(WIDTH)
              .height(HEIGHT)
              .dimension(effDim)
@@ -514,6 +630,27 @@
                   .x(d3.scale.linear().domain([0,100]))
                   .elasticX(true)
                   .render();
+
+
+     clipcChart.width(WIDTH)
+             .height(HEIGHT)
+             .dimension(clipcDim)
+             .group(clipcGroup)
+             .x(d3.scale.linear().domain([0,100]))
+             .elasticX(true)
+             .render();
+     clipcChart.xAxis().ticks(4)
+
+
+     grpChart.width(WIDTH)
+               .height(HEIGHT)
+               .radius(RADIUS)
+               .dimension(grpDim)
+               .group(grpGroup)
+               .render();
+
+
+
 
 
      //     });
