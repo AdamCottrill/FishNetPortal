@@ -531,6 +531,7 @@
                          dd_lon: tmp.dd_lon,
                          sidep: tmp.sidep,
                          lift_date: tmp.lift_date,
+                         gear: tmp.gear,
                          total_catch: tmp.catch
                      };
                      points[tmp.net].species = {};
@@ -547,7 +548,7 @@
                  species_names = Object.keys(pt.species);
                  species_string += '<ul>';
                  for (spc in species_names){
-                     species_string += '<li>' + species_names[spc] + ':' + pt.species[species_names[spc]] + '</li>';
+                     species_string += '<li>' + species_names[spc] + ': ' + pt.species[species_names[spc]] + '</li>';
                  }
                  species_string += '</ul>';
              } else {
@@ -571,7 +572,7 @@
                          "coordinates": [d.dd_lon, d.dd_lat]},
                      "properties":{
                          "netid": d.netid,
-                         "sidep": d.sidep,
+                         "sidep": d.sidep.toFixed(1),
                          "lift_date": mydateformat(d.lift_date),
                          "total_catch": d.total_catch,
                          'species':spc_list
@@ -584,6 +585,21 @@
              return geojson
          }
 
+
+
+         var netset_popup_text = function(d){
+             var netid = d.netid;
+             var lift_date = mydateformat(d.lift_date);
+             var sidep = d.sidep.toFixed(1);
+             var total_catch = d.total_catch;
+             var gear = d.gear;
+             var text = "<p><strong>Sample ID:</strong> " + netid + "<\p>";
+             text +=  "<p><strong>Lift Date:</strong> " + lift_date + "<\p>";
+             text +=  "<p><strong>Gear:</strong> " + gear + "<\p>";
+             text +=  "<p><strong>Site Depth:</strong> " + sidep + "m <\p>";
+             text +=  "<p><strong>Total Catch:</strong> " + total_catch + "<\p>";
+             return text;
+         }
 
          // =================
          //     MAP
@@ -617,7 +633,8 @@
                      fillColor: 'red',
                      fillOpacity: 1
                  });
-                 marker.bindPopup("<p>" + netid + " " + lift_date + " " + d.sidep + " (m) Total Catch: " + d.total_catch +"</p>");
+                 popup_text = netset_popup_text(d);
+                 marker.bindPopup(popup_text);
                  netsetMarkers.addLayer(marker);
              });
 

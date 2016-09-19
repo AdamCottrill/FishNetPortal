@@ -221,7 +221,20 @@
 
 
  var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
- var BINWIDTH = 25;
+ //var BINWIDTH = 25;
+
+ function get_bin_width(x){
+     // set bin width to a reasonable value given the maximum size
+     var binwidth = 25;  // default
+     if (x<=200){
+         binwidth = 5;
+     } else {
+         if (x<=400){
+             binwidth = 10;
+         }
+     }
+     return binwidth;
+ }
 
  function is_index_mesh(x){
      if (~INDEX_EFFS.indexOf(x.eff)){
@@ -385,6 +398,12 @@
      //var lengthGroup = lengthDim.group();
      var weightGroup = weightDim.group();
 
+
+     var minlength = get_dim_min(lengthDim, 'flen', 0);
+     var maxlength = get_dim_max(lengthDim, 'flen', 450);
+
+     var BINWIDTH = get_bin_width(maxlength);
+
      // Length Bins for flen-histogram
      var lenbinDim = biodata.dimension( function(d){
          return BINWIDTH * Math.floor(d.flen/BINWIDTH);
@@ -452,9 +471,6 @@
 
      var minweight = get_dim_min(weightDim, 'rwt', 0);
      var maxweight = get_dim_max(weightDim, 'rwt', 1000);
-
-     var minlength = get_dim_min(lengthDim, 'flen', 0);
-     var maxlength = get_dim_max(lengthDim, 'flen', 450);
 
      var minage = get_dim_min(ageDim, 'agea', 0);
      var maxage = get_dim_max(ageDim, 'agea', 10);
