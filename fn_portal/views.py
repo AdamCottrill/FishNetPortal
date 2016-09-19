@@ -213,7 +213,7 @@ class DateTimeEncoder(json.JSONEncoder):
 def project_spc_biodata_json(request, slug, spc):
     """THis view returns the biological data for the species caught in a
     single project. Data is presented in the project spc_diodata
-    template.  Data returned is a combination of the 121, 122 123, and
+    template.  Data returned is a combination of the 121, 122, 123, and
     125 data for a SINGLE project.  The 121-123 data is used to filter
     the other records.
 
@@ -226,7 +226,7 @@ def project_spc_biodata_json(request, slug, spc):
 
     sql = """SELECT fn125.id, sam, grp,
                effdt1 as lift_date,
-               substr(effdt1, 1,4) as yr,
+               fn011.year as yr,
                sidep,
                eff,
                species.species_code,
@@ -245,7 +245,7 @@ def project_spc_biodata_json(request, slug, spc):
                fn_portal_fn011 fn011 ON fn011.id = fn121.project_id
                JOIN
                fn_portal_species species ON species.id = fn123.species_id
-         WHERE slug = %s and species_code=%s and (accepted=1 or accepted is null)
+         WHERE slug = %s and species_code=%s and (accepted=True or accepted is null)
          ORDER BY sam,
                   eff;
         """
