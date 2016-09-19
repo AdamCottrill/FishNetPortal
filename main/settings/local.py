@@ -2,12 +2,24 @@ from main.settings.base import *
 
 ALLOWED_HOSTS = ['*']
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../db/fn_portal.db'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'fn_portal',
+        'USER': 'cottrillad',
+        'PASSWORD': 'django',
     }
 }
+
+
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, '../db/fn_portal.db'),
+#    }
+#}
 
 SECRET_KEY = 'top_secret'
 

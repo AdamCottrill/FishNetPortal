@@ -47,6 +47,8 @@ import django
 django.setup()
 import django_settings
 
+from django.db import IntegrityError
+
 from fn_portal.models import (Species, FN011, FN121, FN122, FN123,
                               FN125, FN127, FN_Tags)
 
@@ -273,11 +275,20 @@ for x in data:
 
     row['catch'] = catch
 
+#    fish = FN125(**row)
+#    try:
+#        fish.save()
+#    except IntegrityError as e:
+#        fish_num = row.get('fish')
+#        msg = ("Could not create fish record with: \n\tprj_cd = {}\n" +
+#               "\tsam = {}\n\teff = {}\n\tgrp = {}\n\tspc = {}\n\tfish={}")
+#        print(msg.format(prj_cd, sam, eff, grp, spc,fish_num))
+#        next
+#
+
     #create our fish sample object and add it to our list
     my_list.append(FN125(**row))
-
-
-FN125.objects.bulk_create(my_list)
+FN125.objects.bulk_create(my_list, batch_size=10000)
 
 print('Done adding {} records (n={:,})'.format(what, len(my_list)))
 

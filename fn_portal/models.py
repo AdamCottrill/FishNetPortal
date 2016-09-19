@@ -106,11 +106,12 @@ class FN121(models.Model):
     gr = models.CharField(max_length=5, blank=True, null=True)
     orient = models.CharField(max_length=2, blank=True, null=True)
     sidep = models.FloatField(default=0, blank=True, null=True)
+    site = models.CharField(max_length=100, blank=True, null=True)
     grid = models.CharField(max_length=4, db_index=True)
     dd_lat = models.FloatField(blank=True, null=True)
     dd_lon = models.FloatField(blank=True, null=True)
     sitem = models.CharField(max_length=5, blank=True, null=True)
-    comment1 = models.CharField(max_length=50, blank=True, null=True)
+    comment1 = models.CharField(max_length=500, blank=True, null=True)
     secchi = models.FloatField(blank=True, null=True)
 
     #TODO:
@@ -231,21 +232,21 @@ class FN125(models.Model):
     tlen = models.IntegerField(blank=True, null=True)
     rwt = models.IntegerField(blank=True, null=True)
     girth = models.IntegerField(blank=True, null=True)
-    clipc = models.CharField(max_length=6, blank=True, null=True)
+    clipc = models.CharField(max_length=20, blank=True, null=True)
     sex = models.CharField(max_length=2, blank=True, null=True)
     mat = models.CharField(max_length=2, blank=True, null=True)
     gon = models.CharField(max_length=4, blank=True, null=True)
-    noda = models.CharField(max_length=6, blank=True, null=True)
-    nodc = models.CharField(max_length=6, blank=True, null=True)
-    agest = models.CharField(max_length=6, blank=True, null=True)
+    noda = models.CharField(max_length=20, blank=True, null=True)
+    nodc = models.CharField(max_length=20, blank=True, null=True)
+    agest = models.CharField(max_length=20, blank=True, null=True)
     fate = models.CharField(max_length=2, blank=True, null=True)
-    comment5 = models.CharField(max_length=50, blank=True, null=True)
+    comment5 = models.CharField(max_length=500, blank=True, null=True)
 
 
     class Meta:
         #ordering = ['last_name', 'first_name']
         unique_together = ('catch', 'fish')
-        pass
+
 
     def __str__(self):
         return '{}-{}'.format(self.catch,
