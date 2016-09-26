@@ -22,6 +22,7 @@ class Species(models.Model):
         return spc_unicode
 
 
+
 class FN011(models.Model):
     ''' Project meta data.
     '''
@@ -88,6 +89,30 @@ class FN011(models.Model):
                   order_by('species')
 
         return catcnts
+
+    def get_121_gear_codes(self):
+        '''Not sure if this is the right way to do this or not or if we even
+        need this. - get the list of Gear codes the the 121 table for
+        this project. - eventually these should match the gear tables.
+
+        '''
+        gear_codes = FN011.objects.filter(prj_cd=self.prj_cd).\
+                     values('samples__gr').distinct()
+        if gear_codes:
+            return [x.get('samples__gr') for x in gear_codes]
+        else:
+            return None
+
+    def get_gear(self):
+        '''Not sure if this is the right way to do this or not or if we even
+        need this. - get the list of Gear codes the the 121 table for
+        this project. - eventually these should match the gear tables.
+
+        '''
+        gear_codes = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
+        return gear_codes
+
+
 
 
 class FN121(models.Model):
@@ -336,3 +361,44 @@ class FN_Tags(models.Model):
         return '{}-{}({})'.format(self.fish,
                               self.tagnum,
                               self.tagid)
+
+
+
+class FN013(models.Model):
+    '''Project Gear'''
+    #sample = models.ForeignKey(FN121, related_name="gear")
+    project = models.ForeignKey(FN011, related_name="gear")
+    gr = models.CharField(max_length=4)
+    effcnt = models.IntegerField(blank=True, null=True)
+    effdst = models.FloatField(blank=True, null=True)
+    gr_des = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return '{} ({})'.format(self.gr, self.project.prj_cd)
+
+    def get_projects(self):
+        return FN011.objects.filter(samples__gr=self.gr).all()
+
+
+class FN014(models.Model):
+    '''Gear Panel Attributes'''
+    gear = models.ForeignKey(FN013, related_name="gear_effs")
+    eff = models.CharField(max_length=4, blank=True, null=True)
+    mesh = models.IntegerField(blank=True, null=True)
+    grlen = models.FloatField(blank=True, null=True)
+    grht = models.FloatField(blank=True, null=True)
+    grwid = models.FloatField(blank=True, null=True)
+    grcol = models.CharField(max_length=10, blank=True, null=True)
+    grmat = models.CharField(max_length=10, blank=True, null=True)
+    gryarn = models.IntegerField(blank=True, null=True)
+    grknot = models.IntegerField(blank=True, null=True)
+    eff_des = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['eff']
+
+
+    def __str__(self):
+        return '{}-{} ({})'.format(self.gear.gr,
+                                   self.eff,
+                                   self.gear.project.prj_cd)

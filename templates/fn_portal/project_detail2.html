@@ -62,7 +62,7 @@
             <li role="presentation" class="active"><a href="#net-sets" aria-controls="net-sets" role="tab" data-toggle="tab">Samples</a></li>
             <li role="presentation"><a href="#catcnts" aria-controls="catch-counts" role="tab" data-toggle="tab">Catch Counts</a></li>
             <li role="presentation"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
-
+            <li role="presentation"><a href="#gear" aria-controls="gear" role="tab" data-toggle="tab">Gear</a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -120,7 +120,7 @@
                                 {% if species.biocnts == 0 %}
                                 {{ species.species }} ({{ species.species_code }})
                                 {% else %}
-                                <a href="{% url 'project_spc_biodata' object.slug species.species_code %}">{{ species.species }} ({{ species.species_code }})</a>
+                                <a href="{% url 'project_spc_biodata' object.slug species.species_code %}" target="_blank">{{ species.species }} ({{ species.species_code }})</a>
                                 {% endif %}
                             </td>
                             <td>
@@ -256,7 +256,72 @@
                 </div>
 
 
+            </div>  <!-- Graph tabpanel -->
+
+            <div role="tabpanel" class="tab-pane" id="gear">
+                <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'gear_list' %}">gear_list</a>).
+
+                <h5>Gear Codes listed in FN121 Table:</h5>
+                <ul>
+                    {% for gr in object.get_121_gear_codes %}
+                    <li> <a href="{% url 'gear_detail' gear_code=gr %}">{{gr}}</a> </li>
+                    {% endfor %}
+                </ul>
+
+                <h5>Gears in the FN013 Table for this project:</h5>
+                {% for gr in object.get_gear %}
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading"> <strong> <a href="{% url 'gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
+                    <div class="panel-body">
+                        {% if gr.gear_effs.values %}
+                        <table class="table">
+
+                            <thead>
+                                <tr>
+                                    <td> eff </td>
+                                    <td> mesh </td>
+                                    <td> grlen </td>
+                                    <td> grht  </td>
+                                    <td> grwid </td>
+                                    <td> grcol </td>
+                                    <td> grmat </td>
+                                    <td> gryarn </td>
+                                    <td> grknot </td>
+                                    <td> eff_des </td>
+                                </tr>
+                            </thead>
+
+                            {% for eff in gr.gear_effs.values %}
+                            <tr>
+                                <td> {{eff.eff }} </td>
+                                <td> {{eff.mesh }} </td>
+                                <td> {{eff.grlen }} </td>
+                                <td> {{eff.grht  }} </td>
+                                <td> {{eff.grwid }} </td>
+                                <td> {{eff.grcol }} </td>
+                                <td> {{eff.grmat }} </td>
+                                <td> {{eff.gryarn }} </td>
+                                <td> {{eff.grknot }} </td>
+                                <td> {{eff.eff_des }} </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                        {% else %}
+                        <p>No detailed effort information currently available.</p>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+                {% endfor %}
+
             </div>
+
+
 
         </div>
     </div>

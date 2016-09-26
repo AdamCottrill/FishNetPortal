@@ -1,0 +1,38 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+
+
+{% block sidebar %}
+
+{% sidebar_projects %}
+
+{% endblock %}
+
+    {% block content  %}
+
+<h3>Gears:</h3>
+<ul>
+    {% for gr in gear_count %}
+    <li> <a href="{% url 'gear_detail' gear_code=gr.0 %}">{{ gr.0 }}</a>({{ gr.1 }} samples) </li>
+    {% endfor %}
+
+</ul>
+
+    {% endblock %}
+
+    {% block scripts %}
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+        // prepare the sidebar by expanding just the current year
+        var my_year={{ project.year }}{{sample.project.year}};
+        var div_name = "#project-year-" + my_year;
+        $(div_name).show();
+
+        });
+    </script>
+
+
+    {% endblock %}

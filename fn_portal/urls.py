@@ -5,6 +5,11 @@ from . import views
 urlpatterns = [
     url(r'^$', views.project_list, name='project_list'),
 
+    url(r'^gears/$', views.gear_list, name='gear_list'),
+
+    url(r'^gears/gear_detail/(?P<gear_code>[A-Z0-9]{1,4})$',
+        views.gear_detail, name='gear_detail'),
+
     #my attempt to get all of the catch count data in its lowest form
     #(catch by effort by species) and analyze it with server side js.
     url(r'^api/catcnts2/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$',
@@ -41,7 +46,6 @@ urlpatterns = [
     url(r'^api/catch_over_time/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$',
     views.project_catch_over_time_json,
     name='project_catch_over_time_json'),
-
 
 
 

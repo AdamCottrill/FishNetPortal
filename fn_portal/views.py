@@ -1,3 +1,4 @@
+from collections import Counter
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.db.models import Sum,F
@@ -16,6 +17,50 @@ def project_list(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
+def gear_list(request):
+    """Return a simple list of gears currently occur in the FN121 table.
+
+    Arguments:
+    - `request`:
+    - `slug`:
+
+    """
+
+    gear_list = FN121.objects.values_list('gr').all()
+    gear_count = Counter([x[0] for x in gear_list])
+
+    ##collection Counters don't play well will django templates, turn
+    ##it into a sorted list of tuples:
+    #gear_count = [{'GR':x[0], 'N':x[1]} for x in gear_count.items()]
+    gear_count = [(x[0], x[1]) for x in gear_count.items()]
+    gear_count.sort()
+    return render_to_response('fn_portal/gear_list.html',
+                              {'gear_count': gear_count},
+                              context_instance=RequestContext(request))
+
+
+def gear_detail(request, gear_code):
+    """
+
+    Arguments:
+    - `request`:
+    - `slug`:
+    """
+
+    gear = FN013.objects.filter(gr=str(gear_code)).all()
+
+    projects = FN011.objects.filter(samples__gr=str(gear_code)).distinct().\
+               annotate(N=Count('samples'))
+
+
+
+    return render_to_response('fn_portal/gear_detail.html',
+                              {'gear': gear,
+                               'gear_code': gear_code,
+                               'projects': projects},
+                              context_instance=RequestContext(request))
+
+
 def project_detail(request, slug):
     """
 
@@ -29,7 +74,6 @@ def project_detail(request, slug):
     return render_to_response('fn_portal/project_detail.html',
                               {'project': project},
                               context_instance=RequestContext(request))
-
 
 
 def sample_detail(request, slug, sam):
