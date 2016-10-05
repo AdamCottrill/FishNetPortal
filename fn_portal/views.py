@@ -11,6 +11,7 @@ import json
 
 
 from fn_portal.models import *
+from fn_portal.forms import GearForm
 
 
 def project_list(request):
@@ -18,25 +19,42 @@ def project_list(request):
 
 
 def gear_list(request):
-    """Return a simple list of gears currently occur in the FN121 table.
+    """Return a simple list of Gears in our Gear table.
 
     Arguments:
     - `request`:
     - `slug`:
-
     """
 
-    gear_list = FN121.objects.values_list('gr').all()
-    gear_count = Counter([x[0] for x in gear_list])
+    gear_list = Gear.objects.all().order_by('gr_code')
 
-    ##collection Counters don't play well will django templates, turn
-    ##it into a sorted list of tuples:
-    #gear_count = [{'GR':x[0], 'N':x[1]} for x in gear_count.items()]
-    gear_count = [(x[0], x[1]) for x in gear_count.items()]
-    gear_count.sort()
     return render_to_response('fn_portal/gear_list.html',
-                              {'gear_count': gear_count},
+                              {'gear_list': gear_list},
                               context_instance=RequestContext(request))
+
+
+def edit_gear(request, gear_code):
+    '''A view that will allow us to edit our gear attributes.'''
+
+    gear = Gear.objects.filter(gr_code=gear_code).first()
+
+    if request.method == 'POST':
+        form = GearForm(request.POST)
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = GearForm()
+        return render_to_response('fn_portal/gear_form.html',
+                              {'gear': gear, 'gear_code': gear_code, 'form':form},
+                              context_instance=RequestContext(request))
+
+
+def edit_subgear(request, gear_code, eff):
+    '''A view that will allow us to edit our gear attributes.'''
+    pass
 
 
 def gear_detail(request, gear_code):
@@ -47,7 +65,9 @@ def gear_detail(request, gear_code):
     - `slug`:
     """
 
-    gear = FN013.objects.filter(gr=str(gear_code)).all()
+    gear = Gear.objects.filter(gr_code=gear_code).first()
+
+    fn013_gear = FN013.objects.filter(gr=str(gear_code)).all()
 
     projects = FN011.objects.filter(samples__gr=str(gear_code)).distinct().\
                annotate(N=Count('samples'))
@@ -55,7 +75,8 @@ def gear_detail(request, gear_code):
 
 
     return render_to_response('fn_portal/gear_detail.html',
-                              {'gear': gear,
+                              {'fn013_gear': fn013_gear,
+                               'gear': gear,
                                'gear_code': gear_code,
                                'projects': projects},
                               context_instance=RequestContext(request))

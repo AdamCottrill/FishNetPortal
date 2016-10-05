@@ -295,16 +295,16 @@
 
                             {% for eff in gr.gear_effs.values %}
                             <tr>
-                                <td> {{eff.eff }} </td>
-                                <td> {{eff.mesh }} </td>
-                                <td> {{eff.grlen }} </td>
-                                <td> {{eff.grht  }} </td>
-                                <td> {{eff.grwid }} </td>
-                                <td> {{eff.grcol }} </td>
-                                <td> {{eff.grmat }} </td>
-                                <td> {{eff.gryarn }} </td>
-                                <td> {{eff.grknot }} </td>
-                                <td> {{eff.eff_des }} </td>
+                                <td> {{eff.eff |default_if_none:"" }} </td>
+                                <td> {{eff.mesh |default_if_none:"" }} </td>
+                                <td> {{eff.grlen |default_if_none:"" }} </td>
+                                <td> {{eff.grht  |default_if_none:"" }} </td>
+                                <td> {{eff.grwid |default_if_none:"" }} </td>
+                                <td> {{eff.grcol |default_if_none:"" }} </td>
+                                <td> {{eff.grmat |default_if_none:"" }} </td>
+                                <td> {{eff.gryarn |default_if_none:"" }} </td>
+                                <td> {{eff.grknot |default_if_none:"" }} </td>
+                                <td> {{eff.eff_des |default_if_none:"" }} </td>
                             </tr>
                             {% endfor %}
                         </table>

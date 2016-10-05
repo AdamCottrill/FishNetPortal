@@ -14,9 +14,42 @@
 
 <h3>Gears:</h3>
 <ul>
-    {% for gr in gear_count %}
-    <li> <a href="{% url 'gear_detail' gear_code=gr.0 %}">{{ gr.0 }}</a>({{ gr.1 }} samples) </li>
-    {% endfor %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Gear Code </td>
+                <td>Description </td>
+                <td>Net Sets </td>
+                <td>Active</td>
+                <td>Confirmed</td>
+            </tr>
+        </thead>
+
+        {% for gr in gear_list %}
+        <tr>
+            <td><a href="{% url 'gear_detail' gear_code=gr.gr_code %}">{{ gr.gr_code }}</a></td>
+            <td>{{ gr.gr_label }}</td>
+            <td>{{ gr.get_samcount }}</td>
+
+            {% if gr.depreciated %}
+            <td><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:blue"></span></td>
+            {% else %}
+            <td><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span></td>
+            {% endif %}
+
+            {% if gr.confirmed %}
+            <td><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="color:blue"></span></td>
+            {% else %}
+            <td><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="color:red"></span></td>
+            {% endif %}
+
+        </tr>
+        {% endfor %}
+    </table>
+
+
+
 
 </ul>
 

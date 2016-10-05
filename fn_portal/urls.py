@@ -10,6 +10,16 @@ urlpatterns = [
     url(r'^gears/gear_detail/(?P<gear_code>[A-Z0-9]{1,4})$',
         views.gear_detail, name='gear_detail'),
 
+
+    url(r'^gears/edit_gear/(?P<gear_code>[A-Z0-9]{1,4})$',
+        views.edit_gear, name='edit_gear'),
+
+    url(r'^gears/edit_subgear/(?P<gear_code>[A-Z0-9]{1,4})$/(?P<eff>\d{1,3})$',
+        views.edit_subgear, name='edit_subgear'),
+
+
+
+
     #my attempt to get all of the catch count data in its lowest form
     #(catch by effort by species) and analyze it with server side js.
     url(r'^api/catcnts2/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$',
