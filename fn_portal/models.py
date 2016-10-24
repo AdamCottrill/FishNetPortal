@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.core.urlresolvers import reverse
@@ -446,6 +447,9 @@ class GearFamily(models.Model):
     abbrev = models.CharField(max_length=10, unique=True)
     gear_type = models.CharField(max_length=2)
 
+    class Meta:
+        verbose_name_plural = "Gear Families"
+
     def __str__(self):
         return '{} ({})'.format(self.family, self.abbrev)
 
@@ -455,6 +459,8 @@ class Gear(models.Model):
     table.  Each gear will only be defined once and will be associated
     to each SAM by foreign key.
     '''
+    assigned_to  = models.ForeignKey(User, related_name="assigned_to",
+                                  blank=True, null=True)
 
     family = models.ForeignKey(GearFamily, related_name="gears")
     gr_label = models.CharField(max_length=100)

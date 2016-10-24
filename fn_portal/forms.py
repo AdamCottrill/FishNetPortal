@@ -28,6 +28,7 @@ class GearForm(forms.ModelForm):
             'family',
             'effcnt',
             'effdst',
+            'assigned_to',
             'confirmed',
             'depreciated')
 

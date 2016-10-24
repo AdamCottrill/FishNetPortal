@@ -1,5 +1,6 @@
 from collections import Counter
 from django.http import HttpResponse
+from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.db.models import Sum,F
 from django.http import JsonResponse
@@ -18,7 +19,7 @@ def project_list(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-def gear_list(request):
+def gear_list(request, username=None):
     """Return a simple list of Gears in our Gear table.
 
     Arguments:
@@ -26,10 +27,20 @@ def gear_list(request):
     - `slug`:
     """
 
-    gear_list = Gear.objects.all().order_by('gr_code')
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = None
+
+    if user:
+        gear_list = Gear.objects.filter(assigned_to=user).\
+                    order_by('gr_code')
+    else:
+        gear_list = Gear.objects.all().order_by('gr_code')
 
     return render_to_response('fn_portal/gear_list.html',
-                              {'gear_list': gear_list},
+                              {'gear_list': gear_list,
+                               'user': user},
                               context_instance=RequestContext(request))
 
 

@@ -5,6 +5,9 @@ from . import views
 urlpatterns = [
     url(r'^$', views.project_list, name='project_list'),
 
+    url(r'^gears/(?P<username>\w+)$',
+        views.gear_list, name='gears_assigned_to'),
+
     url(r'^gears/$', views.gear_list, name='gear_list'),
 
     url(r'^gears/gear_detail/(?P<gear_code>[A-Z0-9]{1,4})$',
