@@ -29,42 +29,54 @@
 
         {{ gear.gr_des_html|safe}}
 
+
+        <div class="panel panel-default">
+            <div class="panel-heading"> Panels (subgears): </div>
+            <div class="panel-body">
+
         {% if gear.get_subgears %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <td> eff </td>
-                    <td> mesh </td>
-                    <td> grlen </td>
-                    <td> grht  </td>
-                    <td> grwid </td>
-                    <td> grcol </td>
-                    <td> grmat </td>
-                    <td> gryarn </td>
-                    <td> grknot </td>
-                    <td> eff_des </td>
-                </tr>
-            </thead>
 
-            {% for eff in gear.get_subgears %}
-            <tr>
-                <td> {{eff.eff |default_if_none:"" }} </td>
-                <td> {{eff.mesh |default_if_none:"" }} </td>
-                <td> {{eff.grlen |default_if_none:"" }} </td>
-                <td> {{eff.grht  |default_if_none:"" }} </td>
-                <td> {{eff.grwid |default_if_none:"" }} </td>
-                <td> {{eff.grcol |default_if_none:"" }} </td>
-                <td> {{eff.grmat |default_if_none:"" }} </td>
-                <td> {{eff.gryarn |default_if_none:"" }} </td>
-                <td> {{eff.grknot |default_if_none:"" }} </td>
-                <td> {{eff.eff_des|default_if_none:""}} </td>
-            </tr>
-            {% endfor %}
-        </table>
 
-        {% else %}
-        <p>No detailed effort information on subgears is currently available for {{ gear.gr_code }}.</p>
-        {% endif %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td> Panels </td>
+                            <td> eff </td>
+                            <td> mesh </td>
+                            <td> grlen </td>
+                            <td> grht  </td>
+                            <td> grwid </td>
+                            <td> grcol </td>
+                            <td> grmat </td>
+                            <td> gryarn </td>
+                            <td> grknot </td>
+                            <td> eff_des </td>
+                        </tr>
+                    </thead>
+
+                    {% for eff in gear.get_subgears %}
+                    <tr>
+                        <td> {{eff.panel_count |default_if_none:"" }} </td>
+                        <td> {{eff.eff |default_if_none:"" }} </td>
+                        <td> {{eff.mesh |default_if_none:"" }} </td>
+                        <td> {{eff.grlen |default_if_none:"" }} </td>
+                        <td> {{eff.grht  |default_if_none:"" }} </td>
+                        <td> {{eff.grwid |default_if_none:"" }} </td>
+                        <td> {{eff.get_grcol_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_grmat_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_gryarn_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_grknot_display |default_if_none:"" }} </td>
+                        <td> {{eff.eff_des|default_if_none:""}} </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+
+            {% else %}
+            <p>No detailed effort information on subgears is currently available for {{ gear.gr_code }}.</p>
+            {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% else %}

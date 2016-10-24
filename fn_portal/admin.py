@@ -30,15 +30,24 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
     '''Admin class for Gear2SubGear table - allow us to edit the order
     of subgears'''
 
-    list_display = ('__str__', 'panel_sequence', 'panel_count', 'family',
+    list_display = ('__str__', 'panel_sequence', 'panel_count',
+                   'mesh_mm',
+                    'family',
                     'depreciated', 'gryarn')
-    list_filter = ('gear__family', 'gear__depreciated', 'subgear__gryarn',
+    list_filter = ('gear__family', 'gear__depreciated',
+                   'subgear__gryarn',
                    'gear__gr_code')
 
     def depreciated(self, obj):
         """
         """
         return obj.gear.depreciated
+
+
+    def mesh_mm(self, obj):
+        """
+        """
+        return obj.subgear.mesh
 
 
     def family(self, obj):

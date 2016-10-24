@@ -6,6 +6,11 @@ from django.db.models import F, Sum, Count
 
 from markdown import markdown
 
+
+
+
+
+
 class Species(models.Model):
     species_code = models.IntegerField(unique=True)
     common_name = models.CharField(max_length=40, null=True, blank=True)
@@ -482,9 +487,23 @@ class Gear(models.Model):
 
 
     def get_subgears(self):
+        """Return the sub-gears (panels) that make up this gear. in addition
+        to the sub gears, get the number of panels of each gear that
+        is included in the gang.
         """
-        """
+
+        #get the panel counts by subgear
+        panel_counts = {}
+        for panel in self.gang.values():
+            panel_counts[panel['subgear_id']] = panel['panel_count']
+
         my_subgears = SubGear.objects.filter(gear=self).order_by('gang').all()
+
+        #now add the panel count attribute to each sub-gear so we can access it
+        # templates.
+        for panel in my_subgears:
+            panel.panel_count = panel_counts.get(panel.id, 0)
+
         return my_subgears
 
     def get_samcount(self):
@@ -502,6 +521,39 @@ class SubGear(models.Model):
 
     '''
 
+
+    GRYARN_CHOICES = {
+        (1, 'Monofilament'),
+        (2, 'Multifilament'),
+        (3, 'no data'),
+    }
+
+    GRKNOT_CHOICES = {
+        (1, 'Knotless'),
+        (2, 'Knots present'),
+        (3, 'other'),
+    }
+
+    GRCOL_CHOICES = {
+        ('1', 'White'),
+        ('2', 'Black'),
+        ('3', 'Green'),
+        ('4', 'Blue'),
+        ('5', 'Discoloured White'),
+        ('6', 'Transparent'),
+        ('7', 'Other'),
+        ('8', 'Grey')
+    }
+
+    GRMAT_CHOICES = {
+        ('1', 'Polyamide (e.g. Nylon)'),
+        ('2', 'Polypropylene (e.g. Ulstron)'),
+        ('3', 'Polyethylene'),
+        ('4', 'Polyester'),
+        ('5', 'Cotton'),
+        ('6', 'Other'),
+    }
+
     gear = models.ManyToManyField('Gear', through='Gear2SubGear',
                                   related_name='subgears')
     family = models.ForeignKey(GearFamily, related_name="subgears")
@@ -510,10 +562,14 @@ class SubGear(models.Model):
     grlen = models.FloatField(blank=True, null=True)
     grht = models.FloatField(blank=True, null=True)
     grwid = models.FloatField(blank=True, null=True)
-    grcol = models.CharField(max_length=10, blank=True, null=True)
-    grmat = models.CharField(max_length=10, blank=True, null=True)
-    gryarn = models.IntegerField(blank=True, null=True)
-    grknot = models.IntegerField(blank=True, null=True)
+    grcol = models.CharField(max_length=10, blank=True, null=True,
+                             choices=GRCOL_CHOICES)
+    grmat = models.CharField(max_length=10, blank=True, null=True,
+                             choices=GRMAT_CHOICES)
+    gryarn = models.IntegerField(blank=True, null=True,
+                                 choices=GRYARN_CHOICES)
+    grknot = models.IntegerField(blank=True, null=True,
+                                 choices=GRKNOT_CHOICES)
     grdiam = models.FloatField(blank=True, null=True)
     tielength = models.FloatField(blank=True, null=True)
     meshes_per_tie = models.PositiveIntegerField(blank=True, null=True)
