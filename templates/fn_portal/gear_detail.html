@@ -165,6 +165,7 @@
                         <td>Year</td>
                         <td>Project Code</td>
                         <td>Project Name</td>
+                        <td>Master Database</td>
                         <td>Samples</td>
                     </tr>
                 </thead>
@@ -173,6 +174,7 @@
                     <td>{{ project.year }}</td>
                     <td><a href="{% url 'project_catch_counts2' project.slug %}">{{ project.prj_cd }}</a></td>
                     <td>{{ project.prj_nm }}</td>
+                    <td>{{ project.source }}</td>
                     <td>{{ project.N }}</td>
                 </tr>
                 {% endfor %}

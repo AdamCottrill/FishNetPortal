@@ -1,6 +1,6 @@
 from collections import Counter
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.db.models import Sum,F
 from django.http import JsonResponse
 from django.template import RequestContext
@@ -39,16 +39,16 @@ def edit_gear(request, gear_code):
     gear = Gear.objects.filter(gr_code=gear_code).first()
 
     if request.method == 'POST':
-        form = GearForm(request.POST)
+        form = GearForm(request.POST, instance=gear)
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            gear = form.save()
+            gear.gr_code=gear_code
+            gear.save()
+            return redirect('gear_detail', gear_code=gear.gr_code)
     else:
-        form = GearForm()
+        form = GearForm(instance=gear)
         return render_to_response('fn_portal/gear_form.html',
-                              {'gear': gear, 'gear_code': gear_code, 'form':form},
+                              {'gear_code': gear_code, 'form':form},
                               context_instance=RequestContext(request))
 
 
