@@ -2,8 +2,12 @@
 
 
 {% block content %}
-<h2>Welcome to UGLMU's IA-Portal</h2>
 
+{% if q %}
+<h3>Projects that contain "{{q}}" in their project code or name:</h3>
+{% else %}
+<h2>Welcome to UGLMU's IA-Portal</h2>
+{% endif %}
 
 <div>
 
@@ -20,9 +24,10 @@
         <div role="tabpanel" class="tab-pane active" id="offshore">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Recent Offshore Index Projects:</h3>
+                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Offshore Index Projects:</h3>
                 </div>
                 <div class="panel-body">
+                    {% if offshore %}
                     <table class="table table-striped table-float">
                         <thead>
                             <tr>
@@ -46,16 +51,30 @@
 
                         </tbody>
                     </table>
+
+                    {% else %}
+
+                    <div class="alert alert-warning" role="alert">
+                        No offshore projects match that criteria.
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if not q %}
                     <a class="btn btn-info"  href="{% url 'projects_by_type' 'offshore' %}">All Offshore Projects</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="nearshore">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Recent Nearshore Index Projects:</h3>
+                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Nearshore Index Projects:</h3>
                 </div>
                 <div class="panel-body">
+
+                    {% if nearshore %}
                     <table class="table table-striped table-float">
                         <thead>
                             <tr>
@@ -79,16 +98,29 @@
 
                         </tbody>
                     </table>
+
+                    {% else %}
+
+                    <div class="alert alert-warning" role="alert">
+                        No nearshore projects match that criteria.
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if not q%}
                     <a class="btn btn-info"  href="{% url 'projects_by_type' 'nearshore' %}">All Nearshore Projects</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="smallfish">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Recent Smallfish Projects:</h3>
+                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Smallfish Projects:</h3>
                 </div>
                 <div class="panel-body">
+                    {% if smallfish %}
                     <table class="table table-striped table-float">
                         <thead>
                             <tr>
@@ -112,7 +144,18 @@
 
                         </tbody>
                     </table>
+
+                    {% else %}
+
+                    <div class="alert alert-warning" role="alert">
+                        No smallfish projects match that criteria.
+                    </div>
+
+                    {% endif %}
+
+                    {% if not q %}
                     <a class="btn btn-info"  href="{% url 'projects_by_type' 'smallfish' %}">All Smallfish Projects</a>
+                    {% endif %}
                 </div>
             </div>
 

@@ -40,6 +40,7 @@ class FN011(models.Model):
     prj_ldr = models.CharField(max_length=255)
     prj_date0 = models.DateTimeField()
     prj_date1 = models.DateTimeField()
+    #TODO: source should be a choice field
     source =  models.CharField(max_length=255)
     lake =  models.CharField(max_length=20)
     comment0 = models.TextField(blank=True, null=True)

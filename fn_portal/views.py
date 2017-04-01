@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Sum,F
+from django.db.models import Sum, F, Q
 from django.http import JsonResponse
 from django.template import RequestContext
 from django.core import serializers
@@ -17,14 +17,30 @@ from fn_portal.forms import GearForm
 
 
 def project_list(request):
-    offshore = FN011.objects.filter(source='offshore').all()[:15]
-    nearshore = FN011.objects.filter(source='nearshore').all()[:15]
-    smallfish = FN011.objects.filter(source='smallfish').all()[:15]
+
+    q = request.GET.get("q")
+
+    if q:
+        offshore = FN011.objects.filter(source='offshore').\
+                   filter(Q(prj_cd__icontains=q) |
+                          Q(prj_nm__icontains=q)).all()
+        nearshore = FN011.objects.filter(source='nearshore').\
+                    filter(Q(prj_cd__icontains=q) |
+                           Q(prj_nm__icontains=q)).all()
+        smallfish = FN011.objects.filter(source='smallfish').\
+                    filter(Q(prj_cd__icontains=q) |
+                           Q(prj_nm__icontains=q)).all()
+
+    else:
+        offshore = FN011.objects.filter(source='offshore').all()[:15]
+        nearshore = FN011.objects.filter(source='nearshore').all()[:15]
+        smallfish = FN011.objects.filter(source='smallfish').all()[:15]
 
     return render_to_response('fn_portal/project_list.html',
                               {'offshore': offshore,
                                'nearshore':nearshore,
-                               'smallfish': smallfish},
+                               'smallfish': smallfish,
+                               'q': q},
                               context_instance=RequestContext(request))
 
 
