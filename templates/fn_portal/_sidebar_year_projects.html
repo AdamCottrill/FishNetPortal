@@ -1,16 +1,24 @@
 <h4>Projects:</h4>
 
-{% regroup projects by year as year_list %}
+
+
+{% regroup projects by year as projects_by_year %}
 <ul id="projaccordion">
-    {% for proj in year_list %}
+    {% for year in projects_by_year %}
     <li>
-        <a href="#" onclick="toggle_accordion('project-year-{{ proj.grouper }}');">{{ proj.grouper }}</a>
-        <div class="project_list" id="project-year-{{ proj.grouper }}"  style="display: none">
+        <a href="#" onclick="toggle_accordion('project-year-{{ year.grouper }}');">{{ year.grouper }}</a>
+        <div class="project_list" id="project-year-{{ year.grouper }}"  style="display: none">
+
+            {% regroup year.list|dictsort:"source" by source as projects_by_source %}
+            {% for source in projects_by_source %}
+            <p><strong>{{ source.grouper|title}}</strong></p>
             <ul>
-                {% for item in proj.list %}
+                {% for item in source.list %}
                 <li><a href="{{ item.get_absolute_url }}">{{  item.prj_cd }}</a></li>
                 {% endfor %}
             </ul>
+            {% endfor %}
+
         </div>
     </li>
     {% endfor %}
