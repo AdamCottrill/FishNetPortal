@@ -45,7 +45,7 @@ class FN011(models.Model):
     comment0 = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ['year', 'prj_cd']
+        ordering = ['-year', '-prj_date1']
         pass
 
     def save(self, *args, **kwargs):

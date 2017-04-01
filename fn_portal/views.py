@@ -2,6 +2,7 @@ from collections import Counter
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Sum,F
 from django.http import JsonResponse
 from django.template import RequestContext
@@ -16,7 +17,35 @@ from fn_portal.forms import GearForm
 
 
 def project_list(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    offshore = FN011.objects.filter(source='offshore').all()[:15]
+    nearshore = FN011.objects.filter(source='nearshore').all()[:15]
+    smallfish = FN011.objects.filter(source='smallfish').all()[:15]
+
+    return render_to_response('fn_portal/project_list.html',
+                              {'offshore': offshore,
+                               'nearshore':nearshore,
+                               'smallfish': smallfish},
+                              context_instance=RequestContext(request))
+
+
+def projects_by_type(request, project_type):
+
+    projects = FN011.objects.filter(source=project_type).all()
+    paginator = Paginator(projects, 25)
+    page = request.GET.get('page')
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        projects = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        projects = paginator.page(paginator.num_pages)
+
+    return render_to_response('fn_portal/projects_by_type_list.html',
+                              {'projects': projects,
+                               'project_type': project_type},
+                              context_instance=RequestContext(request))
 
 
 def gear_list(request, username=None):
