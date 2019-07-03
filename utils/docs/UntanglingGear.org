@@ -1,0 +1,220 @@
+#+STARTUP: beamer
+#+DATE:  October 25, 2016.
+#+TITLE: Untangling UGLMU Gear Codes
+#+AUTHOR: A. Cottrill
+
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:1 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger]
+
+#+latex_header: \mode<beamer>{\usetheme{Boadilla}\usecolortheme[RGB={40,100,30}]{structure}}
+#+latex_header: %\usebackgroundtemplate{\includegraphics[width=\paperwidth]{MNRgreen}}
+#+latex_header: \setbeamersize{text margin left=10mm}
+#+latex_header: %\setbeamertemplate{frametitle}{ \vskip20mm \insertframetitle }
+#+latex_header: \setbeamertemplate{blocks}[rounded][shadow=true]
+
+#+latex_header: \graphicspath{{figures/}}
+
+#+BEAMER_FRAME_LEVEL: 2
+
+
+
+* Gear
+
+- CPUE is the fundamental measure of virtually all fisheries
+  assessment programs
+- effort (in cpue) is directly dependent on the gear that was used to
+  obtain the catch.
+- impossible to compare cpue numbers without knowledge of gear.
+
+
+* Existing Data Sources
+- Gear codes in UGMLU databases are messy
+  - some gear descriptions in FN013 and FN014 tables in Fishnet
+    archive.  Good for many projects in 1990s, earlier projects sketchy,
+    latter project non-existent
+  - some gear fields in master databases (GR, GRTP, EFF, EFFDST) that
+    allow us to reconstruct some gears
+- Darrel's Gear Spreadsheet
+- Lookup tables on server
+- available documentation on Project Tracker
+
+* Gear and our data model
+
+- Gear defines FN122 table:
+  + one record per sam for traps and hoops
+  + one record for each panel of gill nets
+  + can't have records for meshes not in gear
+  + ProcVal can check for these if gear is well defined and consistent
+    across projects
+
+* Where are we going?
+
+#+LATEX: \begin{figure}
+   #+latex:\includegraphics[width=\textwidth]{GearTables1}
+#+LATEX: \end{figure}
+
+* Where are we going?
+
+#+LATEX: \begin{figure}
+   #+latex:\includegraphics[width=\textwidth]{GearTables2}
+#+LATEX: \end{figure}
+
+* Where are we going?
+
+#+LATEX: \begin{figure}
+   #+latex:\includegraphics[width=\textwidth]{GearTables3}
+#+LATEX: \end{figure}
+
+
+* Gear:
++ A master table of gears.  This will evaully replace the FN013
+  table.
++ Each gear will only be defined once and will be associated
+  to each SAM by Gear Code (or foreign key).
+
+* Subgear:
++ A master table of gear panel attributes - each sub-gear will only
+  be defined once and asscoaited with the appropriate gear through a
+  many-to-many relationship.
+  + For example, the 51mm offshore panel is used in multiple gears,
+    and each gear has multple panels/subgears.
++ analogous to data in Darrel's spreadsheet
+
+* Gear Family:
+
++ A table to constrain relationships between gears and sub-gears
++ Gears are comprised of subgears, but only subgears in the same family
+  should be allowed.
++ For example:
+
+  + GL10, GL21, GL22 and GL32 are all derived from offshore
+    monofilament (OSIA-mono) panels
+
+  + GL01 is offshore multifilament (OSIA-multi)
+
+  + GL50 is a FWIN family
+
+  + GL38, GL51, GL64 are all part of the FLIN/SLIN family
+
+* Gear Family (cont'd):
++ More Families:
+  + Nordic nets
+  + Bottle traps
+  + GEE traps
+  + Windermere traps
+  + Smallfish-tall
+  + Smallfish-short
+  + North American Standard
+  + Trap nets
+  + Hoop nets
+  + Unknown*
+
+
+* Gear2SubGear
++ association table to facilitate many-to-many between gear and
+    subgear
++ contains additional information:
+  + panel sequence
+  + panel count
+
+* How we are going to get there?
+
+- use fn\under{}portal
+- database tables for old fishnet tables have been created and populated
+  - tables from the fish net archive will be used where possible
+  - more recent data will be populated from gear codes where gear
+    details are known (e.g. - offshore gears)
+  - project leads, field staff may be asked to provide some input
+
+- Gear, subgear and gear family tables have been created and populated
+  from available data.
+
+- summary of gears used in a project have been be added to project details
+  in fn\under{}portal
+
+* How we are going to get there?
+- views have been created in fn\under{}portal to:
+  + list gears
+  + gear details
+    + about the gear
+    + associated sub-gears
+    + projects where gear was used
+    + active/depreciated
+    + confirmed
+  + edit gear description
+- list of gears to be updated by <USER>
+
+* What have we learned?
+- all projects need specific project protocols (many are missing from
+  project tracker)
+- project protocols need to explicit describe gear used in project
+  + generic "same as other project" shortcuts are not adequate
+- science 101 - sufficient detail to reproduce/re-run project
+
+* Gill Net Examples
+
+#+LATEX: \begin{figure}
+   #+latex:\includegraphics[width=\textwidth]{GN_Example}
+#+LATEX: \end{figure}
+
+* Trap Net Examples
+
+#+LATEX: \begin{figure}
+   #+latex:\includegraphics[width=\textwidth]{TP_Example}
+#+LATEX: \end{figure}
+
+
+* Other Gears:
++ any suggestions?
+  + fyke nets
+  + hoop nets
+  + bottle traps
+  + Windermere traps
+  + electrofishing
+  + others...
+
+* Consolidating Gear codes
+- process of updating project masters to match gear master
+- documenting undocumented GL and TP codes
+  - inspecting FN122, FN123 and FN125 tables.  Inferring gear from
+    similar projects in same year
+- FishNet Archive/FishLib
+  - possible our archive are incomplete,  especially for projects run
+    by other offices (Espanola/Severn Sound)
+
+* Trap Nets
+- 3 proposed codes:
+  + TP06 - Standard 6' trap net
+  + TP08 - Standard 8' trap net
+  + TP  - Undocumented trap net (only in rare cases)
++ update masters to these codes where information exists to identify
+  trap net size
+
+* Gill Nets
+- eliminate gear code synonyms
+- update gear codes where inconsistencies are evident
+
+
+* Next Steps/Homework
+- confirm assigned gears:
+  - provide description for assigned gear
+  - verify sub gear attributes:
+    - populate where possible
+    - check existing values
+- FLIN gear used with one or multiple efforts. Can these be the same gear
+  code?
+  + 1 can mean half of the net or all of the net
+- export gear code master tables
+- update proc-val to query master tables

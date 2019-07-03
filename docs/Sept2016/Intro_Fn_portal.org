@@ -1,0 +1,61 @@
+#+TITLE:FishNet-Portal
+#+AUTHOR: Proof of Concept
+#+DATE:  September 20, 2016.
+
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [presentation, smaller]
+#+BEAMER_THEME: default
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+
+#+BEAMER_FRAME_LEVEL: 1
+
+#+OPTIONS:   toc:nil ^:nil
+#+latex_header: \mode<beamer>{\usetheme{Boadilla}\usecolortheme[RGB={40,100,30}]{structure}}
+#+latex_header: \usebackgroundtemplate{\includegraphics[width=\paperwidth]{MNRwhite}}
+#+latex_header: \setbeamersize{text margin left=10mm}
+
+
+* FishNet (FN)-Portal
+
+- make data housed in UGLMU databases accessible in your browser
+- Project Tracker:
+  - project documentation (reports, protocols and
+    associated milestones)
+- FN_Portal:
+  - Net set, catch count and biological data collected in the
+    project
+- complementary back-end to project tracker
+
+* Status
+- currently proof of concept/prototype
+- suggestion welcome
+
+* Implementation Stack:
+- leaflet for maps
+- crossfilter.js data filtering
+- dc.js (D3) plots
+
+* Views
+- project detail
+- species detail
+- trend-through time
+
+* Projects
+- currently includes data from:
+  - Offshore master
+  - Nearshore master
+  - Smallfish master
+
+* Caveats
+- general information
+- basic exploratory analysis
+- limited to common fields/attributes
+- sophisticated, specialized analysis out-of-scope
+
+* Next steps
+- extended to:
+  + other project types
+  + Lake Superior
+- formatting
+- add missing filters
+- Catches/Samples by ROI

@@ -8,7 +8,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'fn_portal',
         'USER': 'cottrillad',
-        'PASSWORD': 'django',
+        'PASSWORD': 'django123',
     }
 }
 

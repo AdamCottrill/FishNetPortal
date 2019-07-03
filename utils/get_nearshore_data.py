@@ -33,7 +33,8 @@ import pyodbc
 #
 
 
-SETTINGS_FILE = 'main.settings.append_data_local'
+#SETTINGS_FILE = 'main.settings.append_data_local'
+SETTINGS_FILE = 'main.settings.append_data_remote'
 
 #SECRET should be set when virtualenv as activated.  Just incase its not
 os.environ['SECRET_KEY'] = "\xb1>\xf3\x10\xd3p\x07\x8fS\x94'\xe3g\xc6cZ4\xb0R"
@@ -57,15 +58,14 @@ LOOKUP_DB = "C:/1work/Data_Warehouse/LookupTables.mdb"
 
 
 data_sources = [
-#    {'name':'offshore',
-#     'SRC_DB': "C:/1work/Python/djcode/fn_portal/utils/mdbs/Offshore.mdb"},
+    {'name':'offshore',
+     'SRC_DB': "C:/1work/Python/djcode/fn_portal/utils/mdbs/Offshore.mdb"},
 
     {'name':'nearshore',
      'SRC_DB':"C:/1work/Python/djcode/fn_portal/utils/mdbs/Nearshore.mdb"},
 
     {'name':'smallfish',
      'SRC_DB':"C:/1work/Python/djcode/fn_portal/utils/mdbs/smallfish.mdb"}
-
 ]
 
 
@@ -99,6 +99,17 @@ for x in data:
 Species.objects.bulk_create(my_list)
 print('\tDone adding {} records (n={:,})'.format(what, len(my_list)))
 
+#=======================================================
+
+#clear out all of the old objects:
+print('Clearing tables....')
+FN127.objects.all().delete()
+FN125.objects.all().delete()
+FN123.objects.all().delete()
+FN122.objects.all().delete()
+FN121.objects.all().delete()
+FN011.objects.all().delete()
+print('Done clearing tables...')
 
 #=======================================================
 # now loop over our data source list and append the data from each in turn.
@@ -169,8 +180,6 @@ for source in data_sources:
         my_list.append(FN121(**row))
     FN121.objects.bulk_create(my_list, batch_size=10000)
     print('\tDone adding {} records (n={:,})'.format(what, len(my_list)))
-
-
 
 
 

@@ -1,0 +1,4418 @@
+** FN_Browser
++ urls:
+  + project_list
+  + project_detail/<prj_cd>
+  + project/catch_counts/<prj_cd>
+  + project/species/<prj_cd>/<common_name>
+
++ filter by mesh
++ dates
++ region-of-interest
+
+
+
+** updates to Offshore Master:
+  + empty record in FN127 needs to be removed (filter on PRJ_CD is NULL)
+  + add 000 record to FN123 table for every record in FN122 table
+    (this could be done in migration script - it so, the existing 000
+    records need to be removed from FN123)
+  + rename 000 common to 'Effort Placeholder' or something like that.
+    Multiple species is essentially the same as unidentified species.
+  +
+
+Offshore FN127 - These records should be deleted. They have not age
+estimate or aging information.  Comments indicate that otoliths were
+not collected. Without an aging structure can there be an age
+estimate?
+
+| YEAR | PRJ_CD       |  SAM | EFF | SPC | GRP | FISH | AGEID |
+|------+--------------+------+-----+-----+-----+------+-------|
+| 2007 | LHA_IA07_005 |  520 | 064 | 093 |  00 |    2 |     2 |
+| 2007 | LHA_IA07_005 |  566 | 038 | 093 |  00 |    1 |     2 |
+| 2007 | LHA_IA07_006 |  657 | 032 | 093 |  00 |    1 |     2 |
+| 2007 | LHA_IA07_006 |  657 | 051 | 093 |  00 |    1 |     2 |
+| 2009 | LHA_IA09_005 |  556 | 032 | 103 |  00 |    1 |     1 |
+| 2009 | LHA_IA09_006 |  611 | 032 | 103 |  00 |    2 |     1 |
+| 2009 | LHA_IA09_006 |  611 | 051 | 103 |  00 |    2 |     1 |
+| 2009 | LHA_IA09_026 | 2627 | 032 | 103 |  00 |    1 |     1 |
+| 2009 | LHA_IA09_026 | 2627 | 032 | 103 |  00 |    3 |     1 |
+
+Offshore_FN127:
+No age, no age id, then no record.
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | FISH | AGEID |
+|------+--------------+-----+-----+-----+-----+------+-------|
+| 2015 | LHA_IA15_006 | 604 | 127 | 081 |  00 |    1 | NULL  |
+
+Offshore_FN127:
+Records with ageid=0. While not strictly wrong, it is unconventional.
+These are the only age interpretations available for these fish.  By
+convention, the age id should be 1.
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | FISH | AGEID | AGEID_shouldbe |
+|------+--------------+-----+-----+-----+-----+------+-------+----------------|
+| 2006 | LHR_IA06_119 |  12 | 064 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 064 | 081 |  00 |    2 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 064 | 081 |  00 |    3 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 064 | 081 |  00 |    4 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 089 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 102 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 127 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 127 | 081 |  00 |    2 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  12 | 127 | 081 |  00 |    3 |     0 |              1 |
+| 2006 | LHR_IA06_119 |  15 | 089 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 051 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 102 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 114 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 114 | 081 |  00 |    2 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 127 | 081 |  00 |    1 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   4 | 127 | 081 |  00 |    2 |     0 |              1 |
+| 2006 | LHR_IA06_119 |   7 | 127 | 081 |  00 |    1 |     0 |              1 |
+
+
+
+
+
+** updates to NEARshore Master:
+
+*** Gear codes in LHA_IA98_250
+
+- The gear code in LHA_IA98_250 (Severn Sound swin) were lost.  The
+  fishnet archive contained the complete values.  last two digits
+  indicate the size of the trap net in ft.
+
+| PRJ_CD       |   SAM | GR_was | GR_isnow |
+|--------------+-------+--------+----------|
+| LHA_IA98_250 | 00001 | TP     | TP08     |
+| LHA_IA98_250 | 00002 | TP     | TP08     |
+| LHA_IA98_250 | 00003 | TP     | TP06     |
+| LHA_IA98_250 | 00004 | TP     | TP05     |
+| LHA_IA98_250 | 00005 | TP     | TP06     |
+| LHA_IA98_250 | 00006 | TP     | TP06     |
+| LHA_IA98_250 | 00007 | TP     | TP08     |
+| LHA_IA98_250 | 00008 | TP     | TP08     |
+| LHA_IA98_250 | 00009 | TP     | TP05     |
+| LHA_IA98_250 | 00010 | TP     | TP05     |
+| LHA_IA98_250 | 00011 | TP     | TP08     |
+| LHA_IA98_250 | 00012 | TP     | TP06     |
+| LHA_IA98_250 | 00013 | TP     | TP06     |
+| LHA_IA98_250 | 00014 | TP     | TP08     |
+| LHA_IA98_250 | 00015 | TP     | TP08     |
+| LHA_IA98_250 | 00016 | TP     | TP06     |
+| LHA_IA98_250 | 00017 | TP     | TP06     |
+| LHA_IA98_250 | 00018 | TP     | TP08     |
+| LHA_IA98_250 | 00019 | TP     | TP08     |
+| LHA_IA98_250 | 00020 | TP     | TP06     |
+| LHA_IA98_250 | 00021 | TP     | TP06     |
+| LHA_IA98_250 | 00022 | TP     | TP08     |
+| LHA_IA98_250 | 00023 | TP     | TP06     |
+| LHA_IA98_250 | 00024 | TP     | TP06     |
+| LHA_IA98_250 | 00025 | TP     | TP08     |
+| LHA_IA98_250 | 00026 | TP     | TP06     |
+| LHA_IA98_250 | 00027 | TP     | TP06     |
+| LHA_IA98_250 | 00028 | TP     | TP08     |
+| LHA_IA98_250 | 00029 | TP     | TP06     |
+| LHA_IA98_250 | 00030 | TP     | TP06     |
+| LHA_IA98_250 | 00031 | TP     | TP08     |
+| LHA_IA98_250 | 00032 | TP     | TP06     |
+| LHA_IA98_250 | 00033 | TP     | TP06     |
+| LHA_IA98_250 | 00034 | TP     | TP06     |
+| LHA_IA98_250 | 00035 | TP     | TP08     |
+| LHA_IA98_250 | 00036 | TP     | TP06     |
+| LHA_IA98_250 | 00037 | TP     | TP08     |
+| LHA_IA98_250 | 00038 | TP     | TP06     |
+| LHA_IA98_250 | 00039 | TP     | TP06     |
+| LHA_IA98_250 | 00040 | TP     | TP06     |
+| LHA_IA98_250 | 00041 | TP     | TP08     |
+| LHA_IA98_250 | 00042 | TP     | TP06     |
+| LHA_IA98_250 | 00043 | TP     | TP08     |
+| LHA_IA98_250 | 00044 | TP     | TP06     |
+| LHA_IA98_250 | 00045 | TP     | TP06     |
+| LHA_IA98_250 | 00046 | TP     | TP06     |
+| LHA_IA98_250 | 00047 | TP     | TP08     |
+| LHA_IA98_250 | 00048 | TP     | TP08     |
+| LHA_IA98_250 | 00049 | TP     | TP06     |
+| LHA_IA98_250 | 00050 | TP     | TP06     |
+| LHA_IA98_250 | 00051 | TP     | TP06     |
+| LHA_IA98_250 | 00052 | TP     | TP06     |
+| LHA_IA98_250 | 00053 | TP     | TP08     |
+| LHA_IA98_250 | 00054 | TP     | TP08     |
+| LHA_IA98_250 | 00055 | TP     | TP06     |
+| LHA_IA98_250 | 00056 | TP     | TP06     |
+| LHA_IA98_250 | 00057 | TP     | TP06     |
+| LHA_IA98_250 | 00058 | TP     | TP06     |
+| LHA_IA98_250 | 00059 | TP     | TP08     |
+| LHA_IA98_250 | 00060 | TP     | TP08     |
+| LHA_IA98_250 | 00061 | TP     | TP06     |
+| LHA_IA98_250 | 00062 | TP     | TP06     |
+| LHA_IA98_250 | 00063 | TP     | TP06     |
+| LHA_IA98_250 | 00064 | TP     | TP08     |
+| LHA_IA98_250 | 00065 | TP     | TP06     |
+| LHA_IA98_250 | 00066 | TP     | TP06     |
+| LHA_IA98_250 | 00067 | TP     | TP06     |
+| LHA_IA98_250 | 00068 | TP     | TP06     |
+| LHA_IA98_250 | 00069 | TP     | TP08     |
+| LHA_IA98_250 | 00070 | TP     | TP08     |
+| LHA_IA98_250 | 00071 | TP     | TP06     |
+| LHA_IA98_250 | 00072 | TP     | TP03     |
+| LHA_IA98_250 | 00073 | TP     | TP03     |
+| LHA_IA98_250 | 00074 | TP     | TP03     |
+| LHA_IA98_250 | 00075 | TP     | TP04     |
+| LHA_IA98_250 | 00076 | TP     | TP03     |
+| LHA_IA98_250 | 00077 | TP     | TP04     |
+| LHA_IA98_250 | 00078 | TP     | TP03     |
+| LHA_IA98_250 | 00079 | TP     | TP03     |
+| LHA_IA98_250 | 00080 | TP     | TP04     |
+| LHA_IA98_250 | 00081 | TP     | TP03     |
+| LHA_IA98_250 | 00082 | TP     | TP03     |
+| LHA_IA98_250 | 00083 | TP     | TP04     |
+| LHA_IA98_250 | 00084 | TP     | TP04     |
+| LHA_IA98_250 | 00085 | TP     | TP03     |
+| LHA_IA98_250 | 00086 | TP     | TP03     |
+| LHA_IA98_250 | 00087 | TP     | TP03     |
+| LHA_IA98_250 | 00088 | TP     | TP03     |
+| LHA_IA98_250 | 00089 | TP     | TP03     |
+| LHA_IA98_250 | 00090 | TP     | TP04     |
+| LHA_IA98_250 | 00091 | TP     | TP03     |
+| LHA_IA98_250 | 00092 | TP     | TP03     |
+| LHA_IA98_250 | 00093 | TP     | TP04     |
+| LHA_IA98_250 | 00094 | TP     | TP03     |
+| LHA_IA98_250 | 00095 | TP     | TP04     |
+| LHA_IA98_250 | 00096 | TP     | TP03     |
+| LHA_IA98_250 | 00097 | TP     | TP03     |
+| LHA_IA98_250 | 00098 | TP     | TP04     |
+| LHA_IA98_250 | 00099 | TP     | TP03     |
+| LHA_IA98_250 | 00100 | TP     | TP03     |
+| LHA_IA98_250 | 00101 | TP     | TP04     |
+| LHA_IA98_250 | 00102 | TP     | TP03     |
+| LHA_IA98_250 | 00103 | TP     | TP03     |
+| LHA_IA98_250 | 00104 | TP     | TP04     |
+| LHA_IA98_250 | 00105 | TP     | TP03     |
+| LHA_IA98_250 | 00106 | TP     | TP03     |
+| LHA_IA98_250 | 00107 | TP     | TP03     |
+| LHA_IA98_250 | 00108 | TP     | TP03     |
+| LHA_IA98_250 | 00109 | TP     | TP03     |
+| LHA_IA98_250 | 00110 | TP     | TP04     |
+| LHA_IA98_250 | 00111 | TP     | TP04     |
+| LHA_IA98_250 | 00112 | TP     | TP04     |
+| LHA_IA98_250 | 00113 | TP     | TP03     |
+| LHA_IA98_250 | 00114 | TP     | TP04     |
+| LHA_IA98_250 | 00115 | TP     | TP03     |
+| LHA_IA98_250 | 00116 | TP     | TP03     |
+| LHA_IA98_250 | 00117 | TP     | TP04     |
+| LHA_IA98_250 | 00118 | TP     | TP03     |
+| LHA_IA98_250 | 00119 | TP     | TP03     |
+| LHA_IA98_250 | 00120 | TP     | TP04     |
+| LHA_IA98_250 | 00121 | TP     | TP03     |
+| LHA_IA98_250 | 00122 | TP     | TP03     |
+| LHA_IA98_250 | 00123 | TP     | TP03     |
+| LHA_IA98_250 | 00124 | TP     | TP03     |
+| LHA_IA98_250 | 00125 | TP     | TP03     |
+
+
+*** LHA_IA**_100 in FN122
+
+ + remove these records from FN122 table - the project code does not
+   appear anywhere else:
+
+| YEAR | PRJ_CD       | SAM | SAMn | EFF | EFFDST | GRDEP | GRTEM0 | GRTEM1 | STRATUM |
+|------+--------------+-----+------+-----+--------+-------+--------+--------+---------|
+| 1996 | LHA_IA96_100 |   1 |    1 | 000 |        |       |        |      0 |         |
+| 1996 | LHA_IA96_100 |   2 |    2 | 000 |        |       |        |      0 |         |
+| 1996 | LHA_IA96_100 |   3 |    3 | 000 |        |       |        |      0 |         |
+| 1997 | LHA_IA97_100 |   1 |    1 | 000 |        |       |        |      0 |         |
+| 2005 | LHA_IA05_100 |   1 |    1 |   1 |        |       |        |      0 |         |
+| 2006 | LHA_IA06_100 |   1 |    1 |   1 |        |       |        |      0 |         |
+
+A little more digging in LHMU_warehouse found:
+
+| LHA_IA96_100 | SURPLUS BIG SOUND BROOD STOCK TAGGING OWEN SOUND | STEPHEN GILE |
+| LHA_IA97_100 | SURPLUS BIG SOUND BROOD STOCK TAGGING 5 MILE BAY | STEPHEN GILE |
+
+
+*** 153 is not a FWIN EFF
+
++ updated the effort from 153 to 152 for these records in the 123 and
+  125 tables. This is a FWIN project, 153 is not a fwin mesh. 152 is.
+
+| YEAR | PRJ_CD       | SAM | EFF_was | EFF_is | SPC | GRP |
+|------+--------------+-----+---------+--------+-----+-----|
+| 2015 | LHA_IA15_236 | 102 |     153 |    152 | 334 |  00 |
+| 2015 | LHA_IA15_236 | 102 |     153 |    152 | 131 |  00 |
+| 2015 | LHA_IA15_236 | 105 |     153 |    152 | 132 |  00 |
+
+
+*** LHA_IA15_804-292 GR Code
+
++ based on the catches in this net, the gear need to be changed from
+  NA1 to ON2 - only small EFFs where reported in the FN123 table
+
+| PRJ_CD       | SAM | GR  | GR_shouldbe |
+|--------------+-----+-----+-------------|
+| LHA_IA15_804 | 292 | NA1 | ON1         |
+
+
+
+
+*** LHA_IA15_805-401 GR Code
+
+based on the catches in this net, the gear need to be changed from
+  ON1 to NA1 - only large EFFs where reported in the FN123 table
+
+| PRJ_CD       | SAM | GR_is | GR_shouldbe |
+|--------------+-----+-------+-------------|
+| LHA_IA15_805 | 401 | ON1   | NA1         |
+
+
+*** LHA_IA15_805-402 GR Code
+
+based on the catches in this net, the gear need to be changed from
+  ON1 to NA1 - only large EFFs where reported in the FN123 table
+
+
+| PRJ_CD       | SAM | GR_is | GR_shouldbe |
+|--------------+-----+-------+-------------|
+| LHA_IA15_805 | 402 | ON2   | NA1         |
+
+
+*** FWIN Gear Type
+
+- the following records samples where all associated
+  with FWIN and had GR == GL.  FWIN is a very well documented and
+  stable protocol, we have adoped GL50 as the UGLMU gear code for fwin
+  gill nets.
+
+| YEAR | PRJ_CD       |  SAM | GR_IS | GR_Shouldbe |
+|------+--------------+------+-------+-------------|
+| 1997 | LHA_IA97_023 |    1 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    2 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    3 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    4 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    5 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    6 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    7 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    8 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |    9 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   10 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   11 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   12 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   13 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   14 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   15 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   16 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   17 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   18 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   19 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   20 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   21 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   22 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   23 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   24 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   25 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   26 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   27 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   28 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   29 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   30 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   31 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   32 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   33 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   34 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   35 | GL    | GL50        |
+| 1997 | LHA_IA97_023 |   36 | GL    | GL50        |
+| 1997 | LHA_IA97_023 | 9001 | GL    | GL50        |
+| 1997 | LHA_IA97_023 | 9002 | GL    | GL50        |
+| 1997 | LHA_IA97_023 | 9003 | GL    | GL50        |
+| 1997 | LHA_IA97_023 | 9004 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    1 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    2 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    3 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    4 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    5 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    6 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    7 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    8 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |    9 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   10 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   11 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   12 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   13 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   14 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   15 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   16 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   17 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   18 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   19 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   20 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   21 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   22 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   23 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   24 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   25 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   26 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   27 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   28 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   29 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   30 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   31 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   32 | GL    | GL50        |
+| 2001 | LHA_IA01_023 |   33 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    1 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    2 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    3 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    4 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    5 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    6 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    7 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    8 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |    9 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   10 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   11 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   12 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   13 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   14 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   15 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   16 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   17 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   18 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   19 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   20 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   21 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   22 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   23 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   24 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   25 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   26 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   27 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   28 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   29 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   30 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   31 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   32 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   33 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   34 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   35 | GL    | GL50        |
+| 2002 | LHA_IA02_023 |   36 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    1 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    2 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    3 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    4 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    5 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    6 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    7 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    8 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |    9 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   10 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   11 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   12 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   13 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   14 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   15 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   16 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   17 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   18 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   19 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   20 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   21 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   22 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   23 | GL    | GL50        |
+| 2007 | LHA_IA07_258 |   24 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    1 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    2 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    3 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    4 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    5 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    6 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    7 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    8 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |    9 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   10 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   11 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   12 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   13 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   14 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   15 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   16 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   17 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   18 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   19 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   20 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   21 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   22 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   23 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   24 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   25 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   26 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |   27 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  100 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  101 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  102 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  103 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  104 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  105 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  106 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  107 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  108 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  109 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  110 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  111 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  112 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  113 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  114 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  115 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  116 | GL    | GL50        |
+| 2013 | LHA_IA13_258 |  117 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    1 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    2 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    3 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    4 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    5 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    6 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    7 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    8 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |    9 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   10 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   11 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   12 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   13 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   14 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   15 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   16 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   17 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   18 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   19 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   20 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   21 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   22 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   23 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   24 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   25 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   26 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   27 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |   28 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  101 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  102 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  103 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  104 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  105 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  106 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  107 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  108 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  109 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  110 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  111 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  112 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  113 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  114 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  115 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  116 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  117 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  118 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  119 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  120 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  121 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  122 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  123 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  124 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  125 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  126 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  127 | GL    | GL50        |
+| 2014 | LHA_IA14_258 |  128 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    1 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    2 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    3 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    4 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    5 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    6 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    7 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    8 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |    9 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   10 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   11 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   12 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   13 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   14 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   15 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   16 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   17 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   18 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   19 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   20 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   21 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   22 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   23 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   24 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   25 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   26 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   27 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   28 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   29 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   30 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   31 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   32 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   33 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |   34 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  101 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  102 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  103 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  104 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  105 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  106 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  107 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  108 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  109 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  110 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  111 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  112 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  113 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  114 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  115 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  116 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  117 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  118 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  119 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  120 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  121 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  122 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  123 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  124 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  125 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  126 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  127 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  128 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  129 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  130 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  131 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  132 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  133 | GL    | GL50        |
+| 2015 | LHA_IA15_236 |  134 | GL    | GL50        |
+
+
+*** ON1 should be ON2
+
+the gear code for these records should be ON2 not ON1 - this was a
+typo that was missed in the original data scrub.
+
+| PRJ_CD       | SAM | GR  | GR_shouldBe |
+|--------------+-----+-----+-------------|
+| LHA_IA15_802 |  31 | ON1 | ON2         |
+| LHA_IA15_802 |  32 | ON1 | ON2         |
+| LHA_IA15_802 |  41 | ON1 | ON2         |
+| LHA_IA15_802 |  42 | ON1 | ON2         |
+| LHA_IA15_802 |  71 | ON1 | ON2         |
+| LHA_IA15_802 |  72 | ON1 | ON2         |
+| LHA_IA15_802 | 101 | ON1 | ON2         |
+| LHA_IA15_802 | 102 | ON1 | ON2         |
+| LHA_IA15_802 | 141 | ON1 | ON2         |
+| LHA_IA15_802 | 142 | ON1 | ON2         |
+| LHA_IA15_802 | 151 | ON1 | ON2         |
+| LHA_IA15_802 | 152 | ON1 | ON2         |
+| LHA_IA15_802 | 201 | ON1 | ON2         |
+| LHA_IA15_802 | 202 | ON1 | ON2         |
+| LHA_IA15_802 | 221 | ON1 | ON2         |
+| LHA_IA15_802 | 222 | ON1 | ON2         |
+| LHA_IA15_802 | 261 | ON1 | ON2         |
+| LHA_IA15_802 | 262 | ON1 | ON2         |
+| LHA_IA15_802 | 271 | ON1 | ON2         |
+| LHA_IA15_802 | 272 | ON1 | ON2         |
+| LHA_IA15_802 | 351 | ON1 | ON2         |
+| LHA_IA15_802 | 352 | ON1 | ON2         |
+| LHA_IA15_802 | 361 | ON1 | ON2         |
+| LHA_IA15_802 | 362 | ON1 | ON2         |
+| LHA_IA15_802 | 371 | ON1 | ON2         |
+| LHA_IA15_802 | 372 | ON1 | ON2         |
+| LHA_IA15_802 | 401 | ON1 | ON2         |
+| LHA_IA15_802 | 402 | ON1 | ON2         |
+| LHA_IA15_802 | 441 | ON1 | ON2         |
+| LHA_IA15_802 | 442 | ON1 | ON2         |
+| LHA_IA15_802 | 461 | ON1 | ON2         |
+| LHA_IA15_802 | 462 | ON1 | ON2         |
+| LHA_IA15_802 | 491 | ON1 | ON2         |
+| LHA_IA15_802 | 492 | ON1 | ON2         |
+| LHA_IA15_802 | 501 | ON1 | ON2         |
+| LHA_IA15_802 | 502 | ON1 | ON2         |
+| LHA_IA15_803 |  21 | ON1 | ON2         |
+| LHA_IA15_803 |  22 | ON1 | ON2         |
+| LHA_IA15_803 |  31 | ON1 | ON2         |
+| LHA_IA15_803 |  32 | ON1 | ON2         |
+| LHA_IA15_803 |  71 | ON1 | ON2         |
+| LHA_IA15_803 |  72 | ON1 | ON2         |
+| LHA_IA15_803 | 101 | ON1 | ON2         |
+| LHA_IA15_803 | 102 | ON1 | ON2         |
+| LHA_IA15_803 | 161 | ON1 | ON2         |
+| LHA_IA15_803 | 162 | ON1 | ON2         |
+| LHA_IA15_803 | 171 | ON1 | ON2         |
+| LHA_IA15_803 | 172 | ON1 | ON2         |
+| LHA_IA15_803 | 231 | ON1 | ON2         |
+| LHA_IA15_803 | 232 | ON1 | ON2         |
+| LHA_IA15_803 | 241 | ON1 | ON2         |
+| LHA_IA15_803 | 242 | ON1 | ON2         |
+| LHA_IA15_803 | 251 | ON1 | ON2         |
+| LHA_IA15_803 | 252 | ON1 | ON2         |
+| LHA_IA15_803 | 301 | ON1 | ON2         |
+| LHA_IA15_803 | 302 | ON1 | ON2         |
+| LHA_IA15_803 | 311 | ON1 | ON2         |
+| LHA_IA15_803 | 312 | ON1 | ON2         |
+| LHA_IA15_803 | 361 | ON1 | ON2         |
+| LHA_IA15_803 | 362 | ON1 | ON2         |
+| LHA_IA15_803 | 401 | ON1 | ON2         |
+| LHA_IA15_803 | 402 | ON1 | ON2         |
+| LHA_IA15_803 | 411 | ON1 | ON2         |
+| LHA_IA15_803 | 412 | ON1 | ON2         |
+| LHA_IA15_803 | 431 | ON1 | ON2         |
+| LHA_IA15_803 | 432 | ON1 | ON2         |
+| LHA_IA15_803 | 441 | ON1 | ON2         |
+| LHA_IA15_803 | 442 | ON1 | ON2         |
+| LHA_IA15_804 |  21 | ON1 | ON2         |
+| LHA_IA15_804 |  22 | ON1 | ON2         |
+| LHA_IA15_804 |  41 | ON1 | ON2         |
+| LHA_IA15_804 |  42 | ON1 | ON2         |
+| LHA_IA15_804 |  91 | ON1 | ON2         |
+| LHA_IA15_804 |  92 | ON1 | ON2         |
+| LHA_IA15_804 | 121 | ON1 | ON2         |
+| LHA_IA15_804 | 122 | ON1 | ON2         |
+| LHA_IA15_804 | 161 | ON1 | ON2         |
+| LHA_IA15_804 | 162 | ON1 | ON2         |
+| LHA_IA15_804 | 181 | ON1 | ON2         |
+| LHA_IA15_804 | 182 | ON1 | ON2         |
+| LHA_IA15_804 | 201 | ON1 | ON2         |
+| LHA_IA15_804 | 202 | ON1 | ON2         |
+| LHA_IA15_804 | 241 | ON1 | ON2         |
+| LHA_IA15_804 | 242 | ON1 | ON2         |
+| LHA_IA15_804 | 291 | ON1 | ON2         |
+| LHA_IA15_804 | 292 | ON1 | ON2         |
+| LHA_IA15_804 | 301 | ON1 | ON2         |
+| LHA_IA15_804 | 302 | ON1 | ON2         |
+| LHA_IA15_804 | 321 | ON1 | ON2         |
+| LHA_IA15_804 | 322 | ON1 | ON2         |
+| LHA_IA15_804 | 341 | ON1 | ON2         |
+| LHA_IA15_804 | 342 | ON1 | ON2         |
+| LHA_IA15_804 | 381 | ON1 | ON2         |
+| LHA_IA15_804 | 382 | ON1 | ON2         |
+| LHA_IA15_804 | 391 | ON1 | ON2         |
+| LHA_IA15_804 | 392 | ON1 | ON2         |
+| LHA_IA15_804 | 431 | ON1 | ON2         |
+| LHA_IA15_804 | 432 | ON1 | ON2         |
+| LHA_IA15_804 | 481 | ON1 | ON2         |
+| LHA_IA15_804 | 482 | ON1 | ON2         |
+| LHA_IA15_804 | 501 | ON1 | ON2         |
+| LHA_IA15_804 | 502 | ON1 | ON2         |
+| LHA_IA15_805 |  11 | ON1 | ON2         |
+| LHA_IA15_805 |  12 | ON1 | ON2         |
+| LHA_IA15_805 |  21 | ON1 | ON2         |
+| LHA_IA15_805 |  22 | ON1 | ON2         |
+| LHA_IA15_805 | 111 | ON1 | ON2         |
+| LHA_IA15_805 | 112 | ON1 | ON2         |
+| LHA_IA15_805 | 121 | ON1 | ON2         |
+| LHA_IA15_805 | 122 | ON1 | ON2         |
+| LHA_IA15_805 | 131 | ON1 | ON2         |
+| LHA_IA15_805 | 132 | ON1 | ON2         |
+| LHA_IA15_805 | 141 | ON1 | ON2         |
+| LHA_IA15_805 | 142 | ON1 | ON2         |
+| LHA_IA15_805 | 231 | ON1 | ON2         |
+| LHA_IA15_805 | 232 | ON1 | ON2         |
+| LHA_IA15_805 | 241 | ON1 | ON2         |
+| LHA_IA15_805 | 242 | ON1 | ON2         |
+| LHA_IA15_805 | 261 | ON1 | ON2         |
+| LHA_IA15_805 | 262 | ON1 | ON2         |
+| LHA_IA15_805 | 281 | ON1 | ON2         |
+| LHA_IA15_805 | 282 | ON1 | ON2         |
+| LHA_IA15_805 | 331 | ON1 | ON2         |
+| LHA_IA15_805 | 332 | ON1 | ON2         |
+| LHA_IA15_805 | 351 | ON1 | ON2         |
+| LHA_IA15_805 | 352 | ON1 | ON2         |
+| LHA_IA15_805 | 391 | ON1 | ON2         |
+| LHA_IA15_805 | 392 | ON1 | ON2         |
+| LHA_IA15_805 | 402 | ON1 | ON2         |
+| LHA_IA15_805 | 421 | ON1 | ON2         |
+| LHA_IA15_805 | 422 | ON1 | ON2         |
+| LHA_IA15_805 | 451 | ON1 | ON2         |
+| LHA_IA15_805 | 452 | ON1 | ON2         |
+| LHA_IA15_805 | 481 | ON1 | ON2         |
+| LHA_IA15_805 | 482 | ON1 | ON2         |
+| LHA_IA15_805 | 491 | ON1 | ON2         |
+| LHA_IA15_805 | 492 | ON1 | ON2         |
+| LHA_IA15_805 | 531 | ON1 | ON2         |
+| LHA_IA15_805 | 532 | ON1 | ON2         |
+| LHA_IA15_808 |  51 | ON1 | ON2         |
+| LHA_IA15_808 |  52 | ON1 | ON2         |
+| LHA_IA15_808 |  61 | ON1 | ON2         |
+| LHA_IA15_808 |  62 | ON1 | ON2         |
+| LHA_IA15_808 |  71 | ON1 | ON2         |
+| LHA_IA15_808 |  72 | ON1 | ON2         |
+| LHA_IA15_808 | 121 | ON1 | ON2         |
+| LHA_IA15_808 | 122 | ON1 | ON2         |
+| LHA_IA15_808 | 131 | ON1 | ON2         |
+| LHA_IA15_808 | 132 | ON1 | ON2         |
+| LHA_IA15_808 | 151 | ON1 | ON2         |
+| LHA_IA15_808 | 152 | ON1 | ON2         |
+| LHA_IA15_808 | 211 | ON1 | ON2         |
+| LHA_IA15_808 | 212 | ON1 | ON2         |
+| LHA_IA15_808 | 231 | ON1 | ON2         |
+| LHA_IA15_808 | 232 | ON1 | ON2         |
+| LHA_IA15_808 | 251 | ON1 | ON2         |
+| LHA_IA15_808 | 252 | ON1 | ON2         |
+| LHA_IA15_808 | 281 | ON1 | ON2         |
+| LHA_IA15_808 | 282 | ON1 | ON2         |
+| LHA_IA15_808 | 341 | ON1 | ON2         |
+| LHA_IA15_808 | 342 | ON1 | ON2         |
+| LHA_IA15_808 | 361 | ON1 | ON2         |
+| LHA_IA15_808 | 362 | ON1 | ON2         |
+| LHA_IA15_808 | 381 | ON1 | ON2         |
+| LHA_IA15_808 | 382 | ON1 | ON2         |
+| LHA_IA15_808 | 411 | ON1 | ON2         |
+| LHA_IA15_808 | 412 | ON1 | ON2         |
+| LHA_IA15_808 | 441 | ON1 | ON2         |
+| LHA_IA15_808 | 442 | ON1 | ON2         |
+| LHA_IA15_808 | 491 | ON1 | ON2         |
+| LHA_IA15_808 | 492 | ON1 | ON2         |
+| LHA_IA15_808 | 521 | ON1 | ON2         |
+| LHA_IA15_808 | 522 | ON1 | ON2         |
+
+
+*** LHA_IA15_805-261-019-311
+
+- the catch of this 311 occurred in the a net that did not have that
+  mesh.  Project Lead indictated that SAM should be updated from 251
+  to 261 in both the FN123 and FN125 tables:
+
+| PRJ_CD       | SAM_IS | SAM_shouldbe | EFF | SPC |
+|--------------+--------+--------------+-----+-----|
+| LHA_IA15_805 |    251 |          261 | 019 | 311 |
+
+
+*** LHA_IA15_808-172-019-185
+
+- based on advice of the project lead the effort for this catch should
+  be changed from 019 (which does not occur in the gear type) to 038.
+  The existing catch record for this species in this mesh of this net
+  was deleted (1 caught, none sampled) and replaced with the one
+  below.  The effort field was updated in both the 123 and 125 tables.
+
+| PRJ_CD       | SAM | eff_is | EFF_sholdbe | SPC |
+|--------------+-----+--------+-------------+-----|
+| LHA_IA15_808 | 172 |    019 |         038 | 185 |
+
+
+
+*** WTF FLINS
+
+See the entry for Foobar FLINs
+
+The way that FLINs have been conducted and subsequently handled in the
+database has not been entirely consistent.  In contrast to normal
+FishNet Convention, EFF is supposed to be used to identify the inshore
+and offshore half of each flin net - this was not done in FLINs
+conducted in Iroquis Bay, Colpoys Bay, some Frazer Bay projects.
+Additionally, no flin had EFFDST fields populated, and only some of
+the flins had FN122 records, and even then, only when they caught
+something (0 catches are common in 90 minute daylight set). To
+address the inconsistencies all of the existing FLIN FN122 records
+were removed and replaces with one record for each effort for each
+sample.  Effdst was set to 45.7 for projects that followed the flin
+protocol and divided the catch into inshore and offshore halves, EFFDST
+was set to 91.4 m for those project that only reported a single effort.
+
+Missing FLIN FN122 records that were added to IA122 table:
+
+| PRJ_CD       | SAM | EFF | EFFDST |
+|--------------+-----+-----+--------|
+| LHA_IA15_F14 |   1 | 001 |   45.7 |
+| LHA_IA15_F14 |   1 | 002 |   45.7 |
+| LHA_IA15_F14 |   2 | 001 |   45.7 |
+| LHA_IA15_F14 |   2 | 002 |   45.7 |
+| LHA_IA15_F14 |   3 | 001 |   45.7 |
+| LHA_IA15_F14 |   3 | 002 |   45.7 |
+| LHA_IA15_F14 |   4 | 001 |   45.7 |
+| LHA_IA15_F14 |   4 | 002 |   45.7 |
+| LHA_IA15_F14 |   5 | 001 |   45.7 |
+| LHA_IA15_F14 |   5 | 002 |   45.7 |
+| LHA_IA15_F14 |   6 | 001 |   45.7 |
+| LHA_IA15_F14 |   6 | 002 |   45.7 |
+| LHA_IA15_F14 |   7 | 001 |   45.7 |
+| LHA_IA15_F14 |   7 | 002 |   45.7 |
+| LHA_IA15_F14 |   8 | 001 |   45.7 |
+| LHA_IA15_F14 |   8 | 002 |   45.7 |
+| LHA_IA15_F14 |   9 | 001 |   45.7 |
+| LHA_IA15_F14 |   9 | 002 |   45.7 |
+| LHA_IA15_F14 |  10 | 001 |   45.7 |
+| LHA_IA15_F14 |  10 | 002 |   45.7 |
+| LHA_IA15_F14 |  11 | 001 |   45.7 |
+| LHA_IA15_F14 |  11 | 002 |   45.7 |
+| LHA_IA15_F14 |  12 | 001 |   45.7 |
+| LHA_IA15_F14 |  12 | 002 |   45.7 |
+| LHA_IA15_F14 |  13 | 001 |   45.7 |
+| LHA_IA15_F14 |  13 | 002 |   45.7 |
+| LHA_IA15_F14 |  14 | 001 |   45.7 |
+| LHA_IA15_F14 |  14 | 002 |   45.7 |
+| LHA_IA15_F14 |  15 | 001 |   45.7 |
+| LHA_IA15_F14 |  15 | 002 |   45.7 |
+| LHA_IA15_F14 |  16 | 001 |   45.7 |
+| LHA_IA15_F14 |  16 | 002 |   45.7 |
+| LHA_IA15_F14 |  17 | 001 |   45.7 |
+| LHA_IA15_F14 |  17 | 002 |   45.7 |
+| LHA_IA15_F14 |  18 | 001 |   45.7 |
+| LHA_IA15_F14 |  18 | 002 |   45.7 |
+| LHA_IA15_F14 |  19 | 001 |   45.7 |
+| LHA_IA15_F14 |  19 | 002 |   45.7 |
+| LHA_IA15_F14 |  20 | 001 |   45.7 |
+| LHA_IA15_F14 |  20 | 002 |   45.7 |
+| LHA_IA15_F14 |  21 | 001 |   45.7 |
+| LHA_IA15_F14 |  21 | 002 |   45.7 |
+| LHA_IA15_F14 |  22 | 001 |   45.7 |
+| LHA_IA15_F14 |  22 | 002 |   45.7 |
+| LHA_IA15_F14 |  23 | 001 |   45.7 |
+| LHA_IA15_F14 |  23 | 002 |   45.7 |
+| LHA_IA15_F14 |  24 | 001 |   45.7 |
+| LHA_IA15_F14 |  24 | 002 |   45.7 |
+| LHA_IA15_F14 |  25 | 001 |   45.7 |
+| LHA_IA15_F14 |  25 | 002 |   45.7 |
+| LHA_IA15_F14 |  26 | 001 |   45.7 |
+| LHA_IA15_F14 |  26 | 002 |   45.7 |
+| LHA_IA15_F14 |  27 | 001 |   45.7 |
+| LHA_IA15_F14 |  27 | 002 |   45.7 |
+| LHA_IA15_F14 |  28 | 001 |   45.7 |
+| LHA_IA15_F14 |  28 | 002 |   45.7 |
+| LHA_IA15_F14 |  29 | 001 |   45.7 |
+| LHA_IA15_F14 |  29 | 002 |   45.7 |
+| LHA_IA15_F14 |  30 | 001 |   45.7 |
+| LHA_IA15_F14 |  30 | 002 |   45.7 |
+| LHA_IA15_F14 |  31 | 001 |   45.7 |
+| LHA_IA15_F14 |  31 | 002 |   45.7 |
+| LHA_IA15_F14 |  32 | 001 |   45.7 |
+| LHA_IA15_F14 |  32 | 002 |   45.7 |
+| LHA_IA15_F14 |  33 | 001 |   45.7 |
+| LHA_IA15_F14 |  33 | 002 |   45.7 |
+| LHA_IA15_F14 |  34 | 001 |   45.7 |
+| LHA_IA15_F14 |  34 | 002 |   45.7 |
+| LHA_IA15_F14 |  35 | 001 |   45.7 |
+| LHA_IA15_F14 |  35 | 002 |   45.7 |
+| LHA_IA15_F14 |  36 | 001 |   45.7 |
+| LHA_IA15_F14 |  36 | 002 |   45.7 |
+| LHA_IA15_F14 |  37 | 001 |   45.7 |
+| LHA_IA15_F14 |  37 | 002 |   45.7 |
+| LHA_IA15_F14 |  38 | 001 |   45.7 |
+| LHA_IA15_F14 |  38 | 002 |   45.7 |
+| LHA_IA15_F14 |  39 | 001 |   45.7 |
+| LHA_IA15_F14 |  39 | 002 |   45.7 |
+| LHA_IA15_F14 |  40 | 001 |   45.7 |
+| LHA_IA15_F14 |  40 | 002 |   45.7 |
+| LHA_IA15_F14 |  41 | 001 |   45.7 |
+| LHA_IA15_F14 |  41 | 002 |   45.7 |
+| LHA_IA15_F14 |  42 | 001 |   45.7 |
+| LHA_IA15_F14 |  42 | 002 |   45.7 |
+| LHA_IA15_F14 |  43 | 001 |   45.7 |
+| LHA_IA15_F14 |  43 | 002 |   45.7 |
+| LHA_IA15_F14 |  44 | 001 |   45.7 |
+| LHA_IA15_F14 |  44 | 002 |   45.7 |
+| LHA_IA15_F14 |  45 | 001 |   45.7 |
+| LHA_IA15_F14 |  45 | 002 |   45.7 |
+| LHA_IA15_F14 |  46 | 001 |   45.7 |
+| LHA_IA15_F14 |  46 | 002 |   45.7 |
+| LHA_IA15_F14 |  47 | 001 |   45.7 |
+| LHA_IA15_F14 |  47 | 002 |   45.7 |
+| LHA_IA15_F14 |  48 | 001 |   45.7 |
+| LHA_IA15_F14 |  48 | 002 |   45.7 |
+| LHA_IA15_F14 |  49 | 001 |   45.7 |
+| LHA_IA15_F14 |  49 | 002 |   45.7 |
+| LHA_IA15_F14 |  50 | 001 |   45.7 |
+| LHA_IA15_F14 |  50 | 002 |   45.7 |
+| LHA_IA15_F14 |  51 | 001 |   45.7 |
+| LHA_IA15_F14 |  51 | 002 |   45.7 |
+| LHA_IA15_F14 |  52 | 001 |   45.7 |
+| LHA_IA15_F14 |  52 | 002 |   45.7 |
+| LHA_IA15_F14 |  53 | 001 |   45.7 |
+| LHA_IA15_F14 |  53 | 002 |   45.7 |
+| LHA_IA15_F14 |  54 | 001 |   45.7 |
+| LHA_IA15_F14 |  54 | 002 |   45.7 |
+| LHA_IA15_F14 |  55 | 001 |   45.7 |
+| LHA_IA15_F14 |  55 | 002 |   45.7 |
+| LHA_IA15_F14 |  56 | 001 |   45.7 |
+| LHA_IA15_F14 |  56 | 002 |   45.7 |
+| LHA_IA15_F14 |  57 | 001 |   45.7 |
+| LHA_IA15_F14 |  57 | 002 |   45.7 |
+| LHA_IA15_F14 |  58 | 001 |   45.7 |
+| LHA_IA15_F14 |  58 | 002 |   45.7 |
+| LHA_IA15_F14 |  59 | 001 |   45.7 |
+| LHA_IA15_F14 |  59 | 002 |   45.7 |
+| LHA_IA15_F14 |  60 | 001 |   45.7 |
+| LHA_IA15_F14 |  60 | 002 |   45.7 |
+| LHA_IA15_F14 |  61 | 001 |   45.7 |
+| LHA_IA15_F14 |  61 | 002 |   45.7 |
+| LHA_IA15_F14 |  62 | 001 |   45.7 |
+| LHA_IA15_F14 |  62 | 002 |   45.7 |
+| LHA_IA15_F14 |  63 | 001 |   45.7 |
+| LHA_IA15_F14 |  63 | 002 |   45.7 |
+| LHA_IA15_F14 |  64 | 001 |   45.7 |
+| LHA_IA15_F14 |  64 | 002 |   45.7 |
+| LHA_IA15_F14 |  65 | 001 |   45.7 |
+| LHA_IA15_F14 |  65 | 002 |   45.7 |
+| LHA_IA15_F14 |  66 | 001 |   45.7 |
+| LHA_IA15_F14 |  66 | 002 |   45.7 |
+| LHA_IA15_F14 |  67 | 001 |   45.7 |
+| LHA_IA15_F14 |  67 | 002 |   45.7 |
+| LHA_IA15_F14 |  68 | 001 |   45.7 |
+| LHA_IA15_F14 |  68 | 002 |   45.7 |
+| LHA_IA15_F14 |  69 | 001 |   45.7 |
+| LHA_IA15_F14 |  69 | 002 |   45.7 |
+| LHA_IA15_F14 |  70 | 001 |   45.7 |
+| LHA_IA15_F14 |  70 | 002 |   45.7 |
+| LHA_IA15_F14 |  71 | 001 |   45.7 |
+| LHA_IA15_F14 |  71 | 002 |   45.7 |
+| LHA_IA15_F14 |  72 | 001 |   45.7 |
+| LHA_IA15_F14 |  72 | 002 |   45.7 |
+| LHA_IA15_F14 |  73 | 001 |   45.7 |
+| LHA_IA15_F14 |  73 | 002 |   45.7 |
+| LHA_IA15_F14 |  74 | 001 |   45.7 |
+| LHA_IA15_F14 |  74 | 002 |   45.7 |
+| LHA_IA15_F14 |  75 | 001 |   45.7 |
+| LHA_IA15_F14 |  75 | 002 |   45.7 |
+| LHA_IA15_F14 |  76 | 001 |   45.7 |
+| LHA_IA15_F14 |  76 | 002 |   45.7 |
+| LHA_IA15_F14 |  77 | 001 |   45.7 |
+| LHA_IA15_F14 |  77 | 002 |   45.7 |
+| LHA_IA15_F14 |  78 | 001 |   45.7 |
+| LHA_IA15_F14 |  78 | 002 |   45.7 |
+| LHA_IA15_F14 |  79 | 001 |   45.7 |
+| LHA_IA15_F14 |  79 | 002 |   45.7 |
+| LHA_IA15_F14 |  80 | 001 |   45.7 |
+| LHA_IA15_F14 |  80 | 002 |   45.7 |
+| LHA_IA15_F14 |  81 | 001 |   45.7 |
+| LHA_IA15_F14 |  81 | 002 |   45.7 |
+| LHA_IA15_F14 |  82 | 001 |   45.7 |
+| LHA_IA15_F14 |  82 | 002 |   45.7 |
+| LHA_IA15_F14 |  83 | 001 |   45.7 |
+| LHA_IA15_F14 |  83 | 002 |   45.7 |
+| LHA_IA15_F14 |  84 | 001 |   45.7 |
+| LHA_IA15_F14 |  84 | 002 |   45.7 |
+| LHA_IA15_F14 |  85 | 001 |   45.7 |
+| LHA_IA15_F14 |  85 | 002 |   45.7 |
+| LHA_IA15_F14 |  86 | 001 |   45.7 |
+| LHA_IA15_F14 |  86 | 002 |   45.7 |
+| LHA_IA15_F14 |  87 | 001 |   45.7 |
+| LHA_IA15_F14 |  87 | 002 |   45.7 |
+| LHA_IA15_F14 |  88 | 001 |   45.7 |
+| LHA_IA15_F14 |  88 | 002 |   45.7 |
+| LHA_IA15_F14 |  89 | 001 |   45.7 |
+| LHA_IA15_F14 |  89 | 002 |   45.7 |
+| LHA_IA15_F14 |  90 | 001 |   45.7 |
+| LHA_IA15_F14 |  90 | 002 |   45.7 |
+| LHA_IA15_F14 |  91 | 001 |   45.7 |
+| LHA_IA15_F14 |  91 | 002 |   45.7 |
+| LHA_IA15_F14 |  92 | 001 |   45.7 |
+| LHA_IA15_F14 |  92 | 002 |   45.7 |
+| LHA_IA15_F14 |  93 | 001 |   45.7 |
+| LHA_IA15_F14 |  93 | 002 |   45.7 |
+| LHA_IA15_F14 |  94 | 001 |   45.7 |
+| LHA_IA15_F14 |  94 | 002 |   45.7 |
+| LHA_IA15_F14 |  95 | 001 |   45.7 |
+| LHA_IA15_F14 |  95 | 002 |   45.7 |
+| LHA_IA15_F14 |  96 | 001 |   45.7 |
+| LHA_IA15_F14 |  96 | 002 |   45.7 |
+| LHA_IA15_F14 |  97 | 001 |   45.7 |
+| LHA_IA15_F14 |  97 | 002 |   45.7 |
+| LHA_IA15_F14 |  98 | 001 |   45.7 |
+| LHA_IA15_F14 |  98 | 002 |   45.7 |
+| LHA_IA15_F14 |  99 | 001 |   45.7 |
+| LHA_IA15_F14 |  99 | 002 |   45.7 |
+| LHA_IA15_F14 | 100 | 001 |   45.7 |
+| LHA_IA15_F14 | 100 | 002 |   45.7 |
+| LHA_IA15_F14 | 101 | 001 |   45.7 |
+| LHA_IA15_F14 | 101 | 002 |   45.7 |
+| LHA_IA15_F14 | 102 | 001 |   45.7 |
+| LHA_IA15_F14 | 102 | 002 |   45.7 |
+| LHA_IA15_F14 | 103 | 001 |   45.7 |
+| LHA_IA15_F14 | 103 | 002 |   45.7 |
+| LHA_IA15_F14 | 104 | 001 |   45.7 |
+| LHA_IA15_F14 | 104 | 002 |   45.7 |
+| LHA_IA15_F14 | 105 | 001 |   45.7 |
+| LHA_IA15_F14 | 105 | 002 |   45.7 |
+| LHA_IA15_F14 | 106 | 001 |   45.7 |
+| LHA_IA15_F14 | 106 | 002 |   45.7 |
+| LHA_IA15_F14 | 107 | 001 |   45.7 |
+| LHA_IA15_F14 | 107 | 002 |   45.7 |
+| LHA_IA15_F14 | 108 | 001 |   45.7 |
+| LHA_IA15_F14 | 108 | 002 |   45.7 |
+| LHA_IA15_F14 | 109 | 001 |   45.7 |
+| LHA_IA15_F14 | 109 | 002 |   45.7 |
+| LHA_IA15_F14 | 110 | 001 |   45.7 |
+| LHA_IA15_F14 | 110 | 002 |   45.7 |
+| LHA_IA15_F14 | 111 | 001 |   45.7 |
+| LHA_IA15_F14 | 111 | 002 |   45.7 |
+| LHA_IA15_F14 | 112 | 001 |   45.7 |
+| LHA_IA15_F14 | 112 | 002 |   45.7 |
+| LHA_IA15_F14 | 113 | 001 |   45.7 |
+| LHA_IA15_F14 | 113 | 002 |   45.7 |
+| LHA_IA15_F14 | 114 | 001 |   45.7 |
+| LHA_IA15_F14 | 114 | 002 |   45.7 |
+| LHA_IA15_F14 | 115 | 001 |   45.7 |
+| LHA_IA15_F14 | 115 | 002 |   45.7 |
+| LHA_IA15_F14 | 116 | 001 |   45.7 |
+| LHA_IA15_F14 | 116 | 002 |   45.7 |
+| LHA_IA15_F14 | 117 | 001 |   45.7 |
+| LHA_IA15_F14 | 117 | 002 |   45.7 |
+| LHA_IA15_F14 | 118 | 001 |   45.7 |
+| LHA_IA15_F14 | 118 | 002 |   45.7 |
+| LHA_IA15_F14 | 119 | 001 |   45.7 |
+| LHA_IA15_F14 | 119 | 002 |   45.7 |
+| LHA_IA15_F14 | 120 | 001 |   45.7 |
+| LHA_IA15_F14 | 120 | 002 |   45.7 |
+| LHA_IA15_F14 | 121 | 001 |   45.7 |
+| LHA_IA15_F14 | 121 | 002 |   45.7 |
+| LHA_IA15_F14 | 122 | 001 |   45.7 |
+| LHA_IA15_F14 | 122 | 002 |   45.7 |
+| LHA_IA00_18F |   1 | 001 |   45.7 |
+| LHA_IA00_18F |   1 | 002 |   45.7 |
+| LHA_IA00_18F |   2 | 001 |   45.7 |
+| LHA_IA00_18F |   2 | 002 |   45.7 |
+| LHA_IA00_18F |   3 | 001 |   45.7 |
+| LHA_IA00_18F |   3 | 002 |   45.7 |
+| LHA_IA00_18F |   4 | 001 |   45.7 |
+| LHA_IA00_18F |   4 | 002 |   45.7 |
+| LHA_IA00_18F |   5 | 001 |   45.7 |
+| LHA_IA00_18F |   5 | 002 |   45.7 |
+| LHA_IA00_18F |   6 | 001 |   45.7 |
+| LHA_IA00_18F |   6 | 002 |   45.7 |
+| LHA_IA00_18F |   7 | 001 |   45.7 |
+| LHA_IA00_18F |   7 | 002 |   45.7 |
+| LHA_IA00_18F |   8 | 001 |   45.7 |
+| LHA_IA00_18F |   8 | 002 |   45.7 |
+| LHA_IA00_18F |   9 | 001 |   45.7 |
+| LHA_IA00_18F |   9 | 002 |   45.7 |
+| LHA_IA00_18F |  10 | 001 |   45.7 |
+| LHA_IA00_18F |  10 | 002 |   45.7 |
+| LHA_IA00_18F |  11 | 001 |   45.7 |
+| LHA_IA00_18F |  11 | 002 |   45.7 |
+| LHA_IA00_18F |  12 | 001 |   45.7 |
+| LHA_IA00_18F |  12 | 002 |   45.7 |
+| LHA_IA00_18F |  13 | 001 |   45.7 |
+| LHA_IA00_18F |  13 | 002 |   45.7 |
+| LHA_IA00_18F |  14 | 001 |   45.7 |
+| LHA_IA00_18F |  14 | 002 |   45.7 |
+| LHA_IA00_18F |  15 | 001 |   45.7 |
+| LHA_IA00_18F |  15 | 002 |   45.7 |
+| LHA_IA00_18F |  16 | 001 |   45.7 |
+| LHA_IA00_18F |  16 | 002 |   45.7 |
+| LHA_IA00_18F |  17 | 001 |   45.7 |
+| LHA_IA00_18F |  17 | 002 |   45.7 |
+| LHA_IA00_18F |  18 | 001 |   45.7 |
+| LHA_IA00_18F |  18 | 002 |   45.7 |
+| LHA_IA00_18F |  19 | 001 |   45.7 |
+| LHA_IA00_18F |  19 | 002 |   45.7 |
+| LHA_IA00_18F |  20 | 001 |   45.7 |
+| LHA_IA00_18F |  20 | 002 |   45.7 |
+| LHA_IA00_18F |  21 | 001 |   45.7 |
+| LHA_IA00_18F |  21 | 002 |   45.7 |
+| LHA_IA00_18F |  22 | 001 |   45.7 |
+| LHA_IA00_18F |  22 | 002 |   45.7 |
+| LHA_IA00_18F |  23 | 001 |   45.7 |
+| LHA_IA00_18F |  23 | 002 |   45.7 |
+| LHA_IA00_18F |  24 | 001 |   45.7 |
+| LHA_IA00_18F |  24 | 002 |   45.7 |
+| LHA_IA00_18F |  25 | 001 |   45.7 |
+| LHA_IA00_18F |  25 | 002 |   45.7 |
+| LHA_IA00_18F |  26 | 001 |   45.7 |
+| LHA_IA00_18F |  26 | 002 |   45.7 |
+| LHA_IA00_18F |  27 | 001 |   45.7 |
+| LHA_IA00_18F |  27 | 002 |   45.7 |
+| LHA_IA00_18F |  28 | 001 |   45.7 |
+| LHA_IA00_18F |  28 | 002 |   45.7 |
+| LHA_IA00_18F |  29 | 001 |   45.7 |
+| LHA_IA00_18F |  29 | 002 |   45.7 |
+| LHA_IA00_18F |  30 | 001 |   45.7 |
+| LHA_IA00_18F |  30 | 002 |   45.7 |
+| LHA_IA00_18F |  31 | 001 |   45.7 |
+| LHA_IA00_18F |  31 | 002 |   45.7 |
+| LHA_IA00_18F |  32 | 001 |   45.7 |
+| LHA_IA00_18F |  32 | 002 |   45.7 |
+| LHA_IA00_18F |  33 | 001 |   45.7 |
+| LHA_IA00_18F |  33 | 002 |   45.7 |
+| LHA_IA00_18F |  34 | 001 |   45.7 |
+| LHA_IA00_18F |  34 | 002 |   45.7 |
+| LHA_IA00_18F |  35 | 001 |   45.7 |
+| LHA_IA00_18F |  35 | 002 |   45.7 |
+| LHA_IA00_18F |  36 | 001 |   45.7 |
+| LHA_IA00_18F |  36 | 002 |   45.7 |
+| LHA_IA00_18F |  37 | 001 |   45.7 |
+| LHA_IA00_18F |  37 | 002 |   45.7 |
+| LHA_IA00_18F |  38 | 001 |   45.7 |
+| LHA_IA00_18F |  38 | 002 |   45.7 |
+| LHA_IA00_18F |  39 | 001 |   45.7 |
+| LHA_IA00_18F |  39 | 002 |   45.7 |
+| LHA_IA00_18F |  40 | 001 |   45.7 |
+| LHA_IA00_18F |  40 | 002 |   45.7 |
+| LHA_IA00_18F |  41 | 001 |   45.7 |
+| LHA_IA00_18F |  41 | 002 |   45.7 |
+| LHA_IA00_18F |  42 | 001 |   45.7 |
+| LHA_IA00_18F |  42 | 002 |   45.7 |
+| LHA_IA00_18F |  43 | 001 |   45.7 |
+| LHA_IA00_18F |  43 | 002 |   45.7 |
+| LHA_IA00_18F |  44 | 001 |   45.7 |
+| LHA_IA00_18F |  44 | 002 |   45.7 |
+| LHA_IA00_18F |  45 | 001 |   45.7 |
+| LHA_IA00_18F |  45 | 002 |   45.7 |
+| LHA_IA00_18F |  46 | 001 |   45.7 |
+| LHA_IA00_18F |  46 | 002 |   45.7 |
+| LHA_IA00_18F |  47 | 001 |   45.7 |
+| LHA_IA00_18F |  47 | 002 |   45.7 |
+| LHA_IA00_18F |  48 | 001 |   45.7 |
+| LHA_IA00_18F |  48 | 002 |   45.7 |
+| LHA_IA00_18F |  49 | 001 |   45.7 |
+| LHA_IA00_18F |  49 | 002 |   45.7 |
+| LHA_IA00_18F |  50 | 001 |   45.7 |
+| LHA_IA00_18F |  50 | 002 |   45.7 |
+| LHA_IA00_18F |  51 | 001 |   45.7 |
+| LHA_IA00_18F |  51 | 002 |   45.7 |
+| LHA_IA00_18F |  52 | 001 |   45.7 |
+| LHA_IA00_18F |  52 | 002 |   45.7 |
+| LHA_IA00_18F |  53 | 001 |   45.7 |
+| LHA_IA00_18F |  53 | 002 |   45.7 |
+| LHA_IA00_18F |  54 | 001 |   45.7 |
+| LHA_IA00_18F |  54 | 002 |   45.7 |
+| LHA_IA00_18F |  55 | 001 |   45.7 |
+| LHA_IA00_18F |  55 | 002 |   45.7 |
+| LHA_IA00_18F |  56 | 001 |   45.7 |
+| LHA_IA00_18F |  56 | 002 |   45.7 |
+| LHA_IA00_18F |  57 | 001 |   45.7 |
+| LHA_IA00_18F |  57 | 002 |   45.7 |
+| LHA_IA00_18F |  58 | 001 |   45.7 |
+| LHA_IA00_18F |  58 | 002 |   45.7 |
+| LHA_IA00_18F |  59 | 001 |   45.7 |
+| LHA_IA00_18F |  59 | 002 |   45.7 |
+| LHA_IA00_18F |  60 | 001 |   45.7 |
+| LHA_IA00_18F |  60 | 002 |   45.7 |
+| LHA_IA00_18F |  61 | 001 |   45.7 |
+| LHA_IA00_18F |  61 | 002 |   45.7 |
+| LHA_IA00_18F |  62 | 001 |   45.7 |
+| LHA_IA00_18F |  62 | 002 |   45.7 |
+| LHA_IA00_18F |  63 | 001 |   45.7 |
+| LHA_IA00_18F |  63 | 002 |   45.7 |
+| LHA_IA00_18F |  64 | 001 |   45.7 |
+| LHA_IA00_18F |  64 | 002 |   45.7 |
+| LHA_IA00_18F |  65 | 001 |   45.7 |
+| LHA_IA00_18F |  65 | 002 |   45.7 |
+| LHA_IA00_18F |  66 | 001 |   45.7 |
+| LHA_IA00_18F |  66 | 002 |   45.7 |
+| LHA_IA00_18F |  67 | 001 |   45.7 |
+| LHA_IA00_18F |  67 | 002 |   45.7 |
+| LHA_IA00_18F |  68 | 001 |   45.7 |
+| LHA_IA00_18F |  68 | 002 |   45.7 |
+| LHA_IA00_18F |  69 | 001 |   45.7 |
+| LHA_IA00_18F |  69 | 002 |   45.7 |
+| LHA_IA00_18F |  70 | 001 |   45.7 |
+| LHA_IA00_18F |  70 | 002 |   45.7 |
+| LHA_IA00_18F |  71 | 001 |   45.7 |
+| LHA_IA00_18F |  71 | 002 |   45.7 |
+| LHA_IA00_18F |  72 | 001 |   45.7 |
+| LHA_IA00_18F |  72 | 002 |   45.7 |
+| LHA_IA01_18F |   1 | 001 |   45.7 |
+| LHA_IA01_18F |   1 | 002 |   45.7 |
+| LHA_IA01_18F |   2 | 001 |   45.7 |
+| LHA_IA01_18F |   2 | 002 |   45.7 |
+| LHA_IA01_18F |   3 | 001 |   45.7 |
+| LHA_IA01_18F |   3 | 002 |   45.7 |
+| LHA_IA01_18F |   4 | 001 |   45.7 |
+| LHA_IA01_18F |   4 | 002 |   45.7 |
+| LHA_IA01_18F |   5 | 001 |   45.7 |
+| LHA_IA01_18F |   5 | 002 |   45.7 |
+| LHA_IA01_18F |   6 | 001 |   45.7 |
+| LHA_IA01_18F |   6 | 002 |   45.7 |
+| LHA_IA01_18F |   7 | 001 |   45.7 |
+| LHA_IA01_18F |   7 | 002 |   45.7 |
+| LHA_IA01_18F |   8 | 001 |   45.7 |
+| LHA_IA01_18F |   8 | 002 |   45.7 |
+| LHA_IA01_18F |   9 | 001 |   45.7 |
+| LHA_IA01_18F |   9 | 002 |   45.7 |
+| LHA_IA01_18F |  10 | 001 |   45.7 |
+| LHA_IA01_18F |  10 | 002 |   45.7 |
+| LHA_IA01_18F |  11 | 001 |   45.7 |
+| LHA_IA01_18F |  11 | 002 |   45.7 |
+| LHA_IA01_18F |  12 | 001 |   45.7 |
+| LHA_IA01_18F |  12 | 002 |   45.7 |
+| LHA_IA01_18F |  13 | 001 |   45.7 |
+| LHA_IA01_18F |  13 | 002 |   45.7 |
+| LHA_IA01_18F |  14 | 001 |   45.7 |
+| LHA_IA01_18F |  14 | 002 |   45.7 |
+| LHA_IA01_18F |  15 | 001 |   45.7 |
+| LHA_IA01_18F |  15 | 002 |   45.7 |
+| LHA_IA01_18F |  16 | 001 |   45.7 |
+| LHA_IA01_18F |  16 | 002 |   45.7 |
+| LHA_IA01_18F |  17 | 001 |   45.7 |
+| LHA_IA01_18F |  17 | 002 |   45.7 |
+| LHA_IA01_18F |  18 | 001 |   45.7 |
+| LHA_IA01_18F |  18 | 002 |   45.7 |
+| LHA_IA01_18F |  19 | 001 |   45.7 |
+| LHA_IA01_18F |  19 | 002 |   45.7 |
+| LHA_IA01_18F |  20 | 001 |   45.7 |
+| LHA_IA01_18F |  20 | 002 |   45.7 |
+| LHA_IA01_18F |  21 | 001 |   45.7 |
+| LHA_IA01_18F |  21 | 002 |   45.7 |
+| LHA_IA01_18F |  22 | 001 |   45.7 |
+| LHA_IA01_18F |  22 | 002 |   45.7 |
+| LHA_IA01_18F |  23 | 001 |   45.7 |
+| LHA_IA01_18F |  23 | 002 |   45.7 |
+| LHA_IA01_18F |  24 | 001 |   45.7 |
+| LHA_IA01_18F |  24 | 002 |   45.7 |
+| LHA_IA01_18F |  25 | 001 |   45.7 |
+| LHA_IA01_18F |  25 | 002 |   45.7 |
+| LHA_IA01_18F |  26 | 001 |   45.7 |
+| LHA_IA01_18F |  26 | 002 |   45.7 |
+| LHA_IA01_18F |  27 | 001 |   45.7 |
+| LHA_IA01_18F |  27 | 002 |   45.7 |
+| LHA_IA01_18F |  28 | 001 |   45.7 |
+| LHA_IA01_18F |  28 | 002 |   45.7 |
+| LHA_IA01_18F |  29 | 001 |   45.7 |
+| LHA_IA01_18F |  29 | 002 |   45.7 |
+| LHA_IA01_18F |  30 | 001 |   45.7 |
+| LHA_IA01_18F |  30 | 002 |   45.7 |
+| LHA_IA01_18F |  31 | 001 |   45.7 |
+| LHA_IA01_18F |  31 | 002 |   45.7 |
+| LHA_IA01_18F |  32 | 001 |   45.7 |
+| LHA_IA01_18F |  32 | 002 |   45.7 |
+| LHA_IA01_18F |  33 | 001 |   45.7 |
+| LHA_IA01_18F |  33 | 002 |   45.7 |
+| LHA_IA01_18F |  34 | 001 |   45.7 |
+| LHA_IA01_18F |  34 | 002 |   45.7 |
+| LHA_IA01_18F |  35 | 001 |   45.7 |
+| LHA_IA01_18F |  35 | 002 |   45.7 |
+| LHA_IA01_18F |  36 | 001 |   45.7 |
+| LHA_IA01_18F |  36 | 002 |   45.7 |
+| LHA_IA01_18F |  37 | 001 |   45.7 |
+| LHA_IA01_18F |  37 | 002 |   45.7 |
+| LHA_IA01_18F |  38 | 001 |   45.7 |
+| LHA_IA01_18F |  38 | 002 |   45.7 |
+| LHA_IA01_18F |  39 | 001 |   45.7 |
+| LHA_IA01_18F |  39 | 002 |   45.7 |
+| LHA_IA01_18F |  40 | 001 |   45.7 |
+| LHA_IA01_18F |  40 | 002 |   45.7 |
+| LHA_IA01_18F |  41 | 001 |   45.7 |
+| LHA_IA01_18F |  41 | 002 |   45.7 |
+| LHA_IA01_18F |  42 | 001 |   45.7 |
+| LHA_IA01_18F |  42 | 002 |   45.7 |
+| LHA_IA01_18F |  43 | 001 |   45.7 |
+| LHA_IA01_18F |  43 | 002 |   45.7 |
+| LHA_IA01_18F |  44 | 001 |   45.7 |
+| LHA_IA01_18F |  44 | 002 |   45.7 |
+| LHA_IA01_18F |  45 | 001 |   45.7 |
+| LHA_IA01_18F |  45 | 002 |   45.7 |
+| LHA_IA01_18F |  46 | 001 |   45.7 |
+| LHA_IA01_18F |  46 | 002 |   45.7 |
+| LHA_IA01_18F |  47 | 001 |   45.7 |
+| LHA_IA01_18F |  47 | 002 |   45.7 |
+| LHA_IA01_18F |  48 | 001 |   45.7 |
+| LHA_IA01_18F |  48 | 002 |   45.7 |
+| LHA_IA01_18F |  49 | 001 |   45.7 |
+| LHA_IA01_18F |  49 | 002 |   45.7 |
+| LHA_IA01_18F |  50 | 001 |   45.7 |
+| LHA_IA01_18F |  50 | 002 |   45.7 |
+| LHA_IA01_18F |  51 | 001 |   45.7 |
+| LHA_IA01_18F |  51 | 002 |   45.7 |
+| LHA_IA01_18F |  52 | 001 |   45.7 |
+| LHA_IA01_18F |  52 | 002 |   45.7 |
+| LHA_IA01_18F |  53 | 001 |   45.7 |
+| LHA_IA01_18F |  53 | 002 |   45.7 |
+| LHA_IA01_18F |  54 | 001 |   45.7 |
+| LHA_IA01_18F |  54 | 002 |   45.7 |
+| LHA_IA01_18F |  55 | 001 |   45.7 |
+| LHA_IA01_18F |  55 | 002 |   45.7 |
+| LHA_IA01_18F |  56 | 001 |   45.7 |
+| LHA_IA01_18F |  56 | 002 |   45.7 |
+| LHA_IA01_18F |  57 | 001 |   45.7 |
+| LHA_IA01_18F |  57 | 002 |   45.7 |
+| LHA_IA01_18F |  58 | 001 |   45.7 |
+| LHA_IA01_18F |  58 | 002 |   45.7 |
+| LHA_IA01_18F |  59 | 001 |   45.7 |
+| LHA_IA01_18F |  59 | 002 |   45.7 |
+| LHA_IA01_18F |  60 | 001 |   45.7 |
+| LHA_IA01_18F |  60 | 002 |   45.7 |
+| LHA_IA01_18F |  61 | 001 |   45.7 |
+| LHA_IA01_18F |  61 | 002 |   45.7 |
+| LHA_IA01_18F |  62 | 001 |   45.7 |
+| LHA_IA01_18F |  62 | 002 |   45.7 |
+| LHA_IA01_18F |  63 | 001 |   45.7 |
+| LHA_IA01_18F |  63 | 002 |   45.7 |
+| LHA_IA01_18F |  64 | 001 |   45.7 |
+| LHA_IA01_18F |  64 | 002 |   45.7 |
+| LHA_IA01_18F |  65 | 001 |   45.7 |
+| LHA_IA01_18F |  65 | 002 |   45.7 |
+| LHA_IA01_18F |  66 | 001 |   45.7 |
+| LHA_IA01_18F |  66 | 002 |   45.7 |
+| LHA_IA01_18F |  67 | 001 |   45.7 |
+| LHA_IA01_18F |  67 | 002 |   45.7 |
+| LHA_IA01_18F |  68 | 001 |   45.7 |
+| LHA_IA01_18F |  68 | 002 |   45.7 |
+| LHA_IA01_18F |  69 | 001 |   45.7 |
+| LHA_IA01_18F |  69 | 002 |   45.7 |
+| LHA_IA01_18F |  70 | 001 |   45.7 |
+| LHA_IA01_18F |  70 | 002 |   45.7 |
+| LHA_IA01_18F |  71 | 001 |   45.7 |
+| LHA_IA01_18F |  71 | 002 |   45.7 |
+| LHA_IA01_18F |  72 | 001 |   45.7 |
+| LHA_IA01_18F |  72 | 002 |   45.7 |
+| LHA_IA01_18F |  73 | 001 |   45.7 |
+| LHA_IA01_18F |  73 | 002 |   45.7 |
+| LHA_IA01_18F |  74 | 001 |   45.7 |
+| LHA_IA01_18F |  74 | 002 |   45.7 |
+| LHA_IA01_18F |  75 | 001 |   45.7 |
+| LHA_IA01_18F |  75 | 002 |   45.7 |
+| LHA_IA01_18F |  76 | 001 |   45.7 |
+| LHA_IA01_18F |  76 | 002 |   45.7 |
+| LHA_IA01_18F |  77 | 001 |   45.7 |
+| LHA_IA01_18F |  77 | 002 |   45.7 |
+| LHA_IA01_18F |  78 | 001 |   45.7 |
+| LHA_IA01_18F |  78 | 002 |   45.7 |
+| LHA_IA01_18F |  79 | 001 |   45.7 |
+| LHA_IA01_18F |  79 | 002 |   45.7 |
+| LHA_IA01_18F |  80 | 001 |   45.7 |
+| LHA_IA01_18F |  80 | 002 |   45.7 |
+| LHA_IA01_18F |  81 | 001 |   45.7 |
+| LHA_IA01_18F |  81 | 002 |   45.7 |
+| LHA_IA02_F13 |   1 | 001 |   45.7 |
+| LHA_IA02_F13 |   1 | 002 |   45.7 |
+| LHA_IA02_F13 |   2 | 001 |   45.7 |
+| LHA_IA02_F13 |   2 | 002 |   45.7 |
+| LHA_IA02_F13 |   3 | 001 |   45.7 |
+| LHA_IA02_F13 |   3 | 002 |   45.7 |
+| LHA_IA02_F13 |   4 | 001 |   45.7 |
+| LHA_IA02_F13 |   4 | 002 |   45.7 |
+| LHA_IA02_F13 |   5 | 001 |   45.7 |
+| LHA_IA02_F13 |   5 | 002 |   45.7 |
+| LHA_IA02_F13 |   6 | 001 |   45.7 |
+| LHA_IA02_F13 |   6 | 002 |   45.7 |
+| LHA_IA02_F13 |   7 | 001 |   45.7 |
+| LHA_IA02_F13 |   7 | 002 |   45.7 |
+| LHA_IA02_F13 |   8 | 001 |   45.7 |
+| LHA_IA02_F13 |   8 | 002 |   45.7 |
+| LHA_IA02_F13 |   9 | 001 |   45.7 |
+| LHA_IA02_F13 |   9 | 002 |   45.7 |
+| LHA_IA02_F13 |  10 | 001 |   45.7 |
+| LHA_IA02_F13 |  10 | 002 |   45.7 |
+| LHA_IA02_F13 |  11 | 001 |   45.7 |
+| LHA_IA02_F13 |  11 | 002 |   45.7 |
+| LHA_IA02_F13 |  12 | 001 |   45.7 |
+| LHA_IA02_F13 |  12 | 002 |   45.7 |
+| LHA_IA02_F13 |  13 | 001 |   45.7 |
+| LHA_IA02_F13 |  13 | 002 |   45.7 |
+| LHA_IA02_F13 |  14 | 001 |   45.7 |
+| LHA_IA02_F13 |  14 | 002 |   45.7 |
+| LHA_IA02_F13 |  15 | 001 |   45.7 |
+| LHA_IA02_F13 |  15 | 002 |   45.7 |
+| LHA_IA02_F13 |  16 | 001 |   45.7 |
+| LHA_IA02_F13 |  16 | 002 |   45.7 |
+| LHA_IA02_F13 |  17 | 001 |   45.7 |
+| LHA_IA02_F13 |  17 | 002 |   45.7 |
+| LHA_IA02_F13 |  18 | 001 |   45.7 |
+| LHA_IA02_F13 |  18 | 002 |   45.7 |
+| LHA_IA02_F13 |  19 | 001 |   45.7 |
+| LHA_IA02_F13 |  19 | 002 |   45.7 |
+| LHA_IA02_F13 |  20 | 001 |   45.7 |
+| LHA_IA02_F13 |  20 | 002 |   45.7 |
+| LHA_IA02_F13 |  21 | 001 |   45.7 |
+| LHA_IA02_F13 |  21 | 002 |   45.7 |
+| LHA_IA02_F13 |  22 | 001 |   45.7 |
+| LHA_IA02_F13 |  22 | 002 |   45.7 |
+| LHA_IA02_F13 |  23 | 001 |   45.7 |
+| LHA_IA02_F13 |  23 | 002 |   45.7 |
+| LHA_IA02_F13 |  24 | 001 |   45.7 |
+| LHA_IA02_F13 |  24 | 002 |   45.7 |
+| LHA_IA04_F13 |   1 | 001 |   45.7 |
+| LHA_IA04_F13 |   1 | 002 |   45.7 |
+| LHA_IA04_F13 |   2 | 001 |   45.7 |
+| LHA_IA04_F13 |   2 | 002 |   45.7 |
+| LHA_IA04_F13 |   3 | 001 |   45.7 |
+| LHA_IA04_F13 |   3 | 002 |   45.7 |
+| LHA_IA04_F13 |   4 | 001 |   45.7 |
+| LHA_IA04_F13 |   4 | 002 |   45.7 |
+| LHA_IA04_F13 |   5 | 001 |   45.7 |
+| LHA_IA04_F13 |   5 | 002 |   45.7 |
+| LHA_IA04_F13 |   6 | 001 |   45.7 |
+| LHA_IA04_F13 |   6 | 002 |   45.7 |
+| LHA_IA04_F13 |   7 | 001 |   45.7 |
+| LHA_IA04_F13 |   7 | 002 |   45.7 |
+| LHA_IA04_F13 |   8 | 001 |   45.7 |
+| LHA_IA04_F13 |   8 | 002 |   45.7 |
+| LHA_IA04_F13 |   9 | 001 |   45.7 |
+| LHA_IA04_F13 |   9 | 002 |   45.7 |
+| LHA_IA04_F13 |  10 | 001 |   45.7 |
+| LHA_IA04_F13 |  10 | 002 |   45.7 |
+| LHA_IA04_F13 |  11 | 001 |   45.7 |
+| LHA_IA04_F13 |  11 | 002 |   45.7 |
+| LHA_IA04_F13 |  12 | 001 |   45.7 |
+| LHA_IA04_F13 |  12 | 002 |   45.7 |
+| LHA_IA04_F13 |  13 | 001 |   45.7 |
+| LHA_IA04_F13 |  13 | 002 |   45.7 |
+| LHA_IA04_F13 |  14 | 001 |   45.7 |
+| LHA_IA04_F13 |  14 | 002 |   45.7 |
+| LHA_IA04_F13 |  15 | 001 |   45.7 |
+| LHA_IA04_F13 |  15 | 002 |   45.7 |
+| LHA_IA04_F13 |  16 | 001 |   45.7 |
+| LHA_IA04_F13 |  16 | 002 |   45.7 |
+| LHA_IA04_F13 |  17 | 001 |   45.7 |
+| LHA_IA04_F13 |  17 | 002 |   45.7 |
+| LHA_IA04_F13 |  18 | 001 |   45.7 |
+| LHA_IA04_F13 |  18 | 002 |   45.7 |
+| LHA_IA04_F13 |  19 | 001 |   45.7 |
+| LHA_IA04_F13 |  19 | 002 |   45.7 |
+| LHA_IA04_F13 |  20 | 001 |   45.7 |
+| LHA_IA04_F13 |  20 | 002 |   45.7 |
+| LHA_IA04_F13 |  21 | 001 |   45.7 |
+| LHA_IA04_F13 |  21 | 002 |   45.7 |
+| LHA_IA04_F13 |  22 | 001 |   45.7 |
+| LHA_IA04_F13 |  22 | 002 |   45.7 |
+| LHA_IA04_F13 |  23 | 001 |   45.7 |
+| LHA_IA04_F13 |  23 | 002 |   45.7 |
+| LHA_IA04_F13 |  24 | 001 |   45.7 |
+| LHA_IA04_F13 |  24 | 002 |   45.7 |
+| LHA_IA04_F13 |  25 | 001 |   45.7 |
+| LHA_IA04_F13 |  25 | 002 |   45.7 |
+| LHA_IA04_F13 |  26 | 001 |   45.7 |
+| LHA_IA04_F13 |  26 | 002 |   45.7 |
+| LHA_IA04_F13 |  27 | 001 |   45.7 |
+| LHA_IA04_F13 |  27 | 002 |   45.7 |
+| LHA_IA04_F13 |  28 | 001 |   45.7 |
+| LHA_IA04_F13 |  28 | 002 |   45.7 |
+| LHA_IA04_F13 |  29 | 001 |   45.7 |
+| LHA_IA04_F13 |  29 | 002 |   45.7 |
+| LHA_IA04_F13 |  30 | 001 |   45.7 |
+| LHA_IA04_F13 |  30 | 002 |   45.7 |
+| LHA_IA04_F13 |  31 | 001 |   45.7 |
+| LHA_IA04_F13 |  31 | 002 |   45.7 |
+| LHA_IA04_F13 |  32 | 001 |   45.7 |
+| LHA_IA04_F13 |  32 | 002 |   45.7 |
+| LHA_IA04_F13 |  33 | 001 |   45.7 |
+| LHA_IA04_F13 |  33 | 002 |   45.7 |
+| LHA_IA04_F13 |  34 | 001 |   45.7 |
+| LHA_IA04_F13 |  34 | 002 |   45.7 |
+| LHA_IA04_F13 |  35 | 001 |   45.7 |
+| LHA_IA04_F13 |  35 | 002 |   45.7 |
+| LHA_IA04_F13 |  36 | 001 |   45.7 |
+| LHA_IA04_F13 |  36 | 002 |   45.7 |
+| LHA_IA04_F14 |   1 | 001 |   45.7 |
+| LHA_IA04_F14 |   1 | 002 |   45.7 |
+| LHA_IA04_F14 |   2 | 001 |   45.7 |
+| LHA_IA04_F14 |   2 | 002 |   45.7 |
+| LHA_IA04_F14 |   3 | 001 |   45.7 |
+| LHA_IA04_F14 |   3 | 002 |   45.7 |
+| LHA_IA04_F14 |   4 | 001 |   45.7 |
+| LHA_IA04_F14 |   4 | 002 |   45.7 |
+| LHA_IA04_F14 |   5 | 001 |   45.7 |
+| LHA_IA04_F14 |   5 | 002 |   45.7 |
+| LHA_IA04_F14 |   6 | 001 |   45.7 |
+| LHA_IA04_F14 |   6 | 002 |   45.7 |
+| LHA_IA04_F14 |   7 | 001 |   45.7 |
+| LHA_IA04_F14 |   7 | 002 |   45.7 |
+| LHA_IA04_F14 |   8 | 001 |   45.7 |
+| LHA_IA04_F14 |   8 | 002 |   45.7 |
+| LHA_IA04_F14 |   9 | 001 |   45.7 |
+| LHA_IA04_F14 |   9 | 002 |   45.7 |
+| LHA_IA04_F14 |  10 | 001 |   45.7 |
+| LHA_IA04_F14 |  10 | 002 |   45.7 |
+| LHA_IA04_F14 |  11 | 001 |   45.7 |
+| LHA_IA04_F14 |  11 | 002 |   45.7 |
+| LHA_IA04_F14 |  12 | 001 |   45.7 |
+| LHA_IA04_F14 |  12 | 002 |   45.7 |
+| LHA_IA04_F14 |  13 | 001 |   45.7 |
+| LHA_IA04_F14 |  13 | 002 |   45.7 |
+| LHA_IA04_F14 |  14 | 001 |   45.7 |
+| LHA_IA04_F14 |  14 | 002 |   45.7 |
+| LHA_IA04_F14 |  15 | 001 |   45.7 |
+| LHA_IA04_F14 |  15 | 002 |   45.7 |
+| LHA_IA04_F14 |  16 | 001 |   45.7 |
+| LHA_IA04_F14 |  16 | 002 |   45.7 |
+| LHA_IA04_F14 |  17 | 001 |   45.7 |
+| LHA_IA04_F14 |  17 | 002 |   45.7 |
+| LHA_IA04_F14 |  18 | 001 |   45.7 |
+| LHA_IA04_F14 |  18 | 002 |   45.7 |
+| LHA_IA04_F14 |  19 | 001 |   45.7 |
+| LHA_IA04_F14 |  19 | 002 |   45.7 |
+| LHA_IA04_F14 |  20 | 001 |   45.7 |
+| LHA_IA04_F14 |  20 | 002 |   45.7 |
+| LHA_IA04_F14 |  21 | 001 |   45.7 |
+| LHA_IA04_F14 |  21 | 002 |   45.7 |
+| LHA_IA04_F14 |  22 | 001 |   45.7 |
+| LHA_IA04_F14 |  22 | 002 |   45.7 |
+| LHA_IA04_F14 |  23 | 001 |   45.7 |
+| LHA_IA04_F14 |  23 | 002 |   45.7 |
+| LHA_IA04_F14 |  24 | 001 |   45.7 |
+| LHA_IA04_F14 |  24 | 002 |   45.7 |
+| LHA_IA04_F14 |  25 | 001 |   45.7 |
+| LHA_IA04_F14 |  25 | 002 |   45.7 |
+| LHA_IA04_F14 |  26 | 001 |   45.7 |
+| LHA_IA04_F14 |  26 | 002 |   45.7 |
+| LHA_IA04_F14 |  27 | 001 |   45.7 |
+| LHA_IA04_F14 |  27 | 002 |   45.7 |
+| LHA_IA04_F14 |  28 | 001 |   45.7 |
+| LHA_IA04_F14 |  28 | 002 |   45.7 |
+| LHA_IA04_F14 |  29 | 001 |   45.7 |
+| LHA_IA04_F14 |  29 | 002 |   45.7 |
+| LHA_IA04_F14 |  30 | 001 |   45.7 |
+| LHA_IA04_F14 |  30 | 002 |   45.7 |
+| LHA_IA04_F14 |  31 | 001 |   45.7 |
+| LHA_IA04_F14 |  31 | 002 |   45.7 |
+| LHA_IA04_F14 |  32 | 001 |   45.7 |
+| LHA_IA04_F14 |  32 | 002 |   45.7 |
+| LHA_IA04_F14 |  33 | 001 |   45.7 |
+| LHA_IA04_F14 |  33 | 002 |   45.7 |
+| LHA_IA04_F14 |  34 | 001 |   45.7 |
+| LHA_IA04_F14 |  34 | 002 |   45.7 |
+| LHA_IA04_F14 |  35 | 001 |   45.7 |
+| LHA_IA04_F14 |  35 | 002 |   45.7 |
+| LHA_IA04_F14 |  36 | 001 |   45.7 |
+| LHA_IA04_F14 |  36 | 002 |   45.7 |
+| LHA_IA04_F14 |  37 | 001 |   45.7 |
+| LHA_IA04_F14 |  37 | 002 |   45.7 |
+| LHA_IA04_F14 |  38 | 001 |   45.7 |
+| LHA_IA04_F14 |  38 | 002 |   45.7 |
+| LHA_IA04_F14 |  39 | 001 |   45.7 |
+| LHA_IA04_F14 |  39 | 002 |   45.7 |
+| LHA_IA04_F14 |  40 | 001 |   45.7 |
+| LHA_IA04_F14 |  40 | 002 |   45.7 |
+| LHA_IA04_F14 |  41 | 001 |   45.7 |
+| LHA_IA04_F14 |  41 | 002 |   45.7 |
+| LHA_IA04_F14 |  42 | 001 |   45.7 |
+| LHA_IA04_F14 |  42 | 002 |   45.7 |
+| LHA_IA04_F14 |  43 | 001 |   45.7 |
+| LHA_IA04_F14 |  43 | 002 |   45.7 |
+| LHA_IA04_F14 |  44 | 001 |   45.7 |
+| LHA_IA04_F14 |  44 | 002 |   45.7 |
+| LHA_IA04_F14 |  45 | 001 |   45.7 |
+| LHA_IA04_F14 |  45 | 002 |   45.7 |
+| LHA_IA04_F14 |  46 | 001 |   45.7 |
+| LHA_IA04_F14 |  46 | 002 |   45.7 |
+| LHA_IA04_F14 |  47 | 001 |   45.7 |
+| LHA_IA04_F14 |  47 | 002 |   45.7 |
+| LHA_IA04_F14 |  48 | 001 |   45.7 |
+| LHA_IA04_F14 |  48 | 002 |   45.7 |
+| LHA_IA04_F14 |  49 | 001 |   45.7 |
+| LHA_IA04_F14 |  49 | 002 |   45.7 |
+| LHA_IA04_F14 |  50 | 001 |   45.7 |
+| LHA_IA04_F14 |  50 | 002 |   45.7 |
+| LHA_IA04_F14 |  51 | 001 |   45.7 |
+| LHA_IA04_F14 |  51 | 002 |   45.7 |
+| LHA_IA04_F14 |  52 | 001 |   45.7 |
+| LHA_IA04_F14 |  52 | 002 |   45.7 |
+| LHA_IA12_119 |   1 |   1 |   45.7 |
+| LHA_IA12_119 |   1 |   2 |   45.7 |
+| LHA_IA12_119 |   2 |   1 |   45.7 |
+| LHA_IA12_119 |   2 |   2 |   45.7 |
+| LHA_IA12_119 |   3 |   1 |   45.7 |
+| LHA_IA12_119 |   3 |   2 |   45.7 |
+| LHA_IA12_119 |   4 |   1 |   45.7 |
+| LHA_IA12_119 |   4 |   2 |   45.7 |
+| LHA_IA12_119 |   5 |   1 |   45.7 |
+| LHA_IA12_119 |   5 |   2 |   45.7 |
+| LHA_IA12_119 |   6 |   1 |   45.7 |
+| LHA_IA12_119 |   6 |   2 |   45.7 |
+| LHA_IA12_119 |   7 |   1 |   45.7 |
+| LHA_IA12_119 |   7 |   2 |   45.7 |
+| LHA_IA12_119 |   8 |   1 |   45.7 |
+| LHA_IA12_119 |   8 |   2 |   45.7 |
+| LHA_IA12_119 |   9 |   1 |   45.7 |
+| LHA_IA12_119 |   9 |   2 |   45.7 |
+| LHA_IA12_119 |  10 |   1 |   45.7 |
+| LHA_IA12_119 |  10 |   2 |   45.7 |
+| LHA_IA12_119 |  11 |   1 |   45.7 |
+| LHA_IA12_119 |  11 |   2 |   45.7 |
+| LHA_IA12_119 |  12 |   1 |   45.7 |
+| LHA_IA12_119 |  12 |   2 |   45.7 |
+| LHA_IA12_119 |  13 |   1 |   45.7 |
+| LHA_IA12_119 |  13 |   2 |   45.7 |
+| LHA_IA12_119 |  14 |   1 |   45.7 |
+| LHA_IA12_119 |  14 |   2 |   45.7 |
+| LHA_IA12_119 |  15 |   1 |   45.7 |
+| LHA_IA12_119 |  15 |   2 |   45.7 |
+| LHA_IA12_119 |  16 |   1 |   45.7 |
+| LHA_IA12_119 |  16 |   2 |   45.7 |
+| LHA_IA12_119 |  17 |   1 |   45.7 |
+| LHA_IA12_119 |  17 |   2 |   45.7 |
+| LHA_IA12_119 |  18 |   1 |   45.7 |
+| LHA_IA12_119 |  18 |   2 |   45.7 |
+| LHA_IA12_119 |  19 |   1 |   45.7 |
+| LHA_IA12_119 |  19 |   2 |   45.7 |
+| LHA_IA12_119 |  20 |   1 |   45.7 |
+| LHA_IA12_119 |  20 |   2 |   45.7 |
+| LHA_IA12_119 |  21 |   1 |   45.7 |
+| LHA_IA12_119 |  21 |   2 |   45.7 |
+| LHA_IA12_119 |  22 |   1 |   45.7 |
+| LHA_IA12_119 |  22 |   2 |   45.7 |
+| LHA_IA12_119 |  23 |   1 |   45.7 |
+| LHA_IA12_119 |  23 |   2 |   45.7 |
+| LHA_IA12_119 |  24 |   1 |   45.7 |
+| LHA_IA12_119 |  24 |   2 |   45.7 |
+| LHA_IA12_119 |  25 |   1 |   45.7 |
+| LHA_IA12_119 |  25 |   2 |   45.7 |
+| LHA_IA12_119 |  26 |   1 |   45.7 |
+| LHA_IA12_119 |  26 |   2 |   45.7 |
+| LHA_IA12_119 |  27 |   1 |   45.7 |
+| LHA_IA12_119 |  27 |   2 |   45.7 |
+| LHA_IA12_119 |  28 |   1 |   45.7 |
+| LHA_IA12_119 |  28 |   2 |   45.7 |
+| LHA_IA12_119 |  29 |   1 |   45.7 |
+| LHA_IA12_119 |  29 |   2 |   45.7 |
+| LHA_IA12_119 |  30 |   1 |   45.7 |
+| LHA_IA12_119 |  30 |   2 |   45.7 |
+| LHA_IA12_119 |  31 |   1 |   45.7 |
+| LHA_IA12_119 |  31 |   2 |   45.7 |
+| LHA_IA12_119 |  32 |   1 |   45.7 |
+| LHA_IA12_119 |  32 |   2 |   45.7 |
+| LHA_IA12_119 |  33 |   1 |   45.7 |
+| LHA_IA12_119 |  33 |   2 |   45.7 |
+| LHA_IA12_119 |  34 |   1 |   45.7 |
+| LHA_IA12_119 |  34 |   2 |   45.7 |
+| LHA_IA12_119 |  35 |   1 |   45.7 |
+| LHA_IA12_119 |  35 |   2 |   45.7 |
+| LHA_IA12_119 |  36 |   1 |   45.7 |
+| LHA_IA12_119 |  36 |   2 |   45.7 |
+| LHA_IA12_119 |  37 |   1 |   45.7 |
+| LHA_IA12_119 |  37 |   2 |   45.7 |
+| LHA_IA12_119 |  38 |   1 |   45.7 |
+| LHA_IA12_119 |  38 |   2 |   45.7 |
+| LHA_IA12_119 |  39 |   1 |   45.7 |
+| LHA_IA12_119 |  39 |   2 |   45.7 |
+| LHA_IA12_119 |  40 |   1 |   45.7 |
+| LHA_IA12_119 |  40 |   2 |   45.7 |
+| LHA_IA12_119 |  41 |   1 |   45.7 |
+| LHA_IA12_119 |  41 |   2 |   45.7 |
+| LHA_IA12_119 |  42 |   1 |   45.7 |
+| LHA_IA12_119 |  42 |   2 |   45.7 |
+| LHA_IA12_119 |  43 |   1 |   45.7 |
+| LHA_IA12_119 |  43 |   2 |   45.7 |
+| LHA_IA12_119 |  44 |   1 |   45.7 |
+| LHA_IA12_119 |  44 |   2 |   45.7 |
+| LHA_IA12_119 |  45 |   1 |   45.7 |
+| LHA_IA12_119 |  45 |   2 |   45.7 |
+| LHA_IA12_119 |  46 |   1 |   45.7 |
+| LHA_IA12_119 |  46 |   2 |   45.7 |
+| LHA_IA12_119 |  47 |   1 |   45.7 |
+| LHA_IA12_119 |  47 |   2 |   45.7 |
+| LHA_IA13_119 |   1 |   1 |   45.7 |
+| LHA_IA13_119 |   1 |   2 |   45.7 |
+| LHA_IA13_119 |   2 |   1 |   45.7 |
+| LHA_IA13_119 |   2 |   2 |   45.7 |
+| LHA_IA13_119 |   3 |   1 |   45.7 |
+| LHA_IA13_119 |   3 |   2 |   45.7 |
+| LHA_IA13_119 |   4 |   1 |   45.7 |
+| LHA_IA13_119 |   4 |   2 |   45.7 |
+| LHA_IA13_119 |   5 |   1 |   45.7 |
+| LHA_IA13_119 |   5 |   2 |   45.7 |
+| LHA_IA13_119 |   6 |   1 |   45.7 |
+| LHA_IA13_119 |   6 |   2 |   45.7 |
+| LHA_IA13_119 |   7 |   1 |   45.7 |
+| LHA_IA13_119 |   7 |   2 |   45.7 |
+| LHA_IA13_119 |   8 |   1 |   45.7 |
+| LHA_IA13_119 |   8 |   2 |   45.7 |
+| LHA_IA13_119 |   9 |   1 |   45.7 |
+| LHA_IA13_119 |   9 |   2 |   45.7 |
+| LHA_IA13_119 |  10 |   1 |   45.7 |
+| LHA_IA13_119 |  10 |   2 |   45.7 |
+| LHA_IA13_119 |  11 |   1 |   45.7 |
+| LHA_IA13_119 |  11 |   2 |   45.7 |
+| LHA_IA13_119 |  12 |   1 |   45.7 |
+| LHA_IA13_119 |  12 |   2 |   45.7 |
+| LHA_IA13_119 |  13 |   1 |   45.7 |
+| LHA_IA13_119 |  13 |   2 |   45.7 |
+| LHA_IA13_119 |  14 |   1 |   45.7 |
+| LHA_IA13_119 |  14 |   2 |   45.7 |
+| LHA_IA13_119 |  15 |   1 |   45.7 |
+| LHA_IA13_119 |  15 |   2 |   45.7 |
+| LHA_IA13_119 |  16 |   1 |   45.7 |
+| LHA_IA13_119 |  16 |   2 |   45.7 |
+| LHA_IA13_119 |  17 |   1 |   45.7 |
+| LHA_IA13_119 |  17 |   2 |   45.7 |
+| LHA_IA13_119 |  18 |   1 |   45.7 |
+| LHA_IA13_119 |  18 |   2 |   45.7 |
+| LHA_IA13_119 |  19 |   1 |   45.7 |
+| LHA_IA13_119 |  19 |   2 |   45.7 |
+| LHA_IA13_119 |  20 |   1 |   45.7 |
+| LHA_IA13_119 |  20 |   2 |   45.7 |
+| LHA_IA13_119 |  21 |   1 |   45.7 |
+| LHA_IA13_119 |  21 |   2 |   45.7 |
+| LHA_IA13_119 |  22 |   1 |   45.7 |
+| LHA_IA13_119 |  22 |   2 |   45.7 |
+| LHA_IA13_119 |  23 |   1 |   45.7 |
+| LHA_IA13_119 |  23 |   2 |   45.7 |
+| LHA_IA13_119 |  24 |   1 |   45.7 |
+| LHA_IA13_119 |  24 |   2 |   45.7 |
+| LHA_IA13_119 |  25 |   1 |   45.7 |
+| LHA_IA13_119 |  25 |   2 |   45.7 |
+| LHA_IA13_119 |  26 |   1 |   45.7 |
+| LHA_IA13_119 |  26 |   2 |   45.7 |
+| LHA_IA13_119 |  27 |   1 |   45.7 |
+| LHA_IA13_119 |  27 |   2 |   45.7 |
+| LHA_IA13_119 |  28 |   1 |   45.7 |
+| LHA_IA13_119 |  28 |   2 |   45.7 |
+| LHA_IA13_119 |  29 |   1 |   45.7 |
+| LHA_IA13_119 |  29 |   2 |   45.7 |
+| LHA_IA13_119 |  30 |   1 |   45.7 |
+| LHA_IA13_119 |  30 |   2 |   45.7 |
+| LHA_IA13_119 |  31 |   1 |   45.7 |
+| LHA_IA13_119 |  31 |   2 |   45.7 |
+| LHA_IA13_119 |  32 |   1 |   45.7 |
+| LHA_IA13_119 |  32 |   2 |   45.7 |
+| LHA_IA13_119 |  33 |   1 |   45.7 |
+| LHA_IA13_119 |  33 |   2 |   45.7 |
+| LHA_IA13_119 |  34 |   1 |   45.7 |
+| LHA_IA13_119 |  34 |   2 |   45.7 |
+| LHA_IA13_119 |  35 |   1 |   45.7 |
+| LHA_IA13_119 |  35 |   2 |   45.7 |
+| LHA_IA13_119 |  36 |   1 |   45.7 |
+| LHA_IA13_119 |  36 |   2 |   45.7 |
+| LHA_IA13_119 |  37 |   1 |   45.7 |
+| LHA_IA13_119 |  37 |   2 |   45.7 |
+| LHA_IA13_119 |  38 |   1 |   45.7 |
+| LHA_IA13_119 |  38 |   2 |   45.7 |
+| LHA_IA13_119 |  39 |   1 |   45.7 |
+| LHA_IA13_119 |  39 |   2 |   45.7 |
+| LHA_IA13_119 |  40 |   1 |   45.7 |
+| LHA_IA13_119 |  40 |   2 |   45.7 |
+| LHA_IA13_119 |  41 |   1 |   45.7 |
+| LHA_IA13_119 |  41 |   2 |   45.7 |
+| LHA_IA13_119 |  42 |   1 |   45.7 |
+| LHA_IA13_119 |  42 |   2 |   45.7 |
+| LHA_IA13_119 |  43 |   1 |   45.7 |
+| LHA_IA13_119 |  43 |   2 |   45.7 |
+| LHA_IA13_119 |  44 |   1 |   45.7 |
+| LHA_IA13_119 |  44 |   2 |   45.7 |
+| LHA_IA13_119 |  45 |   1 |   45.7 |
+| LHA_IA13_119 |  45 |   2 |   45.7 |
+| LHA_IA13_119 |  46 |   1 |   45.7 |
+| LHA_IA13_119 |  46 |   2 |   45.7 |
+| LHA_IA13_119 |  47 |   1 |   45.7 |
+| LHA_IA13_119 |  47 |   2 |   45.7 |
+| LHA_IA13_119 |  48 |   1 |   45.7 |
+| LHA_IA13_119 |  48 |   2 |   45.7 |
+| LHA_IA13_119 |  49 |   1 |   45.7 |
+| LHA_IA13_119 |  49 |   2 |   45.7 |
+| LHA_IA13_119 |  50 |   1 |   45.7 |
+| LHA_IA13_119 |  50 |   2 |   45.7 |
+| LHA_IA13_119 |  51 |   1 |   45.7 |
+| LHA_IA13_119 |  51 |   2 |   45.7 |
+| LHA_IA13_119 |  52 |   1 |   45.7 |
+| LHA_IA13_119 |  52 |   2 |   45.7 |
+| LHA_IA13_119 |  53 |   1 |   45.7 |
+| LHA_IA13_119 |  53 |   2 |   45.7 |
+| LHA_IA13_119 |  54 |   1 |   45.7 |
+| LHA_IA13_119 |  54 |   2 |   45.7 |
+| LHA_IA13_119 |  55 |   1 |   45.7 |
+| LHA_IA13_119 |  55 |   2 |   45.7 |
+| LHA_IA13_119 |  56 |   1 |   45.7 |
+| LHA_IA13_119 |  56 |   2 |   45.7 |
+| LHA_IA13_119 |  57 |   1 |   45.7 |
+| LHA_IA13_119 |  57 |   2 |   45.7 |
+| LHA_IA13_119 |  58 |   1 |   45.7 |
+| LHA_IA13_119 |  58 |   2 |   45.7 |
+| LHA_IA13_119 |  59 |   1 |   45.7 |
+| LHA_IA13_119 |  59 |   2 |   45.7 |
+| LHA_IA13_119 |  60 |   1 |   45.7 |
+| LHA_IA13_119 |  60 |   2 |   45.7 |
+| LHA_IA13_119 |  61 |   1 |   45.7 |
+| LHA_IA13_119 |  61 |   2 |   45.7 |
+| LHA_IA13_119 |  62 |   1 |   45.7 |
+| LHA_IA13_119 |  62 |   2 |   45.7 |
+| LHA_IA13_119 |  63 |   1 |   45.7 |
+| LHA_IA13_119 |  63 |   2 |   45.7 |
+| LHA_IA13_119 |  64 |   1 |   45.7 |
+| LHA_IA13_119 |  64 |   2 |   45.7 |
+| LHA_IA13_119 |  65 |   1 |   45.7 |
+| LHA_IA13_119 |  65 |   2 |   45.7 |
+| LHA_IA13_119 |  66 |   1 |   45.7 |
+| LHA_IA13_119 |  66 |   2 |   45.7 |
+| LHA_IA13_119 |  67 |   1 |   45.7 |
+| LHA_IA13_119 |  67 |   2 |   45.7 |
+| LHA_IA13_119 |  68 |   1 |   45.7 |
+| LHA_IA13_119 |  68 |   2 |   45.7 |
+| LHA_IA13_119 |  69 |   1 |   45.7 |
+| LHA_IA13_119 |  69 |   2 |   45.7 |
+| LHA_IA13_119 |  70 |   1 |   45.7 |
+| LHA_IA13_119 |  70 |   2 |   45.7 |
+| LHA_IA13_119 |  71 |   1 |   45.7 |
+| LHA_IA13_119 |  71 |   2 |   45.7 |
+| LHA_IA13_119 |  72 |   1 |   45.7 |
+| LHA_IA13_119 |  72 |   2 |   45.7 |
+| LHA_IA13_119 |  73 |   1 |   45.7 |
+| LHA_IA13_119 |  73 |   2 |   45.7 |
+| LHA_IA13_119 |  74 |   1 |   45.7 |
+| LHA_IA13_119 |  74 |   2 |   45.7 |
+| LHA_IA13_119 |  75 |   1 |   45.7 |
+| LHA_IA13_119 |  75 |   2 |   45.7 |
+| LHA_IA13_119 |  76 |   1 |   45.7 |
+| LHA_IA13_119 |  76 |   2 |   45.7 |
+| LHA_IA13_119 |  77 |   1 |   45.7 |
+| LHA_IA13_119 |  77 |   2 |   45.7 |
+| LHA_IA13_119 |  78 |   1 |   45.7 |
+| LHA_IA13_119 |  78 |   2 |   45.7 |
+| LHA_IA13_119 |  79 |   1 |   45.7 |
+| LHA_IA13_119 |  79 |   2 |   45.7 |
+| LHA_IA13_119 |  80 |   1 |   45.7 |
+| LHA_IA13_119 |  80 |   2 |   45.7 |
+| LHA_IA13_119 |  81 |   1 |   45.7 |
+| LHA_IA13_119 |  81 |   2 |   45.7 |
+| LHA_IA13_119 |  82 |   1 |   45.7 |
+| LHA_IA13_119 |  82 |   2 |   45.7 |
+| LHA_IA13_119 |  83 |   1 |   45.7 |
+| LHA_IA13_119 |  83 |   2 |   45.7 |
+| LHA_IA13_119 |  84 |   1 |   45.7 |
+| LHA_IA13_119 |  84 |   2 |   45.7 |
+| LHA_IA13_119 |  85 |   1 |   45.7 |
+| LHA_IA13_119 |  85 |   2 |   45.7 |
+| LHA_IA13_119 |  86 |   1 |   45.7 |
+| LHA_IA13_119 |  86 |   2 |   45.7 |
+| LHA_IA13_119 |  87 |   1 |   45.7 |
+| LHA_IA13_119 |  87 |   2 |   45.7 |
+| LHA_IA13_119 |  88 |   1 |   45.7 |
+| LHA_IA13_119 |  88 |   2 |   45.7 |
+| LHA_IA13_119 |  89 |   1 |   45.7 |
+| LHA_IA13_119 |  89 |   2 |   45.7 |
+| LHA_IA13_119 |  90 |   1 |   45.7 |
+| LHA_IA13_119 |  90 |   2 |   45.7 |
+| LHA_IA13_119 |  91 |   1 |   45.7 |
+| LHA_IA13_119 |  91 |   2 |   45.7 |
+| LHA_IA13_119 |  92 |   1 |   45.7 |
+| LHA_IA13_119 |  92 |   2 |   45.7 |
+| LHA_IA13_119 |  93 |   1 |   45.7 |
+| LHA_IA13_119 |  93 |   2 |   45.7 |
+| LHA_IA13_119 |  94 |   1 |   45.7 |
+| LHA_IA13_119 |  94 |   2 |   45.7 |
+| LHA_IA13_119 |  95 |   1 |   45.7 |
+| LHA_IA13_119 |  95 |   2 |   45.7 |
+| LHA_IA13_119 |  96 |   1 |   45.7 |
+| LHA_IA13_119 |  96 |   2 |   45.7 |
+| LHA_IA14_18F |   1 | 001 |   45.7 |
+| LHA_IA14_18F |   1 | 002 |   45.7 |
+| LHA_IA14_18F |   2 | 001 |   45.7 |
+| LHA_IA14_18F |   2 | 002 |   45.7 |
+| LHA_IA14_18F |   3 | 001 |   45.7 |
+| LHA_IA14_18F |   3 | 002 |   45.7 |
+| LHA_IA14_18F |   4 | 001 |   45.7 |
+| LHA_IA14_18F |   4 | 002 |   45.7 |
+| LHA_IA14_18F |   5 | 001 |   45.7 |
+| LHA_IA14_18F |   5 | 002 |   45.7 |
+| LHA_IA14_18F |   6 | 001 |   45.7 |
+| LHA_IA14_18F |   6 | 002 |   45.7 |
+| LHA_IA14_18F |   7 | 001 |   45.7 |
+| LHA_IA14_18F |   7 | 002 |   45.7 |
+| LHA_IA14_18F |   8 | 001 |   45.7 |
+| LHA_IA14_18F |   8 | 002 |   45.7 |
+| LHA_IA14_18F |   9 | 001 |   45.7 |
+| LHA_IA14_18F |   9 | 002 |   45.7 |
+| LHA_IA14_18F |  11 | 001 |   45.7 |
+| LHA_IA14_18F |  11 | 002 |   45.7 |
+| LHA_IA14_18F |  12 | 001 |   45.7 |
+| LHA_IA14_18F |  12 | 002 |   45.7 |
+| LHA_IA14_18F |  13 | 001 |   45.7 |
+| LHA_IA14_18F |  13 | 002 |   45.7 |
+| LHA_IA14_18F |  14 | 001 |   45.7 |
+| LHA_IA14_18F |  14 | 002 |   45.7 |
+| LHA_IA14_18F |  15 | 001 |   45.7 |
+| LHA_IA14_18F |  15 | 002 |   45.7 |
+| LHA_IA14_18F |  16 | 001 |   45.7 |
+| LHA_IA14_18F |  16 | 002 |   45.7 |
+| LHA_IA14_18F |  17 | 001 |   45.7 |
+| LHA_IA14_18F |  17 | 002 |   45.7 |
+| LHA_IA14_18F |  18 | 001 |   45.7 |
+| LHA_IA14_18F |  18 | 002 |   45.7 |
+| LHA_IA14_18F |  19 | 001 |   45.7 |
+| LHA_IA14_18F |  19 | 002 |   45.7 |
+| LHA_IA14_18F |  20 | 001 |   45.7 |
+| LHA_IA14_18F |  20 | 002 |   45.7 |
+| LHA_IA14_18F |  21 | 001 |   45.7 |
+| LHA_IA14_18F |  21 | 002 |   45.7 |
+| LHA_IA14_18F |  22 | 001 |   45.7 |
+| LHA_IA14_18F |  22 | 002 |   45.7 |
+| LHA_IA14_18F |  23 | 001 |   45.7 |
+| LHA_IA14_18F |  23 | 002 |   45.7 |
+| LHA_IA14_18F |  24 | 001 |   45.7 |
+| LHA_IA14_18F |  24 | 002 |   45.7 |
+| LHA_IA14_18F |  25 | 001 |   45.7 |
+| LHA_IA14_18F |  25 | 002 |   45.7 |
+| LHA_IA14_18F |  26 | 001 |   45.7 |
+| LHA_IA14_18F |  26 | 002 |   45.7 |
+| LHA_IA14_18F |  27 | 001 |   45.7 |
+| LHA_IA14_18F |  27 | 002 |   45.7 |
+| LHA_IA14_18F |  28 | 001 |   45.7 |
+| LHA_IA14_18F |  28 | 002 |   45.7 |
+| LHA_IA14_18F |  29 | 001 |   45.7 |
+| LHA_IA14_18F |  29 | 002 |   45.7 |
+| LHA_IA14_18F |  30 | 001 |   45.7 |
+| LHA_IA14_18F |  30 | 002 |   45.7 |
+| LHA_IA14_18F |  31 | 001 |   45.7 |
+| LHA_IA14_18F |  31 | 002 |   45.7 |
+| LHA_IA14_18F |  32 | 001 |   45.7 |
+| LHA_IA14_18F |  32 | 002 |   45.7 |
+| LHA_IA14_18F |  33 | 001 |   45.7 |
+| LHA_IA14_18F |  33 | 002 |   45.7 |
+| LHA_IA14_18F |  34 | 001 |   45.7 |
+| LHA_IA14_18F |  34 | 002 |   45.7 |
+| LHA_IA14_18F |  35 | 001 |   45.7 |
+| LHA_IA14_18F |  35 | 002 |   45.7 |
+| LHA_IA14_18F |  36 | 001 |   45.7 |
+| LHA_IA14_18F |  36 | 002 |   45.7 |
+| LHA_IA14_18F |  37 | 001 |   45.7 |
+| LHA_IA14_18F |  37 | 002 |   45.7 |
+| LHA_IA14_18F |  38 | 001 |   45.7 |
+| LHA_IA14_18F |  38 | 002 |   45.7 |
+| LHA_IA14_18F |  39 | 001 |   45.7 |
+| LHA_IA14_18F |  39 | 002 |   45.7 |
+| LHA_IA14_18F |  40 | 001 |   45.7 |
+| LHA_IA14_18F |  40 | 002 |   45.7 |
+| LHA_IA14_18F |  41 | 001 |   45.7 |
+| LHA_IA14_18F |  41 | 002 |   45.7 |
+| LHA_IA14_18F |  42 | 001 |   45.7 |
+| LHA_IA14_18F |  42 | 002 |   45.7 |
+| LHA_IA14_18F |  43 | 001 |   45.7 |
+| LHA_IA14_18F |  43 | 002 |   45.7 |
+| LHA_IA14_18F |  44 | 001 |   45.7 |
+| LHA_IA14_18F |  44 | 002 |   45.7 |
+| LHA_IA14_18F |  45 | 001 |   45.7 |
+| LHA_IA14_18F |  45 | 002 |   45.7 |
+| LHA_IA14_18F |  46 | 001 |   45.7 |
+| LHA_IA14_18F |  46 | 002 |   45.7 |
+| LHA_IA14_18F |  47 | 001 |   45.7 |
+| LHA_IA14_18F |  47 | 002 |   45.7 |
+| LHA_IA14_18F |  48 | 001 |   45.7 |
+| LHA_IA14_18F |  48 | 002 |   45.7 |
+| LHA_IA14_18F |  49 | 001 |   45.7 |
+| LHA_IA14_18F |  49 | 002 |   45.7 |
+| LHA_IA14_18F |  50 | 001 |   45.7 |
+| LHA_IA14_18F |  50 | 002 |   45.7 |
+| LHA_IA14_18F |  51 | 001 |   45.7 |
+| LHA_IA14_18F |  51 | 002 |   45.7 |
+| LHA_IA14_18F |  52 | 001 |   45.7 |
+| LHA_IA14_18F |  52 | 002 |   45.7 |
+| LHA_IA14_18F |  53 | 001 |   45.7 |
+| LHA_IA14_18F |  53 | 002 |   45.7 |
+| LHA_IA14_18F |  54 | 001 |   45.7 |
+| LHA_IA14_18F |  54 | 002 |   45.7 |
+| LHA_IA14_18F |  55 | 001 |   45.7 |
+| LHA_IA14_18F |  55 | 002 |   45.7 |
+| LHA_IA14_18F |  56 | 001 |   45.7 |
+| LHA_IA14_18F |  56 | 002 |   45.7 |
+| LHA_IA14_18F |  57 | 001 |   45.7 |
+| LHA_IA14_18F |  57 | 002 |   45.7 |
+| LHA_IA14_18F |  58 | 001 |   45.7 |
+| LHA_IA14_18F |  58 | 002 |   45.7 |
+| LHA_IA14_18F |  59 | 001 |   45.7 |
+| LHA_IA14_18F |  59 | 002 |   45.7 |
+| LHA_IA14_18F |  60 | 001 |   45.7 |
+| LHA_IA14_18F |  60 | 002 |   45.7 |
+| LHA_IA14_18F |  61 | 001 |   45.7 |
+| LHA_IA14_18F |  61 | 002 |   45.7 |
+| LHA_IA14_18F |  62 | 001 |   45.7 |
+| LHA_IA14_18F |  62 | 002 |   45.7 |
+| LHA_IA14_18F |  63 | 001 |   45.7 |
+| LHA_IA14_18F |  63 | 002 |   45.7 |
+| LHA_IA14_18F |  64 | 001 |   45.7 |
+| LHA_IA14_18F |  64 | 002 |   45.7 |
+| LHA_IA14_18F |  65 | 001 |   45.7 |
+| LHA_IA14_18F |  65 | 002 |   45.7 |
+| LHA_IA14_18F |  66 | 001 |   45.7 |
+| LHA_IA14_18F |  66 | 002 |   45.7 |
+| LHA_IA14_18F |  67 | 001 |   45.7 |
+| LHA_IA14_18F |  67 | 002 |   45.7 |
+| LHA_IA15_18F |   1 | 001 |   45.7 |
+| LHA_IA15_18F |   1 | 002 |   45.7 |
+| LHA_IA15_18F |   2 | 001 |   45.7 |
+| LHA_IA15_18F |   2 | 002 |   45.7 |
+| LHA_IA15_18F |   3 | 001 |   45.7 |
+| LHA_IA15_18F |   3 | 002 |   45.7 |
+| LHA_IA15_18F |   4 | 001 |   45.7 |
+| LHA_IA15_18F |   4 | 002 |   45.7 |
+| LHA_IA15_18F |   5 | 001 |   45.7 |
+| LHA_IA15_18F |   5 | 002 |   45.7 |
+| LHA_IA15_18F |   6 | 001 |   45.7 |
+| LHA_IA15_18F |   6 | 002 |   45.7 |
+| LHA_IA15_18F |   7 | 001 |   45.7 |
+| LHA_IA15_18F |   7 | 002 |   45.7 |
+| LHA_IA15_18F |   8 | 001 |   45.7 |
+| LHA_IA15_18F |   8 | 002 |   45.7 |
+| LHA_IA15_18F |   9 | 001 |   45.7 |
+| LHA_IA15_18F |   9 | 002 |   45.7 |
+| LHA_IA15_18F |  10 | 001 |   45.7 |
+| LHA_IA15_18F |  10 | 002 |   45.7 |
+| LHA_IA15_18F |  11 | 001 |   45.7 |
+| LHA_IA15_18F |  11 | 002 |   45.7 |
+| LHA_IA15_18F |  12 | 001 |   45.7 |
+| LHA_IA15_18F |  12 | 002 |   45.7 |
+| LHA_IA15_18F |  13 | 001 |   45.7 |
+| LHA_IA15_18F |  13 | 002 |   45.7 |
+| LHA_IA15_18F |  14 | 001 |   45.7 |
+| LHA_IA15_18F |  14 | 002 |   45.7 |
+| LHA_IA15_18F |  15 | 001 |   45.7 |
+| LHA_IA15_18F |  15 | 002 |   45.7 |
+| LHA_IA15_18F |  16 | 001 |   45.7 |
+| LHA_IA15_18F |  16 | 002 |   45.7 |
+| LHA_IA15_18F |  17 | 001 |   45.7 |
+| LHA_IA15_18F |  17 | 002 |   45.7 |
+| LHA_IA15_18F |  18 | 001 |   45.7 |
+| LHA_IA15_18F |  18 | 002 |   45.7 |
+| LHA_IA15_18F |  19 | 001 |   45.7 |
+| LHA_IA15_18F |  19 | 002 |   45.7 |
+| LHA_IA15_18F |  20 | 001 |   45.7 |
+| LHA_IA15_18F |  20 | 002 |   45.7 |
+| LHA_IA15_18F |  21 | 001 |   45.7 |
+| LHA_IA15_18F |  21 | 002 |   45.7 |
+| LHA_IA15_18F |  22 | 001 |   45.7 |
+| LHA_IA15_18F |  22 | 002 |   45.7 |
+| LHA_IA15_18F |  23 | 001 |   45.7 |
+| LHA_IA15_18F |  23 | 002 |   45.7 |
+| LHA_IA15_18F |  24 | 001 |   45.7 |
+| LHA_IA15_18F |  24 | 002 |   45.7 |
+| LHA_IA15_18F |  25 | 001 |   45.7 |
+| LHA_IA15_18F |  25 | 002 |   45.7 |
+| LHA_IA15_18F |  26 | 001 |   45.7 |
+| LHA_IA15_18F |  26 | 002 |   45.7 |
+| LHA_IA15_18F |  27 | 001 |   45.7 |
+| LHA_IA15_18F |  27 | 002 |   45.7 |
+| LHA_IA15_18F |  28 | 001 |   45.7 |
+| LHA_IA15_18F |  28 | 002 |   45.7 |
+| LHA_IA15_18F |  29 | 001 |   45.7 |
+| LHA_IA15_18F |  29 | 002 |   45.7 |
+| LHA_IA15_18F |  30 | 001 |   45.7 |
+| LHA_IA15_18F |  30 | 002 |   45.7 |
+| LHA_IA15_18F |  31 | 001 |   45.7 |
+| LHA_IA15_18F |  31 | 002 |   45.7 |
+| LHA_IA15_18F |  32 | 001 |   45.7 |
+| LHA_IA15_18F |  32 | 002 |   45.7 |
+| LHA_IA15_18F |  33 | 001 |   45.7 |
+| LHA_IA15_18F |  33 | 002 |   45.7 |
+| LHA_IA15_18F |  34 | 001 |   45.7 |
+| LHA_IA15_18F |  34 | 002 |   45.7 |
+| LHA_IA15_18F |  35 | 001 |   45.7 |
+| LHA_IA15_18F |  35 | 002 |   45.7 |
+| LHA_IA15_18F |  36 | 001 |   45.7 |
+| LHA_IA15_18F |  36 | 002 |   45.7 |
+| LHA_IA15_18F |  37 | 001 |   45.7 |
+| LHA_IA15_18F |  37 | 002 |   45.7 |
+| LHA_IA15_18F |  38 | 001 |   45.7 |
+| LHA_IA15_18F |  38 | 002 |   45.7 |
+| LHA_IA15_18F |  39 | 001 |   45.7 |
+| LHA_IA15_18F |  39 | 002 |   45.7 |
+| LHA_IA15_18F |  40 | 001 |   45.7 |
+| LHA_IA15_18F |  40 | 002 |   45.7 |
+| LHA_IA15_18F |  41 | 001 |   45.7 |
+| LHA_IA15_18F |  41 | 002 |   45.7 |
+| LHA_IA15_18F |  42 | 001 |   45.7 |
+| LHA_IA15_18F |  42 | 002 |   45.7 |
+| LHA_IA15_18F |  43 | 001 |   45.7 |
+| LHA_IA15_18F |  43 | 002 |   45.7 |
+| LHA_IA15_18F |  44 | 001 |   45.7 |
+| LHA_IA15_18F |  44 | 002 |   45.7 |
+| LHA_IA15_18F |  45 | 001 |   45.7 |
+| LHA_IA15_18F |  45 | 002 |   45.7 |
+| LHA_IA15_18F |  46 | 001 |   45.7 |
+| LHA_IA15_18F |  46 | 002 |   45.7 |
+| LHA_IA15_18F |  47 | 001 |   45.7 |
+| LHA_IA15_18F |  47 | 002 |   45.7 |
+| LHA_IA15_18F |  48 | 001 |   45.7 |
+| LHA_IA15_18F |  48 | 002 |   45.7 |
+| LHA_IA15_18F |  49 | 001 |   45.7 |
+| LHA_IA15_18F |  49 | 002 |   45.7 |
+| LHA_IA15_18F |  50 | 001 |   45.7 |
+| LHA_IA15_18F |  50 | 002 |   45.7 |
+| LHA_IA15_18F |  51 | 001 |   45.7 |
+| LHA_IA15_18F |  51 | 002 |   45.7 |
+| LHA_IA15_18F |  52 | 001 |   45.7 |
+| LHA_IA15_18F |  52 | 002 |   45.7 |
+| LHA_IA15_18F |  53 | 001 |   45.7 |
+| LHA_IA15_18F |  53 | 002 |   45.7 |
+| LHA_IA15_18F |  54 | 001 |   45.7 |
+| LHA_IA15_18F |  54 | 002 |   45.7 |
+| LHA_IA15_18F |  55 | 001 |   45.7 |
+| LHA_IA15_18F |  55 | 002 |   45.7 |
+| LHA_IA15_18F |  56 | 001 |   45.7 |
+| LHA_IA15_18F |  56 | 002 |   45.7 |
+| LHA_IA15_18F |  57 | 001 |   45.7 |
+| LHA_IA15_18F |  57 | 002 |   45.7 |
+| LHA_IA15_18F |  58 | 001 |   45.7 |
+| LHA_IA15_18F |  58 | 002 |   45.7 |
+| LHA_IA15_18F |  59 | 001 |   45.7 |
+| LHA_IA15_18F |  59 | 002 |   45.7 |
+| LHA_IA15_18F |  60 | 001 |   45.7 |
+| LHA_IA15_18F |  60 | 002 |   45.7 |
+| LHA_IA15_18F |  61 | 001 |   45.7 |
+| LHA_IA15_18F |  61 | 002 |   45.7 |
+| LHA_IA15_18F |  62 | 001 |   45.7 |
+| LHA_IA15_18F |  62 | 002 |   45.7 |
+| LHA_IA15_18F |  63 | 001 |   45.7 |
+| LHA_IA15_18F |  63 | 002 |   45.7 |
+| LHA_IA15_18F |  64 | 001 |   45.7 |
+| LHA_IA15_18F |  64 | 002 |   45.7 |
+| LHA_IA15_18F |  65 | 001 |   45.7 |
+| LHA_IA15_18F |  65 | 002 |   45.7 |
+| LHA_IA15_18F |  66 | 001 |   45.7 |
+| LHA_IA15_18F |  66 | 002 |   45.7 |
+| LHA_IA15_18F |  67 | 001 |   45.7 |
+| LHA_IA15_18F |  67 | 002 |   45.7 |
+| LHA_IA15_18F |  68 | 001 |   45.7 |
+| LHA_IA15_18F |  68 | 002 |   45.7 |
+| LHA_IA15_18F |  69 | 001 |   45.7 |
+| LHA_IA15_18F |  69 | 002 |   45.7 |
+| LHA_IA15_18F |  70 | 001 |   45.7 |
+| LHA_IA15_18F |  70 | 002 |   45.7 |
+| LHA_IA15_18F |  71 | 001 |   45.7 |
+| LHA_IA15_18F |  71 | 002 |   45.7 |
+| LHA_IA15_18F |  72 | 001 |   45.7 |
+| LHA_IA15_18F |  72 | 002 |   45.7 |
+| LHA_IA15_18F |  73 | 001 |   45.7 |
+| LHA_IA15_18F |  73 | 002 |   45.7 |
+| LHA_IA15_18F |  74 | 001 |   45.7 |
+| LHA_IA15_18F |  74 | 002 |   45.7 |
+| LHA_IA15_18F |  75 | 001 |   45.7 |
+| LHA_IA15_18F |  75 | 002 |   45.7 |
+| LHA_IA15_18F |  76 | 001 |   45.7 |
+| LHA_IA15_18F |  76 | 002 |   45.7 |
+| LHA_IA15_18F |  77 | 001 |   45.7 |
+| LHA_IA15_18F |  77 | 002 |   45.7 |
+| LHA_IA15_18F |  78 | 001 |   45.7 |
+| LHA_IA15_18F |  78 | 002 |   45.7 |
+| LHA_IA15_18F |  79 | 001 |   45.7 |
+| LHA_IA15_18F |  79 | 002 |   45.7 |
+| LHA_IA15_18F |  80 | 001 |   45.7 |
+| LHA_IA15_18F |  80 | 002 |   45.7 |
+| LHA_IA15_18F |  81 | 001 |   45.7 |
+| LHA_IA15_18F |  81 | 002 |   45.7 |
+| LHA_IA15_18F |  82 | 001 |   45.7 |
+| LHA_IA15_18F |  82 | 002 |   45.7 |
+| LHA_IA15_18F |  83 | 001 |   45.7 |
+| LHA_IA15_18F |  83 | 002 |   45.7 |
+| LHA_IA15_18F |  84 | 001 |   45.7 |
+| LHA_IA15_18F |  84 | 002 |   45.7 |
+| LHA_IA15_18F |  85 | 001 |   45.7 |
+| LHA_IA15_18F |  85 | 002 |   45.7 |
+| LHA_IA15_18F |  86 | 001 |   45.7 |
+| LHA_IA15_18F |  86 | 002 |   45.7 |
+| LHA_IA15_18F |  87 | 001 |   45.7 |
+| LHA_IA15_18F |  87 | 002 |   45.7 |
+| LHA_IA15_18F |  88 | 001 |   45.7 |
+| LHA_IA15_18F |  88 | 002 |   45.7 |
+| LHA_IA15_18F |  89 | 001 |   45.7 |
+| LHA_IA15_18F |  89 | 002 |   45.7 |
+| LHA_IA15_18F |  90 | 001 |   45.7 |
+| LHA_IA15_18F |  90 | 002 |   45.7 |
+| LHA_IA15_18F |  91 | 001 |   45.7 |
+| LHA_IA15_18F |  91 | 002 |   45.7 |
+| LHA_IA15_18F |  92 | 001 |   45.7 |
+| LHA_IA15_18F |  92 | 002 |   45.7 |
+| LHA_IA15_18F |  93 | 001 |   45.7 |
+| LHA_IA15_18F |  93 | 002 |   45.7 |
+| LHA_IA98_18F |   1 | 001 |   45.7 |
+| LHA_IA98_18F |   1 | 002 |   45.7 |
+| LHA_IA98_18F |   2 | 001 |   45.7 |
+| LHA_IA98_18F |   2 | 002 |   45.7 |
+| LHA_IA98_18F |   3 | 001 |   45.7 |
+| LHA_IA98_18F |   3 | 002 |   45.7 |
+| LHA_IA98_18F |   4 | 001 |   45.7 |
+| LHA_IA98_18F |   4 | 002 |   45.7 |
+| LHA_IA98_18F |   5 | 001 |   45.7 |
+| LHA_IA98_18F |   5 | 002 |   45.7 |
+| LHA_IA98_18F |   6 | 001 |   45.7 |
+| LHA_IA98_18F |   6 | 002 |   45.7 |
+| LHA_IA98_18F |   7 | 001 |   45.7 |
+| LHA_IA98_18F |   7 | 002 |   45.7 |
+| LHA_IA98_18F |   8 | 001 |   45.7 |
+| LHA_IA98_18F |   8 | 002 |   45.7 |
+| LHA_IA98_18F |   9 | 001 |   45.7 |
+| LHA_IA98_18F |   9 | 002 |   45.7 |
+| LHA_IA98_18F |  10 | 001 |   45.7 |
+| LHA_IA98_18F |  10 | 002 |   45.7 |
+| LHA_IA98_18F |  11 | 001 |   45.7 |
+| LHA_IA98_18F |  11 | 002 |   45.7 |
+| LHA_IA98_18F |  12 | 001 |   45.7 |
+| LHA_IA98_18F |  12 | 002 |   45.7 |
+| LHA_IA98_18F |  13 | 001 |   45.7 |
+| LHA_IA98_18F |  13 | 002 |   45.7 |
+| LHA_IA98_18F |  14 | 001 |   45.7 |
+| LHA_IA98_18F |  14 | 002 |   45.7 |
+| LHA_IA98_18F |  15 | 001 |   45.7 |
+| LHA_IA98_18F |  15 | 002 |   45.7 |
+| LHA_IA98_18F |  16 | 001 |   45.7 |
+| LHA_IA98_18F |  16 | 002 |   45.7 |
+| LHA_IA98_18F |  17 | 001 |   45.7 |
+| LHA_IA98_18F |  17 | 002 |   45.7 |
+| LHA_IA98_18F |  18 | 001 |   45.7 |
+| LHA_IA98_18F |  18 | 002 |   45.7 |
+| LHA_IA98_18F |  19 | 001 |   45.7 |
+| LHA_IA98_18F |  19 | 002 |   45.7 |
+| LHA_IA98_18F |  20 | 001 |   45.7 |
+| LHA_IA98_18F |  20 | 002 |   45.7 |
+| LHA_IA98_18F |  21 | 001 |   45.7 |
+| LHA_IA98_18F |  21 | 002 |   45.7 |
+| LHA_IA98_18F |  22 | 001 |   45.7 |
+| LHA_IA98_18F |  22 | 002 |   45.7 |
+| LHA_IA98_18F |  23 | 001 |   45.7 |
+| LHA_IA98_18F |  23 | 002 |   45.7 |
+| LHA_IA98_18F |  24 | 001 |   45.7 |
+| LHA_IA98_18F |  24 | 002 |   45.7 |
+| LHA_IA98_18F |  25 | 001 |   45.7 |
+| LHA_IA98_18F |  25 | 002 |   45.7 |
+| LHA_IA98_18F |  26 | 001 |   45.7 |
+| LHA_IA98_18F |  26 | 002 |   45.7 |
+| LHA_IA98_18F |  27 | 001 |   45.7 |
+| LHA_IA98_18F |  27 | 002 |   45.7 |
+| LHA_IA98_18F |  28 | 001 |   45.7 |
+| LHA_IA98_18F |  28 | 002 |   45.7 |
+| LHA_IA98_18F |  29 | 001 |   45.7 |
+| LHA_IA98_18F |  29 | 002 |   45.7 |
+| LHA_IA98_18F |  30 | 001 |   45.7 |
+| LHA_IA98_18F |  30 | 002 |   45.7 |
+| LHA_IA98_18F |  31 | 001 |   45.7 |
+| LHA_IA98_18F |  31 | 002 |   45.7 |
+| LHA_IA98_18F |  32 | 001 |   45.7 |
+| LHA_IA98_18F |  32 | 002 |   45.7 |
+| LHA_IA98_18F |  33 | 001 |   45.7 |
+| LHA_IA98_18F |  33 | 002 |   45.7 |
+| LHA_IA98_18F |  34 | 001 |   45.7 |
+| LHA_IA98_18F |  34 | 002 |   45.7 |
+| LHA_IA98_18F |  35 | 001 |   45.7 |
+| LHA_IA98_18F |  35 | 002 |   45.7 |
+| LHA_IA98_18F |  36 | 001 |   45.7 |
+| LHA_IA98_18F |  36 | 002 |   45.7 |
+| LHA_IA98_18F |  37 | 001 |   45.7 |
+| LHA_IA98_18F |  37 | 002 |   45.7 |
+| LHA_IA98_18F |  38 | 001 |   45.7 |
+| LHA_IA98_18F |  38 | 002 |   45.7 |
+| LHA_IA98_18F |  39 | 001 |   45.7 |
+| LHA_IA98_18F |  39 | 002 |   45.7 |
+| LHA_IA98_18F |  40 | 001 |   45.7 |
+| LHA_IA98_18F |  40 | 002 |   45.7 |
+| LHA_IA98_18F |  41 | 001 |   45.7 |
+| LHA_IA98_18F |  41 | 002 |   45.7 |
+| LHA_IA98_18F |  42 | 001 |   45.7 |
+| LHA_IA98_18F |  42 | 002 |   45.7 |
+| LHA_IA98_18F |  43 | 001 |   45.7 |
+| LHA_IA98_18F |  43 | 002 |   45.7 |
+| LHA_IA98_18F |  44 | 001 |   45.7 |
+| LHA_IA98_18F |  44 | 002 |   45.7 |
+| LHA_IA98_18F |  45 | 001 |   45.7 |
+| LHA_IA98_18F |  45 | 002 |   45.7 |
+| LHA_IA98_18F |  46 | 001 |   45.7 |
+| LHA_IA98_18F |  46 | 002 |   45.7 |
+| LHA_IA98_18F |  47 | 001 |   45.7 |
+| LHA_IA98_18F |  47 | 002 |   45.7 |
+| LHA_IA98_18F |  48 | 001 |   45.7 |
+| LHA_IA98_18F |  48 | 002 |   45.7 |
+| LHA_IA98_18F |  49 | 001 |   45.7 |
+| LHA_IA98_18F |  49 | 002 |   45.7 |
+| LHA_IA98_18F |  50 | 001 |   45.7 |
+| LHA_IA98_18F |  50 | 002 |   45.7 |
+| LHA_IA98_18F |  51 | 001 |   45.7 |
+| LHA_IA98_18F |  51 | 002 |   45.7 |
+| LHA_IA98_18F |  52 | 001 |   45.7 |
+| LHA_IA98_18F |  52 | 002 |   45.7 |
+| LHA_IA98_18F |  53 | 001 |   45.7 |
+| LHA_IA98_18F |  53 | 002 |   45.7 |
+| LHA_IA98_18F |  54 | 001 |   45.7 |
+| LHA_IA98_18F |  54 | 002 |   45.7 |
+| LHA_IA98_18F |  55 | 001 |   45.7 |
+| LHA_IA98_18F |  55 | 002 |   45.7 |
+| LHA_IA98_18F |  56 | 001 |   45.7 |
+| LHA_IA98_18F |  56 | 002 |   45.7 |
+| LHA_IA98_18F |  57 | 001 |   45.7 |
+| LHA_IA98_18F |  57 | 002 |   45.7 |
+| LHA_IA98_18F |  58 | 001 |   45.7 |
+| LHA_IA98_18F |  58 | 002 |   45.7 |
+| LHA_IA98_18F |  59 | 001 |   45.7 |
+| LHA_IA98_18F |  59 | 002 |   45.7 |
+| LHA_IA98_18F |  60 | 001 |   45.7 |
+| LHA_IA98_18F |  60 | 002 |   45.7 |
+| LHA_IA98_18F |  61 | 001 |   45.7 |
+| LHA_IA98_18F |  61 | 002 |   45.7 |
+| LHA_IA98_18F |  62 | 001 |   45.7 |
+| LHA_IA98_18F |  62 | 002 |   45.7 |
+| LHA_IA98_18F |  63 | 001 |   45.7 |
+| LHA_IA98_18F |  63 | 002 |   45.7 |
+| LHA_IA98_18F |  64 | 001 |   45.7 |
+| LHA_IA98_18F |  64 | 002 |   45.7 |
+| LHA_IA98_18F |  65 | 001 |   45.7 |
+| LHA_IA98_18F |  65 | 002 |   45.7 |
+| LHA_IA98_18F |  66 | 001 |   45.7 |
+| LHA_IA98_18F |  66 | 002 |   45.7 |
+| LHA_IA98_18F |  67 | 001 |   45.7 |
+| LHA_IA98_18F |  67 | 002 |   45.7 |
+| LHA_IA98_18F |  68 | 001 |   45.7 |
+| LHA_IA98_18F |  68 | 002 |   45.7 |
+| LHA_IA98_18F |  69 | 001 |   45.7 |
+| LHA_IA98_18F |  69 | 002 |   45.7 |
+| LHA_IA98_18F |  70 | 001 |   45.7 |
+| LHA_IA98_18F |  70 | 002 |   45.7 |
+| LHA_IA98_18F |  71 | 001 |   45.7 |
+| LHA_IA98_18F |  71 | 002 |   45.7 |
+| LHA_IA98_18F |  72 | 001 |   45.7 |
+| LHA_IA98_18F |  72 | 002 |   45.7 |
+| LHA_IA99_18F |   1 | 001 |   45.7 |
+| LHA_IA99_18F |   1 | 002 |   45.7 |
+| LHA_IA99_18F |   2 | 001 |   45.7 |
+| LHA_IA99_18F |   2 | 002 |   45.7 |
+| LHA_IA99_18F |   3 | 001 |   45.7 |
+| LHA_IA99_18F |   3 | 002 |   45.7 |
+| LHA_IA99_18F |   4 | 001 |   45.7 |
+| LHA_IA99_18F |   4 | 002 |   45.7 |
+| LHA_IA99_18F |   5 | 001 |   45.7 |
+| LHA_IA99_18F |   5 | 002 |   45.7 |
+| LHA_IA99_18F |   6 | 001 |   45.7 |
+| LHA_IA99_18F |   6 | 002 |   45.7 |
+| LHA_IA99_18F |   7 | 001 |   45.7 |
+| LHA_IA99_18F |   7 | 002 |   45.7 |
+| LHA_IA99_18F |   8 | 001 |   45.7 |
+| LHA_IA99_18F |   8 | 002 |   45.7 |
+| LHA_IA99_18F |   9 | 001 |   45.7 |
+| LHA_IA99_18F |   9 | 002 |   45.7 |
+| LHA_IA99_18F |  10 | 001 |   45.7 |
+| LHA_IA99_18F |  10 | 002 |   45.7 |
+| LHA_IA99_18F |  11 | 001 |   45.7 |
+| LHA_IA99_18F |  11 | 002 |   45.7 |
+| LHA_IA99_18F |  12 | 001 |   45.7 |
+| LHA_IA99_18F |  12 | 002 |   45.7 |
+| LHA_IA99_18F |  13 | 001 |   45.7 |
+| LHA_IA99_18F |  13 | 002 |   45.7 |
+| LHA_IA99_18F |  14 | 001 |   45.7 |
+| LHA_IA99_18F |  14 | 002 |   45.7 |
+| LHA_IA99_18F |  15 | 001 |   45.7 |
+| LHA_IA99_18F |  15 | 002 |   45.7 |
+| LHA_IA99_18F |  16 | 001 |   45.7 |
+| LHA_IA99_18F |  16 | 002 |   45.7 |
+| LHA_IA99_18F |  17 | 001 |   45.7 |
+| LHA_IA99_18F |  17 | 002 |   45.7 |
+| LHA_IA99_18F |  18 | 001 |   45.7 |
+| LHA_IA99_18F |  18 | 002 |   45.7 |
+| LHA_IA99_18F |  19 | 001 |   45.7 |
+| LHA_IA99_18F |  19 | 002 |   45.7 |
+| LHA_IA99_18F |  20 | 001 |   45.7 |
+| LHA_IA99_18F |  20 | 002 |   45.7 |
+| LHA_IA99_18F |  21 | 001 |   45.7 |
+| LHA_IA99_18F |  21 | 002 |   45.7 |
+| LHA_IA99_18F |  22 | 001 |   45.7 |
+| LHA_IA99_18F |  22 | 002 |   45.7 |
+| LHA_IA99_18F |  23 | 001 |   45.7 |
+| LHA_IA99_18F |  23 | 002 |   45.7 |
+| LHA_IA99_18F |  24 | 001 |   45.7 |
+| LHA_IA99_18F |  24 | 002 |   45.7 |
+| LHA_IA99_18F |  25 | 001 |   45.7 |
+| LHA_IA99_18F |  25 | 002 |   45.7 |
+| LHA_IA99_18F |  26 | 001 |   45.7 |
+| LHA_IA99_18F |  26 | 002 |   45.7 |
+| LHA_IA99_18F |  27 | 001 |   45.7 |
+| LHA_IA99_18F |  27 | 002 |   45.7 |
+| LHA_IA99_18F |  28 | 001 |   45.7 |
+| LHA_IA99_18F |  28 | 002 |   45.7 |
+| LHA_IA99_18F |  29 | 001 |   45.7 |
+| LHA_IA99_18F |  29 | 002 |   45.7 |
+| LHA_IA99_18F |  30 | 001 |   45.7 |
+| LHA_IA99_18F |  30 | 002 |   45.7 |
+| LHA_IA99_18F |  31 | 001 |   45.7 |
+| LHA_IA99_18F |  31 | 002 |   45.7 |
+| LHA_IA99_18F |  32 | 001 |   45.7 |
+| LHA_IA99_18F |  32 | 002 |   45.7 |
+| LHA_IA99_18F |  33 | 001 |   45.7 |
+| LHA_IA99_18F |  33 | 002 |   45.7 |
+| LHA_IA99_18F |  34 | 001 |   45.7 |
+| LHA_IA99_18F |  34 | 002 |   45.7 |
+| LHA_IA99_18F |  35 | 001 |   45.7 |
+| LHA_IA99_18F |  35 | 002 |   45.7 |
+| LHA_IA99_18F |  36 | 001 |   45.7 |
+| LHA_IA99_18F |  36 | 002 |   45.7 |
+| LHA_IA99_18F |  37 | 001 |   45.7 |
+| LHA_IA99_18F |  37 | 002 |   45.7 |
+| LHA_IA99_18F |  38 | 001 |   45.7 |
+| LHA_IA99_18F |  38 | 002 |   45.7 |
+| LHA_IA99_18F |  39 | 001 |   45.7 |
+| LHA_IA99_18F |  39 | 002 |   45.7 |
+| LHA_IA99_18F |  40 | 001 |   45.7 |
+| LHA_IA99_18F |  40 | 002 |   45.7 |
+| LHA_IA99_18F |  41 | 001 |   45.7 |
+| LHA_IA99_18F |  41 | 002 |   45.7 |
+| LHA_IA99_18F |  42 | 001 |   45.7 |
+| LHA_IA99_18F |  42 | 002 |   45.7 |
+| LHA_IA99_18F |  43 | 001 |   45.7 |
+| LHA_IA99_18F |  43 | 002 |   45.7 |
+| LHA_IA99_18F |  44 | 001 |   45.7 |
+| LHA_IA99_18F |  44 | 002 |   45.7 |
+| LHA_IA99_18F |  45 | 001 |   45.7 |
+| LHA_IA99_18F |  45 | 002 |   45.7 |
+| LHA_IA99_18F |  46 | 001 |   45.7 |
+| LHA_IA99_18F |  46 | 002 |   45.7 |
+| LHA_IA99_18F |  47 | 001 |   45.7 |
+| LHA_IA99_18F |  47 | 002 |   45.7 |
+| LHA_IA99_18F |  48 | 001 |   45.7 |
+| LHA_IA99_18F |  48 | 002 |   45.7 |
+| LHA_IA99_18F |  49 | 001 |   45.7 |
+| LHA_IA99_18F |  49 | 002 |   45.7 |
+| LHA_IA99_18F |  50 | 001 |   45.7 |
+| LHA_IA99_18F |  50 | 002 |   45.7 |
+| LHA_IA99_18F |  51 | 001 |   45.7 |
+| LHA_IA99_18F |  51 | 002 |   45.7 |
+| LHA_IA99_18F |  52 | 001 |   45.7 |
+| LHA_IA99_18F |  52 | 002 |   45.7 |
+| LHA_IA99_18F |  53 | 001 |   45.7 |
+| LHA_IA99_18F |  53 | 002 |   45.7 |
+| LHA_IA99_18F |  54 | 001 |   45.7 |
+| LHA_IA99_18F |  54 | 002 |   45.7 |
+| LHA_IA99_18F |  55 | 001 |   45.7 |
+| LHA_IA99_18F |  55 | 002 |   45.7 |
+| LHA_IA99_18F |  56 | 001 |   45.7 |
+| LHA_IA99_18F |  56 | 002 |   45.7 |
+| LHA_IA99_18F |  57 | 001 |   45.7 |
+| LHA_IA99_18F |  57 | 002 |   45.7 |
+| LHA_IA99_18F |  58 | 001 |   45.7 |
+| LHA_IA99_18F |  58 | 002 |   45.7 |
+| LHA_IA99_18F |  59 | 001 |   45.7 |
+| LHA_IA99_18F |  59 | 002 |   45.7 |
+| LHA_IA99_18F |  60 | 001 |   45.7 |
+| LHA_IA99_18F |  60 | 002 |   45.7 |
+| LHA_IA99_18F |  61 | 001 |   45.7 |
+| LHA_IA99_18F |  61 | 002 |   45.7 |
+| LHA_IA99_18F |  62 | 001 |   45.7 |
+| LHA_IA99_18F |  62 | 002 |   45.7 |
+| LHA_IA99_18F |  63 | 001 |   45.7 |
+| LHA_IA99_18F |  63 | 002 |   45.7 |
+| LHA_IA99_18F |  64 | 001 |   45.7 |
+| LHA_IA99_18F |  64 | 002 |   45.7 |
+| LHA_IA99_18F |  65 | 001 |   45.7 |
+| LHA_IA99_18F |  65 | 002 |   45.7 |
+| LHA_IA99_18F |  66 | 001 |   45.7 |
+| LHA_IA99_18F |  66 | 002 |   45.7 |
+| LHA_IA99_18F |  67 | 001 |   45.7 |
+| LHA_IA99_18F |  67 | 002 |   45.7 |
+| LHA_IA99_18F |  68 | 001 |   45.7 |
+| LHA_IA99_18F |  68 | 002 |   45.7 |
+| LHA_IA99_18F |  69 | 001 |   45.7 |
+| LHA_IA99_18F |  69 | 002 |   45.7 |
+| LHA_IA99_18F |  70 | 001 |   45.7 |
+| LHA_IA99_18F |  70 | 002 |   45.7 |
+| LHA_IA99_18F |  71 | 001 |   45.7 |
+| LHA_IA99_18F |  71 | 002 |   45.7 |
+| LHA_IA99_18F |  72 | 001 |   45.7 |
+| LHA_IA99_18F |  72 | 002 |   45.7 |
+| LHA_IS10_140 |   1 |   1 |   91.4 |
+| LHA_IS10_140 |   2 |   1 |   91.4 |
+| LHA_IS10_140 |   3 |   1 |   91.4 |
+| LHA_IS10_140 |   4 |   1 |   91.4 |
+| LHA_IS10_140 |   5 |   1 |   91.4 |
+| LHA_IS10_140 |   6 |   1 |   91.4 |
+| LHA_IS10_140 |   7 |   1 |   91.4 |
+| LHA_IS10_140 |   8 |   1 |   91.4 |
+| LHA_IS10_140 |   9 |   1 |   91.4 |
+| LHA_IS10_140 |  10 |   1 |   91.4 |
+| LHA_IS10_140 |  11 |   1 |   91.4 |
+| LHA_IS10_140 |  12 |   1 |   91.4 |
+| LHA_IS10_140 |  13 |   1 |   91.4 |
+| LHA_IS10_140 |  14 |   1 |   91.4 |
+| LHA_IS10_140 |  15 |   1 |   91.4 |
+| LHA_IS10_140 |  16 |   1 |   91.4 |
+| LHA_IS10_140 |  17 |   1 |   91.4 |
+| LHA_IS10_140 |  18 |   1 |   91.4 |
+| LHA_IS10_140 |  19 |   1 |   91.4 |
+| LHA_IS10_140 |  20 |   1 |   91.4 |
+| LHA_IS10_140 |  21 |   1 |   91.4 |
+| LHA_IS10_140 |  22 |   1 |   91.4 |
+| LHA_IS10_140 |  23 |   1 |   91.4 |
+| LHA_IS10_140 |  24 |   1 |   91.4 |
+| LHA_IS10_140 |  25 |   1 |   91.4 |
+| LHA_IS10_140 |  26 |   1 |   91.4 |
+| LHA_IS10_140 |  27 |   1 |   91.4 |
+| LHA_IS10_140 |  28 |   1 |   91.4 |
+| LHA_IS10_140 |  29 |   1 |   91.4 |
+| LHA_IS10_140 |  30 |   1 |   91.4 |
+| LHA_IS10_140 |  31 |   1 |   91.4 |
+| LHA_IS10_140 |  32 |   1 |   91.4 |
+| LHA_IS10_140 |  33 |   1 |   91.4 |
+| LHA_IS10_140 |  34 |   1 |   91.4 |
+| LHA_IS10_140 |  35 |   1 |   91.4 |
+| LHA_IS10_140 |  36 |   1 |   91.4 |
+| LHA_IS10_140 |  37 |   1 |   91.4 |
+| LHA_IS10_140 |  38 |   1 |   91.4 |
+| LHA_IS10_140 |  39 |   1 |   91.4 |
+| LHA_IS10_140 |  40 |   1 |   91.4 |
+| LHA_IS10_140 |  41 |   1 |   91.4 |
+| LHA_IS10_140 |  42 |   1 |   91.4 |
+| LHA_IS10_140 |  43 |   1 |   91.4 |
+| LHA_IS10_140 |  44 |   1 |   91.4 |
+| LHA_IS10_140 |  45 |   1 |   91.4 |
+| LHA_IS10_140 |  46 |   1 |   91.4 |
+| LHA_IS10_140 |  47 |   1 |   91.4 |
+| LHA_IS10_140 |  48 |   1 |   91.4 |
+| LHA_IS10_140 |  49 |   1 |   91.4 |
+| LHA_IS10_140 |  50 |   1 |   91.4 |
+| LHA_IS10_140 |  51 |   1 |   91.4 |
+| LHA_IS10_140 |  52 |   1 |   91.4 |
+| LHA_IS10_140 |  53 |   1 |   91.4 |
+| LHA_IS10_140 |  54 |   1 |   91.4 |
+| LHA_IS10_140 |  55 |   1 |   91.4 |
+| LHA_IS10_140 |  56 |   1 |   91.4 |
+| LHA_IS10_140 |  57 |   1 |   91.4 |
+| LHA_IS10_140 |  58 |   1 |   91.4 |
+| LHA_IS10_140 |  59 |   1 |   91.4 |
+| LHA_IS10_140 |  60 |   1 |   91.4 |
+| LHA_IS10_140 |  61 |   1 |   91.4 |
+| LHA_IS10_140 |  62 |   1 |   91.4 |
+| LHA_IS10_140 |  63 |   1 |   91.4 |
+| LHA_IS10_140 |  64 |   1 |   91.4 |
+| LHA_IS10_140 |  65 |   1 |   91.4 |
+| LHA_IS10_140 |  66 |   1 |   91.4 |
+| LHA_IS10_140 |  67 |   1 |   91.4 |
+| LHA_IS10_140 |  68 |   1 |   91.4 |
+| LHA_IS10_140 |  69 |   1 |   91.4 |
+| LHA_IA09_F13 |  28 |   1 |   91.4 |
+| LHA_IA09_F13 |  29 |   1 |   91.4 |
+| LHA_IA09_F13 |  30 |   1 |   91.4 |
+| LHA_IA09_F13 |  31 |   1 |   91.4 |
+| LHA_IA09_F13 |  32 |   1 |   91.4 |
+| LHA_IA09_F13 |  33 |   1 |   91.4 |
+| LHA_IA09_F13 |  34 |   1 |   91.4 |
+| LHA_IA09_F13 |  35 |   1 |   91.4 |
+| LHA_IA09_F13 |  36 |   1 |   91.4 |
+| LHA_IA09_F13 |  37 |   1 |   91.4 |
+| LHA_IA09_F13 |  38 |   1 |   91.4 |
+| LHA_IA09_F13 |  39 |   1 |   91.4 |
+| LHA_IA09_F13 |  40 |   1 |   91.4 |
+| LHA_IA09_F13 |  41 |   1 |   91.4 |
+| LHA_IA09_F13 |  42 |   1 |   91.4 |
+| LHA_IA09_F13 |  43 |   1 |   91.4 |
+| LHA_IA09_F13 |  44 |   1 |   91.4 |
+| LHA_IA09_F13 |  45 |   1 |   91.4 |
+| LHA_IA09_F13 |  46 |   1 |   91.4 |
+| LHA_IA09_F13 |  59 |   1 |   91.4 |
+| LHA_IA09_F13 |  60 |   1 |   91.4 |
+| LHA_IA09_F13 |  61 |   1 |   91.4 |
+| LHA_IA09_F13 |  62 |   1 |   91.4 |
+| LHA_IA09_F13 |  63 |   1 |   91.4 |
+| LHA_IA09_F13 |  64 |   1 |   91.4 |
+| LHA_IA09_F13 |  65 |   1 |   91.4 |
+| LHA_IA09_F13 |  66 |   1 |   91.4 |
+| LHA_IA09_F13 |  67 |   1 |   91.4 |
+| LHA_IA09_F13 |  68 |   1 |   91.4 |
+| LHA_IA09_F13 |  69 |   1 |   91.4 |
+| LHA_IA09_F14 |   1 |   1 |   91.4 |
+| LHA_IA09_F14 |   2 |   1 |   91.4 |
+| LHA_IA09_F14 |   3 |   1 |   91.4 |
+| LHA_IA09_F14 |   4 |   1 |   91.4 |
+| LHA_IA09_F14 |   5 |   1 |   91.4 |
+| LHA_IA09_F14 |   6 |   1 |   91.4 |
+| LHA_IA09_F14 |   7 |   1 |   91.4 |
+| LHA_IA09_F14 |   8 |   1 |   91.4 |
+| LHA_IA09_F14 |   9 |   1 |   91.4 |
+| LHA_IA09_F14 |  10 |   1 |   91.4 |
+| LHA_IA09_F14 |  11 |   1 |   91.4 |
+| LHA_IA09_F14 |  12 |   1 |   91.4 |
+| LHA_IA09_F14 |  13 |   1 |   91.4 |
+| LHA_IA09_F14 |  14 |   1 |   91.4 |
+| LHA_IA09_F14 |  15 |   1 |   91.4 |
+| LHA_IA09_F14 |  16 |   1 |   91.4 |
+| LHA_IA09_F14 |  17 |   1 |   91.4 |
+| LHA_IA09_F14 |  18 |   1 |   91.4 |
+| LHA_IA09_F14 |  19 |   1 |   91.4 |
+| LHA_IA09_F14 |  20 |   1 |   91.4 |
+| LHA_IA09_F14 |  21 |   1 |   91.4 |
+| LHA_IA09_F14 |  22 |   1 |   91.4 |
+| LHA_IA09_F14 |  23 |   1 |   91.4 |
+| LHA_IA09_F14 |  24 |   1 |   91.4 |
+| LHA_IA09_F14 |  25 |   1 |   91.4 |
+| LHA_IA09_F14 |  26 |   1 |   91.4 |
+| LHA_IA09_F14 |  27 |   1 |   91.4 |
+| LHA_IA09_F14 |  47 |   1 |   91.4 |
+| LHA_IA09_F14 |  48 |   1 |   91.4 |
+| LHA_IA09_F14 |  49 |   1 |   91.4 |
+| LHA_IA09_F14 |  50 |   1 |   91.4 |
+| LHA_IA09_F14 |  51 |   1 |   91.4 |
+| LHA_IA09_F14 |  52 |   1 |   91.4 |
+| LHA_IA09_F14 |  53 |   1 |   91.4 |
+| LHA_IA09_F14 |  54 |   1 |   91.4 |
+| LHA_IA09_F14 |  55 |   1 |   91.4 |
+| LHA_IA09_F14 |  56 |   1 |   91.4 |
+| LHA_IA09_F14 |  57 |   1 |   91.4 |
+| LHA_IA09_F14 |  58 |   1 |   91.4 |
+| LHA_IA09_F14 |  70 |   1 |   91.4 |
+| LHA_IA09_F14 |  71 |   1 |   91.4 |
+| LHA_IA09_F14 |  72 |   1 |   91.4 |
+| LHA_IA09_F14 |  73 |   1 |   91.4 |
+| LHA_IA10_F13 |  19 |   1 |   91.4 |
+| LHA_IA10_F13 |  20 |   1 |   91.4 |
+| LHA_IA10_F13 |  21 |   1 |   91.4 |
+| LHA_IA10_F13 |  22 |   1 |   91.4 |
+| LHA_IA10_F13 |  23 |   1 |   91.4 |
+| LHA_IA10_F13 |  24 |   1 |   91.4 |
+| LHA_IA10_F13 |  25 |   1 |   91.4 |
+| LHA_IA10_F13 |  26 |   1 |   91.4 |
+| LHA_IA10_F13 |  27 |   1 |   91.4 |
+| LHA_IA10_F13 |  37 |   1 |   91.4 |
+| LHA_IA10_F13 |  38 |   1 |   91.4 |
+| LHA_IA10_F13 |  39 |   1 |   91.4 |
+| LHA_IA10_F13 |  40 |   1 |   91.4 |
+| LHA_IA10_F13 |  41 |   1 |   91.4 |
+| LHA_IA10_F13 |  42 |   1 |   91.4 |
+| LHA_IA10_F13 |  43 |   1 |   91.4 |
+| LHA_IA10_F13 |  44 |   1 |   91.4 |
+| LHA_IA10_F13 |  45 |   1 |   91.4 |
+| LHA_IA10_F13 |  79 |   1 |   91.4 |
+| LHA_IA10_F13 |  80 |   1 |   91.4 |
+| LHA_IA10_F13 |  81 |   1 |   91.4 |
+| LHA_IA10_F13 |  82 |   1 |   91.4 |
+| LHA_IA10_F13 |  83 |   1 |   91.4 |
+| LHA_IA10_F13 |  84 |   1 |   91.4 |
+| LHA_IA10_F13 |  85 |   1 |   91.4 |
+| LHA_IA10_F13 |  86 |   1 |   91.4 |
+| LHA_IA10_F13 |  87 |   1 |   91.4 |
+| LHA_IA10_F14 |   1 |   1 |   91.4 |
+| LHA_IA10_F14 |   2 |   1 |   91.4 |
+| LHA_IA10_F14 |   3 |   1 |   91.4 |
+| LHA_IA10_F14 |   4 |   1 |   91.4 |
+| LHA_IA10_F14 |   5 |   1 |   91.4 |
+| LHA_IA10_F14 |   6 |   1 |   91.4 |
+| LHA_IA10_F14 |   7 |   1 |   91.4 |
+| LHA_IA10_F14 |   8 |   1 |   91.4 |
+| LHA_IA10_F14 |   9 |   1 |   91.4 |
+| LHA_IA10_F14 |  10 |   1 |   91.4 |
+| LHA_IA10_F14 |  11 |   1 |   91.4 |
+| LHA_IA10_F14 |  12 |   1 |   91.4 |
+| LHA_IA10_F14 |  13 |   1 |   91.4 |
+| LHA_IA10_F14 |  14 |   1 |   91.4 |
+| LHA_IA10_F14 |  15 |   1 |   91.4 |
+| LHA_IA10_F14 |  16 |   1 |   91.4 |
+| LHA_IA10_F14 |  17 |   1 |   91.4 |
+| LHA_IA10_F14 |  18 |   1 |   91.4 |
+| LHA_IA10_F14 |  28 |   1 |   91.4 |
+| LHA_IA10_F14 |  29 |   1 |   91.4 |
+| LHA_IA10_F14 |  30 |   1 |   91.4 |
+| LHA_IA10_F14 |  31 |   1 |   91.4 |
+| LHA_IA10_F14 |  32 |   1 |   91.4 |
+| LHA_IA10_F14 |  33 |   1 |   91.4 |
+| LHA_IA10_F14 |  34 |   1 |   91.4 |
+| LHA_IA10_F14 |  35 |   1 |   91.4 |
+| LHA_IA10_F14 |  36 |   1 |   91.4 |
+| LHA_IA10_F14 |  46 |   1 |   91.4 |
+| LHA_IA10_F14 |  47 |   1 |   91.4 |
+| LHA_IA10_F14 |  48 |   1 |   91.4 |
+| LHA_IA10_F14 |  49 |   1 |   91.4 |
+| LHA_IA10_F14 |  50 |   1 |   91.4 |
+| LHA_IA10_F14 |  51 |   1 |   91.4 |
+| LHA_IA10_F14 |  52 |   1 |   91.4 |
+| LHA_IA10_F14 |  53 |   1 |   91.4 |
+| LHA_IA10_F14 |  54 |   1 |   91.4 |
+| LHA_IA10_F14 |  55 |   1 |   91.4 |
+| LHA_IA10_F14 |  56 |   1 |   91.4 |
+| LHA_IA10_F14 |  57 |   1 |   91.4 |
+| LHA_IA10_F14 |  58 |   1 |   91.4 |
+| LHA_IA10_F14 |  59 |   1 |   91.4 |
+| LHA_IA10_F14 |  60 |   1 |   91.4 |
+| LHA_IA10_F14 |  61 |   1 |   91.4 |
+| LHA_IA10_F14 |  62 |   1 |   91.4 |
+| LHA_IA10_F14 |  63 |   1 |   91.4 |
+| LHA_IA10_F14 |  64 |   1 |   91.4 |
+| LHA_IA10_F14 |  65 |   1 |   91.4 |
+| LHA_IA10_F14 |  66 |   1 |   91.4 |
+| LHA_IA10_F14 |  67 |   1 |   91.4 |
+| LHA_IA10_F14 |  68 |   1 |   91.4 |
+| LHA_IA10_F14 |  69 |   1 |   91.4 |
+| LHA_IA10_F14 |  70 |   1 |   91.4 |
+| LHA_IA10_F14 |  71 |   1 |   91.4 |
+| LHA_IA10_F14 |  72 |   1 |   91.4 |
+| LHA_IA10_F14 |  73 |   1 |   91.4 |
+| LHA_IA10_F14 |  74 |   1 |   91.4 |
+| LHA_IA10_F14 |  75 |   1 |   91.4 |
+| LHA_IA10_F14 |  76 |   1 |   91.4 |
+| LHA_IA10_F14 |  77 |   1 |   91.4 |
+| LHA_IA10_F14 |  78 |   1 |   91.4 |
+| LHA_IA10_F14 |  88 |   1 |   91.4 |
+| LHA_IA10_F14 |  89 |   1 |   91.4 |
+| LHA_IA10_F14 |  90 |   1 |   91.4 |
+| LHA_IA10_F14 |  91 |   1 |   91.4 |
+| LHA_IA10_F14 |  92 |   1 |   91.4 |
+| LHA_IA10_F14 |  93 |   1 |   91.4 |
+| LHA_IA10_F14 |  94 |   1 |   91.4 |
+| LHA_IA10_F14 |  95 |   1 |   91.4 |
+| LHA_IA10_F14 |  96 |   1 |   91.4 |
+| LHA_IA15_F13 |   1 | 001 |   91.4 |
+| LHA_IA15_F13 |   2 | 001 |   91.4 |
+| LHA_IA15_F13 |   3 | 001 |   91.4 |
+| LHA_IA15_F13 |   4 | 001 |   91.4 |
+| LHA_IA15_F13 |   5 | 001 |   91.4 |
+| LHA_IA15_F13 |   6 | 001 |   91.4 |
+| LHA_IA15_F13 |   7 | 001 |   91.4 |
+| LHA_IA15_F13 |   8 | 001 |   91.4 |
+| LHA_IA15_F13 |   9 | 001 |   91.4 |
+| LHA_IA15_F13 |  10 | 001 |   91.4 |
+| LHA_IA15_F13 |  11 | 001 |   91.4 |
+| LHA_IA15_F13 |  12 | 001 |   91.4 |
+| LHA_IA15_F13 |  14 | 001 |   91.4 |
+| LHA_IA15_F13 |  15 | 001 |   91.4 |
+| LHA_IA15_F13 |  16 | 001 |   91.4 |
+| LHA_IA15_F13 |  17 | 001 |   91.4 |
+| LHA_IA15_F13 |  18 | 001 |   91.4 |
+| LHA_IA15_F13 |  19 | 001 |   91.4 |
+| LHA_IA15_F13 |  20 | 001 |   91.4 |
+| LHA_IA15_F13 |  21 | 001 |   91.4 |
+| LHA_IA15_F13 |  22 | 001 |   91.4 |
+| LHA_IA15_F13 |  23 | 001 |   91.4 |
+| LHA_IA15_F13 |  24 | 001 |   91.4 |
+| LHA_IA15_F13 |  25 | 001 |   91.4 |
+| LHA_IA15_F13 |  26 | 001 |   91.4 |
+| LHA_IA15_F13 |  27 | 001 |   91.4 |
+| LHA_IA15_F13 |  28 | 001 |   91.4 |
+| LHA_IA15_F13 |  29 | 001 |   91.4 |
+| LHA_IA15_F13 |  30 | 001 |   91.4 |
+| LHA_IA15_F13 |  31 | 001 |   91.4 |
+| LHA_IA15_F13 |  32 | 001 |   91.4 |
+| LHA_IA15_F13 |  33 | 001 |   91.4 |
+| LHA_IA15_F13 |  34 | 001 |   91.4 |
+| LHA_IA15_F13 |  35 | 001 |   91.4 |
+| LHA_IA15_F13 |  36 | 001 |   91.4 |
+| LHA_IA15_F13 |  37 | 001 |   91.4 |
+| LHA_IA15_F13 |  38 | 001 |   91.4 |
+| LHA_IA15_F13 |  39 | 001 |   91.4 |
+| LHA_IA15_F13 |  40 | 001 |   91.4 |
+| LHA_IA15_F13 |  41 | 001 |   91.4 |
+| LHA_IA15_F13 |  42 | 001 |   91.4 |
+| LHA_IA15_F13 |  43 | 001 |   91.4 |
+| LHA_IA15_F13 |  44 | 001 |   91.4 |
+| LHA_IA15_F13 |  45 | 001 |   91.4 |
+| LHA_IA15_F13 |  46 | 001 |   91.4 |
+| LHA_IA15_F13 |  47 | 001 |   91.4 |
+| LHA_IA15_F13 |  48 | 001 |   91.4 |
+| LHA_IA15_F13 |  49 | 001 |   91.4 |
+| LHA_IA15_F13 |  50 | 001 |   91.4 |
+| LHA_IA15_F13 |  51 | 001 |   91.4 |
+| LHA_IA15_F13 |  52 | 001 |   91.4 |
+
+
+*** Foobar Flins
+
+These projects used EFF to identify shallow and deep nets, not the
+shallow and deep ends of the same net:
+("LHA_IA16_11F",
+ "LHA_IA16_F14",
+ "LHA_IA16_F13",
+ "LHA_IA15_18F",
+ "LHA_IA15_F13",
+ "LHA_IA15_F14",
+ "LHA_IA14_18F",
+ "LHA_IA13_119",
+ "LHA_IA12_119",
+ "LHA_IA11_119",
+ "LHA_IS10_140",
+ "LHA_IA10_F13",
+ "LHA_IA10_F14",
+ "LHA_IA09_F14",
+ "LHA_IA09_F13"
+)
+
+These are the flin pojects that use EFF=1 and 2 instead of 001 and 002:
+("LHA_IA13_119",  "LHA_IA12_119",  "LHA_IS10_140",  "LHA_IA10_F13",  "LHA_IA10_F14")
+
+
+These are FLIN projects that appear to have properly used EFF do
+ designate the nearshore and offshore ends of each net sample.  They
+ were identified by creating a cross tab of catch in each effort and
+ sample.  These projects often had both cell populated, the others
+ always had one or the other.
+
+No changes were made to these projects.
+(
+ "LHA_IA04_F14"
+ "LHA_IA04_F13"
+ "LHA_IA02_F13"
+ "LHA_IA01_18F"
+ "LHA_IA00_18F" )
+
+
+
+**** The fix:
+The Foobar flins were fixed by grouping the FN122 and FN123 tables by
+PRJ_CD and SAM and aggregating the remaining fields:
+
+FN122 and FN123 tables:
+group by PRJ_CD and SAM, EFF=1
+Sum EFFDST, CATCNT, BIOCNT, ect.
+
+For FN125, FN126, and FN127 tables, Eff was updated to EFF=1/001 where
+prj_cd was in the foobar_flin list and EFF=2/002
+
+
+#checks:
+- catch per sample was calculated and compared before and after
+  updates.
+- effort distance by sample calculated before and after update
+- standard checks for orphans and duplicates.
+
+
+*** Duplicate FN122 records
+
+The following records where found to be duplicates in the FN122 table
+and were deleted:
+
+| YEAR | PRJ_CD       | SAM | SAMn | EFF | EFFDST | GRDEP | GRTEM0 | GRTEM1 | STRATUM |
+|------+--------------+-----+------+-----+--------+-------+--------+--------+---------|
+| 2005 | LHA_IS05_CRA |   1 |    1 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   2 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   3 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   4 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   5 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   6 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   7 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   1 |    1 |   8 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   2 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   3 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   4 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   5 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   6 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   7 |        |       |        |        |         |
+| 2005 | LHA_IS05_CRA |   2 |    2 |   8 |        |       |        |        |         |
+| 2015 | LHA_IA15_236 | 102 |  102 | 001 |        |       |        |        |         |
+| 2015 | LHA_IA15_236 | 129 |  129 | 001 |        |       |        |        |         |
+
+
+*** missing FWIN FN122s
+
+There were a large number of fwins with missing effort records.  there
+was only one effort that need to be added for those fwins were catch
+was only reported by net set:
+
+| YEAR | PRJ_CD       | SAM | SAMn | EFF | EFFDST |
+|------+--------------+-----+------+-----+--------+-
+| 2014 | LHA_IA14_258 | 109 |    0 |   1 |   60.8 |
+
+There were many more instances of FN122 records that needed to be
+added for fwin projects were catch was reported by mesh.  presumably,
+these panels failed to catch a single fish (and were forgotten about)
+
+| PRJ_CD       |   SAM | EFF | EFFDST |
+|--------------+-------+-----+--------|
+| LHA_IA01_023 |     2 | 076 |    7.6 |
+| LHA_IA01_023 |     2 | 051 |    7.6 |
+| LHA_IA01_023 |     2 | 127 |    7.6 |
+| LHA_IA01_023 |     2 | 152 |    7.6 |
+| LHA_IA01_023 |     2 | 064 |    7.6 |
+| LHA_IA01_023 |    30 | 038 |    7.6 |
+| LHA_IA01_023 |    30 | 025 |    7.6 |
+| LHA_IA01_023 |    30 | 051 |    7.6 |
+| LHA_IA01_023 |    30 | 076 |    7.6 |
+| LHA_IA01_023 |    30 | 127 |    7.6 |
+| LHA_IA01_023 |    30 | 102 |    7.6 |
+| LHA_IA01_023 |    31 | 038 |    7.6 |
+| LHA_IA01_023 |    31 | 025 |    7.6 |
+| LHA_IA01_023 |    31 | 051 |    7.6 |
+| LHA_IA01_023 |    31 | 127 |    7.6 |
+| LHA_IA01_023 |    31 | 064 |    7.6 |
+| LHA_IA01_023 |    31 | 102 |    7.6 |
+| LHA_IA01_023 |    31 | 152 |    7.6 |
+| LHA_IA01_023 |    32 | 038 |    7.6 |
+| LHA_IA01_023 |    32 | 025 |    7.6 |
+| LHA_IA01_023 |    32 | 051 |    7.6 |
+| LHA_IA01_023 |    32 | 076 |    7.6 |
+| LHA_IA01_023 |    32 | 127 |    7.6 |
+| LHA_IA01_023 |    32 | 064 |    7.6 |
+| LHA_IA01_023 |    32 | 102 |    7.6 |
+| LHA_IA01_023 |    32 | 152 |    7.6 |
+| LHA_IA01_023 |    33 | 038 |    7.6 |
+| LHA_IA01_023 |    33 | 025 |    7.6 |
+| LHA_IA01_023 |    33 | 051 |    7.6 |
+| LHA_IA01_023 |    33 | 127 |    7.6 |
+| LHA_IA01_023 |    33 | 064 |    7.6 |
+| LHA_IA01_023 |    33 | 102 |    7.6 |
+| LHA_IA01_023 |    24 | 102 |    7.6 |
+| LHA_IA01_023 |    24 | 076 |    7.6 |
+| LHA_IA01_023 |    24 | 127 |    7.6 |
+| LHA_IA01_023 |    24 | 152 |    7.6 |
+| LHA_IA01_023 |    24 | 064 |    7.6 |
+| LHA_IA01_023 |     1 | 102 |    7.6 |
+| LHA_IA01_023 |     1 | 076 |    7.6 |
+| LHA_IA01_023 |     1 | 127 |    7.6 |
+| LHA_IA01_023 |     1 | 152 |    7.6 |
+| LHA_IA01_023 |     1 | 064 |    7.6 |
+| LHA_IA01_023 |    10 | 051 |    7.6 |
+| LHA_IA01_023 |    10 | 127 |    7.6 |
+| LHA_IA01_023 |    10 | 152 |    7.6 |
+| LHA_IA01_023 |    25 | 102 |    7.6 |
+| LHA_IA01_023 |    25 | 064 |    7.6 |
+| LHA_IA01_023 |    26 | 102 |    7.6 |
+| LHA_IA01_023 |    26 | 076 |    7.6 |
+| LHA_IA01_023 |    26 | 051 |    7.6 |
+| LHA_IA01_023 |    26 | 127 |    7.6 |
+| LHA_IA01_023 |    26 | 064 |    7.6 |
+| LHA_IA01_023 |    23 | 064 |    7.6 |
+| LHA_IA01_023 |    27 | 038 |    7.6 |
+| LHA_IA01_023 |    27 | 025 |    7.6 |
+| LHA_IA01_023 |    27 | 051 |    7.6 |
+| LHA_IA01_023 |    27 | 076 |    7.6 |
+| LHA_IA01_023 |    27 | 127 |    7.6 |
+| LHA_IA01_023 |    27 | 064 |    7.6 |
+| LHA_IA01_023 |    27 | 102 |    7.6 |
+| LHA_IA01_023 |    27 | 152 |    7.6 |
+| LHA_IA01_023 |    28 | 102 |    7.6 |
+| LHA_IA01_023 |    28 | 076 |    7.6 |
+| LHA_IA01_023 |    28 | 025 |    7.6 |
+| LHA_IA01_023 |    28 | 127 |    7.6 |
+| LHA_IA01_023 |    28 | 064 |    7.6 |
+| LHA_IA01_023 |    29 | 038 |    7.6 |
+| LHA_IA01_023 |    29 | 025 |    7.6 |
+| LHA_IA01_023 |    29 | 051 |    7.6 |
+| LHA_IA01_023 |    29 | 076 |    7.6 |
+| LHA_IA01_023 |    29 | 127 |    7.6 |
+| LHA_IA01_023 |    29 | 064 |    7.6 |
+| LHA_IA01_023 |    29 | 102 |    7.6 |
+| LHA_IA01_023 |    29 | 152 |    7.6 |
+| LHA_IA01_023 |     5 | 102 |    7.6 |
+| LHA_IA01_023 |     5 | 076 |    7.6 |
+| LHA_IA01_023 |     5 | 127 |    7.6 |
+| LHA_IA01_023 |     5 | 152 |    7.6 |
+| LHA_IA01_023 |     5 | 064 |    7.6 |
+| LHA_IA01_023 |     9 | 025 |    7.6 |
+| LHA_IA01_023 |     9 | 152 |    7.6 |
+| LHA_IA01_023 |     9 | 102 |    7.6 |
+| LHA_IA01_023 |    16 | 038 |    7.6 |
+| LHA_IA01_023 |    16 | 025 |    7.6 |
+| LHA_IA01_023 |    16 | 051 |    7.6 |
+| LHA_IA01_023 |    16 | 076 |    7.6 |
+| LHA_IA01_023 |    16 | 064 |    7.6 |
+| LHA_IA01_023 |    16 | 152 |    7.6 |
+| LHA_IA01_023 |     6 | 025 |    7.6 |
+| LHA_IA01_023 |     6 | 127 |    7.6 |
+| LHA_IA01_023 |     6 | 152 |    7.6 |
+| LHA_IA01_023 |     6 | 064 |    7.6 |
+| LHA_IA01_023 |     7 | 025 |    7.6 |
+| LHA_IA01_023 |     7 | 051 |    7.6 |
+| LHA_IA01_023 |     8 | 127 |    7.6 |
+| LHA_IA01_023 |     8 | 152 |    7.6 |
+| LHA_IA01_023 |     8 | 102 |    7.6 |
+| LHA_IA01_023 |     3 | 025 |    7.6 |
+| LHA_IA01_023 |     3 | 127 |    7.6 |
+| LHA_IA01_023 |     3 | 152 |    7.6 |
+| LHA_IA01_023 |     3 | 102 |    7.6 |
+| LHA_IA01_023 |    11 | 076 |    7.6 |
+| LHA_IA01_023 |    11 | 127 |    7.6 |
+| LHA_IA01_023 |    11 | 152 |    7.6 |
+| LHA_IA01_023 |    11 | 102 |    7.6 |
+| LHA_IA01_023 |    12 | 127 |    7.6 |
+| LHA_IA01_023 |    12 | 152 |    7.6 |
+| LHA_IA01_023 |    13 | 076 |    7.6 |
+| LHA_IA01_023 |    13 | 127 |    7.6 |
+| LHA_IA01_023 |    13 | 152 |    7.6 |
+| LHA_IA01_023 |    14 | 051 |    7.6 |
+| LHA_IA01_023 |    14 | 152 |    7.6 |
+| LHA_IA01_023 |    18 | 076 |    7.6 |
+| LHA_IA01_023 |    18 | 127 |    7.6 |
+| LHA_IA01_023 |    18 | 152 |    7.6 |
+| LHA_IA01_023 |    18 | 102 |    7.6 |
+| LHA_IA01_023 |    19 | 076 |    7.6 |
+| LHA_IA01_023 |    19 | 025 |    7.6 |
+| LHA_IA01_023 |    19 | 127 |    7.6 |
+| LHA_IA01_023 |    19 | 152 |    7.6 |
+| LHA_IA01_023 |    19 | 064 |    7.6 |
+| LHA_IA01_023 |    20 | 025 |    7.6 |
+| LHA_IA01_023 |    20 | 152 |    7.6 |
+| LHA_IA01_023 |    20 | 064 |    7.6 |
+| LHA_IA01_023 |    21 | 076 |    7.6 |
+| LHA_IA01_023 |    21 | 127 |    7.6 |
+| LHA_IA01_023 |    21 | 152 |    7.6 |
+| LHA_IA01_023 |    21 | 064 |    7.6 |
+| LHA_IA01_023 |    22 | 038 |    7.6 |
+| LHA_IA01_023 |    22 | 025 |    7.6 |
+| LHA_IA01_023 |    22 | 064 |    7.6 |
+| LHA_IA01_023 |     4 | 102 |    7.6 |
+| LHA_IA01_023 |     4 | 076 |    7.6 |
+| LHA_IA01_023 |     4 | 025 |    7.6 |
+| LHA_IA01_023 |     4 | 152 |    7.6 |
+| LHA_IA01_023 |     4 | 064 |    7.6 |
+| LHA_IA01_023 |    17 | 076 |    7.6 |
+| LHA_IA01_023 |    17 | 025 |    7.6 |
+| LHA_IA01_023 |    17 | 127 |    7.6 |
+| LHA_IA01_023 |    17 | 152 |    7.6 |
+| LHA_IA01_023 |    17 | 102 |    7.6 |
+| LHA_IA02_023 |     3 | 076 |    7.6 |
+| LHA_IA02_023 |     3 | 152 |    7.6 |
+| LHA_IA02_023 |     4 | 076 |    7.6 |
+| LHA_IA02_023 |     4 | 127 |    7.6 |
+| LHA_IA02_023 |     4 | 152 |    7.6 |
+| LHA_IA02_023 |     4 | 102 |    7.6 |
+| LHA_IA02_023 |     5 | 076 |    7.6 |
+| LHA_IA02_023 |     5 | 127 |    7.6 |
+| LHA_IA02_023 |     5 | 152 |    7.6 |
+| LHA_IA02_023 |     5 | 102 |    7.6 |
+| LHA_IA02_023 |     6 | 076 |    7.6 |
+| LHA_IA02_023 |     6 | 127 |    7.6 |
+| LHA_IA02_023 |     6 | 152 |    7.6 |
+| LHA_IA02_023 |     7 | 102 |    7.6 |
+| LHA_IA02_023 |     7 | 025 |    7.6 |
+| LHA_IA02_023 |     7 | 127 |    7.6 |
+| LHA_IA02_023 |     7 | 152 |    7.6 |
+| LHA_IA02_023 |     7 | 064 |    7.6 |
+| LHA_IA02_023 |     8 | 076 |    7.6 |
+| LHA_IA02_023 |     8 | 127 |    7.6 |
+| LHA_IA02_023 |     8 | 152 |    7.6 |
+| LHA_IA02_023 |     8 | 102 |    7.6 |
+| LHA_IA02_023 |     9 | 076 |    7.6 |
+| LHA_IA02_023 |     9 | 127 |    7.6 |
+| LHA_IA02_023 |     9 | 152 |    7.6 |
+| LHA_IA02_023 |    10 | 038 |    7.6 |
+| LHA_IA02_023 |    10 | 025 |    7.6 |
+| LHA_IA02_023 |    10 | 051 |    7.6 |
+| LHA_IA02_023 |    10 | 076 |    7.6 |
+| LHA_IA02_023 |    10 | 127 |    7.6 |
+| LHA_IA02_023 |    10 | 102 |    7.6 |
+| LHA_IA02_023 |    10 | 152 |    7.6 |
+| LHA_IA02_023 |    11 | 102 |    7.6 |
+| LHA_IA02_023 |    11 | 127 |    7.6 |
+| LHA_IA02_023 |    11 | 152 |    7.6 |
+| LHA_IA02_023 |    11 | 064 |    7.6 |
+| LHA_IA02_023 |    12 | 127 |    7.6 |
+| LHA_IA02_023 |    13 | 038 |    7.6 |
+| LHA_IA02_023 |    13 | 025 |    7.6 |
+| LHA_IA02_023 |    13 | 051 |    7.6 |
+| LHA_IA02_023 |    13 | 127 |    7.6 |
+| LHA_IA02_023 |    13 | 102 |    7.6 |
+| LHA_IA02_023 |    13 | 152 |    7.6 |
+| LHA_IA02_023 |     1 | 076 |    7.6 |
+| LHA_IA02_023 |     1 | 127 |    7.6 |
+| LHA_IA02_023 |     1 | 152 |    7.6 |
+| LHA_IA02_023 |     1 | 064 |    7.6 |
+| LHA_IA02_023 |    18 | 025 |    7.6 |
+| LHA_IA02_023 |    18 | 152 |    7.6 |
+| LHA_IA02_023 |    18 | 102 |    7.6 |
+| LHA_IA02_023 |    19 | 025 |    7.6 |
+| LHA_IA02_023 |    19 | 051 |    7.6 |
+| LHA_IA02_023 |    19 | 127 |    7.6 |
+| LHA_IA02_023 |    19 | 064 |    7.6 |
+| LHA_IA02_023 |    19 | 102 |    7.6 |
+| LHA_IA02_023 |    19 | 152 |    7.6 |
+| LHA_IA02_023 |    20 | 076 |    7.6 |
+| LHA_IA02_023 |    20 | 127 |    7.6 |
+| LHA_IA02_023 |    20 | 152 |    7.6 |
+| LHA_IA02_023 |    20 | 102 |    7.6 |
+| LHA_IA02_023 |     2 | 038 |    7.6 |
+| LHA_IA02_023 |     2 | 025 |    7.6 |
+| LHA_IA02_023 |     2 | 051 |    7.6 |
+| LHA_IA02_023 |     2 | 076 |    7.6 |
+| LHA_IA02_023 |     2 | 127 |    7.6 |
+| LHA_IA02_023 |     2 | 064 |    7.6 |
+| LHA_IA02_023 |    14 | 127 |    7.6 |
+| LHA_IA02_023 |    14 | 152 |    7.6 |
+| LHA_IA02_023 |    14 | 102 |    7.6 |
+| LHA_IA02_023 |    15 | 038 |    7.6 |
+| LHA_IA02_023 |    15 | 025 |    7.6 |
+| LHA_IA02_023 |    15 | 051 |    7.6 |
+| LHA_IA02_023 |    15 | 076 |    7.6 |
+| LHA_IA02_023 |    15 | 064 |    7.6 |
+| LHA_IA02_023 |    15 | 152 |    7.6 |
+| LHA_IA02_023 |    16 | 076 |    7.6 |
+| LHA_IA02_023 |    16 | 051 |    7.6 |
+| LHA_IA02_023 |    16 | 127 |    7.6 |
+| LHA_IA02_023 |    16 | 152 |    7.6 |
+| LHA_IA02_023 |    17 | 102 |    7.6 |
+| LHA_IA02_023 |    17 | 038 |    7.6 |
+| LHA_IA02_023 |    17 | 076 |    7.6 |
+| LHA_IA02_023 |    17 | 127 |    7.6 |
+| LHA_IA02_023 |    17 | 064 |    7.6 |
+| LHA_IA02_023 |    36 | 076 |    7.6 |
+| LHA_IA02_023 |    36 | 025 |    7.6 |
+| LHA_IA02_023 |    36 | 127 |    7.6 |
+| LHA_IA02_023 |    36 | 064 |    7.6 |
+| LHA_IA02_023 |    36 | 102 |    7.6 |
+| LHA_IA02_023 |    36 | 152 |    7.6 |
+| LHA_IA02_023 |    21 | 127 |    7.6 |
+| LHA_IA02_023 |    21 | 152 |    7.6 |
+| LHA_IA02_023 |    21 | 064 |    7.6 |
+| LHA_IA02_023 |    22 | 102 |    7.6 |
+| LHA_IA02_023 |    22 | 127 |    7.6 |
+| LHA_IA02_023 |    22 | 152 |    7.6 |
+| LHA_IA02_023 |    22 | 064 |    7.6 |
+| LHA_IA02_023 |    23 | 038 |    7.6 |
+| LHA_IA02_023 |    23 | 025 |    7.6 |
+| LHA_IA02_023 |    23 | 051 |    7.6 |
+| LHA_IA02_023 |    23 | 076 |    7.6 |
+| LHA_IA02_023 |    23 | 127 |    7.6 |
+| LHA_IA02_023 |    23 | 064 |    7.6 |
+| LHA_IA02_023 |    23 | 102 |    7.6 |
+| LHA_IA02_023 |    23 | 152 |    7.6 |
+| LHA_IA02_023 |    24 | 025 |    7.6 |
+| LHA_IA02_023 |    24 | 127 |    7.6 |
+| LHA_IA02_023 |    24 | 152 |    7.6 |
+| LHA_IA02_023 |    25 | 038 |    7.6 |
+| LHA_IA02_023 |    25 | 025 |    7.6 |
+| LHA_IA02_023 |    25 | 127 |    7.6 |
+| LHA_IA02_023 |    25 | 064 |    7.6 |
+| LHA_IA02_023 |    25 | 102 |    7.6 |
+| LHA_IA02_023 |    25 | 152 |    7.6 |
+| LHA_IA02_023 |    26 | 102 |    7.6 |
+| LHA_IA02_023 |    26 | 038 |    7.6 |
+| LHA_IA02_023 |    26 | 127 |    7.6 |
+| LHA_IA02_023 |    26 | 152 |    7.6 |
+| LHA_IA02_023 |    26 | 064 |    7.6 |
+| LHA_IA02_023 |    27 | 038 |    7.6 |
+| LHA_IA02_023 |    27 | 025 |    7.6 |
+| LHA_IA02_023 |    27 | 051 |    7.6 |
+| LHA_IA02_023 |    27 | 076 |    7.6 |
+| LHA_IA02_023 |    27 | 127 |    7.6 |
+| LHA_IA02_023 |    27 | 064 |    7.6 |
+| LHA_IA02_023 |    27 | 102 |    7.6 |
+| LHA_IA02_023 |    28 | 102 |    7.6 |
+| LHA_IA02_023 |    28 | 051 |    7.6 |
+| LHA_IA02_023 |    28 | 127 |    7.6 |
+| LHA_IA02_023 |    28 | 152 |    7.6 |
+| LHA_IA02_023 |    28 | 064 |    7.6 |
+| LHA_IA02_023 |    29 | 102 |    7.6 |
+| LHA_IA02_023 |    29 | 127 |    7.6 |
+| LHA_IA02_023 |    29 | 152 |    7.6 |
+| LHA_IA02_023 |    29 | 064 |    7.6 |
+| LHA_IA02_023 |    30 | 038 |    7.6 |
+| LHA_IA02_023 |    30 | 025 |    7.6 |
+| LHA_IA02_023 |    30 | 051 |    7.6 |
+| LHA_IA02_023 |    30 | 076 |    7.6 |
+| LHA_IA02_023 |    30 | 127 |    7.6 |
+| LHA_IA02_023 |    30 | 152 |    7.6 |
+| LHA_IA02_023 |    31 | 076 |    7.6 |
+| LHA_IA02_023 |    31 | 025 |    7.6 |
+| LHA_IA02_023 |    31 | 051 |    7.6 |
+| LHA_IA02_023 |    31 | 127 |    7.6 |
+| LHA_IA02_023 |    31 | 102 |    7.6 |
+| LHA_IA02_023 |    32 | 038 |    7.6 |
+| LHA_IA02_023 |    32 | 025 |    7.6 |
+| LHA_IA02_023 |    32 | 051 |    7.6 |
+| LHA_IA02_023 |    32 | 127 |    7.6 |
+| LHA_IA02_023 |    32 | 064 |    7.6 |
+| LHA_IA02_023 |    32 | 152 |    7.6 |
+| LHA_IA02_023 |    33 | 025 |    7.6 |
+| LHA_IA02_023 |    33 | 152 |    7.6 |
+| LHA_IA02_023 |    34 | 127 |    7.6 |
+| LHA_IA02_023 |    34 | 152 |    7.6 |
+| LHA_IA02_023 |    34 | 102 |    7.6 |
+| LHA_IA02_023 |    35 | 102 |    7.6 |
+| LHA_IA02_023 |    35 | 076 |    7.6 |
+| LHA_IA02_023 |    35 | 127 |    7.6 |
+| LHA_IA02_023 |    35 | 152 |    7.6 |
+| LHA_IA02_023 |    35 | 064 |    7.6 |
+| LHA_IA96_024 |    21 | 025 |    7.6 |
+| LHA_IA96_024 |    21 | 051 |    7.6 |
+| LHA_IA96_024 |    21 | 076 |    7.6 |
+| LHA_IA96_024 |    21 | 127 |    7.6 |
+| LHA_IA96_024 |    21 | 064 |    7.6 |
+| LHA_IA96_024 |    21 | 102 |    7.6 |
+| LHA_IA96_024 |    21 | 152 |    7.6 |
+| LHA_IA96_024 |    22 | 038 |    7.6 |
+| LHA_IA96_024 |    22 | 025 |    7.6 |
+| LHA_IA96_024 |    22 | 051 |    7.6 |
+| LHA_IA96_024 |    22 | 127 |    7.6 |
+| LHA_IA96_024 |    22 | 102 |    7.6 |
+| LHA_IA96_024 |     8 | 038 |    7.6 |
+| LHA_IA96_024 |     8 | 025 |    7.6 |
+| LHA_IA96_024 |     8 | 051 |    7.6 |
+| LHA_IA96_024 |     8 | 076 |    7.6 |
+| LHA_IA96_024 |     8 | 127 |    7.6 |
+| LHA_IA96_024 |     8 | 064 |    7.6 |
+| LHA_IA96_024 |     8 | 102 |    7.6 |
+| LHA_IA96_024 |     8 | 152 |    7.6 |
+| LHA_IA96_024 |     1 | 076 |    7.6 |
+| LHA_IA96_024 |     1 | 051 |    7.6 |
+| LHA_IA96_024 |     1 | 127 |    7.6 |
+| LHA_IA96_024 |     1 | 064 |    7.6 |
+| LHA_IA96_024 |     1 | 102 |    7.6 |
+| LHA_IA96_024 |     1 | 152 |    7.6 |
+| LHA_IA96_024 |     2 | 076 |    7.6 |
+| LHA_IA96_024 |     2 | 127 |    7.6 |
+| LHA_IA96_024 |     2 | 152 |    7.6 |
+| LHA_IA96_024 |     2 | 064 |    7.6 |
+| LHA_IA96_024 |     3 | 025 |    7.6 |
+| LHA_IA96_024 |     3 | 051 |    7.6 |
+| LHA_IA96_024 |     3 | 127 |    7.6 |
+| LHA_IA96_024 |     3 | 152 |    7.6 |
+| LHA_IA96_024 |     3 | 102 |    7.6 |
+| LHA_IA96_024 |     4 | 038 |    7.6 |
+| LHA_IA96_024 |     4 | 076 |    7.6 |
+| LHA_IA96_024 |     4 | 051 |    7.6 |
+| LHA_IA96_024 |     4 | 152 |    7.6 |
+| LHA_IA96_024 |     5 | 102 |    7.6 |
+| LHA_IA96_024 |     5 | 127 |    7.6 |
+| LHA_IA96_024 |     5 | 152 |    7.6 |
+| LHA_IA96_024 |     5 | 064 |    7.6 |
+| LHA_IA96_024 |     6 | 038 |    7.6 |
+| LHA_IA96_024 |     6 | 025 |    7.6 |
+| LHA_IA96_024 |     6 | 051 |    7.6 |
+| LHA_IA96_024 |     6 | 076 |    7.6 |
+| LHA_IA96_024 |     6 | 127 |    7.6 |
+| LHA_IA96_024 |     6 | 064 |    7.6 |
+| LHA_IA96_024 |     6 | 102 |    7.6 |
+| LHA_IA96_024 |     6 | 152 |    7.6 |
+| LHA_IA96_024 | 10003 | 127 |    7.6 |
+| LHA_IA96_024 | 10003 | 152 |    7.6 |
+| LHA_IA96_024 | 10005 | 152 |    7.6 |
+| LHA_IA96_024 | 10006 | 076 |    7.6 |
+| LHA_IA96_024 | 10006 | 127 |    7.6 |
+| LHA_IA96_024 | 10006 | 152 |    7.6 |
+| LHA_IA96_024 | 10006 | 064 |    7.6 |
+| LHA_IA96_024 |    13 | 076 |    7.6 |
+| LHA_IA96_024 |    13 | 025 |    7.6 |
+| LHA_IA96_024 |    13 | 051 |    7.6 |
+| LHA_IA96_024 |    13 | 127 |    7.6 |
+| LHA_IA96_024 |    13 | 064 |    7.6 |
+| LHA_IA96_024 |    13 | 152 |    7.6 |
+| LHA_IA96_024 |    14 | 025 |    7.6 |
+| LHA_IA96_024 |    14 | 127 |    7.6 |
+| LHA_IA96_024 |    15 | 038 |    7.6 |
+| LHA_IA96_024 |    15 | 076 |    7.6 |
+| LHA_IA96_024 |    15 | 127 |    7.6 |
+| LHA_IA96_024 |    15 | 064 |    7.6 |
+| LHA_IA96_024 |    15 | 102 |    7.6 |
+| LHA_IA96_024 |    15 | 152 |    7.6 |
+| LHA_IA96_024 |    16 | 038 |    7.6 |
+| LHA_IA96_024 |    16 | 025 |    7.6 |
+| LHA_IA96_024 |    16 | 051 |    7.6 |
+| LHA_IA96_024 |    16 | 076 |    7.6 |
+| LHA_IA96_024 |    16 | 127 |    7.6 |
+| LHA_IA96_024 |    16 | 102 |    7.6 |
+| LHA_IA96_024 |    17 | 102 |    7.6 |
+| LHA_IA96_024 |    17 | 038 |    7.6 |
+| LHA_IA96_024 |    17 | 076 |    7.6 |
+| LHA_IA96_024 |    17 | 152 |    7.6 |
+| LHA_IA96_024 |    17 | 064 |    7.6 |
+| LHA_IA96_024 |    18 | 076 |    7.6 |
+| LHA_IA96_024 |    18 | 152 |    7.6 |
+| LHA_IA96_024 |    18 | 102 |    7.6 |
+| LHA_IA96_024 |    19 | 038 |    7.6 |
+| LHA_IA96_024 |    19 | 025 |    7.6 |
+| LHA_IA96_024 |    19 | 127 |    7.6 |
+| LHA_IA96_024 |    19 | 152 |    7.6 |
+| LHA_IA96_024 |     7 | 038 |    7.6 |
+| LHA_IA96_024 |     7 | 025 |    7.6 |
+| LHA_IA96_024 |     7 | 051 |    7.6 |
+| LHA_IA96_024 |     7 | 076 |    7.6 |
+| LHA_IA96_024 |     7 | 127 |    7.6 |
+| LHA_IA96_024 |     7 | 102 |    7.6 |
+| LHA_IA96_024 |     7 | 152 |    7.6 |
+| LHA_IA96_024 |    12 | 038 |    7.6 |
+| LHA_IA96_024 |    12 | 051 |    7.6 |
+| LHA_IA96_024 |    12 | 127 |    7.6 |
+| LHA_IA96_024 |    12 | 064 |    7.6 |
+| LHA_IA96_024 |    12 | 102 |    7.6 |
+| LHA_IA96_024 |    12 | 152 |    7.6 |
+| LHA_IA96_024 |    20 | 038 |    7.6 |
+| LHA_IA96_024 |    20 | 025 |    7.6 |
+| LHA_IA96_024 |    20 | 051 |    7.6 |
+| LHA_IA96_024 |    20 | 127 |    7.6 |
+| LHA_IA96_024 |    20 | 064 |    7.6 |
+| LHA_IA96_024 |    20 | 102 |    7.6 |
+| LHA_IA96_024 |    20 | 152 |    7.6 |
+| LHA_IA96_024 | 10007 | 076 |    7.6 |
+| LHA_IA96_024 |    23 | 038 |    7.6 |
+| LHA_IA96_024 |    23 | 025 |    7.6 |
+| LHA_IA96_024 |    23 | 051 |    7.6 |
+| LHA_IA96_024 |    23 | 076 |    7.6 |
+| LHA_IA96_024 |    23 | 127 |    7.6 |
+| LHA_IA96_024 |    23 | 064 |    7.6 |
+| LHA_IA96_024 |    23 | 102 |    7.6 |
+| LHA_IA96_024 |    24 | 038 |    7.6 |
+| LHA_IA96_024 |    24 | 025 |    7.6 |
+| LHA_IA96_024 |    24 | 051 |    7.6 |
+| LHA_IA96_024 |    24 | 127 |    7.6 |
+| LHA_IA96_024 |    24 | 064 |    7.6 |
+| LHA_IA96_024 |    24 | 102 |    7.6 |
+| LHA_IA96_024 |    24 | 152 |    7.6 |
+| LHA_IA96_024 |    25 | 076 |    7.6 |
+| LHA_IA96_024 |    25 | 051 |    7.6 |
+| LHA_IA96_024 |    25 | 127 |    7.6 |
+| LHA_IA96_024 |    25 | 152 |    7.6 |
+| LHA_IA96_024 |    25 | 102 |    7.6 |
+| LHA_IA96_024 |    26 | 038 |    7.6 |
+| LHA_IA96_024 |    26 | 025 |    7.6 |
+| LHA_IA96_024 | 10001 | 025 |    7.6 |
+| LHA_IA96_024 | 10001 | 102 |    7.6 |
+| LHA_IA96_024 | 10002 | 127 |    7.6 |
+| LHA_IA96_024 | 10002 | 152 |    7.6 |
+| LHA_IA96_024 |     9 | 038 |    7.6 |
+| LHA_IA96_024 |     9 | 051 |    7.6 |
+| LHA_IA96_024 |     9 | 127 |    7.6 |
+| LHA_IA96_024 |     9 | 064 |    7.6 |
+| LHA_IA96_024 |     9 | 102 |    7.6 |
+| LHA_IA96_024 |     9 | 152 |    7.6 |
+| LHA_IA96_024 |    10 | 038 |    7.6 |
+| LHA_IA96_024 |    10 | 025 |    7.6 |
+| LHA_IA96_024 |    10 | 051 |    7.6 |
+| LHA_IA96_024 |    10 | 076 |    7.6 |
+| LHA_IA96_024 |    10 | 127 |    7.6 |
+| LHA_IA96_024 |    10 | 102 |    7.6 |
+| LHA_IA96_024 |    10 | 152 |    7.6 |
+| LHA_IA96_024 |    11 | 038 |    7.6 |
+| LHA_IA96_024 |    11 | 025 |    7.6 |
+| LHA_IA96_024 |    11 | 051 |    7.6 |
+| LHA_IA96_024 |    11 | 076 |    7.6 |
+| LHA_IA96_024 |    11 | 127 |    7.6 |
+| LHA_IA96_024 |    11 | 064 |    7.6 |
+| LHA_IA96_024 |    11 | 152 |    7.6 |
+| LHA_IA97_023 |  9004 | 127 |    7.6 |
+| LHA_IA97_023 |  9004 | 152 |    7.6 |
+| LHA_IA97_023 |    21 | 152 |    7.6 |
+| LHA_IA97_023 |    22 | 152 |    7.6 |
+| LHA_IA97_023 |    23 | 051 |    7.6 |
+| LHA_IA97_023 |    23 | 152 |    7.6 |
+| LHA_IA97_023 |    24 | 152 |    7.6 |
+| LHA_IA97_023 |    24 | 064 |    7.6 |
+| LHA_IA97_023 |     9 | 076 |    7.6 |
+| LHA_IA97_023 |     9 | 127 |    7.6 |
+| LHA_IA97_023 |     9 | 152 |    7.6 |
+| LHA_IA97_023 |     9 | 064 |    7.6 |
+| LHA_IA97_023 |    10 | 025 |    7.6 |
+| LHA_IA97_023 |    10 | 051 |    7.6 |
+| LHA_IA97_023 |    10 | 152 |    7.6 |
+| LHA_IA97_023 |    10 | 064 |    7.6 |
+| LHA_IA97_023 |    11 | 102 |    7.6 |
+| LHA_IA97_023 |    12 | 152 |    7.6 |
+| LHA_IA97_023 |    13 | 127 |    7.6 |
+| LHA_IA97_023 |    13 | 152 |    7.6 |
+| LHA_IA97_023 |    13 | 064 |    7.6 |
+| LHA_IA97_023 |    14 | 051 |    7.6 |
+| LHA_IA97_023 |    14 | 152 |    7.6 |
+| LHA_IA97_023 |    14 | 102 |    7.6 |
+| LHA_IA97_023 |    15 | 076 |    7.6 |
+| LHA_IA97_023 |    15 | 127 |    7.6 |
+| LHA_IA97_023 |    15 | 152 |    7.6 |
+| LHA_IA97_023 |    36 | 038 |    7.6 |
+| LHA_IA97_023 |    36 | 051 |    7.6 |
+| LHA_IA97_023 |    36 | 152 |    7.6 |
+| LHA_IA97_023 |  9001 | 152 |    7.6 |
+| LHA_IA97_023 |  9002 | 076 |    7.6 |
+| LHA_IA97_023 |  9002 | 051 |    7.6 |
+| LHA_IA97_023 |  9002 | 127 |    7.6 |
+| LHA_IA97_023 |  9002 | 152 |    7.6 |
+| LHA_IA97_023 |  9002 | 064 |    7.6 |
+| LHA_IA97_023 |  9003 | 127 |    7.6 |
+| LHA_IA97_023 |  9003 | 152 |    7.6 |
+| LHA_IA97_023 |    16 | 025 |    7.6 |
+| LHA_IA97_023 |    16 | 127 |    7.6 |
+| LHA_IA97_023 |    16 | 152 |    7.6 |
+| LHA_IA97_023 |    17 | 038 |    7.6 |
+| LHA_IA97_023 |    17 | 025 |    7.6 |
+| LHA_IA97_023 |    17 | 076 |    7.6 |
+| LHA_IA97_023 |    17 | 152 |    7.6 |
+| LHA_IA97_023 |    17 | 064 |    7.6 |
+| LHA_IA97_023 |    18 | 038 |    7.6 |
+| LHA_IA97_023 |    18 | 025 |    7.6 |
+| LHA_IA97_023 |    18 | 076 |    7.6 |
+| LHA_IA97_023 |    18 | 127 |    7.6 |
+| LHA_IA97_023 |    18 | 102 |    7.6 |
+| LHA_IA97_023 |    18 | 152 |    7.6 |
+| LHA_IA97_023 |    19 | 038 |    7.6 |
+| LHA_IA97_023 |    19 | 025 |    7.6 |
+| LHA_IA97_023 |    19 | 051 |    7.6 |
+| LHA_IA97_023 |    19 | 076 |    7.6 |
+| LHA_IA97_023 |    19 | 064 |    7.6 |
+| LHA_IA97_023 |    19 | 152 |    7.6 |
+| LHA_IA97_023 |    25 | 038 |    7.6 |
+| LHA_IA97_023 |    25 | 025 |    7.6 |
+| LHA_IA97_023 |    25 | 051 |    7.6 |
+| LHA_IA97_023 |    25 | 127 |    7.6 |
+| LHA_IA97_023 |    25 | 152 |    7.6 |
+| LHA_IA97_023 |    26 | 152 |    7.6 |
+| LHA_IA97_023 |    27 | 127 |    7.6 |
+| LHA_IA97_023 |    27 | 152 |    7.6 |
+| LHA_IA97_023 |    28 | 102 |    7.6 |
+| LHA_IA97_023 |    28 | 127 |    7.6 |
+| LHA_IA97_023 |    28 | 152 |    7.6 |
+| LHA_IA97_023 |    28 | 064 |    7.6 |
+| LHA_IA97_023 |    29 | 038 |    7.6 |
+| LHA_IA97_023 |    29 | 051 |    7.6 |
+| LHA_IA97_023 |    29 | 076 |    7.6 |
+| LHA_IA97_023 |    29 | 127 |    7.6 |
+| LHA_IA97_023 |    29 | 064 |    7.6 |
+| LHA_IA97_023 |    29 | 102 |    7.6 |
+| LHA_IA97_023 |    29 | 152 |    7.6 |
+| LHA_IA97_023 |    30 | 051 |    7.6 |
+| LHA_IA97_023 |    30 | 127 |    7.6 |
+| LHA_IA97_023 |    30 | 152 |    7.6 |
+| LHA_IA97_023 |    31 | 127 |    7.6 |
+| LHA_IA97_023 |    31 | 152 |    7.6 |
+| LHA_IA97_023 |    32 | 152 |    7.6 |
+| LHA_IA97_023 |    33 | 076 |    7.6 |
+| LHA_IA97_023 |    33 | 127 |    7.6 |
+| LHA_IA97_023 |    33 | 152 |    7.6 |
+| LHA_IA97_023 |    34 | 051 |    7.6 |
+| LHA_IA97_023 |    34 | 127 |    7.6 |
+| LHA_IA97_023 |    34 | 152 |    7.6 |
+| LHA_IA97_023 |    35 | 038 |    7.6 |
+| LHA_IA97_023 |    35 | 051 |    7.6 |
+| LHA_IA97_023 |    35 | 064 |    7.6 |
+| LHA_IA97_023 |    20 | 038 |    7.6 |
+| LHA_IA97_023 |    20 | 051 |    7.6 |
+| LHA_IA97_023 |    20 | 152 |    7.6 |
+| LHA_IA97_023 |    20 | 102 |    7.6 |
+| LHA_IA97_023 |     1 | 127 |    7.6 |
+| LHA_IA97_023 |     3 | 076 |    7.6 |
+| LHA_IA97_023 |     3 | 051 |    7.6 |
+| LHA_IA97_023 |     3 | 102 |    7.6 |
+| LHA_IA97_023 |     4 | 127 |    7.6 |
+| LHA_IA97_023 |     4 | 102 |    7.6 |
+| LHA_IA97_023 |     5 | 127 |    7.6 |
+| LHA_IA97_023 |     5 | 152 |    7.6 |
+| LHA_IA97_023 |     5 | 064 |    7.6 |
+| LHA_IA97_023 |     6 | 076 |    7.6 |
+| LHA_IA97_023 |     6 | 064 |    7.6 |
+| LHA_IA97_023 |     7 | 076 |    7.6 |
+| LHA_IA97_023 |     7 | 152 |    7.6 |
+| LHA_IA97_023 |     8 | 038 |    7.6 |
+| LHA_IA97_023 |     8 | 025 |    7.6 |
+| LHA_IA97_023 |     8 | 051 |    7.6 |
+| LHA_IA97_023 |     8 | 127 |    7.6 |
+| LHA_IA97_023 |     8 | 064 |    7.6 |
+| LHA_IA97_023 |     8 | 102 |    7.6 |
+| LHA_IA97_023 |     8 | 152 |    7.6 |
+
+
+*** 2015 FWIN Samples without Effort:
+
+- there were a large number of samples collected in 2015 FWIN without
+  associated EFF - contrary to the rest of the samples in the
+  project.  This should be avoided whenever possible - do your best to
+  pick the appropriate mesh in the field.
+- in the meantime, records remain in the Fn122 table for these catch
+  counts. EFFDST has been set to 0 to avoid inflating total effort
+  associated with the samples.
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | CATCNT | BIOCNT |
+|------+--------------+-----+-----+-----+-----+--------+--------|
+| 2015 | LHA_IA15_236 |   3 | 001 | 061 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 |  27 | 001 | 331 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 102 | 001 | 311 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 102 | 001 | 331 |  00 |      3 |      0 |
+| 2015 | LHA_IA15_236 | 105 | 001 | 331 |  00 |      2 |      0 |
+| 2015 | LHA_IA15_236 | 107 | 001 | 311 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 109 | 001 | 331 |  00 |      4 |      0 |
+| 2015 | LHA_IA15_236 | 110 | 001 | 311 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 118 | 001 | 331 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 119 | 001 | 331 |  00 |      4 |      0 |
+| 2015 | LHA_IA15_236 | 120 | 001 | 331 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 124 | 001 | 331 |  00 |      3 |      0 |
+| 2015 | LHA_IA15_236 | 125 | 001 | 331 |  00 |      6 |      0 |
+| 2015 | LHA_IA15_236 | 126 | 001 | 331 |  00 |      2 |      0 |
+| 2015 | LHA_IA15_236 | 129 | 001 | 131 |  00 |      1 |      0 |
+| 2015 | LHA_IA15_236 | 129 | 001 | 331 |  00 |      4 |      0 |
+| 2015 | LHA_IA15_236 | 130 | 001 | 331 |  00 |      6 |      0 |
+
+
+*** More missing BSM FN122 Records
+
+| YEAR | PRJ_CD       | SAM | SAMn | EFF | EFFDST |
+|------+--------------+-----+------+-----+--------|
+| 2015 | LHA_IA15_805 | 401 |    0 | 076 |    6.2 |
+| 2015 | LHA_IA15_805 | 401 |    0 | 102 |    6.2 |
+| 2015 | LHA_IA15_805 | 401 |    0 | 114 |    6.2 |
+
+
+*** LHA_IA00_18F GRP Codes
+- a large number of the lake trout catch count records in the FN123
+  table for project LHA_IA00_18F were reported with unusual group
+  codes.  However, the group codes were not carried into the 125
+  table where all lake trout were identified as grp '00' resulting in
+  a large number of orphan records.
+- the solution was to group all of the lake trout catch counts into a
+  single grp '00' to re-establish linkages between 123 and the 125
+  table.
+- without documentation its difficult to see how the existing group
+  codes could have been used or how the records in the 125 table could
+  have been updated to the corresponding group code from fn123.
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | CATCNT | RCPCNT | BIOCNT |
+|------+--------------+-----+-----+-----+-----+--------+--------+--------|
+| 2000 | LHA_IA00_18F |   1 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   1 | 002 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |   2 | 001 | 081 | 00  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   2 | 001 | 081 | 95  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   2 | 001 | 081 | 96  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   4 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   5 | 001 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |   5 | 002 | 081 | 00  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |   5 | 002 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |   6 | 002 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  10 | 001 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  10 | 002 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  12 | 002 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  17 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  20 | 001 | 081 | 96  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  22 | 002 | 081 | 00  |      7 |      0 |      7 |
+| 2000 | LHA_IA00_18F |  24 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  25 | 001 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  27 | 001 | 081 | 2k  |      6 |      0 |      6 |
+| 2000 | LHA_IA00_18F |  27 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  28 | 001 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  28 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  31 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  32 | 001 | 081 | 2k  |      5 |      0 |      5 |
+| 2000 | LHA_IA00_18F |  32 | 001 | 081 | 98  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  33 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  35 | 002 | 081 | 00  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  35 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  37 | 002 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  40 | 001 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  40 | 001 | 081 | 96  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  40 | 002 | 081 | 99  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  41 | 002 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  41 | 002 | 081 | 99  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  42 | 001 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  44 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  44 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  46 | 001 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  46 | 002 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  48 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  49 | 002 | 081 | 00  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  49 | 002 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  51 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  52 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  52 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  53 | 001 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  53 | 001 | 081 | 96  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  53 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  54 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  57 | 001 | 081 | 2k  |      2 |      0 |      2 |
+| 2000 | LHA_IA00_18F |  57 | 001 | 081 | 94  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  59 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  60 | 001 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  61 | 002 | 081 | 2k  |      3 |      0 |      3 |
+| 2000 | LHA_IA00_18F |  63 | 001 | 081 | 2k  |      4 |      0 |      4 |
+| 2000 | LHA_IA00_18F |  63 | 001 | 081 | 99  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  64 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  66 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  67 | 001 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  67 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  69 | 001 | 081 | 00  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  69 | 001 | 081 | 2k  |      8 |      0 |      8 |
+| 2000 | LHA_IA00_18F |  69 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  70 | 002 | 081 | 00  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  70 | 002 | 081 | 2k  |      1 |      0 |      1 |
+| 2000 | LHA_IA00_18F |  71 | 001 | 081 | 2k  |      1 |      0 |      1 |
+
+
+
+*** LHA_IA04_F14 GRP=55 076
+
+- there were 3 orphan records that were associated with aquaculture
+  rainbow caught in the Frazer Bay FLIN.  The group code in the
+  corresponding records of the FN123 table were update to 55 to match.
+  In each case, only one rainbow was caught and sampled.
+
+| IA125.PRJ_CD | SAM | EFF | Spc | GRP |
+|--------------+-----+-----+-----+-----|
+| LHA_IA04_F14 |   9 | 001 | 076 |  55 |
+| LHA_IA04_F14 |  39 | 001 | 076 |  55 |
+| LHA_IA04_F14 |  52 | 001 | 076 |  55 |
+
+
+*** FN121 without matching FN122
+
+With very few exceptions, every FN121 record should have at least one
+FN122 record.  the FN122 record records attributes of the effort
+(EFFDST, GRDEP ect).  The following records were added to the FN122
+table to restore that relationship:
+
+| YEAR | PRJ_CD       |   SAM | EFF | EFFDST | GRDEP | GRTEM0 | GRTEM1 | STRATUM |
+|------+--------------+-------+-----+--------+-------+--------+--------+---------+
+| 2015 | LHA_IA15_017 |     2 |   1 |        |       |        |        |         |
+| 2015 | LHA_IA15_017 |    45 |   1 |        |       |        |        |         |
+| 2015 | LHA_IA15_021 |     1 |   1 |        |   6.4 |        |        |         |
+| 2015 | LHA_IA15_021 |     3 |   1 |        |   4.8 |        |        |         |
+| 2015 | LHA_IA15_021 |     9 |   1 |        |   3.2 |        |        |         |
+| 2015 | LHA_IA15_021 |    12 |   1 |        |   3.4 |        |        |         |
+| 2015 | LHA_IA15_021 |    21 |   1 |        |   4.5 |        |        |         |
+| 2015 | LHA_IA15_021 |    42 |   1 |        |   3.8 |        |        |         |
+| 2015 | LHA_IA15_257 |    25 |   1 |        |   2.3 |        |        |         |
+| 2015 | LHA_IA15_257 |    49 |   1 |        |     2 |        |        |         |
+| 2015 | LHA_IA15_257 |    50 |   1 |        |   2.6 |        |        |         |
+| 2015 | LHA_IA15_257 |    51 |   1 |        |   1.9 |        |        |         |
+| 2015 | LHA_IA15_257 |    52 |   1 |        |     2 |        |        |         |
+| 2015 | LHA_IA15_257 |    56 |   1 |        |   3.8 |        |        |         |
+| 2015 | LHA_IS15_018 |     3 |   1 |        |     3 |        |        |         |
+| 2014 | LHA_IA14_017 |     8 |   1 |        |   3.2 |        |        |         |
+| 2014 | LHA_IA14_017 |    19 |   1 |        |   3.6 |        |        |         |
+| 2014 | LHA_IA14_021 |    13 |   1 |        |   3.1 |        |        |         |
+| 2014 | LHA_IA14_250 |    92 |   1 |        |   2.7 |        |        |         |
+| 2014 | LHA_IS14_018 |    33 |   1 |        |     2 |        |        |         |
+| 2013 | LHA_IA13_116 |     2 |   1 |        |     3 |        |        |         |
+| 2013 | LHA_IA13_116 |     6 |   1 |        |   2.1 |        |        |         |
+| 2012 | LHA_IA12_022 |    25 |   1 |        |   2.6 |        |        |         |
+| 2012 | LHA_IA12_116 |     1 |   1 |        |   3.6 |        |        |         |
+| 2011 | LHA_IA11_301 |   103 |   1 |        |   2.3 |        |        |         |
+| 2010 | LHA_IA10_251 |    14 |   1 |        |   3.2 |        |        |         |
+| 2010 | LHA_IS10_014 |     2 |   1 |        |   3.2 |        |        |         |
+| 2009 | LHA_IA09_257 |    11 |   1 |        |   2.6 |        |        |         |
+| 2005 | LHA_IA05_116 |     2 |   1 |        |   2.4 |        |        |         |
+| 2005 | LHA_IS05_018 |     1 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |     2 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |     3 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |     4 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |     6 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |     8 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |    10 |   1 |        |       |        |        |         |
+| 2005 | LHA_IS05_018 |    14 |   1 |        |       |        |        |         |
+| 2004 | LHA_IA04_022 |     1 |   1 |        |     2 |        |        |         |
+| 2004 | LHA_IA04_116 |     2 |   1 |        |     2 |        |        |         |
+| 2004 | LHA_IA04_116 |     8 |   1 |        |   2.4 |        |        |         |
+| 2004 | LHA_IA04_116 |    40 |   1 |        |   2.3 |        |        |         |
+| 2003 | LHA_IA03_111 |    12 |   1 |        |   2.1 |        |        |         |
+| 2003 | LHA_IA03_252 |    55 |   1 |        |     3 |        |        |         |
+| 2003 | LHA_IA03_255 |     2 |   1 |        |     2 |        |        |         |
+| 2003 | LHA_IA03_255 |    35 |   1 |        |     2 |        |        |         |
+| 2002 | LHA_IA02_253 |    60 |   1 |        |       |        |        |         |
+| 2002 | LHA_IA02_254 |    19 |   1 |        |       |        |        |         |
+| 2001 | LHA_IA01_111 |     1 |   1 |        |       |        |        |         |
+| 2001 | LHA_IA01_111 |     3 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_111 |     6 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_111 |     8 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_111 |    10 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_111 |    11 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    23 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    30 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    38 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    47 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    53 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    93 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    94 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    95 |   1 |        |       |        |        |         |
+| 2000 | LHA_IA00_113 |    96 |   1 |        |       |        |        |         |
+| 2000 | LHA_IS00_018 |    27 |   1 |        |       |        |        |         |
+| 1999 | LHA_IA99_250 |    60 |   1 |        |       |        |        |         |
+| 1999 | LHA_IA99_251 |    26 |   1 |        |       |        |        |         |
+| 1999 | LHA_IA99_251 |    30 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_114 |     8 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_114 |    14 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_114 |    25 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_114 |   120 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15002 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15006 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15007 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15008 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15012 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15016 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15023 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15024 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15025 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15035 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15037 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_231 | 15039 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_232 |    15 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_233 |     6 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_233 |    30 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_234 |     4 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_234 |    16 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_234 |    20 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_234 |    32 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_250 |    79 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_250 |   107 |   1 |        |       |        |        |         |
+| 1998 | LHA_IA98_250 |   125 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_016 |  3021 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_016 |  3027 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_025 |  1001 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_025 |  1043 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_113 |  1002 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2010 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2014 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2023 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2025 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2036 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2038 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_114 |  2044 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_115 |     1 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_115 |     2 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_115 |     8 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_115 |    22 |   1 |        |       |        |        |         |
+| 1997 | LHA_IA97_115 |    36 |   1 |        |       |        |        |         |
+| 1997 | LHA_IS97_014 |    13 |   1 |        |       |        |        |         |
+| 1997 | LHA_IS97_014 |    14 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1608 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1612 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1615 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1620 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1630 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1642 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1645 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1670 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_016 |  1674 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_021 |    38 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_021 |    42 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_021 |    44 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_111 | 11005 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_111 | 11008 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |     1 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |     6 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |     8 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |     9 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |    10 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |    16 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |    17 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |    20 |   1 |        |       |        |        |         |
+| 1996 | LHA_IA96_113 |    22 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1002 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1007 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1008 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1015 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1071 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1072 |   1 |        |       |        |        |         |
+| 1996 | LHA_IS96_018 |  1073 |   1 |        |       |        |        |         |
+| 1995 | LHA_IS95_011 |  1102 |   1 |        |       |        |        |         |
+| 1995 | LHA_IS95_011 |  1125 |   1 |        |       |        |        |         |
+| 1995 | LHA_IS95_011 |  1126 |   1 |        |       |        |        |         |
+| 1995 | LHA_IS95_018 |  1015 |   1 |        |       |        |        |         |
+| 1994 | LHA_IA94_016 |  1618 |   1 |        |       |        |        |         |
+| 1994 | LHA_IA94_016 |  1623 |   1 |        |       |        |        |         |
+| 1994 | LHA_IA94_016 |  1625 |   1 |        |       |        |        |         |
+| 1994 | LHA_IA94_016 |  1630 |   1 |        |       |        |        |         |
+| 1994 | LHA_IS94_018 |  1020 |   1 |        |       |        |        |         |
+| 1993 | LHA_IS93_018 |  1016 |   1 |        |       |        |        |         |
+| 1993 | LHA_IS93_018 |  1031 |   1 |        |       |        |        |         |
+| 1993 | LHA_IS93_018 |  1042 |   1 |        |       |        |        |         |
+| 1992 | LHA_IS92_018 |  1020 |   1 |        |       |        |        |         |
+| 1992 | LHA_IS92_018 |  1042 |   1 |        |       |        |        |         |
+| 1992 | LHA_IS92_018 |  1045 |   1 |        |       |        |        |         |
+| 1992 | LHA_IS92_018 |  1054 |   1 |        |       |        |        |         |
+| 2015 | LHA_IA15_230 |     5 |   5 |      1 |       |        |        |         |
+
+
+
+
+*** GR LHA_IS05_240
+
+This was a large mesh gill netting project targeting spawning lake
+trout and lake whitefish in southern Georgian Bay.  The gear was 50m
+panels of 4.5" mono.  This same gear was used in 2004 project and
+where gear code GL26 was used.  This same gear code was reported in
+the 2005 protocol, but not in the database.
+
+The gear code for all samples associated with LHA_IS05_240 where
+GR='GL13' were updated to GL26.
+
+| PRJ_CD       | SAM | GR   | GR_shouldbe |
+|--------------+-----+------+-------------|
+| LHA_IS05_240 |   1 | GL13 | GL26        |
+| LHA_IS05_240 |   2 | GL13 | GL26        |
+| LHA_IS05_240 |   3 | GL13 | GL26        |
+| LHA_IS05_240 |   4 | GL13 | GL26        |
+| LHA_IS05_240 |   5 | GL13 | GL26        |
+| LHA_IS05_240 |   6 | GL13 | GL26        |
+| LHA_IS05_240 |   7 | GL13 | GL26        |
+| LHA_IS05_240 |   8 | GL13 | GL26        |
+| LHA_IS05_240 |   9 | GL13 | GL26        |
+| LHA_IS05_240 |  10 | GL13 | GL26        |
+| LHA_IS05_240 |  11 | GL13 | GL26        |
+| LHA_IS05_240 |  12 | GL13 | GL26        |
+
+*** GL26 and GL27 EFFDST
+
+- the GL26 and GL27 gears consisted of either one or two panels of 50m
+  of 4.5" mono.  So EFFDST was set to 50 (GL26) or 100m (GL27) for
+  every 122 record where these gear were used.
+
+
+*** GR LHA_IS04_240 GL27 Efforts
+
+the GL27 gear consisted of two panels of 50m of 4.5" mono.  Effort
+codes 1 and 2 were used to distinguish between the shallow and deep
+panels (like the FLIN protocol).  The following records were added to
+the FN122 table to account for panels that did not catch fish and
+were originally excluded from the FN122:
+
+| YEAR | PRJ_CD       |   SAM | EFF | EFFDST | GRDEP | GRTEM0 | GRTEM1 | STRATUM |
+|------+--------------+-------+-----+--------+-------+--------+--------+---------+
+| 2004 | LHA_IA04_240 |     3 |   3 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |     4 |   4 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |     9 |   9 |      1 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    10 |  10 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    13 |  13 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    14 |  14 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    31 |  31 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    32 |  32 |      2 |    50 |        |        |       0 |
+| 2004 | LHA_IA04_240 |    40 |  40 |      1 |    50 |        |        |       0 |
+
+
+
+
+*** LHA_IS95_013 GL19 and GL20 Efforts
+
+There were 4 gear types used in the 1995 Iroquois Bay LT spawning
+survey.  Two gears caught fish, (GL15 and GL18) and based on their
+effort codes from the 123 were 64mm and 76mm meshes.  GL19 and GL 20
+were used but didn't catch anything.  As a result, they have no effort
+code.  The gear does not appear to have been used anywhere else.  The
+project lead is currenly looking for documentation.  In the meantime,
+eff will be set to 1 in the FN122.
+
+| YEAR | PRJ_CD       |  SAM | SAMn | EFF |
+|------+--------------+------+------+-----|
+| 1995 | LHA_IS95_013 | 1002 |  100 |   1 |
+| 1995 | LHA_IS95_013 | 1003 |  100 |   1 |
+| 1995 | LHA_IS95_013 | 1004 |  100 |   1 |
+| 1995 | LHA_IS95_013 | 1005 |  100 |   1 |
+| 1995 | LHA_IS95_013 | 1014 |  101 |   1 |
+| 1995 | LHA_IS95_013 | 1015 |  101 |   1 |
+| 1995 | LHA_IS95_013 | 1016 |  101 |   1 |
+| 1995 | LHA_IS95_013 | 1017 |  101 |   1 |
+| 1995 | LHA_IS95_013 | 1019 |  101 |   1 |
+| 1995 | LHA_IS95_013 | 1020 |  102 |   1 |
+| 1995 | LHA_IS95_013 | 1023 |  102 |   1 |
+| 1995 | LHA_IS95_013 | 1024 |  102 |   1 |
+| 1995 | LHA_IS95_013 | 1029 |  102 |   1 |
+| 1995 | LHA_IS95_013 | 1030 |  103 |   1 |
+
+
+*** EFFDST Removed from IA121
+
+
+- EFFDST was used in only two projects (LHA_IS04_140 and
+  LHA_IS05_240).  The data in those fields was moved to the
+  appropriate records in the IA122 table.
+- the fields in IA121 were also re-organized to group like fields
+  together - where, when, about
+
+*** PRDTM0, PRDTM1 and SILOC
+
+- these fields were not populated in any project in the nearshore
+  database and were removed from the IA121 table.
+
+*** NULL EFFDT0
+
+There were 585 instances in parry sound flins and slins where the lift
+date was null. Presumabley because the protocol uses 90 minute
+day-time sets so obviously EFFDT0 would be the same as EFFDT1.  All of
+these records were updated so that EFFDT0 is populated for all records.
+
+There were also 73 instances from the 1996 flin in Iroquis Bay
+(LHA_IS96_013).  EFFDT0 was updated for these records in the same way.
+
+
+*** UnKnown SPC??
+
+The following records occur in the 123 table but have an unknown
+species code:
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | CATCNT | BIOCNT |
+|------+--------------+-----+-----+-----+-----+--------+--------|
+| 2006 | LHA_IA06_257 |   3 |   1 | 001 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |   3 |   1 | 002 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |   8 |   1 | 001 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |   8 |   1 | 002 |  00 |      2 |      0 |
+| 2006 | LHA_IA06_257 |   8 |   1 | 003 |  00 |      3 |      0 |
+| 2006 | LHA_IA06_257 |  24 |   1 | 002 |  00 |      2 |      0 |
+| 2006 | LHA_IA06_257 |  38 |   1 | 003 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |  42 |   1 | 002 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |  47 |   1 | 003 |  00 |      0 |      0 |
+| 2006 | LHA_IA06_257 |  48 |   1 | 003 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |  61 |   1 | 002 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 |  77 |   1 | 002 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 105 |   1 | 001 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 120 |   1 | 002 |  00 |      2 |      0 |
+| 2006 | LHA_IA06_257 | 121 |   1 | 003 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 122 |   1 | 003 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 126 |   1 | 002 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 130 |   1 | 001 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 131 |   1 | 003 |  00 |      2 |      0 |
+| 2006 | LHA_IA06_257 | 132 |   1 | 003 |  00 |      5 |      0 |
+| 2006 | LHA_IA06_257 | 136 |   1 | 001 |  00 |      4 |      0 |
+| 2006 | LHA_IA06_257 | 137 |   1 | 003 |  00 |      1 |      0 |
+| 2006 | LHA_IA06_257 | 142 |   1 | 001 |  00 |      1 |      0 |
+
+According to the project lead, these were probably non-fish species.
+A little digging through the Field Season archives revealed that these
+were in fact turtles - the comments where not loaded into the master.
+
+the following records created in the 123 non-fish table and the
+records above were deleted from IA123 table:
+
+| YEAR | PRJ_CD       | SAM | EFF |    SPC | CATCNT | BIOCNT | COMMENT3   |
+|------+--------------+-----+-----+--------+--------+--------+------------|
+| 2006 | LHA_IA06_257 |   8 |   1 | 173758 |      3 |      0 | STINK      |
+| 2006 | LHA_IA06_257 |  39 |   1 | 173794 |      1 |      0 | MAP TURTLE |
+| 2006 | LHA_IA06_257 |  38 |   1 | 173758 |      1 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 |  33 |   1 | 173758 |      3 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 |  27 |   1 | 173758 |      1 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 |  24 |   1 | 173794 |      2 |      0 | MAP TURTLE |
+| 2006 | LHA_IA06_257 |  10 |   1 | 173752 |      1 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 |  42 |   1 | 173794 |      1 |      0 | MAPTURTLE  |
+| 2006 | LHA_IA06_257 |   8 |   1 | 173794 |      2 |      0 | MAP        |
+| 2006 | LHA_IA06_257 |   8 |   1 | 173752 |      1 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 | 142 |   1 | 173752 |      1 |      0 | SNAPPER    |
+| 2006 | LHA_IA06_257 |   3 |   1 | 173794 |      1 |      0 | MAP        |
+| 2006 | LHA_IA06_257 |   2 |   1 | 173752 |      1 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 |   2 |   1 | 173794 |      2 |      0 | MAP        |
+| 2006 | LHA_IA06_257 |   1 |   1 | 173758 |      6 |      0 | STINK      |
+| 2006 | LHA_IA06_257 |   1 |   1 | 173794 |      1 |      0 | MAP        |
+| 2006 | LHA_IA06_257 |  10 |   1 | 173758 |      1 |      0 | STINK      |
+| 2006 | LHA_IA06_257 | 131 |   1 | 173758 |      2 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 |   3 |   1 | 173752 |      1 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 |  46 |   1 | 173758 |      1 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 | 137 |   1 | 173758 |      1 |      0 | STINK POT  |
+| 2006 | LHA_IA06_257 | 132 |   1 | 173758 |      5 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 | 130 |   1 | 173752 |      1 |      0 | SNAPPER    |
+| 2006 | LHA_IA06_257 | 126 |   1 | 173794 |      1 |      0 | MAP        |
+| 2006 | LHA_IA06_257 | 122 |   1 | 173758 |      1 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 |  61 |   1 | 173794 |      1 |      0 | MAP        |
+| 2006 | LHA_IA06_257 | 120 |   1 | 173794 |      2 |      0 | MAP TURTLE |
+| 2006 | LHA_IA06_257 | 105 |   1 | 173752 |      1 |      0 | SNAPPER    |
+| 2006 | LHA_IA06_257 |  77 |   1 | 173794 |      1 |      0 | MAP        |
+| 2006 | LHA_IA06_257 |  72 |   1 | 173752 |      1 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 |  66 |   1 | 173752 |      1 |      0 | SNAPPER    |
+| 2006 | LHA_IA06_257 | 121 |   1 | 173758 |      1 |      0 | STINKPOT   |
+| 2006 | LHA_IA06_257 | 136 |   1 | 173752 |      4 |      0 | SNAP       |
+| 2006 | LHA_IA06_257 |  48 |   1 | 173758 |      1 |      0 | STINKPOT   |
+
+
+*** Changes to 123_nonfish
+
+- removed tally and recapture columns, these do not apply to non-fish
+  species
+- updated the default value for BIOCNT to 0 (it was null)
+
+*** LHA_IS02_013 IA123 EFF
+
+- '1' was used for EFF of all catch counts that did not have
+  associated biodata.  This broke the relationship between 122 and 123
+  tables.  Luckily, a flin only has 1 fn122 record per net set, so EFF
+  could be updated from PRJ_CD and SAM.  The following 83 records in
+  the 123 table were updated:
+
+| PRJ_CD       | SAM | SPC | GRP | EFF_is | EFF_shouldbe |
+|--------------+-----+-----+-----+--------+--------------|
+| LHA_IS02_013 |   5 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |   7 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |   8 | 311 |  00 |      1 |          064 |
+| LHA_IS02_013 |  10 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  11 | 311 |  00 |      1 |          064 |
+| LHA_IS02_013 |  13 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  13 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  13 | 313 |  00 |      1 |          038 |
+| LHA_IS02_013 |  13 | 316 |  00 |      1 |          038 |
+| LHA_IS02_013 |  16 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  16 | 313 |  00 |      1 |          038 |
+| LHA_IS02_013 |  16 | 316 |  00 |      1 |          038 |
+| LHA_IS02_013 |  18 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |  19 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  21 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  22 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  23 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  24 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  25 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  26 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  27 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  27 | 131 |  00 |      1 |          051 |
+| LHA_IS02_013 |  28 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  29 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  29 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  29 | 313 |  00 |      1 |          038 |
+| LHA_IS02_013 |  30 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  32 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  35 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  35 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  35 | 313 |  00 |      1 |          038 |
+| LHA_IS02_013 |  36 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |  40 | 131 |  00 |      1 |          038 |
+| LHA_IS02_013 |  43 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  46 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  48 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  48 | 131 |  00 |      1 |          051 |
+| LHA_IS02_013 |  49 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  49 | 313 |  00 |      1 |          038 |
+| LHA_IS02_013 |  49 | 316 |  00 |      1 |          038 |
+| LHA_IS02_013 |  55 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |  57 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  57 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  60 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  61 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |  62 | 311 |  00 |      1 |          064 |
+| LHA_IS02_013 |  64 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  65 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  67 | 075 |  00 |      1 |          038 |
+| LHA_IS02_013 |  68 | 316 |  00 |      1 |          038 |
+| LHA_IS02_013 |  70 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  71 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  73 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 |  75 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  77 | 131 |  00 |      1 |          064 |
+| LHA_IS02_013 |  77 | 311 |  00 |      1 |          064 |
+| LHA_IS02_013 |  78 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  79 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  81 | 224 |  00 |      1 |          064 |
+| LHA_IS02_013 |  81 | 317 |  00 |      1 |          064 |
+| LHA_IS02_013 |  86 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  87 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  89 | 314 |  00 |      1 |          051 |
+| LHA_IS02_013 |  89 | 316 |  00 |      1 |          051 |
+| LHA_IS02_013 |  91 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  92 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  93 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  93 | 131 |  00 |      1 |          064 |
+| LHA_IS02_013 |  94 | 316 |  00 |      1 |          064 |
+| LHA_IS02_013 |  95 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 |  95 | 314 |  00 |      1 |          038 |
+| LHA_IS02_013 |  96 | 075 |  00 |      1 |          051 |
+| LHA_IS02_013 |  97 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 |  97 | 311 |  00 |      1 |          064 |
+| LHA_IS02_013 | 103 | 311 |  00 |      1 |          051 |
+| LHA_IS02_013 | 103 | 314 |  00 |      1 |          051 |
+| LHA_IS02_013 | 104 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 | 104 | 314 |  00 |      1 |          038 |
+| LHA_IS02_013 | 112 | 311 |  00 |      1 |          038 |
+| LHA_IS02_013 | 112 | 314 |  00 |      1 |          038 |
+| LHA_IS02_013 | 112 | 316 |  00 |      1 |          038 |
+| LHA_IS02_013 | 113 | 075 |  00 |      1 |          064 |
+| LHA_IS02_013 | 113 | 131 |  00 |      1 |          064 |
+
+
+*** IA127 No AGE, NO AGEID, NO AGEMT
+
+- there were 1381 records in the 127 table that did not have an ageid,
+  agea or agemt - Are these really age interpretations or estimates?
+  They have been deleted from IA127 and copied into a separate table
+  foobar_IA127.
+- there were an additional 23 records with an age id, but no other
+  aging information.  These were also removed from IA127 and added to
+  foobar_IA127
+
+
+
+*** IA127 NULL AGEID
+
++ AGEID is a key field in IA127 and cannot be null.  There were 1677
+  records where AGEID was null.
++ AGEID was set to 1 for these records (XAGEM was also null and
+  temporarily set to "ZZZ" to flag the affected rows)
++ duplicate FN127 records where checked - no duplicates where found
+  before or after updating ageid.
+
+
+*** IA127 Required Fields
+
+- the design of the IA127 table was update:
+  + fields were re-orderd to include group in its natural place:
+    + PRJ_CD -> SAM -> EFF -> SPC -> GRP -> FISH -> AGEID
+  + all of the key fields are now required, as are YEAR, XAGEM and AGEMT
+
+*** 2016 Nearshore Data:
+
+**** Null Eff 123_non-fish
+
+| YEAR | PRJ_CD       | SAM | EFF  |    SPC | Eff_shouldBe |
+|------+--------------+-----+------+--------+--------------|
+| 2016 | LHA_IA16_233 |  29 | NULL | 173752 |            1 |
+| 2016 | LHA_IA16_233 |  15 | NULL | 173752 |            1 |
+| 2016 | LHA_IA16_233 |  13 | NULL | 173758 |            1 |
+| 2016 | LHA_IA16_233 |  11 | NULL | 173758 |            1 |
+| 2016 | LHA_IA16_233 |  11 | NULL | 173752 |            1 |
+
+**** Master List Target Species
+
+| YEAR | PRJ_CD       | Target_Species | Should_be |
+|------+--------------+----------------+-----------|
+| 2016 | LHA_IA16_302 | Muskellunge    |       132 |
+| 2016 | LHA_IA16_301 | Muskellunge    |       132 |
+| 2016 | LHA_IA16_259 | Muskellunge    |       132 |
+| 2016 | LHA_IA16_257 | Muskellunge    |       132 |
+
+
+** COA Smallfish
+
+*** Required fields
++ keyfields in all tables are now required
+
+*** Efforts inconsistent with GR
+
++ there have been quite a few different meshes used in different gear
+  types in the small fish program, many of which are extremely close
+  to one another.
+
+The following catches were in SIN1 gear but had a Nordic Specific mesh
+size.  Changes were made in both the 123 and 125 tables:
+
+| YEAR | PRJ_CD       | SAM | EFF_is | SPC | GRP | Eff_Shouldbe |
+|------+--------------+-----+--------+-----+-----+--------------|
+| 2008 | LHA_IA08_700 |  16 |    020 | 121 |  00 |          019 |
+| 2008 | LHA_IA08_700 |  16 |    020 | 201 |  00 |          019 |
+| 2008 | LHA_IA08_700 |  16 |    020 | 291 |  00 |          019 |
+| 2008 | LHA_IA08_700 |  16 |    020 | 331 |  00 |          019 |
+| 2008 | LHA_IA08_700 |  16 |    020 | 366 |  00 |          019 |
+| 2008 | LHA_IA08_700 |   8 |    043 | 162 |  00 |          044 |
+| 2008 | LHA_IA08_703 |  23 |    043 | 041 |  00 |          043 |
+| 2008 | LHA_IA08_703 |  23 |    035 | 041 |  00 |          032 |
+| 2008 | LHA_IA08_705 |  68 |    035 | 366 |  00 |          038 |
+| 2008 | LHA_IA08_705 |  68 |    035 | 331 |  00 |          038 |
+| 2008 | LHA_IA08_705 |  68 |    035 | 311 |  00 |          038 |
+| 2008 | LHA_IA08_705 |  68 |    035 | 163 |  00 |          038 |
+| 2008 | LHA_IA08_705 |  68 |    035 | 999 |  00 |          038 |
+| 2008 | LHA_IA08_712 | 188 |    020 | 163 |  00 |          019 |
+| 2008 | LHA_IA08_712 | 188 |    020 | 201 |  00 |          019 |
+| 2008 | LHA_IA08_712 | 188 |    020 | 208 |  00 |          019 |
+| 2008 | LHA_IA08_712 | 188 |    020 | 331 |  00 |          019 |
+| 2008 | LHA_IA08_712 | 188 |    020 | 366 |  00 |          019 |
+
+This was the only catches in NOR gear that was associated with SIN
+specific mesh size.  Changes were made in both the 123 and 125 tables:
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | EFF_shouldBe |
+|------+--------------+-----+-----+-----+-----+--------------|
+| 2008 | LHA_IA08_708 | 121 | 019 | 331 |  00 |          020 |
+
+
+*** Unknown or undocumented species
+
+000 has occasionally been used as an empty catch placeholder for
+calculating CPUE.  999 unditentified fish/multiple species:
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC_was | SPC_shouldbe |
+|------+--------------+-----+-----+---------+--------------|
+| 2003 | LHA_IA03_706 |  69 | 001 |     000 |          999 |
+| 2003 | LHA_IA03_702 |  84 | 001 |     000 |          999 |
+
+*** 011 table
+
++ [PRJ_CD_NEW] changed to [PRJ_CD]
++ the following records were added to the 011 table:
+
+| YEAR | PRJ_CD_NEW   | PRJ_DATE0 | PRJ_DATE1 | PRJ_NM                                        | PRJ_LDR     | Comment0 |
+|------+--------------+-----------+-----------+-----------------------------------------------+-------------+----------|
+| 2015 | LHA_BM15_802 | 27-Jul-15 | 31-Jul-15 | Smallfish Assessment - Parry Sound            | Jeff Speers |          |
+| 2015 | LHA_BM15_803 | 10-Aug-15 | 14-Aug-15 | Smallfish Assessment - Severn Sound           | Jeff Speers |          |
+| 2015 | LHA_BM15_804 | 24-Aug-15 | 28-Aug-15 | Smallfish Assessment - French River           | Jeff Speers |          |
+| 2015 | LHA_BM15_805 | 08-Jul-15 | 12-Jul-15 | Smallfish Assessment - Shawanaga River        | Jeff Speers |          |
+| 2015 | LHA_BM15_807 | 12-Jul-15 | 16-Jul-15 | Smallfish Assessment - Sturgeon Bay           | Jeff Speers |          |
+| 2015 | LHA_BM15_808 | 29-Jun-15 | 03-Jul-15 | Smallfish Assessment - Shebeshekong           | Jeff Speers |          |
+| 2015 | LHA_IA15_700 | 15-Jun-15 | 19-Jun-15 | Smallfish Assessment - Owen Sound             | Jeff Speers |          |
+| 2015 | LHA_IA15_702 | 22-Jun-15 | 26-Jun-15 | Smallfish Assessment - Midland Bay            | Jeff Speers |          |
+| 2015 | LHA_IA15_703 | 06-Jul-15 | 10-Jul-15 | Smallfish Assessment - Blackstone Harbour     | Jeff Speers |          |
+| 2015 | LHA_IA15_704 | 02-Jul-15 | 06-Jul-15 | Smallfish Assessment - Britt                  | Jeff Speers |          |
+| 2015 | LHA_IA15_705 | 13-Jul-15 | 17-Jul-15 | Smallfish Assessment - South Bay              | Jeff Speers |          |
+| 2015 | LHA_IA15_706 | 20-Jul-15 | 24-Jul-15 | Smallfish Assessment - Stokes Bay             | Jeff Speers |          |
+| 2015 | LHA_IA15_707 | 27-Jul-15 | 31-Jul-15 | Smallfish Assessment - Goderich               | Jeff Speers |          |
+| 2015 | LHA_IA15_708 | 04-Aug-15 | 07-Aug-15 | Smallfish Assessment - Grand Bend             | Jeff Speers |          |
+| 2015 | LHA_IA15_709 | 24-Aug-15 | 28-Aug-15 | Smallfish Assessment - Whalesback Channel     | Jeff Speers |          |
+| 2015 | LHA_IA15_710 | 16-Aug-15 | 20-Aug-15 | Smallfish Assessment - Mississagi River Delta | Jeff Speers |          |
+| 2015 | LHA_IA15_711 | 12-Aug-15 | 16-Aug-15 | Smallfish Assessment - Bruce Mines            | Jeff Speers |          |
+| 2015 | LHA_IA15_712 | 31-Aug-15 | 04-Sep-15 | Smallfish Assessment - Campbell Bay           | Jeff Speers |          |
+
+
+*** FN123 Biocnt != FN125 Biocnt
+
++ the following 123 records do not have associated records in the 125
+  table.  All are coded as either unknown, any species or multiple
+  species.  Presumably these fish were subsequent identified and
+  correctly coded in the 125 table and a 123 record added.
++ these records were deleted from the 123 table.
+
+| PRJ_CD       | SAM | EFF | Spc | GRP | BIOCNT | Fn125_Biocounts |
+|--------------+-----+-----+-----+-----+--------+-----------------|
+| LHA_IA03_707 |  34 | 001 | 000 |  00 |      2 |                 |
+| LHA_IA07_711 | 159 | 029 | 999 |  00 |      1 |                 |
+| LHA_IA07_703 |  26 | 001 | 999 |  00 |      1 |                 |
+| LHA_IA07_703 |  24 | 019 | 999 |  00 |      1 |                 |
+| LHA_IA07_710 | 146 | 013 | 999 |  00 |      1 |                 |
+| LHA_IA07_711 | 179 | 010 | 999 |  00 |      1 |                 |
+| LHA_IA07_700 |  48 | 013 | 999 |  00 |      1 |                 |
+| LHA_IA07_711 | 168 | 025 | 999 |  00 |      1 |                 |
+| LHA_IA03_703 |  51 | 001 | 000 |  00 |      1 |                 |
+| LHA_IA07_702 |   9 | 029 | 999 |  00 |      1 |                 |
+
+*** Null CATCNT
+
+The following records were in the 123 table without any catch count data:
+- they were moved to 123_Nonfish and spc code updated to 90568 (ITIS
+  code for hemimysis)
+
+| YEAR | PRJ_CD       | SAM | EFF | SPC | GRP | CATCNT | BIOCNT | COMMENT3     |
+|------+--------------+-----+-----+-----+-----+--------+--------+--------------|
+| 2008 | LHA_IA08_707 | 114 | 001 | 999 |  00 |        |      0 | BLOOD SHRIMP |
+| 2008 | LHA_IA08_707 | 105 | 001 | 999 |  00 |        |      0 | BLOOD SHRIMP |
+
+
+*** Created FN122 Table
+
++ a fn122 table was created for small fish by adding one record for
+  each sample for gear that were not gill nets
++ records were added for gill net efforts depending on gear/net type
+  and standard meshes
++ finally, missing records where added to ensure that there were no
+  orphans in the 123 table.  This last step ensured that catches in
+  non-standard efforts in gill nets where accounted for (eff=001 or
+  999).  Note that the 'Nordic' gill nets set in 2013 seems to have
+  had several more meshes than other years.  I was unable to find any
+  associated documentation to clarify this issue.
+
+
+*** Teeny-Tiny Girth
+
+girth is measured in mm.  The following records have a girth value
+less than one and are probably not real.
+
+| PRJ_CD       | SAM | EFF | SPC | GRP | FISH | GIRTH | GIRTH_shouldbe |
+|--------------+-----+-----+-----+-----+------+-------+----------------|
+| LHA_IA05_704 | 191 | 024 | 311 |  00 |    5 |   0.7 | Null           |
+| LHA_IA05_707 |   7 | 001 | 366 |  00 |   24 |     0 | Null           |
+
+
+*** FLEN > TLEN
+
+- really? still?
+
+
+| PRJ_CD       | SAM | EFF | SPC | GRP | FISH | FLEN | TLEN |
+|--------------+-----+-----+-----+-----+------+------+------|
+| LHA_IA03_700 |  18 | 001 | 163 |  00 |    7 |  296 |  208 |
+| LHA_IA03_702 |  87 | 001 | 198 |  00 |    2 |  720 |   72 |
+| LHA_IA03_707 |  22 | 001 | 366 |  00 |    7 |  103 |   37 |
+| LHA_IA03_707 |  36 | 024 | 163 |  00 |    3 |  216 |  133 |
+| LHA_IA03_708 | 128 | 001 | 196 |  00 |   35 |   43 |   35 |
+| LHA_IA03_803 |  93 | 001 | 311 |  00 |  107 |   78 |   75 |
+| LHA_IA03_803 |  94 | 001 | 313 |  00 |   50 |   85 |   62 |
+| LHA_IA04_700 |  39 | 001 | 208 |  00 |   47 |   54 |   53 |
+| LHA_IA04_711 | 147 | 016 | 163 |  00 |   43 |  147 |  146 |
+| LHA_IA04_714 | 249 | 008 | 331 |  00 |   50 |   87 |   70 |
+| LHA_IA05_704 | 180 | 016 | 311 |  00 |    7 |  861 |   90 |
+| LHA_IA05_709 | 219 | 016 | 171 |  00 |   11 |  237 |  165 |
+| LHA_IA05_709 | 223 | 024 | 316 |  00 |   18 |  176 |  175 |
+| LHA_IA05_709 | 247 | 020 | 313 |  00 |   45 |  138 |  135 |
+| LHA_IA05_709 | 247 | 013 | 316 |  00 |   52 |  110 |  106 |
+| LHA_IA05_709 | 283 | 001 | 311 |  00 |    2 |   42 |   11 |
+| LHA_IA05_711 |  85 | 001 | 163 |  00 |   30 |   58 |   56 |
+| LHA_IA05_711 |  85 | 001 | 291 |  00 |   50 |   47 |   44 |
+| LHA_IA05_711 |  92 | 043 | 163 |  00 |   22 |  170 |   80 |
+| LHA_IA07_700 |  48 | 013 | 121 |  00 |   82 |   84 |   83 |
+| LHA_IA07_700 |  64 | 001 | 201 |  00 |   39 |   56 |   40 |
+| LHA_IA07_704 |  81 | 038 | 311 |  00 |   21 |  109 |  104 |
+| LHA_IA07_704 |  85 | 001 | 331 |  00 |    3 |  105 |   11 |
+| LHA_IA07_706 | 127 | 001 | 206 |  00 |    9 |   49 |   46 |
+| LHA_IA07_706 | 135 | 001 | 331 |  00 |   18 |   68 |   64 |
+| LHA_IA10_704 |  36 | 001 | 198 |  00 |   49 |   45 |   40 |
+
+
+** Gear
+
+- CPUE is the fundamental measure of virtually all fisheries
+  assessment programs
+- effort (in cpue) is directly dependent on the gear that was used to
+  obtain the catch.
+- impossible to compare cpue numbers without knowledge of gear.
+
+- *NOTE*: gear descriptions in most UGLMU protocols are wholely
+  inadequate.  The gear used in a project needs to be explicitly
+  stated.  It's not sufficient to state "the same as some other project".
+
+
+*** Existing Data Sources
+- some gear descriptions in FN013 and FN014 tables in Fishnet
+  archive.  Good for many projects in 1990s, earlier projects sketchy,
+  latter project non-existent
+- some gear fields in master databases (GR, GRTP, EFF, EFFDST) that
+  allow us to reconstruct some gears
+- Darrel's Gear Spreadsheet
+- Lookup tables on server
+- available documentation on Project Tracker
+
+*** Where are we going
+
+- Gear defines FN122 table:
+  + one record per sam for traps and hoops
+  + one record for each panel of gill nets
+  + can't have records for meshes not in gear
+  + ProcVal can check for these if gear is well defined and consistent
+    across projects
+
+- master gear and subgear tables.
+  + Gear:
+    + A master table of gears.  This will evaully replace the FN013
+      table.  Each gear will only be defined once and will be associated
+      to each SAM by foreign key.
+
+  + Subgear:
+    + A master table of gear panel attributes - each sub-gear will only
+      be defined once and asscoaited with the appropriate gear through a
+      many-to-many relationship.  51mm offshore panel is used in
+      multiple gears, and each gear has multple panels/subgears.
+
+  + Gear Family:
+
+    + A model to associate sub-gears with the appropriate gears.  Gears
+      are comprised of subgears, but only subgears in the same family
+      should be allowed.  For example:
+
+        + GL10, GL21, GL22 and GL32 are all derived from offshore
+          monofilament (OSIA-mono) panels (and GL18 might be too)
+
+        + GL01 is offshore multifilament (OSIA-multi)
+
+        + GL50 is a fwin family
+
+        + GL38, GL51, GL64 are all part of the FLIN/SLIN family
+
+        + Nordic nets
+        + Bottle traps
+        + GEE traps
+        + Windemere traps
+
+        + Smallfish tall
+        + Smallfish short
+
+        + North American Standard (not sure if small and large
+          standards are same family or not)
+
+        + TP* is trapnet family
+        + HP* is hoopnet family
+
+        + Unknown - this should never be used, but will be included
+          here to get things working.  Delete before moving into
+          production.
+
+
+        Generally, the subgears within a family have similar
+        characteristics and are only used in particular gear types. the
+        51mm panels in FWIN and offshore gear are different lengths and
+        are unlikely to ever be used on the same net.
+
+   + Gear2SubGear
+     + association table to faciliation many-to-many between gear and
+       subgear
+     + contains additional information - panel count and panel sequence
+
+
+
+*** How we are going to get there
+
+- use fn_portal
+- database tables for old fishnet tables will be created and populated
+  - tables from the fish net archive will be used where possible
+  - more recent data will be populated from gear codes where gear
+    details are known (e.g. - offshore gears)
+  - project leads, field staff may be asked to provide some input
+
+- Gear, subgear and gear family tables will be created and populated
+  from available data.
+
+- summary of gears used in a project will be added to project details
+  in fn_portal (already available as filter, but not as a link to gear
+  details)
+
+- views will be created to:
+  + list gears
+  + crud gears
+  + crud subgears
+  + gear details
+    + about the gear
+    + associated sub-gears
+    + projects where gear was used
+  + list gear families
+  + crud gear families
+  + family details:
+    + gears in family
+    + sub gears in family
+
+  + approved gears
+  + defunct gears
+  + gears to be updated by <USER>
+
+
+*** What have we learned?
+- all projects need specific project protocols (many are missing from
+  project tracker)
+- project protocols need to explicit describe gear used in project
+  + generic "same as other project" shortcuts are not adequate
+  + TP example
+  + HP example
+  + GL example
+  + electrofishing - any suggestions?
+- science 101 - sufficient detail to reproduce/re-run project
+
+
+*** Next Steps/Homework
+- assigned gears:
+  - provide description for assigned gear
+  - verify sub gear attributes:
+    - populate where possible
+    - check existing values
+- FLIN gear used with one or two efforts. Can these be the same gear
+  code?

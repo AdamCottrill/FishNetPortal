@@ -1,0 +1,108 @@
+% Created 2016-09-20 Tue 07:50
+\documentclass[presentation, smaller]{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\mode<beamer>{\usetheme{Boadilla}\usecolortheme[RGB={40,100,30}]{structure}}
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{MNRwhite}}
+\setbeamersize{text margin left=10mm}
+\usetheme{default}
+\author{Proof of Concept}
+\date{September 20, 2016.}
+\title{FishNet-Portal}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 24.5.1 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+
+
+\begin{frame}[label=sec-1]{FishNet (FN)-Portal}
+\begin{itemize}
+\item make data housed in UGLMU databases accessible in your browser
+\item Project Tracker:
+\begin{itemize}
+\item project documentation (reports, protocols and
+associated milestones)
+\end{itemize}
+\item FN\_Portal:
+\begin{itemize}
+\item Net set, catch count and biological data collected in the
+project
+\end{itemize}
+\item complementary back-end to project tracker
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-2]{Status}
+\begin{itemize}
+\item currently proof of concept/prototype
+\item suggestion welcome
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-3]{Implementation Stack:}
+\begin{itemize}
+\item leaflet for maps
+\item crossfilter.js data filtering
+\item dc.js (D3) plots
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-4]{Views}
+\begin{itemize}
+\item project detail
+\item species detail
+\item trend-through time
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-5]{Projects}
+\begin{itemize}
+\item currently includes data from:
+\begin{itemize}
+\item Offshore master
+\item Nearshore master
+\item Smallfish master
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-6]{Caveats}
+\begin{itemize}
+\item general information
+\item basic exploratory analysis
+\item limited to common fields/attributes
+\item sophisticated, specialized analysis out-of-scope
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=sec-7]{Next steps}
+\begin{itemize}
+\item extended to:
+\begin{itemize}
+\item other project types
+\item Lake Superior
+\end{itemize}
+\item formatting
+\item add missing filters
+\item Catches/Samples by ROI
+\end{itemize}
+\end{frame}
+% Emacs 24.5.1 (Org mode 8.2.10)
+\end{document}

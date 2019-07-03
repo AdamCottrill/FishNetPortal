@@ -200,7 +200,7 @@ with pyodbc.connect(constring) as src_conn:
     flds = [x[0].lower() for x in src_cur.description]
 
 msg = 'Found {:,} records.  Creating {} objects ...'
-print(msg.format(len(data), 'FN122'))
+print(msg.format(len(data), 'FN123'))
 
 for x in data:
     row = {k:v for k,v in zip(flds, x)}
@@ -230,6 +230,68 @@ for x in data:
 FN123.objects.bulk_create(my_list)
 
 print('Done adding {} records (n={:,})'.format(what, len(my_list)))
+
+
+
+#=======================================================
+#                FN123 - 0 Catches
+
+
+what = "SPC='000' Catch Counts"
+my_list = []
+key_fields = ['prj_cd', 'sam', 'eff', 'spc'] #form foreign keys
+print('Retrieving {} records...'.format(what))
+constring = r"DRIVER={Microsoft Access Driver (*.mdb)};DBQ=%s" % SRC_DB
+with pyodbc.connect(constring) as src_conn:
+    src_cur = src_conn.cursor()
+    rs = src_cur.execute('execute get_fn123_SPC_000')
+    data = rs.fetchall()
+    flds = [x[0].lower() for x in src_cur.description]
+
+msg = 'Found {:,} records.  Creating {} objects ...'
+print(msg.format(len(data), 'FN123 000 records'))
+
+species = Species.objects.get(species_code='000')
+
+for x in data:
+    row = {k:v for k,v in zip(flds, x)}
+    try:
+        prj_cd = row.get('prj_cd')
+        sam = row.get('sam')
+        eff = row.get('eff')
+        #spc = row.get('spc')
+        effort = FN122.objects.filter(sample__project__prj_cd=prj_cd,
+                                      sample__sam__iexact=sam,
+                                      eff=eff).get()
+        #species = Species.objects.get(species_code=spc)
+    except:
+        msg = "Could not find effort with prj_cd = {}, sam = {} and eff={}"
+        print(msg.format(prj_cd, sam, eff))
+        next
+    for keyfld  in key_fields:
+        del row[keyfld]
+
+    #add the related django objects
+    row['effort'] = effort
+    row['species'] = species
+
+    #create our catch count object and add it to our list
+    my_list.append(FN123(**row))
+
+FN123.objects.bulk_create(my_list)
+
+print('Done adding {} records (n={:,})'.format(what, len(my_list)))
+
+
+
+
+
+
+
+
+
+
+
 
 #=======================================================
 #                FN125 - Fish Data
