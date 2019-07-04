@@ -330,7 +330,7 @@ class FN127(models.Model):
         pass
 
     def __str__(self):
-        return "{}-{}({})".format(self.fish, self.agea, self.ageid)
+        return "{}-{} (age={})".format(self.fish, self.ageid, self.agea,)
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
@@ -384,7 +384,7 @@ class FN_Tags(models.Model):
         pass
 
     def __str__(self):
-        return "{}-{}({})".format(self.fish, self.tagnum, self.tagid)
+        return "{}-{}({})".format(self.fish, self.tagid, self.tagdoc)
 
 
 class FN013(models.Model):
@@ -435,7 +435,7 @@ class FN014(models.Model):
 
 class GearFamily(models.Model):
     """A model to associate sub-gears with the appropriate gears.  Gears
-    are comprised of subgears, but only subgears in teh same family
+    are comprised of subgears, but only subgears in the same family
     should be allowed.  For example:
 
     + GL10, GL21, GL22 and GL32 are all derived from offshore
@@ -606,7 +606,7 @@ class SubGear(models.Model):
         # ordering = ['eff',]
 
     def __str__(self):
-        return "{}".format(self.eff)
+        return "{} ({})".format(self.eff, self.family)
 
 
 class Gear2SubGear(models.Model):
