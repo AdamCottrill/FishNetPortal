@@ -1,0 +1,827 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+{% load staticfiles %}
+
+{% block extrahead  %}
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/reductio/0.6.3/reductio.js"></script>  -->
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+    <script src="{% static 'leaflet-bubble.js' %}"></script>
+
+    <style type="text/css" media="screen">
+    #filter-buttons a {
+        margin-bottom: 3px;
+     }
+     .dc-chart g.row text {fill: black;}
+    </style>
+
+
+{% endblock %}
+
+{% block sidebar %}
+
+{% sidebar_projects %}
+
+{% endblock %}
+
+    {% block content  %}
+
+
+
+
+    <h2>{{ object.prj_nm |title }}({{ object.prj_cd }})</h2>
+
+    <h4>Net Sets</h4>
+    <div id="maprow" class="row" >
+        <div class="col-md-10" >
+            <div id="map" style="width: 900px; height: 700px;"></div>
+        </div>
+    </div>
+
+    <br />
+    <hr />
+
+
+    <div>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#net-sets" aria-controls="net-sets" role="tab" data-toggle="tab">Samples</a></li>
+            <li role="presentation"><a href="#catcnts" aria-controls="catch-counts" role="tab" data-toggle="tab">Catch Counts</a></li>
+            <li role="presentation"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+            <li role="presentation"><a href="#gear" aria-controls="gear" role="tab" data-toggle="tab">Gear</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="net-sets">
+                {% if object.samples.all %}
+                <h4>Net Sets</h4>
+                <table id="myTable" class="table tablesorter">
+                    <thead><tr>
+                        <td>Sample</td>
+                        <td>Set Date</td>
+                        <td>Lift Date</td>
+                        <td>Effort Duration</td>
+                        <td>Gear</td>
+                        <td>Orient</td>
+                        <td>Site Depth(m)</td>
+                        <td>Total Catch</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in object.samples.all %}
+                        <tr>
+                            <td><a href="{{ item.get_absolute_url }}">{{ item.sam }}</a></td>
+                            <td> {{ item.effdt0|date:"N j,Y" }} </td>
+                            <td> {{ item.effdt1|date:"N j,Y" }} </td>
+                            <td> {{ item.effdur|floatformat:2 }} </td>
+                            <td> {{ item.gr }} </td>
+                            <td> {{ item.orient }} </td>
+                            <td> {{ item.sidep|floatformat:2 }} </td>
+                            <td> {{ item.total_catch.total|default_if_none:0 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h4>Not Applicable</h4>
+                {% endif %}
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="catcnts">
+
+                <div class="row">
+                    <table class="table tablesorter" id="data-table1">
+                        <thead>
+                            <tr class='header'>
+                                <th>Species (Species Code)</th>
+                                <th>Catch Counts</th>
+                                <th>Bio-Counts</th>
+                            </tr>
+                        </thead>
+
+                        {% for species in object.catch_counts %}
+                        <tr>
+                            <td>
+                                {% if species.biocnts == 0 %}
+                                {{ species.species }} ({{ species.species_code }})
+                                {% else %}
+                                <a href="{% url 'project_spc_biodata' object.slug species.species_code %}" target="_blank">{{ species.species }} ({{ species.species_code }})</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ species.catcnts }}
+                            </td>
+                            <td>
+                                {{ species.biocnts }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="graphs">
+
+
+                <div class="row">
+                    <div id="tally_row" class="row" >
+                        <div id="tallies" class="col-md-5" >
+                            <table>
+                                <tr>
+                                    <td>Nets:</td>
+                                    <td id="net-count"></td>
+                                </tr>
+                                <tr>
+                                    <td>Species:</td>
+                                    <td id="species-count"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Catch:</td>
+                                    <td id="total-catch"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="filters" class="col-md-5" >
+                            <table>
+                                <tr>
+                                    <td>Species Filter(s):</td>
+                                    <td id="species-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Mesh Filter(s):</td>
+                                    <td id="mesh-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Index Meshes:</td>
+                                    <td id="index-mesh-filter">All Meshes</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Depth Filter:</td>
+                                    <td id="sidep-filter">None</td>
+                                </tr>
+                                <tr>
+                                    <td>Lift Date Filter:</td>
+                                    <td id="effdt1-filter">None</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Gear Filter:</td>
+                                    <td id="gear-filter">None</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div id="filter-buttons" class="col-md-2" >
+                            <span>
+                                <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
+                                <a href="{% url 'project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+
+                <div id="first-plot-row" class="row" >
+
+                    <div class="col-md-6" >
+                        <div id="catch-pie-chart">
+                            <strong>Species Composition</strong>
+                            <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" >
+                        <div id="eff-catch-chart">
+                            <strong>Catch By Effort</strong>
+                            <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                            <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                                <label class="btn btn-primary active">
+                                    <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6" >
+                        <div id="sidep-chart">
+                            <strong>Net Set Depth (m)</strong>
+                            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" >
+                        <div id="gear-catch-chart">
+                            <strong>Catch By Gear Type</strong>
+                            <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-10" >
+                        <div id="effdt1-chart">
+                            <strong>Lift Date</strong>
+                            <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>  <!-- Graph tabpanel -->
+
+            <div role="tabpanel" class="tab-pane" id="gear">
+                <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'gear_list' %}">gear_list</a>).
+
+                <h5>Gear Codes listed in FN121 Table:</h5>
+                <ul>
+                    {% for gr in object.get_121_gear_codes %}
+                    <li> <a href="{% url 'gear_detail' gear_code=gr %}">{{gr}}</a> </li>
+                    {% endfor %}
+                </ul>
+
+                <h5>Gears in the FN013 Table for this project:</h5>
+                {% for gr in object.get_gear %}
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading"> <strong> <a href="{% url 'gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
+                    <div class="panel-body">
+                        {% if gr.gear_effs.values %}
+                        <table class="table">
+
+                            <thead>
+                                <tr>
+                                    <td> eff </td>
+                                    <td> mesh </td>
+                                    <td> grlen </td>
+                                    <td> grht  </td>
+                                    <td> grwid </td>
+                                    <td> grcol </td>
+                                    <td> grmat </td>
+                                    <td> gryarn </td>
+                                    <td> grknot </td>
+                                    <td> eff_des </td>
+                                </tr>
+                            </thead>
+
+                            {% for eff in gr.gear_effs.values %}
+                            <tr>
+                                <td> {{eff.eff |default_if_none:"" }} </td>
+                                <td> {{eff.mesh |default_if_none:"" }} </td>
+                                <td> {{eff.grlen |default_if_none:"" }} </td>
+                                <td> {{eff.grht  |default_if_none:"" }} </td>
+                                <td> {{eff.grwid |default_if_none:"" }} </td>
+                                <td> {{eff.grcol |default_if_none:"" }} </td>
+                                <td> {{eff.grmat |default_if_none:"" }} </td>
+                                <td> {{eff.gryarn |default_if_none:"" }} </td>
+                                <td> {{eff.grknot |default_if_none:"" }} </td>
+                                <td> {{eff.eff_des |default_if_none:"" }} </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                        {% else %}
+                        <p>No detailed effort information currently available.</p>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+        // prepare the sidebar by expanding just the current year
+        var my_year={{ object.year }}{{object.project.year}};
+        var div_name = "#project-year-" + my_year;
+        $(div_name).show();
+
+        });
+    </script>
+
+    <script type="text/javascript">
+
+     // instantiate charts and count objects outside of d3 call:
+
+     var catchPieChart = dc.pieChart('#catch-pie-chart');
+     var effCatchChart = dc.rowChart('#eff-catch-chart');
+     var sidepChart = dc.barChart('#sidep-chart');
+     var gearCatchChart = dc.rowChart('#gear-catch-chart');
+     var effdt1Chart = dc.barChart('#effdt1-chart');
+     var dataTable = dc.dataTable('#data-table2');
+
+     var netCount = dc.numberDisplay("#net-count");
+     var speciesCount = dc.numberDisplay("#species-count");
+     var totalCatch = dc.numberDisplay("#total-catch");
+
+     var INDEX_EFFS=['038', '051', '064', '076', '089', '102', '114', '127'];
+
+
+     function is_index_mesh(x){
+         if (~INDEX_EFFS.indexOf(x.eff)){
+             return true;
+         } else {
+             return false;
+         }
+     }
+
+
+
+     d3.json("{% url 'project_catch_counts2_json' object.slug %}", function (error, data) {
+
+         var lat = 45
+         var lon = -82
+         var zoom = 7
+         var mydateformat = d3.time.format('%B %d, %Y');
+         var isodateformat = d3.time.format.iso;
+
+         data.forEach(function(d){
+             d.prj_cd =  d.prj_cd;
+             d.net = d.prj_cd + '-' + d.sam;
+             d.catcnt = +d.catch;
+             d.dd_lat = +d.dd_lat;
+             d.dd_lon = +d.dd_lon;
+             d.effst = +d.effst;
+             d.grdep =  +d.grdep;
+             d.lift_date = isodateformat.parse(d.lift_date);
+             d.sidep =  +d.sidep;
+             d.species =  d.spc;
+             d.spc_code =  +d.spc_code;
+             d.index_mesh = is_index_mesh(d);
+         });
+
+
+         // helper function count unique values (from:http://stackoverflow.com/questions/29018259/)
+         // remaining in filtered data set
+         function bin_counter(group) {
+             return {
+                 value: function() {
+                     return group.all().filter(function(kv) {
+                         return kv.value > 0;
+                     }).length;
+                 }
+             };
+         }
+
+
+         // set up our filters and dimensions:
+         var catches = crossfilter(data);
+
+         var all = catches.groupAll();
+         var allcatches = all.reduceSum(function(d){return d.catcnt;});
+         //var allDim = catches.dimension(function(d) {return d;});
+
+
+         //var prjcdDim = catches.dimension(function(d) { return d.prj_cd; });
+         var samDim = catches.dimension(function(d) { return d.sam; });
+         var netDim = catches.dimension(function(d) { return d.net; });
+         var effDim = catches.dimension(function(d) { return d.eff; });
+         var indexMeshDim = catches.dimension(function(d) { return d.index_mesh; });
+         var effdt1Dim = catches.dimension(function(d) { return d.lift_date; });
+         var speciesDim = catches.dimension(function(d) { return d.species; });
+         var sidepDim = catches.dimension(function(d) { return d.sidep; });
+         //var grpDim = catches.dimension(function(d) { return d.grp; });
+         var gearDim = catches.dimension(function(d) { return d.gear; });
+         //var effstDim = catches.dimension(function(d) { return d.effst; });
+
+         //var prjcdGroup = prjcdDim.group();
+         var samGroup = samDim.group();
+         var netGroup = netDim.group();
+         var effGroup = effDim.group();
+         var effdt1Group = effdt1Dim.group();
+         var speciesGroup = speciesDim.group();
+         //var grpGroup = grpDim.group();
+         var sidepGroup = sidepDim.group();
+         var gearGroup = gearDim.group();
+         //var effstGroup = effstDim.group();
+
+
+
+         //var allCatchGroup = allDim.group().reduceSum(function(d) {return d.catcnt;});
+         var effCatchGroup = effDim.group().reduceSum(function(d) {return d.catcnt;});
+         var speciesCatchGroup = speciesDim.group().reduceSum(function(d) {return d.catcnt;});
+         var gearCatchGroup = gearDim.group().reduceSum(function(d) {return d.catcnt;});
+
+         var effdt1Catch = effdt1Dim.group().reduceSum(function(d) {return d.catcnt;});
+
+         netCount.valueAccessor(function (x) {return x; })
+                                  .group(bin_counter(netGroup));
+
+         speciesCount.valueAccessor(function (x) { return x; })
+                     .group(bin_counter(speciesCatchGroup));
+
+         totalCatch.valueAccessor(function (x) { return x; })
+                   .formatNumber(d3.format(',d'))
+                   .group(allcatches);
+
+
+         // =================
+         //     CHARTS
+
+         var width = 500;
+         var height = 500;
+         var radius = (width * 0.8)/2;
+
+         catchPieChart.width(width)
+                      .height(height)
+                      .radius(radius)
+                      .dimension(speciesDim)
+                      .group(speciesCatchGroup)
+                      .render();
+
+         //update the filter elements on the page to show the current filters
+         catchPieChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=catchPieChart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#species-filter").text('None');
+                 } else {
+                     d3.select("#species-filter").text(myfilters);
+                     d3.select("#species-count").text(myfilters.length);
+
+                 }
+             });
+         });
+
+
+         effCatchChart.width(width)
+                      .height(height)
+                      .dimension(effDim)
+                      .group(effCatchGroup)
+                      .x(d3.scale.linear().domain([0,100]))
+                      .elasticX(true)
+                      .render();
+
+         //update the filter elements on the page to show the current filters
+         effCatchChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#mesh-filter").text('None');
+                 } else {
+                     d3.select("#mesh-filter").text(myfilters);
+                 }
+             });
+         })
+
+
+         sidepChart.width(width)
+                   .height(height)
+                   .dimension(sidepDim)
+                   .group(sidepGroup)
+                   .x(d3.scale.linear().domain([0,100]))
+                   .yAxisLabel('Total Catch')
+                   .elasticX(true)
+                   .render();
+
+         //update the filter elements on the page to show the current filters
+         sidepChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#sidep-filter").text('None');
+                 } else {
+                     d3.select("#sidep-filter").text(myfilters);
+                 }
+             });
+         })
+
+
+         gearCatchChart.width(width)
+                       .height(height)
+                       .dimension(gearDim)
+                       .group(gearCatchGroup)
+                       .x(d3.scale.linear().domain([0,100]))
+                       .elasticX(true)
+             //.colors(d3.scale.ordinal().range('blue'))
+                       .render();
+
+         //update the filter elements on the page to show the current filters
+         gearCatchChart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#gear-filter").text('None');
+                 } else {
+                     d3.select("#gear-filter").text(myfilters);
+                 }
+             });
+         });
+
+
+         var minDate = effdt1Dim.bottom(1)[0].lift_date;
+         var maxDate = effdt1Dim.top(1)[0].lift_date;
+
+         function prettyDateFilter(filter){
+             myformat = d3.time.format('%b %d');
+             dates = filter[0];
+             start_date = d3.time.format.iso.parse(dates[0]);
+             end_date = d3.time.format.iso.parse(dates[1]);
+             pretty = myformat(start_date) + ' - ' + myformat(end_date);
+             return pretty;
+         }
+
+
+         effdt1Chart.width(width * 2)
+                   .height(height)
+                   .dimension(effdt1Dim)
+                   .group(effdt1Group)
+                    .x(d3.time.scale().domain([minDate,maxDate]))
+                    .yAxisLabel('Total Catch')
+                   .elasticX(true)
+                   .render();
+
+         effdt1Chart.xAxis().tickFormat(d3.time.format('%b-%d'));
+
+         //update the filter elements on the page to show the current filters
+         effdt1Chart.renderlet(function(chart) {
+             dc.events.trigger(function() {
+                 myfilters=chart.filters();
+                 if (!myfilters || !myfilters.length){
+                     d3.select("#effdt1-filter").text('None');
+                 } else {
+                     prettyFilters = prettyDateFilter(myfilters);
+                     d3.select("#effdt1-filter").text(prettyFilters);
+                 }
+             });
+         })
+
+
+         function get_net_set_points(x){
+             // give a list/array, extract format the elements
+             // for use with leaflet.
+             var len = x.length
+             var points={};
+
+             for (var i = 0; i < len; i++) {
+                 var tmp = x[i];
+                 if (points[tmp.net]!=undefined) {
+                     points[tmp.net].total_catch += tmp.catch;
+                     // add the species specific catch counts too:
+                     if(points[tmp.net].species[tmp.species]!=undefined){
+                         points[tmp.net].species[tmp.species] += tmp.catch;
+                     } else {
+                         points[tmp.net].species[tmp.species] = tmp.catch;
+                     }
+                 } else {
+                     points[tmp.net] = {
+                         netid: tmp.net,
+                         dd_lat: tmp.dd_lat,
+                         dd_lon: tmp.dd_lon,
+                         sidep: tmp.sidep,
+                         lift_date: tmp.lift_date,
+                         gear: tmp.gear,
+                         total_catch: tmp.catch
+                     };
+                     points[tmp.net].species = {};
+                     points[tmp.net].species[tmp.species] = tmp.catch;
+                 }
+             }
+             return points
+         }
+
+
+         function get_spc_list(pt){
+             var species_string = '';
+             if (Object.keys(pt.species)){
+                 species_names = Object.keys(pt.species);
+                 species_string += '<ul>';
+                 for (spc in species_names){
+                     species_string += '<li>' + species_names[spc] + ': ' + pt.species[species_names[spc]] + '</li>';
+                 }
+                 species_string += '</ul>';
+             } else {
+                 species_string = 'None';
+             }
+             return species_string;
+         }
+
+         function points_to_geojson(points){
+             // this function takes a list of points and converts it to geoJson format
+             // required by leaflet-bubble.js
+             var features = []
+             _.each(points, function (d){
+
+                 spc_list = get_spc_list(d);
+
+                 features.push({
+                     "type": "Feature",
+                     "geometry":{
+                         "type": "Point",
+                         "coordinates": [d.dd_lon, d.dd_lat]},
+                     "properties":{
+                         "netid": d.netid,
+                         "sidep": d.sidep.toFixed(1),
+                         "lift_date": mydateformat(d.lift_date),
+                         "total_catch": d.total_catch,
+                         'species':spc_list
+                     }});
+             });
+
+             var geojson =  {"type": "FeatureCollection",
+                             "features": features };
+
+             return geojson
+         }
+
+
+
+         var netset_popup_text = function(d){
+             var netid = d.netid;
+             var lift_date = mydateformat(d.lift_date);
+             var sidep = d.sidep.toFixed(1);
+             var total_catch = d.total_catch;
+             var gear = d.gear;
+             var text = "<p><strong>Sample ID:</strong> " + netid + "<\p>";
+             text +=  "<p><strong>Lift Date:</strong> " + lift_date + "<\p>";
+             text +=  "<p><strong>Gear:</strong> " + gear + "<\p>";
+             text +=  "<p><strong>Site Depth:</strong> " + sidep + "m <\p>";
+             text +=  "<p><strong>Total Catch:</strong> " + total_catch + "<\p>";
+             return text;
+         }
+
+         // =================
+         //     MAP
+
+         var  map = new L.map('map').setView([lat,lon], zoom);
+
+         function drawMap(){
+
+             function onEachFeature(feature, layer) {
+                 if (feature.properties && feature.properties.popup_text) {
+                     layer.bindPopup(feature.properties.popup_text);
+                 }
+             };
+
+             L.mapbox.accessToken = 'pk.eyJ1IjoiYWNvdHRyaWxsIiwiYSI6ImNpazVmb3Q2eDAwMWZpZm0yZTQ1cjF3NTkifQ.Pb1wCYs0lKgjnTGz43DjVQ';
+             // Replace 'mapbox.streets' with your map id.
+             var mapboxTiles = L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
+                 attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+             }).addTo(map);
+
+             var netsetMarkers = new L.FeatureGroup();
+             // this will get a point for each of the original net sets:
+             var netsetPoints = get_net_set_points(data);
+
+             netsetMarkers.clearLayers();
+             _.each(netsetPoints, function (d) {
+                 var netid = d.netid
+                 var lift_date = mydateformat(d.lift_date);
+                 var marker = L.circle([d.dd_lat, d.dd_lon], 25, {
+                     color:'red',
+                     fillColor: 'red',
+                     fillOpacity: 1
+                 });
+                 popup_text = netset_popup_text(d);
+                 marker.bindPopup(popup_text);
+                 netsetMarkers.addLayer(marker);
+             });
+
+             var bubbleMarkers = new L.FeatureGroup();
+             // samDim will response to filters and only include the
+             // selected records
+             var catchcntPoints = get_net_set_points(samDim.top(Infinity));
+             var geojsonPts = points_to_geojson(catchcntPoints);
+
+             bubbleMarkers.clearLayers();
+             bubbles = L.bubbleLayer(geojsonPts, { property: "total_catch",
+                                                   legend: false,
+                                                   max_radius : 40,
+                                                   scale: 'YlGnBu',
+                                                   tooltip : "species"
+             });
+
+             // add the bubbles first so that the net centroid markers are on top
+             bubbleMarkers.addLayer(bubbles);
+             map.addLayer(bubbles);
+
+             map.addLayer(netsetMarkers);
+             map.fitBounds(netsetMarkers.getBounds());
+
+         }
+
+         drawMap();
+
+         // refresh our map each time one of the charts change
+         dcCharts = [catchPieChart, effCatchChart, sidepChart, gearCatchChart, effdt1Chart];
+
+         _.each(dcCharts, function (dcChart) {
+             dcChart.on("filtered", function (chart, filter) {
+                 map.eachLayer(function (layer) {
+                     map.removeLayer(layer)
+                 });
+                 drawMap();
+             });
+         });
+
+         // ===========================
+         //        DATA TABLE
+
+         dataTable.dimension(speciesDim)
+                              .group(function(d){ return "Catch Table"})
+                              .size(100)
+                              .columns([
+                                  function (d) { return d.prj_cd; },
+                                  function (d) { return d.sam; },
+                                  function (d) { return d.eff; },
+                                  function (d) { return d.spc; },
+                                  function (d) { return d.grp; },
+                                  function (d) { return d.catcnt; }
+                              ])
+                              .sortBy(function(d){
+                                  return [d.prj_cd, d.sam, d.eff, d.spc].join();
+                              })
+                              .order(d3.descending);
+
+         dataTable.on("renderlet", function(table) {
+             table.selectAll('.dc-table-group').remove();
+         });
+
+         dc.renderAll();
+
+
+         //update the index mesh filter using the button group change (click) event.
+         $("#mesh-group-btn :input").change(function() {
+             if (this.id==='index_only'){
+                 indexMeshDim.filter(function(d) {return d===true;});
+                 d3.select("#index-mesh-filter").text('Index Meshes Only');
+             } else {
+                 indexMeshDim.filterAll();
+                 d3.select("#index-mesh-filter").text('All Meshes');
+             }
+             dc.renderAll();
+         });
+
+
+     });
+
+    </script>
+
+
+    <!-- tablesorter plugin-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.js"></script>
+
+    <!-- tablesorter widget file - loaded after the plugin -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.widgets.js"></script>
+
+
+    <script type="text/javascript">
+
+     $(".tablesorter").tablesorter({
+         theme: 'bootstrap',
+         widthFixed: true,
+         showProcessing: true,
+         headerTemplate: '{content} {icon}',
+         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgetOptions: {
+             scroller_height: 300,
+             scroller_barWidth: 17,
+             scroller_jumpToHeader: true,
+             scroller_idPrefix: 's_'
+         }
+     });
+
+    </script>
+
+
+    {% endblock %}

@@ -1,0 +1,215 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+
+
+{% block sidebar %}
+
+{% sidebar_projects %}
+
+{% endblock %}
+
+{% block content  %}
+
+
+<h3>{{ gear_code }}</h3>
+
+{% if gear %}
+<div class="panel panel-default">
+    <div class="panel-heading">     <strong> {{ gear.gr_label }} - {{ gear.gr_code }}</strong></div>
+
+    <div class="panel-body">
+
+        {% if gear.depreciated %}
+        <div class="alert alert-danger" role="alert">
+            "{{ gear_code }}" has been depreciated and should not be used for new UGLMU projects.
+        </div>
+        {% endif %}
+
+        {{ gear.gr_des_html|safe}}
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading"> Panels (subgears): </div>
+            <div class="panel-body">
+
+        {% if gear.get_subgears %}
+
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td> Panels </td>
+                            <td> eff </td>
+                            <td> mesh </td>
+                            <td> grlen </td>
+                            <td> grht  </td>
+                            <td> grwid </td>
+                            <td> grcol </td>
+                            <td> grmat </td>
+                            <td> gryarn </td>
+                            <td> grknot </td>
+                            <td> eff_des </td>
+                        </tr>
+                    </thead>
+
+                    {% for eff in gear.get_subgears %}
+                    <tr>
+                        <td> {{eff.panel_count |default_if_none:"" }} </td>
+                        <td> {{eff.eff |default_if_none:"" }} </td>
+                        <td> {{eff.mesh |default_if_none:"" }} </td>
+                        <td> {{eff.grlen |default_if_none:"" }} </td>
+                        <td> {{eff.grht  |default_if_none:"" }} </td>
+                        <td> {{eff.grwid |default_if_none:"" }} </td>
+                        <td> {{eff.get_grcol_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_grmat_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_gryarn_display |default_if_none:"" }} </td>
+                        <td> {{eff.get_grknot_display |default_if_none:"" }} </td>
+                        <td> {{eff.eff_des|default_if_none:""}} </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+
+            {% else %}
+            <p>No detailed effort information on subgears is currently available for {{ gear.gr_code }}.</p>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    "{{ gear_code }}" does not appear to be documented. Do you know anything about it?
+</div>
+
+{% endif%}
+
+<div class="row">
+    <div class="btn-group pull-right row">
+        <div class="col-md-3">
+            <a class="btn btn-primary pull-right" href="{% url 'edit_gear' gear_code %}" role="button">Edit Gear Description</a>
+        </div>
+        <div class="col-md-1" ></div>
+        <div class="col-md-2" >
+            <a class="btn btn-primary pull-right" href="{% url 'gear_list' %}" role="button">Gear List</a>
+        </div>
+    </div>
+</div>
+
+<div>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#gear" aria-controls="gear" role="tab" data-toggle="tab">FN013/FN014</a></li>
+        <li role="presentation"><a href="#projects" aria-controls="projects" role="tab" data-toggle="tab">Projects (FN121)</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="gear">
+
+            <h4>Gear information from the FN013/FN014 tables:</h4>
+            {% if fn013_gear %}
+            <ul>
+                {% for gr in fn013_gear %}
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">     <strong> {{ gr.gr }} - {{ gr.gr_des }} (
+                        <a href="{% url 'project_catch_counts2' gr.project.slug %}">{{ gr.project.prj_cd }})</a></strong></div>
+                    <div class="panel-body">
+                        {% if gr.gear_effs.values %}
+                        <table class="table">
+
+                            <thead>
+                                <tr>
+                                    <td> eff </td>
+                                    <td> mesh </td>
+                                    <td> grlen </td>
+                                    <td> grht  </td>
+                                    <td> grwid </td>
+                                    <td> grcol </td>
+                                    <td> grmat </td>
+                                    <td> gryarn </td>
+                                    <td> grknot </td>
+                                    <td> eff_des </td>
+                                </tr>
+                            </thead>
+
+                            {% for eff in gr.gear_effs.values %}
+                            <tr>
+                                <td> {{eff.eff |default_if_none:"" }} </td>
+                                <td> {{eff.mesh |default_if_none:"" }} </td>
+                                <td> {{eff.grlen |default_if_none:"" }} </td>
+                                <td> {{eff.grht  |default_if_none:"" }} </td>
+                                <td> {{eff.grwid |default_if_none:"" }} </td>
+                                <td> {{eff.grcol |default_if_none:"" }} </td>
+                                <td> {{eff.grmat |default_if_none:"" }} </td>
+                                <td> {{eff.gryarn |default_if_none:"" }} </td>
+                                <td> {{eff.grknot |default_if_none:"" }} </td>
+                                <td> {{eff.eff_des |default_if_none:"" }} </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+
+                        {% else %}
+                        <p>No detailed effort information currently available.</p>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </ul>
+            {% else %}
+            <p> '{{ gear_code }}' is missing from the FN013 table! </p>
+            {% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="projects">
+            <h4>"{{ gear_code }}" appears in the FN121 table of these projects (N={{ projects|length }}):</h4>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Year</td>
+                        <td>Project Code</td>
+                        <td>Project Name</td>
+                        <td>Master Database</td>
+                        <td>Samples</td>
+                    </tr>
+                </thead>
+                {% for project in projects %}
+                <tr>
+                    <td>{{ project.year }}</td>
+                    <td><a href="{% url 'project_catch_counts2' project.slug %}">{{ project.prj_cd }}</a></td>
+                    <td>{{ project.prj_nm }}</td>
+                    <td>{{ project.source }}</td>
+                    <td>{{ project.N }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+ $( document ).ready(function() {
+     // prepare the sidebar by expanding just the current year
+     var my_year={{ project.year }}{{sample.project.year}};
+     var div_name = "#project-year-" + my_year;
+     $(div_name).show();
+
+ });
+</script>
+
+
+{% endblock %}

@@ -9,7 +9,8 @@ from django.template import RequestContext
 from django.core import serializers
 from django.db import connection
 import json
-#from datetime import datetime
+
+# from datetime import datetime
 
 
 from fn_portal.models import *
@@ -21,34 +22,39 @@ def project_list(request):
     q = request.GET.get("q")
 
     if q:
-        offshore = FN011.objects.filter(source='offshore').\
-                   filter(Q(prj_cd__icontains=q) |
-                          Q(prj_nm__icontains=q)).all()
-        nearshore = FN011.objects.filter(source='nearshore').\
-                    filter(Q(prj_cd__icontains=q) |
-                           Q(prj_nm__icontains=q)).all()
-        smallfish = FN011.objects.filter(source='smallfish').\
-                    filter(Q(prj_cd__icontains=q) |
-                           Q(prj_nm__icontains=q)).all()
+        offshore = (
+            FN011.objects.filter(source="offshore")
+            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
+            .all()
+        )
+        nearshore = (
+            FN011.objects.filter(source="nearshore")
+            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
+            .all()
+        )
+        smallfish = (
+            FN011.objects.filter(source="smallfish")
+            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
+            .all()
+        )
 
     else:
-        offshore = FN011.objects.filter(source='offshore').all()[:15]
-        nearshore = FN011.objects.filter(source='nearshore').all()[:15]
-        smallfish = FN011.objects.filter(source='smallfish').all()[:15]
+        offshore = FN011.objects.filter(source="offshore").all()[:15]
+        nearshore = FN011.objects.filter(source="nearshore").all()[:15]
+        smallfish = FN011.objects.filter(source="smallfish").all()[:15]
 
-    return render_to_response('fn_portal/project_list.html',
-                              {'offshore': offshore,
-                               'nearshore':nearshore,
-                               'smallfish': smallfish,
-                               'q': q},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/project_list.html",
+        {"offshore": offshore, "nearshore": nearshore, "smallfish": smallfish, "q": q},
+        context_instance=RequestContext(request),
+    )
 
 
 def projects_by_type(request, project_type):
 
     projects = FN011.objects.filter(source=project_type).all()
     paginator = Paginator(projects, 25)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         projects = paginator.page(page)
     except PageNotAnInteger:
@@ -58,10 +64,11 @@ def projects_by_type(request, project_type):
         # If page is out of range (e.g. 9999), deliver last page of results.
         projects = paginator.page(paginator.num_pages)
 
-    return render_to_response('fn_portal/projects_by_type_list.html',
-                              {'projects': projects,
-                               'project_type': project_type},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/projects_by_type_list.html",
+        {"projects": projects, "project_type": project_type},
+        context_instance=RequestContext(request),
+    )
 
 
 def gear_list(request, username=None):
@@ -78,38 +85,40 @@ def gear_list(request, username=None):
         user = None
 
     if user:
-        gear_list = Gear.objects.filter(assigned_to=user).\
-                    order_by('gr_code')
+        gear_list = Gear.objects.filter(assigned_to=user).order_by("gr_code")
     else:
-        gear_list = Gear.objects.all().order_by('gr_code')
+        gear_list = Gear.objects.all().order_by("gr_code")
 
-    return render_to_response('fn_portal/gear_list.html',
-                              {'gear_list': gear_list,
-                               'user': user},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/gear_list.html",
+        {"gear_list": gear_list, "user": user},
+        context_instance=RequestContext(request),
+    )
 
 
 def edit_gear(request, gear_code):
-    '''A view that will allow us to edit our gear attributes.'''
+    """A view that will allow us to edit our gear attributes."""
 
     gear = Gear.objects.filter(gr_code=gear_code).first()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = GearForm(request.POST, instance=gear)
         if form.is_valid():
             gear = form.save()
-            gear.gr_code=gear_code
+            gear.gr_code = gear_code
             gear.save()
-            return redirect('gear_detail', gear_code=gear.gr_code)
+            return redirect("gear_detail", gear_code=gear.gr_code)
     else:
         form = GearForm(instance=gear)
-        return render_to_response('fn_portal/gear_form.html',
-                              {'gear_code': gear_code, 'form':form},
-                              context_instance=RequestContext(request))
+        return render_to_response(
+            "fn_portal/gear_form.html",
+            {"gear_code": gear_code, "form": form},
+            context_instance=RequestContext(request),
+        )
 
 
 def edit_subgear(request, gear_code, eff):
-    '''A view that will allow us to edit our gear attributes.'''
+    """A view that will allow us to edit our gear attributes."""
     pass
 
 
@@ -125,17 +134,22 @@ def gear_detail(request, gear_code):
 
     fn013_gear = FN013.objects.filter(gr=str(gear_code)).all()
 
-    projects = FN011.objects.filter(samples__gr=str(gear_code)).distinct().\
-               annotate(N=Count('samples'))
+    projects = (
+        FN011.objects.filter(samples__gr=str(gear_code))
+        .distinct()
+        .annotate(N=Count("samples"))
+    )
 
-
-
-    return render_to_response('fn_portal/gear_detail.html',
-                              {'fn013_gear': fn013_gear,
-                               'gear': gear,
-                               'gear_code': gear_code,
-                               'projects': projects},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/gear_detail.html",
+        {
+            "fn013_gear": fn013_gear,
+            "gear": gear,
+            "gear_code": gear_code,
+            "projects": projects,
+        },
+        context_instance=RequestContext(request),
+    )
 
 
 def project_detail(request, slug):
@@ -148,9 +162,11 @@ def project_detail(request, slug):
 
     project = get_object_or_404(FN011, slug=slug)
 
-    return render_to_response('fn_portal/project_detail.html',
-                              {'project': project},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/project_detail.html",
+        {"project": project},
+        context_instance=RequestContext(request),
+    )
 
 
 def sample_detail(request, slug, sam):
@@ -166,10 +182,11 @@ def sample_detail(request, slug, sam):
     project = get_object_or_404(FN011, slug=slug)
     sample = get_object_or_404(FN121, project=project, sam=sam)
 
-    return render_to_response('fn_portal/project_detail.html',
-                              {'sample': sample},
-                              context_instance=RequestContext(request))
-
+    return render_to_response(
+        "fn_portal/project_detail.html",
+        {"sample": sample},
+        context_instance=RequestContext(request),
+    )
 
 
 def project_catch_counts(request, prj_cd):
@@ -181,9 +198,11 @@ def project_catch_counts(request, prj_cd):
 
     project = get_object_or_404(FN011, prj_cd=prj_cd)
 
-    return render_to_response('fn_portal/project_detail.html',
-                              {'project': project},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/project_detail.html",
+        {"project": project},
+        context_instance=RequestContext(request),
+    )
 
 
 def project_catch_counts_json(request, slug):
@@ -192,13 +211,16 @@ def project_catch_counts_json(request, slug):
     Arguments:
     - `request`:
     """
-    #catch by species for a project:
-    #this is one that we will need:
-    catchcounts = FN123.objects.annotate(key=F('species__common_name')).\
-                  annotate(project_code=F('effort__sample__project__prj_cd')).\
-                  values('key').\
-                  filter(effort__sample__project__slug=slug).\
-                  annotate(y=Sum('catcnt')).order_by('key')
+    # catch by species for a project:
+    # this is one that we will need:
+    catchcounts = (
+        FN123.objects.annotate(key=F("species__common_name"))
+        .annotate(project_code=F("effort__sample__project__prj_cd"))
+        .values("key")
+        .filter(effort__sample__project__slug=slug)
+        .annotate(y=Sum("catcnt"))
+        .order_by("key")
+    )
     return JsonResponse(list(catchcounts), safe=False)
 
 
@@ -208,17 +230,17 @@ def sample_catch_counts_json(request, slug, sam):
     Arguments:
     - `request`:
     """
-    #catch by species for a project:
-    #this is one that we will need:
-    catchcounts = FN123.objects.annotate(key=F('species__common_name')).\
-                  values('key').\
-                  filter(effort__sample__project__slug=slug).\
-                  filter(effort__sample__sam=sam).\
-                  annotate(y=Sum('catcnt')).order_by('key')
+    # catch by species for a project:
+    # this is one that we will need:
+    catchcounts = (
+        FN123.objects.annotate(key=F("species__common_name"))
+        .values("key")
+        .filter(effort__sample__project__slug=slug)
+        .filter(effort__sample__sam=sam)
+        .annotate(y=Sum("catcnt"))
+        .order_by("key")
+    )
     return JsonResponse(list(catchcounts), safe=False)
-
-
-
 
 
 def project_catch_counts2(request, slug):
@@ -234,11 +256,11 @@ def project_catch_counts2(request, slug):
 
     project = get_object_or_404(FN011, slug=slug)
 
-    return render_to_response('fn_portal/project_detail2.html',
-                              {'object': project},
-                              context_instance=RequestContext(request))
-
-
+    return render_to_response(
+        "fn_portal/project_detail2.html",
+        {"object": project},
+        context_instance=RequestContext(request),
+    )
 
 
 def project_catch_counts2_json(request, slug):
@@ -256,31 +278,44 @@ def project_catch_counts2_json(request, slug):
 
     """
 
-    catcnts = FN123.objects.\
-          annotate(prj_cd=F('effort__sample__project__prj_cd')).\
-          annotate(sam=F('effort__sample__sam')).\
-          annotate(eff=F('effort__eff')).\
-          annotate(lift_date=F('effort__sample__effdt1')).\
-          annotate(dd_lat=F('effort__sample__dd_lat')).\
-          annotate(dd_lon=F('effort__sample__dd_lon')).\
-          annotate(gear=F('effort__sample__gr')).\
-          annotate(effst=F('effort__sample__effst')).\
-          annotate(sidep=F('effort__sample__sidep')).\
-          annotate(effdst=F('effort__effdst')).\
-          annotate(grdep=F('effort__grdep')).\
-          annotate(spc=F('species__common_name')).\
-          annotate(spc_code=F('species__species_code')).\
-          annotate(catch=F('catcnt')).\
-          values('prj_cd','lift_date', 'dd_lat', 'dd_lon', 'sam', 'gear',
-                 'effst', 'sidep', 'eff', 'grp', 'effdst', 'grdep', 'spc',
-                 'spc_code', 'catch').\
-          filter(effort__sample__project__slug=slug).\
-          exclude(spc_code=0).all()
+    catcnts = (
+        FN123.objects.annotate(prj_cd=F("effort__sample__project__prj_cd"))
+        .annotate(sam=F("effort__sample__sam"))
+        .annotate(eff=F("effort__eff"))
+        .annotate(lift_date=F("effort__sample__effdt1"))
+        .annotate(dd_lat=F("effort__sample__dd_lat"))
+        .annotate(dd_lon=F("effort__sample__dd_lon"))
+        .annotate(gear=F("effort__sample__gr"))
+        .annotate(effst=F("effort__sample__effst"))
+        .annotate(sidep=F("effort__sample__sidep"))
+        .annotate(effdst=F("effort__effdst"))
+        .annotate(grdep=F("effort__grdep"))
+        .annotate(spc=F("species__common_name"))
+        .annotate(spc_code=F("species__species_code"))
+        .annotate(catch=F("catcnt"))
+        .values(
+            "prj_cd",
+            "lift_date",
+            "dd_lat",
+            "dd_lon",
+            "sam",
+            "gear",
+            "effst",
+            "sidep",
+            "eff",
+            "grp",
+            "effdst",
+            "grdep",
+            "spc",
+            "spc_code",
+            "catch",
+        )
+        .filter(effort__sample__project__slug=slug)
+        .exclude(spc_code=0)
+        .all()
+    )
 
     return JsonResponse(list(catcnts), safe=False)
-
-
-
 
 
 def project_spc_biodata(request, slug, spc):
@@ -301,11 +336,11 @@ def project_spc_biodata(request, slug, spc):
     project = get_object_or_404(FN011, slug=slug)
     species = get_object_or_404(Species, species_code=spc)
 
-    return render_to_response('fn_portal/project_spc_biodata.html',
-                              {'project': project,
-                               'species': species,
-                              },
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "fn_portal/project_spc_biodata.html",
+        {"project": project, "species": species},
+        context_instance=RequestContext(request),
+    )
 
 
 def dictfetchall(cursor):
@@ -313,17 +348,14 @@ def dictfetchall(cursor):
     from: https://docs.djangoproject.com/en/1.10/topics/db/sql/"""
 
     columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row))
-        for row in cursor.fetchall()
-    ]
-
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
 class DateTimeEncoder(json.JSONEncoder):
-    '''to serialize dates using json.dumps.
+    """to serialize dates using json.dumps.
     Copied from: http://stackoverflow.com/questions/11875770
-    '''
+    """
+
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
@@ -371,14 +403,12 @@ def project_spc_biodata_json(request, slug, spc):
                   eff;
         """
 
-    #cursor = connection.cursor()
+    # cursor = connection.cursor()
     with connection.cursor() as cursor:
         cursor.execute(sql, [slug, spc])
         data = dictfetchall(cursor)
 
-    return JsonResponse(data,
-                        safe=False)
-
+    return JsonResponse(data, safe=False)
 
 
 def project_catch_over_time(request, slug):
@@ -393,16 +423,18 @@ def project_catch_over_time(request, slug):
     """
 
     project = get_object_or_404(FN011, slug=slug)
-    slug_pattern = slug[:6] + '[0-9]{2}' + slug[8:]
+    slug_pattern = slug[:6] + "[0-9]{2}" + slug[8:]
     project_list = FN011.objects.filter(slug__regex=slug_pattern).all()
 
-    return render_to_response('fn_portal/project_catch_over_time.html',
-                              {'project': project,
-                               'project_list': project_list,
-                               'slug_pattern': slug_pattern},
-                              context_instance=RequestContext(request))
-
-
+    return render_to_response(
+        "fn_portal/project_catch_over_time.html",
+        {
+            "project": project,
+            "project_list": project_list,
+            "slug_pattern": slug_pattern,
+        },
+        context_instance=RequestContext(request),
+    )
 
 
 def project_catch_over_time_json(request, slug):
@@ -416,27 +448,44 @@ def project_catch_over_time_json(request, slug):
 
     """
 
-    slug_pattern = slug[:6] + '[0-9]{2}' + slug[8:]
+    slug_pattern = slug[:6] + "[0-9]{2}" + slug[8:]
 
-    catcnts = FN123.objects.\
-          annotate(year=F('effort__sample__project__year')).\
-          annotate(prj_cd=F('effort__sample__project__prj_cd')).\
-          annotate(sam=F('effort__sample__sam')).\
-          annotate(eff=F('effort__eff')).\
-          annotate(lift_date=F('effort__sample__effdt1')).\
-          annotate(dd_lat=F('effort__sample__dd_lat')).\
-          annotate(dd_lon=F('effort__sample__dd_lon')).\
-          annotate(gear=F('effort__sample__gr')).\
-          annotate(effst=F('effort__sample__effst')).\
-          annotate(sidep=F('effort__sample__sidep')).\
-          annotate(effdst=F('effort__effdst')).\
-          annotate(grdep=F('effort__grdep')).\
-          annotate(spc=F('species__common_name')).\
-          annotate(spc_code=F('species__species_code')).\
-          annotate(catch=F('catcnt')).\
-          values('prj_cd','lift_date', 'year', 'dd_lat', 'dd_lon', 'sam',
-                 'gear', 'effst', 'sidep', 'eff', 'grp', 'effdst', 'grdep',
-                 'spc', 'spc_code', 'catch').\
-          filter(effort__sample__project__slug__regex=slug_pattern).all()
+    catcnts = (
+        FN123.objects.annotate(year=F("effort__sample__project__year"))
+        .annotate(prj_cd=F("effort__sample__project__prj_cd"))
+        .annotate(sam=F("effort__sample__sam"))
+        .annotate(eff=F("effort__eff"))
+        .annotate(lift_date=F("effort__sample__effdt1"))
+        .annotate(dd_lat=F("effort__sample__dd_lat"))
+        .annotate(dd_lon=F("effort__sample__dd_lon"))
+        .annotate(gear=F("effort__sample__gr"))
+        .annotate(effst=F("effort__sample__effst"))
+        .annotate(sidep=F("effort__sample__sidep"))
+        .annotate(effdst=F("effort__effdst"))
+        .annotate(grdep=F("effort__grdep"))
+        .annotate(spc=F("species__common_name"))
+        .annotate(spc_code=F("species__species_code"))
+        .annotate(catch=F("catcnt"))
+        .values(
+            "prj_cd",
+            "lift_date",
+            "year",
+            "dd_lat",
+            "dd_lon",
+            "sam",
+            "gear",
+            "effst",
+            "sidep",
+            "eff",
+            "grp",
+            "effdst",
+            "grdep",
+            "spc",
+            "spc_code",
+            "catch",
+        )
+        .filter(effort__sample__project__slug__regex=slug_pattern)
+        .all()
+    )
 
     return JsonResponse(list(catcnts), safe=False)
