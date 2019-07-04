@@ -153,7 +153,7 @@
 //
 
 
- d3.json("{% url 'project_catch_over_time_json' project.slug %}", function (error, data) {
+ d3.json("{% url 'fn_portal:project_catch_over_time_json' project.slug %}", function (error, data) {
 
      var mydateformat = d3.time.format('%B %d, %Y');
      var isodateformat = d3.time.format.iso;

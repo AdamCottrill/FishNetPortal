@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from . import views
 
-
+app_name = "fn_portal"
 
 urlpatterns = [
     url(r"^$", views.project_list, name="project_list"),

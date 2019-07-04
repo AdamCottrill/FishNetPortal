@@ -349,7 +349,7 @@
  }
 
 
- d3.json("{% url 'project_spc_biodata_json' project.slug species.species_code %}", function (error, data) {
+ d3.json("{% url 'fn_portal:project_spc_biodata_json' project.slug species.species_code %}", function (error, data) {
 
      var mydateformat = d3.time.format('%B %d, %Y');
      var isodateformat = d3.time.format.iso;

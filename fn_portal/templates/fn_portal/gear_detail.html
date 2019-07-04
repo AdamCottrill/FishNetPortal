@@ -89,11 +89,11 @@
 <div class="row">
     <div class="btn-group pull-right row">
         <div class="col-md-3">
-            <a class="btn btn-primary pull-right" href="{% url 'edit_gear' gear_code %}" role="button">Edit Gear Description</a>
+            <a class="btn btn-primary pull-right" href="{% url 'fn_portal:edit_gear' gear_code %}" role="button">Edit Gear Description</a>
         </div>
         <div class="col-md-1" ></div>
         <div class="col-md-2" >
-            <a class="btn btn-primary pull-right" href="{% url 'gear_list' %}" role="button">Gear List</a>
+            <a class="btn btn-primary pull-right" href="{% url 'fn_portal:gear_list' %}" role="button">Gear List</a>
         </div>
     </div>
 </div>
@@ -117,7 +117,7 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">     <strong> {{ gr.gr }} - {{ gr.gr_des }} (
-                        <a href="{% url 'project_catch_counts2' gr.project.slug %}">{{ gr.project.prj_cd }})</a></strong></div>
+                        <a href="{% url 'fn_portal:project_catch_counts2' gr.project.slug %}">{{ gr.project.prj_cd }})</a></strong></div>
                     <div class="panel-body">
                         {% if gr.gear_effs.values %}
                         <table class="table">
@@ -184,7 +184,7 @@
                 {% for project in projects %}
                 <tr>
                     <td>{{ project.year }}</td>
-                    <td><a href="{% url 'project_catch_counts2' project.slug %}">{{ project.prj_cd }}</a></td>
+                    <td><a href="{% url 'fn_portal:project_catch_counts2' project.slug %}">{{ project.prj_cd }}</a></td>
                     <td>{{ project.prj_nm }}</td>
                     <td>{{ project.source }}</td>
                     <td>{{ project.N }}</td>

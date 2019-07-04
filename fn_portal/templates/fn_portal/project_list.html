@@ -41,7 +41,7 @@
                         <tbody>
                             {% for item in offshore %}
                             <tr>
-                                <td> <a href="{% url 'project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
+                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
                                 <td> {{ item.prj_ldr|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
@@ -62,7 +62,7 @@
 
 
                     {% if not q %}
-                    <a class="btn btn-info"  href="{% url 'projects_by_type' 'offshore' %}">All Offshore Projects</a>
+                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'offshore' %}">All Offshore Projects</a>
                     {% endif %}
                 </div>
             </div>
@@ -88,7 +88,7 @@
                         <tbody>
                             {% for item in nearshore %}
                             <tr>
-                                <td> <a href="{% url 'project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
+                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
                                 <td> {{ item.prj_ldr|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
@@ -109,7 +109,7 @@
 
 
                     {% if not q%}
-                    <a class="btn btn-info"  href="{% url 'projects_by_type' 'nearshore' %}">All Nearshore Projects</a>
+                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'nearshore' %}">All Nearshore Projects</a>
                     {% endif %}
                 </div>
             </div>
@@ -134,7 +134,7 @@
                         <tbody>
                             {% for item in smallfish %}
                             <tr>
-                                <td> <a href="{% url 'project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
+                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
                                 <td> {{ item.prj_ldr|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
@@ -154,7 +154,7 @@
                     {% endif %}
 
                     {% if not q %}
-                    <a class="btn btn-info"  href="{% url 'projects_by_type' 'smallfish' %}">All Smallfish Projects</a>
+                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'smallfish' %}">All Smallfish Projects</a>
                     {% endif %}
                 </div>
             </div>

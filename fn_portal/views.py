@@ -106,11 +106,11 @@ def edit_gear(request, gear_code):
             gear = form.save()
             gear.gr_code = gear_code
             gear.save()
-            return redirect("gear_detail", gear_code=gear.gr_code)
+            return redirect("fn_portal:gear_detail", gear_code=gear.gr_code)
     else:
         form = GearForm(instance=gear)
         context = {"gear_code": gear_code, "form": form}
-        return render("fn_portal/gear_form.html", context)
+        return render(request, "fn_portal/gear_form.html", context)
 
 
 def edit_subgear(request, gear_code, eff):
@@ -156,7 +156,7 @@ def project_detail(request, slug):
     project = get_object_or_404(FN011, slug=slug)
     context = {"project": project}
 
-    return render("fn_portal/project_detail.html", context)
+    return render(request, "fn_portal/project_detail.html", context)
 
 
 def sample_detail(request, slug, sam):

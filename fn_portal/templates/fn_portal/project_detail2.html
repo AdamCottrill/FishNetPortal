@@ -120,7 +120,7 @@
                                 {% if species.biocnts == 0 %}
                                 {{ species.species }} ({{ species.species_code }})
                                 {% else %}
-                                <a href="{% url 'project_spc_biodata' object.slug species.species_code %}" target="_blank">{{ species.species }} ({{ species.species_code }})</a>
+                                <a href="{% url 'fn_portal:project_spc_biodata' object.slug species.species_code %}" target="_blank">{{ species.species }} ({{ species.species_code }})</a>
                                 {% endif %}
                             </td>
                             <td>
@@ -190,7 +190,7 @@
                         <div id="filter-buttons" class="col-md-2" >
                             <span>
                                 <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
-                                <a href="{% url 'project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
+                                <a href="{% url 'fn_portal:project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
                             </span>
                         </div>
                     </div>
@@ -259,12 +259,12 @@
             </div>  <!-- Graph tabpanel -->
 
             <div role="tabpanel" class="tab-pane" id="gear">
-                <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'gear_list' %}">gear_list</a>).
+                <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'fn_portal:gear_list' %}">gear_list</a>).
 
                 <h5>Gear Codes listed in FN121 Table:</h5>
                 <ul>
                     {% for gr in object.get_121_gear_codes %}
-                    <li> <a href="{% url 'gear_detail' gear_code=gr %}">{{gr}}</a> </li>
+                    <li> <a href="{% url 'fn_portal:gear_detail' gear_code=gr %}">{{gr}}</a> </li>
                     {% endfor %}
                 </ul>
 
@@ -273,7 +273,7 @@
 
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"> <strong> <a href="{% url 'gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
+                    <div class="panel-heading"> <strong> <a href="{% url 'fn_portal:gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
                     <div class="panel-body">
                         {% if gr.gear_effs.values %}
                         <table class="table">
@@ -367,7 +367,7 @@
 
 
 
-     d3.json("{% url 'project_catch_counts2_json' object.slug %}", function (error, data) {
+     d3.json("{% url 'fn_portal:project_catch_counts2_json' object.slug %}", function (error, data) {
 
          var lat = 45
          var lon = -82

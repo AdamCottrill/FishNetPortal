@@ -29,7 +29,7 @@
 
     {% for gr in gear_list %}
     <tr>
-        <td><a href="{% url 'gear_detail' gear_code=gr.gr_code %}">{{ gr.gr_code }}</a></td>
+        <td><a href="{% url 'fn_portal:gear_detail' gear_code=gr.gr_code %}">{{ gr.gr_code }}</a></td>
         <td>{{ gr.gr_label }}</td>
         <td>{{ gr.get_samcount }}</td>
 
@@ -47,7 +47,7 @@
 
         {% if gr.assigned_to.username %}
         <td>
-            <a href="{% url 'gears_assigned_to' username=gr.assigned_to.username %}">
+            <a href="{% url 'fn_portal:gears_assigned_to' username=gr.assigned_to.username %}">
                 {{ gr.assigned_to.username }}
             </a>
         </td>
@@ -60,7 +60,7 @@
 </table>
 
 {% if user %}
-<a class="btn btn-primary pull-right" href="{% url 'gear_list' %}" role="button">Gear List</a>
+<a class="btn btn-primary pull-right" href="{% url 'fn_portal:gear_list' %}" role="button">Gear List</a>
 {% endif %}
 
 

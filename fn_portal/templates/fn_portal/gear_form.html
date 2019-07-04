@@ -16,7 +16,7 @@
     <div class="panel-body">
         <h2>Gear: {{ gear_code }}</h2>
 
-        <form class="form-horizontal" role="form" action="{% url 'edit_gear' gear_code %}" method="post">
+        <form class="form-horizontal" role="form" action="{% url 'fn_portal:edit_gear' gear_code %}" method="post">
             {% csrf_token %}
             {% for field in form %}
             {% if field.errors %}

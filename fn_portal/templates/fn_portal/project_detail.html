@@ -193,9 +193,9 @@
 
      //nvd3 piechart of catch counts
         d3.json({% if project %}
-"{% url 'project_catch_counts_json' project.slug %}"
+"{% url 'fn_portal:project_catch_counts_json' project.slug %}"
 {% else %}
-"{% url 'sample_catch_counts_json' sample.project.slug sample.sam %}"
+"{% url 'fn_portal:sample_catch_counts_json' sample.project.slug sample.sam %}"
 {% endif %}
 ,
         function(error, data)

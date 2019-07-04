@@ -23,7 +23,7 @@
             <tbody>
                 {% for item in projects %}
                 <tr>
-                    <td> <a href="{% url 'project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
+                    <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                     <td> {{ item.prj_nm|title }}</td>
                     <td> {{ item.prj_ldr|title }}</td>
                     <td> {{ item.prj_date0|date:"M d, Y" }}</td>
