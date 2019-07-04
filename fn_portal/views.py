@@ -1,11 +1,12 @@
 # from collections import Counter
 # from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Sum, F, Q, Count
 from django.http import JsonResponse
 from django.template import RequestContext
+
 # from django.core import serializers
 from django.db import connection
 import json
@@ -42,13 +43,14 @@ def project_list(request):
         nearshore = FN011.objects.filter(source="nearshore").all()[:15]
         smallfish = FN011.objects.filter(source="smallfish").all()[:15]
 
-    return render_to_response(
-        "fn_portal/project_list.html",
-        {"offshore": offshore,
-         "nearshore": nearshore,
-         "smallfish": smallfish, "q": q},
-        context_instance=RequestContext(request),
-    )
+    context = {
+        "offshore": offshore,
+        "nearshore": nearshore,
+        "smallfish": smallfish,
+        "q": q,
+    }
+
+    return render(request, "fn_portal/project_list.html", context)
 
 
 def projects_by_type(request, project_type):
@@ -65,11 +67,9 @@ def projects_by_type(request, project_type):
         # If page is out of range (e.g. 9999), deliver last page of results.
         projects = paginator.page(paginator.num_pages)
 
-    return render_to_response(
-        "fn_portal/projects_by_type_list.html",
-        {"projects": projects, "project_type": project_type},
-        context_instance=RequestContext(request),
-    )
+    context = {"projects": projects, "project_type": project_type}
+
+    return render(request, "fn_portal/projects_by_type_list.html", context)
 
 
 def gear_list(request, username=None):
@@ -90,11 +90,9 @@ def gear_list(request, username=None):
     else:
         gear_list = Gear.objects.all().order_by("gr_code")
 
-    return render_to_response(
-        "fn_portal/gear_list.html",
-        {"gear_list": gear_list, "user": user},
-        context_instance=RequestContext(request),
-    )
+    context = {"gear_list": gear_list, "user": user}
+
+    return render(request, "fn_portal/gear_list.html", context)
 
 
 def edit_gear(request, gear_code):
@@ -111,11 +109,8 @@ def edit_gear(request, gear_code):
             return redirect("gear_detail", gear_code=gear.gr_code)
     else:
         form = GearForm(instance=gear)
-        return render_to_response(
-            "fn_portal/gear_form.html",
-            {"gear_code": gear_code, "form": form},
-            context_instance=RequestContext(request),
-        )
+        context = {"gear_code": gear_code, "form": form}
+        return render("fn_portal/gear_form.html", context)
 
 
 def edit_subgear(request, gear_code, eff):
@@ -141,16 +136,13 @@ def gear_detail(request, gear_code):
         .annotate(N=Count("samples"))
     )
 
-    return render_to_response(
-        "fn_portal/gear_detail.html",
-        {
-            "fn013_gear": fn013_gear,
-            "gear": gear,
-            "gear_code": gear_code,
-            "projects": projects,
-        },
-        context_instance=RequestContext(request),
-    )
+    context = {
+        "fn013_gear": fn013_gear,
+        "gear": gear,
+        "gear_code": gear_code,
+        "projects": projects,
+    }
+    return render(request, "fn_portal/gear_detail.html", context)
 
 
 def project_detail(request, slug):
@@ -162,12 +154,9 @@ def project_detail(request, slug):
     """
 
     project = get_object_or_404(FN011, slug=slug)
+    context = {"project": project}
 
-    return render_to_response(
-        "fn_portal/project_detail.html",
-        {"project": project},
-        context_instance=RequestContext(request),
-    )
+    return render("fn_portal/project_detail.html", context)
 
 
 def sample_detail(request, slug, sam):
@@ -182,12 +171,8 @@ def sample_detail(request, slug, sam):
 
     project = get_object_or_404(FN011, slug=slug)
     sample = get_object_or_404(FN121, project=project, sam=sam)
-
-    return render_to_response(
-        "fn_portal/project_detail.html",
-        {"sample": sample},
-        context_instance=RequestContext(request),
-    )
+    context = {"sample": sample}
+    return render(request, "fn_portal/project_detail.html", context)
 
 
 def project_catch_counts(request, prj_cd):
@@ -198,12 +183,9 @@ def project_catch_counts(request, prj_cd):
     """
 
     project = get_object_or_404(FN011, prj_cd=prj_cd)
+    context = {"project": project}
 
-    return render_to_response(
-        "fn_portal/project_detail.html",
-        {"project": project},
-        context_instance=RequestContext(request),
-    )
+    return render(request, "fn_portal/project_detail.html", context)
 
 
 def project_catch_counts_json(request, slug):
@@ -256,12 +238,8 @@ def project_catch_counts2(request, slug):
     """
 
     project = get_object_or_404(FN011, slug=slug)
-
-    return render_to_response(
-        "fn_portal/project_detail2.html",
-        {"object": project},
-        context_instance=RequestContext(request),
-    )
+    context = {"object": project}
+    return render(request, "fn_portal/project_detail2.html", context)
 
 
 def project_catch_counts2_json(request, slug):
@@ -336,12 +314,9 @@ def project_spc_biodata(request, slug, spc):
 
     project = get_object_or_404(FN011, slug=slug)
     species = get_object_or_404(Species, species_code=spc)
+    context = {"project": project, "species": species}
 
-    return render_to_response(
-        "fn_portal/project_spc_biodata.html",
-        {"project": project, "species": species},
-        context_instance=RequestContext(request),
-    )
+    return render(request, "fn_portal/project_spc_biodata.html", context)
 
 
 def dictfetchall(cursor):
@@ -427,15 +402,13 @@ def project_catch_over_time(request, slug):
     slug_pattern = slug[:6] + "[0-9]{2}" + slug[8:]
     project_list = FN011.objects.filter(slug__regex=slug_pattern).all()
 
-    return render_to_response(
-        "fn_portal/project_catch_over_time.html",
-        {
-            "project": project,
-            "project_list": project_list,
-            "slug_pattern": slug_pattern,
-        },
-        context_instance=RequestContext(request),
-    )
+    context = {
+        "project": project,
+        "project_list": project_list,
+        "slug_pattern": slug_pattern,
+    }
+
+    return render(request, "fn_portal/project_catch_over_time.html", context)
 
 
 def project_catch_over_time_json(request, slug):
@@ -450,6 +423,8 @@ def project_catch_over_time_json(request, slug):
     """
 
     slug_pattern = slug[:6] + "[0-9]{2}" + slug[8:]
+
+    # TODO - select_related
 
     catcnts = (
         FN123.objects.annotate(year=F("effort__sample__project__year"))

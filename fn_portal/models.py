@@ -68,7 +68,7 @@ class FN011(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            "fn_portal.views.project_catch_counts2", args=[str(self.slug)]
+            "project_catch_counts2", args=[str(self.slug)]
         )
 
     def total_catch(self):
@@ -174,7 +174,7 @@ class FN121(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            "fn_portal.views.sample_detail",
+            "sample_detail",
             args=[str(self.project.slug), str(self.sam)],
         )
 

@@ -1,7 +1,9 @@
 from main.settings.base import *
 
 ALLOWED_HOSTS = ['*']
+SECRET_KEY = 'top_secret'
 
+DEBUG = True
 
 DATABASES = {
     'default': {
@@ -12,29 +14,14 @@ DATABASES = {
     }
 }
 
+INTERNAL_IPS = ('127.0.0.1', )
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, '../db/fn_portal.db'),
-#    }
-#}
+MIDDLEWARE_CLASSES += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
 
-SECRET_KEY = 'top_secret'
 
-#MIDDLEWARE_CLASSES += (
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
-#)
-#
 INSTALLED_APPS += (
-    #'debug_toolbar',
+    'debug_toolbar',
     #'django_extensions',
-    #'werkzeug_debugger_runserver',
-
 )
-#
-#INTERNAL_IPS = ('127.0.0.1', )   #added for debug toolbar
-#
-#def show_toolbar(request):
-#    return True
-#SHOW_TOOLBAR_CALLBACK = show_toolbar

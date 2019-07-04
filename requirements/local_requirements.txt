@@ -9,8 +9,9 @@ attrs==19.1.0             # via pytest
 click==7.0                # via pip-tools
 colorama==0.4.1           # via pytest
 coverage==4.5.3           # via pytest-cov
+django-debug-toolbar==1.9
 django-widget-tweaks==1.4.5
-django==1.9
+django==1.10.5
 factory-boy==2.11.0
 faker==1.0.7              # via factory-boy
 importlib-metadata==0.18  # via pluggy, pytest
@@ -27,6 +28,7 @@ pytest-django==3.5.1
 pytest==5.0.0
 python-dateutil==2.8.0    # via faker
 six==1.12.0               # via faker, packaging, pip-tools, python-dateutil
+sqlparse==0.3.0           # via django-debug-toolbar
 text-unidecode==1.2       # via faker
 wcwidth==0.1.7            # via pytest
 zipp==0.5.1               # via importlib-metadata
