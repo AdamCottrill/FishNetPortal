@@ -13,6 +13,19 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+
+
+def get_env_variable(var_name):
+    """Get the environment variable or return exception (from page 39 of
+    2-scoops"""
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = "Set the %s environment variable" % var_name
+        raise ImproperlyConfigured(error_msg)
+
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -41,7 +54,7 @@ DJANGO_APPS = (
     'django.contrib.humanize',
 )
 
-THIRDPARTY_APPS = (
+THIRD_PARTY_APPS = (
 #    'djgeojson',
 #    'leaflet',
 #    'django_filters',
@@ -53,7 +66,7 @@ MY_APPS = (
     'fn_portal',
     )
 
-INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + MY_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
 
 

@@ -1,19 +1,18 @@
-from collections import Counter
-from django.http import HttpResponse
+# from collections import Counter
+# from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Sum, F, Q
+from django.db.models import Sum, F, Q, Count
 from django.http import JsonResponse
 from django.template import RequestContext
-from django.core import serializers
+# from django.core import serializers
 from django.db import connection
 import json
 
-# from datetime import datetime
+from datetime import datetime
 
-
-from fn_portal.models import *
+from fn_portal.models import FN011, FN013, FN121, FN123, Gear, Species
 from fn_portal.forms import GearForm
 
 
@@ -45,7 +44,9 @@ def project_list(request):
 
     return render_to_response(
         "fn_portal/project_list.html",
-        {"offshore": offshore, "nearshore": nearshore, "smallfish": smallfish, "q": q},
+        {"offshore": offshore,
+         "nearshore": nearshore,
+         "smallfish": smallfish, "q": q},
         context_instance=RequestContext(request),
     )
 

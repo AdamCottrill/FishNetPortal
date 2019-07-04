@@ -1,3 +1,9 @@
 .dir-locals.el
 *.pyc
+.coverage
+sandbox.js
+utils/sandbox.py
+utils/mdbs/*
+node/*
+htmlcov/*
 db/*

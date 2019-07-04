@@ -18,7 +18,9 @@ class Species(models.Model):
 
     def __str__(self):
         if self.scientific_name:
-            spc_unicode = "{} ({})".format(self.common_name, self.scientific_name)
+            spc_unicode = "{} ({})".format(
+                self.common_name, self.scientific_name
+            )
         else:
             spc_unicode = "{}".format(self.common_name)
         return spc_unicode
@@ -58,14 +60,16 @@ class FN011(models.Model):
         super(FN011, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "{} - {}".format(self.prj_cd, self.prj_nm)
+        return "{} ({})".format(self.prj_nm, self.prj_cd)
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
         return "{}".format(self.prj_cd)
 
     def get_absolute_url(self):
-        return reverse("fn_portal.views.project_catch_counts2", args=[str(self.slug)])
+        return reverse(
+            "fn_portal.views.project_catch_counts2", args=[str(self.slug)]
+        )
 
     def total_catch(self):
         """
@@ -107,7 +111,9 @@ class FN011(models.Model):
 
         """
         gear_codes = (
-            FN011.objects.filter(prj_cd=self.prj_cd).values("samples__gr").distinct()
+            FN011.objects.filter(prj_cd=self.prj_cd)
+            .values("samples__gr")
+            .distinct()
         )
         if gear_codes:
             return [x.get("samples__gr") for x in gear_codes]
@@ -128,7 +134,9 @@ class FN121(models.Model):
     """A table to hold information on fishing events/efforts
     """
 
-    project = models.ForeignKey(FN011, related_name="samples")
+    project = models.ForeignKey(
+        FN011, related_name="samples", on_delete=models.CASCADE
+    )
 
     sam = models.CharField(max_length=5, db_index=True)
     effdt0 = models.DateTimeField(blank=True, null=True)
@@ -207,7 +215,9 @@ class FN122(models.Model):
 
     """
 
-    sample = models.ForeignKey(FN121, related_name="effort")
+    sample = models.ForeignKey(
+        FN121, related_name="effort", on_delete=models.CASCADE
+    )
     # sam = models.CharField(max_length=5, blank=True, null=True)
     eff = models.CharField(max_length=4, db_index=True, default=1)
     effdst = models.FloatField(blank=True, null=True)
@@ -231,8 +241,12 @@ class FN123(models.Model):
     """ a table for catch counts.
     """
 
-    effort = models.ForeignKey(FN122, related_name="catch")
-    species = models.ForeignKey(Species, related_name="species")
+    effort = models.ForeignKey(
+        FN122, related_name="catch", on_delete=models.CASCADE
+    )
+    species = models.ForeignKey(
+        Species, related_name="species", on_delete=models.CASCADE
+    )
 
     grp = models.CharField(max_length=3, default="00", db_index=True)
     catcnt = models.IntegerField(blank=True, null=True)
@@ -245,18 +259,24 @@ class FN123(models.Model):
         unique_together = ("effort", "species", "grp")
 
     def __str__(self):
-        return "{}-{}-{}".format(self.effort, self.species.species_code, self.grp)
+        return "{}-{}-{}".format(
+            self.effort, self.species.species_code, self.grp
+        )
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
-        return "{}-{}-{}".format(self.effort, self.species.species_code, self.grp)
+        return "{}-{}-{}".format(
+            self.effort, self.species.species_code, self.grp
+        )
 
 
 class FN125(models.Model):
     """A table for biological data collected from fish
     """
 
-    catch = models.ForeignKey(FN123, related_name="fish")
+    catch = models.ForeignKey(
+        FN123, related_name="fish", on_delete=models.CASCADE
+    )
 
     fish = models.CharField(max_length=6, db_index=True)
     flen = models.IntegerField(blank=True, null=True)
@@ -289,7 +309,9 @@ class FN127(models.Model):
     """A table for age interpretations collected from fish
     """
 
-    fish = models.ForeignKey(FN125, related_name="age_estimates")
+    fish = models.ForeignKey(
+        FN125, related_name="age_estimates", on_delete=models.CASCADE
+    )
 
     ageid = models.IntegerField()
     agea = models.IntegerField(blank=True, null=True, db_index=True)
@@ -319,7 +341,8 @@ class FN127(models.Model):
 #    ''' a table for lamprey data.
 #    '''
 #
-#    fish = models.ForeignKey(FN125, related_name="tags")
+#    fish = models.ForeignKey(FN125, related_name="tags",
+#    on_delete=models.CASCADE)
 #    #lamprey flags - these belong in child table
 #    lam_flag = models.CharField(max_length=1)
 #    xlam = models.CharField(max_length=6, blank=True, null=True)
@@ -344,7 +367,9 @@ class FN_Tags(models.Model):
     """ a table for the tag(s) assoicated with a fish.
     """
 
-    fish = models.ForeignKey(FN125, related_name="tags")
+    fish = models.ForeignKey(
+        FN125, related_name="tags", on_delete=models.CASCADE
+    )
     # tag fields
     tagstat = models.CharField(max_length=5, blank=True, null=True)
     tagid = models.CharField(max_length=9, blank=True, null=True)
@@ -365,8 +390,11 @@ class FN_Tags(models.Model):
 class FN013(models.Model):
     """FN-II table for Project Gear"""
 
-    # sample = models.ForeignKey(FN121, related_name="gear")
-    project = models.ForeignKey(FN011, related_name="gear")
+    # sample = models.ForeignKey(FN121, related_name="gear",
+    # on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        FN011, related_name="gear", on_delete=models.CASCADE
+    )
     gr = models.CharField(max_length=4)
     effcnt = models.IntegerField(blank=True, null=True)
     effdst = models.FloatField(blank=True, null=True)
@@ -382,7 +410,9 @@ class FN013(models.Model):
 class FN014(models.Model):
     """FN-II table for Gear Panel Attributes by project-gear"""
 
-    gear = models.ForeignKey(FN013, related_name="gear_effs")
+    gear = models.ForeignKey(
+        FN013, related_name="gear_effs", on_delete=models.CASCADE
+    )
     eff = models.CharField(max_length=4, blank=True, null=True)
     mesh = models.IntegerField(blank=True, null=True)
     grlen = models.FloatField(blank=True, null=True)
@@ -398,7 +428,9 @@ class FN014(models.Model):
         ordering = ["eff"]
 
     def __str__(self):
-        return "{}-{} ({})".format(self.gear.gr, self.eff, self.gear.project.prj_cd)
+        return "{}-{} ({})".format(
+            self.gear.gr, self.eff, self.gear.project.prj_cd
+        )
 
 
 class GearFamily(models.Model):
@@ -457,10 +489,16 @@ class Gear(models.Model):
     """
 
     assigned_to = models.ForeignKey(
-        User, related_name="assigned_to", blank=True, null=True
+        User,
+        related_name="assigned_to",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
 
-    family = models.ForeignKey(GearFamily, related_name="gears")
+    family = models.ForeignKey(
+        GearFamily, related_name="gears", on_delete=models.CASCADE
+    )
     gr_label = models.CharField(max_length=100)
     gr_code = models.CharField(max_length=4, db_index=True, unique=True)
     effcnt = models.IntegerField(blank=True, null=True)
@@ -489,12 +527,12 @@ class Gear(models.Model):
         for panel in self.gang.values():
             panel_counts[panel["subgear_id"]] = panel["panel_count"]
 
-        my_subgears = SubGear.objects.filter(gear=self).order_by("gang").all()
-
+        # my_subgears = SubGear.objects.filter(gear=self).order_by("gang").all()
+        my_subgears = self.subgears.all()
         # now add the panel count attribute to each sub-gear so we can access it
         # templates.
-        for panel in my_subgears:
-            panel.panel_count = panel_counts.get(panel.id, 0)
+        for subgear_panel in my_subgears:
+            subgear_panel.panel_count = panel_counts.get(subgear_panel.id, 0)
 
         return my_subgears
 
@@ -540,7 +578,9 @@ class SubGear(models.Model):
     gear = models.ManyToManyField(
         "Gear", through="Gear2SubGear", related_name="subgears"
     )
-    family = models.ForeignKey(GearFamily, related_name="subgears")
+    family = models.ForeignKey(
+        GearFamily, related_name="subgears", on_delete=models.CASCADE
+    )
     eff = models.CharField(max_length=4, blank=True, null=True)
     mesh = models.FloatField(blank=True, null=True)
     grlen = models.FloatField(blank=True, null=True)
@@ -583,8 +623,12 @@ class Gear2SubGear(models.Model):
 
     """
 
-    gear = models.ForeignKey(Gear, related_name="gang")
-    subgear = models.ForeignKey(SubGear, related_name="gang")
+    gear = models.ForeignKey(
+        Gear, related_name="gang", on_delete=models.CASCADE
+    )
+    subgear = models.ForeignKey(
+        SubGear, related_name="gang", on_delete=models.CASCADE
+    )
     panel_sequence = models.PositiveIntegerField(default=1)
     panel_count = models.PositiveIntegerField(default=1)
 
