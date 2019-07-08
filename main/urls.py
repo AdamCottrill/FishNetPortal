@@ -5,10 +5,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("fn_portal/", include('fn_portal.urls')),
-    path("admin/", admin.site.urls),
-]
 
+    path("admin/", admin.site.urls),
+
+    path("fn_portal/", include('fn_portal.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/v1/fn_portal/', include('fn_portal.api.urls',
+                                      namespace='fn_portal_api')),
+]
 
 if settings.DEBUG:
     import debug_toolbar
