@@ -7,8 +7,10 @@ from .factories import (
     FN122Factory,
     FN123Factory,
     FN125Factory,
+    FN126Factory,
+    FN125TagFactory,
+    FN125LampreyFactory,
     FN127Factory,
-    FNTagFactory,
     FN013Factory,
     FN014Factory,
     GearFamilyFactory,
@@ -129,6 +131,41 @@ def test_FN125_str():
 
 
 @pytest.mark.django_db
+def test_FN126_str():
+    """Verify that the string representation of a field collected diet
+    item is the string reprentation of the associated
+    fish, the food id, the taxon, and foodcount (in brackets)
+
+    e.g. - LHA_IA00_123-001-051-091-00-1-1 (F121: 3)
+
+    """
+
+    project_code = "LHA_IA00_123"
+    sam = "001"
+    eff = "051"
+    spc = 334
+    species = SpeciesFactory(species_code=spc)
+    grp = "55"
+    fish_number = 9
+    food = 1
+    taxon = "F121"
+    foodcnt = 8
+
+    project = FN011Factory(prj_cd=project_code)
+    fn121 = FN121Factory(project=project, sam=sam)
+    fn122 = FN122Factory(sample=fn121, eff=eff)
+    fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
+    fn125 = FN125Factory(catch=fn123, fish=fish_number)
+    fn126 = FN126Factory(fish=fn125, food=food, taxon=taxon, foodcnt=foodcnt)
+
+    shouldbe = "{}-{}-{}-{}-{}-{}-{} ({}: {})".format(
+        project_code, sam, eff, spc, grp, fish_number, food, taxon, foodcnt
+    )
+
+    assert str(fn126) == shouldbe
+
+
+@pytest.mark.django_db
 def test_FN127_str():
     """Verify that the string representation of a FN127 object is the
     string reprentation of the associated fish, the assigned age and
@@ -164,7 +201,7 @@ def test_FN127_str():
 
 
 @pytest.mark.django_db
-def test_FNTags_str():
+def test_FN125Tags_str():
     """Verify that the string representation of a FN_Tags object is the
     string reprentation of the associated fish, the tag number and the
     tag documentation string. The fish and tag number are separated by
@@ -181,6 +218,7 @@ def test_FNTags_str():
     species = SpeciesFactory(species_code=spc)
     grp = "55"
     fish_number = 9
+    fish_tag_id = 11
     tagnumber = 78910
     tagdoc = 12345
 
@@ -189,13 +227,83 @@ def test_FNTags_str():
     fn122 = FN122Factory(sample=fn121, eff=eff)
     fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
     fn125 = FN125Factory(catch=fn123, fish=fish_number)
-    tag = FNTagFactory(fish=fn125, tagid=tagnumber, tagdoc=tagdoc)
+    tag = FN125TagFactory(
+        fish=fn125, fish_tag_id=fish_tag_id, tagid=tagnumber, tagdoc=tagdoc
+    )
 
-    shouldbe = "{}-{}-{}-{}-{}-{}-{}({})".format(
-        project_code, sam, eff, spc, grp, fish_number, tagnumber, tagdoc
+    shouldbe = "{}-{}-{}-{}-{}-{}-{} ({} ({}))".format(
+        project_code, sam, eff, spc, grp, fish_number, fish_tag_id, tagnumber, tagdoc
     )
 
     assert str(tag) == shouldbe
+
+
+@pytest.mark.django_db
+def test_FN125Lamprey_xlam_str():
+    """Verify that the string representation of a lamprey wound object is the
+    string reprentation of the associated fish, the wound number and the
+    xlam string.
+
+    e.g. - LHA_IA00_123-001-051-091-00-1-1 (xlam: 0101)
+
+    """
+
+    project_code = "LHA_IA00_123"
+    sam = "001"
+    eff = "051"
+    spc = 334
+    species = SpeciesFactory(species_code=spc)
+    grp = "55"
+    fish_number = 9
+    lamid = 11
+    xlam = "0101"
+
+    project = FN011Factory(prj_cd=project_code)
+    fn121 = FN121Factory(project=project, sam=sam)
+    fn122 = FN122Factory(sample=fn121, eff=eff)
+    fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
+    fn125 = FN125Factory(catch=fn123, fish=fish_number)
+    lamprey = FN125LampreyFactory(fish=fn125, lamid=lamid, xlam=xlam)
+
+    shouldbe = "{}-{}-{}-{}-{}-{}-{} (xlam: {})".format(
+        project_code, sam, eff, spc, grp, fish_number, lamid, xlam
+    )
+
+    assert str(lamprey) == shouldbe
+
+
+@pytest.mark.django_db
+def test_FN125Lamprey_lamijc_str():
+    """Verify that the string representation of a lamprey wound object is the
+    string reprentation of the associated fish, the wound number and the
+    lamijc string.
+
+    e.g. - LHA_IA00_123-001-051-091-00-1-1 (lamijc: A235)
+
+    """
+
+    project_code = "LHA_IA00_123"
+    sam = "001"
+    eff = "051"
+    spc = 334
+    species = SpeciesFactory(species_code=spc)
+    grp = "55"
+    fish_number = 9
+    lamid = 11
+    lamijc = "A125"
+
+    project = FN011Factory(prj_cd=project_code)
+    fn121 = FN121Factory(project=project, sam=sam)
+    fn122 = FN122Factory(sample=fn121, eff=eff)
+    fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
+    fn125 = FN125Factory(catch=fn123, fish=fish_number)
+    lamprey = FN125LampreyFactory(fish=fn125, lamid=lamid, lamijc=lamijc)
+
+    shouldbe = "{}-{}-{}-{}-{}-{}-{} (lamijc: {})".format(
+        project_code, sam, eff, spc, grp, fish_number, lamid, lamijc
+    )
+
+    assert str(lamprey) == shouldbe
 
 
 @pytest.mark.django_db

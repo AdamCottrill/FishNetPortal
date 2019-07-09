@@ -12,7 +12,7 @@ from .serializers import (
     FN125Serializer,
 )
 from .filters import FN011Filter
-from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN_Tags
+from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag
 
 
 # ViewSets define the view behavior.

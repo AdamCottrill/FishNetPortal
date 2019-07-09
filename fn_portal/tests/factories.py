@@ -4,13 +4,16 @@ import datetime
 
 from ..models import (
     Species,
+    FNProtocol,
     FN011,
     FN121,
     FN122,
     FN123,
     FN125,
+    FN126,
     FN127,
-    FN_Tags,
+    FN125Tag,
+    FN125_Lamprey,
     FN013,
     FN014,
     GearFamily,
@@ -34,6 +37,18 @@ class SpeciesFactory(factory.DjangoModelFactory):
     species_code = 81
 
 
+class FNProtocolFactory(factory.DjangoModelFactory):
+    """A factory for protocl objects.
+    """
+
+    class Meta:
+        model = FNProtocol
+        django_get_or_create = ("abbrev",)
+
+    label = "Fake Assessment Protocol"
+    abbrev = "FAP"
+
+
 class FN011Factory(factory.DjangoModelFactory):
     """A factory for FN011 objects.  Project year, start date and end date
     are all generated after the fact based on project code.
@@ -46,6 +61,8 @@ class FN011Factory(factory.DjangoModelFactory):
     prj_cd = "LHA_IA18_999"
     prj_nm = "Cool Project"
     prj_ldr = "Homer Simpson"
+
+    protocol = factory.SubFactory(FNProtocolFactory)
 
     @factory.lazy_attribute
     def prj_date0(self):
@@ -136,6 +153,56 @@ class FN125Factory(factory.DjangoModelFactory):
     fish = factory.Sequence(lambda n: "{:03d}".format(n))
 
 
+class FN125TagFactory(factory.DjangoModelFactory):
+    """A factory for FNTag objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = FN125Tag
+        django_get_or_create = ("fish", "fish_tag_id")
+
+    fish = factory.SubFactory(FN125Factory)
+    fish_tag_id = factory.Sequence(lambda n: n)
+    tagid = factory.Sequence(lambda n: n)
+    tagdoc = "25012"
+    tagstat = "C"
+
+
+class FN125LampreyFactory(factory.DjangoModelFactory):
+    """A factory for FNTag objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = FN125_Lamprey
+        django_get_or_create = ("fish", "lamid")
+
+    fish = factory.SubFactory(FN125Factory)
+    lamid = factory.Sequence(lambda n: n)
+    lamijc = "A235"
+    lamijc_type = "A2"
+    lamijc_size = 35
+
+
+class FN126Factory(factory.DjangoModelFactory):
+    """A factory for FN126 objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = FN126
+        django_get_or_create = ("fish", "food")
+
+    fish = factory.SubFactory(FN125Factory)
+    food = factory.Sequence(lambda n: n)
+    taxon = "F061"
+    foodcnt = 6
+
+
 class FN127Factory(factory.DjangoModelFactory):
     """A factory for FN127 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
@@ -149,22 +216,6 @@ class FN127Factory(factory.DjangoModelFactory):
     fish = factory.SubFactory(FN125Factory)
     ageid = factory.Sequence(lambda n: n)
     agea = 6
-
-
-class FNTagFactory(factory.DjangoModelFactory):
-    """A factory for FNTag objects.  Only fields that are required or have
-    been tested are currently inlcuded in this factory.
-
-    """
-
-    class Meta:
-        model = FN_Tags
-        django_get_or_create = ("fish", "tagid", "tagdoc", "tagstat")
-
-    fish = factory.SubFactory(FN125Factory)
-    tagid = factory.Sequence(lambda n: n)
-    tagdoc = "25012"
-    tagstat = "C"
 
 
 class FN013Factory(factory.DjangoModelFactory):

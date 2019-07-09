@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN_Tags
+from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag
 
 
 # Serializers define the API representation.
@@ -84,7 +84,7 @@ class FN123Serializer(serializers.ModelSerializer):
 
 class FN125TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FN_Tags
+        model = FN125Tag
         fields = (
             id,
             # fish_tag_id,
