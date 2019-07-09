@@ -18,9 +18,7 @@ class Species(models.Model):
 
     def __str__(self):
         if self.scientific_name:
-            spc_unicode = "{} ({})".format(
-                self.common_name, self.scientific_name
-            )
+            spc_unicode = "{} ({})".format(self.common_name, self.scientific_name)
         else:
             spc_unicode = "{}".format(self.common_name)
         return spc_unicode
@@ -67,9 +65,7 @@ class FN011(models.Model):
         return "{}".format(self.prj_cd)
 
     def get_absolute_url(self):
-        return reverse(
-            "fn_portal:project_catch_counts2", args=[str(self.slug)]
-        )
+        return reverse("fn_portal:project_catch_counts2", args=[str(self.slug)])
 
     def total_catch(self):
         """
@@ -111,9 +107,7 @@ class FN011(models.Model):
 
         """
         gear_codes = (
-            FN011.objects.filter(prj_cd=self.prj_cd)
-            .values("samples__gr")
-            .distinct()
+            FN011.objects.filter(prj_cd=self.prj_cd).values("samples__gr").distinct()
         )
         if gear_codes:
             return [x.get("samples__gr") for x in gear_codes]
@@ -134,9 +128,7 @@ class FN121(models.Model):
     """A table to hold information on fishing events/efforts
     """
 
-    project = models.ForeignKey(
-        FN011, related_name="samples", on_delete=models.CASCADE
-    )
+    project = models.ForeignKey(FN011, related_name="samples", on_delete=models.CASCADE)
 
     sam = models.CharField(max_length=5, db_index=True)
     effdt0 = models.DateTimeField(blank=True, null=True)
@@ -174,8 +166,7 @@ class FN121(models.Model):
 
     def get_absolute_url(self):
         return reverse(
-            "fn_portal:sample_detail",
-            args=[str(self.project.slug), str(self.sam)],
+            "fn_portal:sample_detail", args=[str(self.project.slug), str(self.sam)]
         )
 
     def total_catch(self):
@@ -215,9 +206,7 @@ class FN122(models.Model):
 
     """
 
-    sample = models.ForeignKey(
-        FN121, related_name="effort", on_delete=models.CASCADE
-    )
+    sample = models.ForeignKey(FN121, related_name="effort", on_delete=models.CASCADE)
     # sam = models.CharField(max_length=5, blank=True, null=True)
     eff = models.CharField(max_length=4, db_index=True, default=1)
     effdst = models.FloatField(blank=True, null=True)
@@ -241,9 +230,7 @@ class FN123(models.Model):
     """ a table for catch counts.
     """
 
-    effort = models.ForeignKey(
-        FN122, related_name="catch", on_delete=models.CASCADE
-    )
+    effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
     species = models.ForeignKey(
         Species, related_name="species", on_delete=models.CASCADE
     )
@@ -259,24 +246,18 @@ class FN123(models.Model):
         unique_together = ("effort", "species", "grp")
 
     def __str__(self):
-        return "{}-{}-{}".format(
-            self.effort, self.species.species_code, self.grp
-        )
+        return "{}-{}-{}".format(self.effort, self.species.species_code, self.grp)
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
-        return "{}-{}-{}".format(
-            self.effort, self.species.species_code, self.grp
-        )
+        return "{}-{}-{}".format(self.effort, self.species.species_code, self.grp)
 
 
 class FN125(models.Model):
     """A table for biological data collected from fish
     """
 
-    catch = models.ForeignKey(
-        FN123, related_name="fish", on_delete=models.CASCADE
-    )
+    catch = models.ForeignKey(FN123, related_name="fish", on_delete=models.CASCADE)
 
     fish = models.CharField(max_length=6, db_index=True)
     flen = models.IntegerField(blank=True, null=True)
@@ -330,7 +311,7 @@ class FN127(models.Model):
         pass
 
     def __str__(self):
-        return "{}-{} (age={})".format(self.fish, self.ageid, self.agea,)
+        return "{}-{} (age={})".format(self.fish, self.ageid, self.agea)
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
@@ -367,9 +348,7 @@ class FN_Tags(models.Model):
     """ a table for the tag(s) assoicated with a fish.
     """
 
-    fish = models.ForeignKey(
-        FN125, related_name="tags", on_delete=models.CASCADE
-    )
+    fish = models.ForeignKey(FN125, related_name="tags", on_delete=models.CASCADE)
     # tag fields
     tagstat = models.CharField(max_length=5, blank=True, null=True)
     tagid = models.CharField(max_length=9, blank=True, null=True)
@@ -378,9 +357,13 @@ class FN_Tags(models.Model):
     xtaginckd = models.CharField(max_length=6, blank=True, null=True)
     xtag_chk = models.CharField(max_length=50, blank=True, null=True)
 
+    # someday soon:
+    # fish_tag_id = models.IntegerField()
+    # comment_tag = models.TextField(blank=True, null=True)
+
     class Meta:
         # ordering = ['last_name', 'first_name']
-        # unique_together = ('fish', 'tagnum', 'grp')
+        # unique_together = ('fish','tagnum', 'grp')
         pass
 
     def __str__(self):
@@ -392,9 +375,7 @@ class FN013(models.Model):
 
     # sample = models.ForeignKey(FN121, related_name="gear",
     # on_delete=models.CASCADE)
-    project = models.ForeignKey(
-        FN011, related_name="gear", on_delete=models.CASCADE
-    )
+    project = models.ForeignKey(FN011, related_name="gear", on_delete=models.CASCADE)
     gr = models.CharField(max_length=4)
     effcnt = models.IntegerField(blank=True, null=True)
     effdst = models.FloatField(blank=True, null=True)
@@ -410,9 +391,7 @@ class FN013(models.Model):
 class FN014(models.Model):
     """FN-II table for Gear Panel Attributes by project-gear"""
 
-    gear = models.ForeignKey(
-        FN013, related_name="gear_effs", on_delete=models.CASCADE
-    )
+    gear = models.ForeignKey(FN013, related_name="gear_effs", on_delete=models.CASCADE)
     eff = models.CharField(max_length=4, blank=True, null=True)
     mesh = models.IntegerField(blank=True, null=True)
     grlen = models.FloatField(blank=True, null=True)
@@ -428,9 +407,7 @@ class FN014(models.Model):
         ordering = ["eff"]
 
     def __str__(self):
-        return "{}-{} ({})".format(
-            self.gear.gr, self.eff, self.gear.project.prj_cd
-        )
+        return "{}-{} ({})".format(self.gear.gr, self.eff, self.gear.project.prj_cd)
 
 
 class GearFamily(models.Model):
@@ -623,12 +600,8 @@ class Gear2SubGear(models.Model):
 
     """
 
-    gear = models.ForeignKey(
-        Gear, related_name="gang", on_delete=models.CASCADE
-    )
-    subgear = models.ForeignKey(
-        SubGear, related_name="gang", on_delete=models.CASCADE
-    )
+    gear = models.ForeignKey(Gear, related_name="gang", on_delete=models.CASCADE)
+    subgear = models.ForeignKey(SubGear, related_name="gang", on_delete=models.CASCADE)
     panel_sequence = models.PositiveIntegerField(default=1)
     panel_count = models.PositiveIntegerField(default=1)
 
