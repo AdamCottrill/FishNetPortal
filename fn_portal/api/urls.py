@@ -11,10 +11,23 @@
 
 """
 
-from django.conf.urls import url, include
+from django.conf.urls import url
+from django.urls import include, path
+
 from rest_framework import routers
 
-from .views import FN011ViewSet, NetSetList, CatchCountList, BioSampleList, EffortList
+from .views import (
+    SpeciesList,
+    FN011ViewSet,
+    NetSetList,
+    CatchCountList,
+    BioSampleList,
+    EffortList,
+    FN121DetailView,
+    FN122DetailView,
+    FN123DetailView,
+    FN125DetailView,
+)
 
 app_name = "fn_portal_api"
 
@@ -27,6 +40,7 @@ router.register("project", FN011ViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r"^", include(router.urls)),
+    url("^species_list$", SpeciesList.as_view(), name="species-list"),
     url("^net_sets/(?P<slug>.+)/$", NetSetList.as_view(), name="project-samples"),
     url(
         "^catch_counts/(?P<slug>.+)/$",
@@ -64,6 +78,10 @@ urlpatterns = [
         BioSampleList.as_view(),
         name="catch-biosamples",
     ),
+    path("fn121/<str:slug>/", FN121DetailView.as_view(), name="FN121_detail_view"),
+    path("fn122/<str:slug>/", FN122DetailView.as_view(), name="FN122_detail_view"),
+    path("fn123/<str:slug>/", FN123DetailView.as_view(), name="FN123_detail_view"),
+    path("fn125/<str:slug>/", FN125DetailView.as_view(), name="FN125_detail_view"),
 ]
 
 

@@ -5,6 +5,7 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .serializers import (
+    SpeciesSerializer,
     FN011Serializer,
     FN121Serializer,
     FN122Serializer,
@@ -12,7 +13,12 @@ from .serializers import (
     FN125Serializer,
 )
 from .filters import FN011Filter
-from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag
+from fn_portal.models import Species, FN011, FN121, FN122, FN123, FN125, FN125Tag
+
+
+class SpeciesList(generics.ListAPIView):
+    queryset = Species.objects.all()
+    serializer_class = SpeciesSerializer
 
 
 # ViewSets define the view behavior.
@@ -25,7 +31,7 @@ class FN011ViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        queryset = FN011.objects.all()
+        queryset = FN011.objects.prefetch_related("protocol").all()
         # finally django-filter
         filtered_list = FN011Filter(self.request.GET, queryset=queryset)
 
@@ -39,23 +45,34 @@ class FN121ViewSet(viewsets.ModelViewSet):
     # lookup_field = "slug"
 
 
-class NetSetList(generics.ListAPIView):
+class NetSetList(generics.ListCreateAPIView):
     """A view to return all of the net sets associated with a project"""
 
     serializer_class = FN121Serializer
 
+    def get_serializer_context(self):
+        """to create a new net set, we have to make the project available in
+        the serializer's context"""
+
+        context = super(NetSetList, self).get_serializer_context()
+        slug = self.kwargs["slug"].lower()
+
+        context.update({"project": FN011.objects.get(slug=slug)})
+        return context
+
     def get_queryset(self):
         """
-        This view should return a list of all the purchases for
-        the user as determined by the username portion of the URL.
+        This view should return a list of all the net sets for a project
+        as determined by the slug portion of the URL.
         """
         slug = self.kwargs["slug"]
         slug = slug.lower()
         return FN121.objects.filter(project__slug=slug)
 
 
-class EffortList(generics.ListAPIView):
-    """A view to return all of the catch counts associated with a project
+class EffortList(generics.ListCreateAPIView):
+    """A view to return all of the efforts associated with a net set
+    (within a project).
 
     """
 
@@ -76,8 +93,19 @@ class EffortList(generics.ListAPIView):
 
         return queryset
 
+    def get_serializer_context(self):
+        """to create a new net set, we have to make the project available in
+        the serializer's context"""
 
-class CatchCountList(generics.ListAPIView):
+        context = super(EffortList, self).get_serializer_context()
+        slug = self.kwargs["slug"].lower()
+        sam = self.kwargs["sample"]
+
+        context.update({"sample": FN121.objects.get(project__slug=slug, sam=sam)})
+        return context
+
+
+class CatchCountList(generics.ListCreateAPIView):
     """A view to return all of the catch counts associated with a project
 
     TODO: filter by SAM, EFF, SPC (and maybe GRP?)
@@ -111,8 +139,27 @@ class CatchCountList(generics.ListAPIView):
 
         return queryset
 
+    def get_serializer_context(self):
+        """to create a new catch count, we have to make the effort available in
+        the serializer's context"""
 
-class BioSampleList(generics.ListAPIView):
+        context = super(CatchCountList, self).get_serializer_context()
+        slug = self.kwargs["slug"].lower()
+        sam = self.kwargs["sample"]
+        eff = self.kwargs.get("effort")
+
+        context.update(
+            {
+                "effort": FN122.objects.get(
+                    sample__project__slug=slug, sample__sam=sam, eff=eff
+                )
+            }
+        )
+
+        return context
+
+
+class BioSampleList(generics.ListCreateAPIView):
     """A view to return all of the catch counts associated with a project
 
      TODO: filter by SAM, EFF, SPC, (and maybe GRP?)
@@ -120,6 +167,31 @@ class BioSampleList(generics.ListAPIView):
     """
 
     serializer_class = FN125Serializer
+
+    def get_serializer_context(self):
+        """to create a new catch count, we have to make the effort available in
+        the serializer's context"""
+
+        context = super(BioSampleList, self).get_serializer_context()
+        slug = self.kwargs["slug"].lower()
+        sam = self.kwargs.get("sample")
+        eff = self.kwargs.get("effort")
+        spc = self.kwargs.get("species")
+        grp = self.kwargs.get("group")
+
+        context.update(
+            {
+                "catch_count": FN123.objects.get(
+                    effort__sample__project__slug=slug,
+                    effort__sample__sam=sam,
+                    effort__eff=eff,
+                    species__species_code=spc,
+                    grp=grp,
+                )
+            }
+        )
+
+        return context
 
     def get_queryset(self):
         """
@@ -134,7 +206,6 @@ class BioSampleList(generics.ListAPIView):
         spc = self.kwargs.get("species")
         grp = self.kwargs.get("group")
 
-        # TODO - prefetch_related lamprey, tags (and maybe someday age estimates?)
         queryset = (
             FN125.objects.select_related(
                 "catch",
@@ -142,7 +213,7 @@ class BioSampleList(generics.ListAPIView):
                 "catch__effort__sample",
                 "catch__effort__sample__project",
             )
-            .prefetch_related("tags")
+            .prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
             .filter(catch__effort__sample__project__slug=slug)
         )
 
@@ -156,3 +227,76 @@ class BioSampleList(generics.ListAPIView):
             queryset = queryset.filter(catch__grp=grp)
 
         return queryset
+
+
+# ========================================================
+#      RETRIEVE-UPDATE-DESTROY
+
+# these views will be used to get, update and delete individual
+# records for netsets, efforts, catch counts and bio-samples.
+
+
+class FN121DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An classed based view that provides a way to retrieve, update and
+    delete individual net sets with GET, PATCH, and DELETE requests.
+    Requires a unique slug value to identify the net set.  THe slug is
+    of the form: <prj_cd>-<sam>.
+
+    e.g. - lha_ia01_023-1
+
+    """
+
+    serializer_class = FN121Serializer
+    lookup_url_kwarg = "slug"
+    lookup_field = "slug"
+    queryset = FN121.objects.all()
+
+
+class FN122DetailView(generics.RetrieveUpdateDestroyAPIView):
+
+    """An classed based view that provides a way to retrieve, update and
+    delete individual efforts within a net set with GET, PATCH, and
+    DELETE requests.  Requires a unique slug value to identify the effort
+    set.  THe slug is of the form: <prj_cd>-<sam>-<eff>.
+
+    e.g. - lha_ia01_023-1-051
+
+    """
+
+    serializer_class = FN122Serializer
+    lookup_url_kwarg = "slug"
+    lookup_field = "slug"
+    queryset = FN122.objects.all()
+
+
+class FN123DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An classed based view that provides a way to retrieve, update and
+    delete individual catch counts within an effort set with GET, PATCH, and
+    DELETE requests.  Requires a unique slug value to identify the catch count
+    (including both species and group code).  THe slug is of the form:
+    <prj_cd>-<sam>-<eff>-<spc>-<grp>.
+
+    e.g. - lha_ia01_023-1-051-331-00
+
+    """
+
+    serializer_class = FN123Serializer
+    lookup_url_kwarg = "slug"
+    lookup_field = "slug"
+    queryset = FN123.objects.all()
+
+
+class FN125DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An classed based view that provides a way to retrieve, update and
+    delete individual fish within an catch count with GET, PATCH, and
+    DELETE requests.  Requires a unique slug value to identify the
+    fish.  THe slug is of the form: <prj_cd>-<sam>-<eff>-<spc>-<grp>-<fish>.
+
+    e.g. - lha_ia01_023-1-051-331-00-1
+
+    """
+
+    serializer_class = FN125Serializer
+    lookup_url_kwarg = "slug"
+    lookup_field = "slug"
+    queryset = FN125.objects.all()

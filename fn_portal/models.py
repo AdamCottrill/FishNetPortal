@@ -48,8 +48,8 @@ class FN011(models.Model):
     slug = models.CharField(max_length=13, unique=True)
     prj_nm = models.CharField(max_length=255)
     prj_ldr = models.CharField(max_length=255)
-    prj_date0 = models.DateTimeField()
-    prj_date1 = models.DateTimeField()
+    prj_date0 = models.DateField()
+    prj_date1 = models.DateField()
 
     LAKE_CHOICES = (("huron", "Lake Huron"), ("superior", "Lake Superior"))
 
@@ -154,11 +154,11 @@ class FN121(models.Model):
 
     slug = models.CharField(max_length=100, unique=True)
     sam = models.CharField(max_length=5, db_index=True)
-    effdt0 = models.DateTimeField(blank=True, null=True, db_index=True)
-    effdt1 = models.DateTimeField(blank=True, null=True, db_index=True)
+    effdt0 = models.DateField(blank=True, null=True, db_index=True)
+    effdt1 = models.DateField(blank=True, null=True, db_index=True)
     effdur = models.FloatField(blank=True, null=True)
-    efftm0 = models.DateTimeField(blank=True, null=True, db_index=True)
-    efftm1 = models.DateTimeField(blank=True, null=True, db_index=True)
+    efftm0 = models.TimeField(blank=True, null=True, db_index=True)
+    efftm1 = models.TimeField(blank=True, null=True, db_index=True)
     effst = models.CharField(max_length=2, blank=True, null=True, db_index=True)
 
     orient = models.CharField(max_length=2, blank=True, null=True, db_index=True)
@@ -344,7 +344,7 @@ class FN126(models.Model):
     """ a table for diet data collected in the field.
     """
 
-    fish = models.ForeignKey(FN125, related_name="food", on_delete=models.CASCADE)
+    fish = models.ForeignKey(FN125, related_name="diet_data", on_delete=models.CASCADE)
     slug = models.CharField(max_length=100, unique=True)
     food = models.IntegerField()
 
@@ -375,7 +375,6 @@ class FN127(models.Model):
     fish = models.ForeignKey(
         FN125, related_name="age_estimates", on_delete=models.CASCADE
     )
-
     slug = models.CharField(max_length=100, unique=True)
     ageid = models.IntegerField()
     agea = models.IntegerField(blank=True, null=True, db_index=True)
@@ -436,8 +435,9 @@ class FN125_Lamprey(models.Model):
     lamijc_size = models.IntegerField(blank=True, null=True)
     comment_lam = models.TextField(blank=True, null=True)
 
-    # class Meta:
-    # ordering = ['last_name', 'first_name']
+    class Meta:
+        ordering = ["slug", "lamid"]
+
     # unique_together = ('fish', 'tagnum', 'grp')
 
     def __str__(self):
@@ -460,7 +460,7 @@ class FN125Tag(models.Model):
     """ a table for the tag(s) assoicated with a fish.
     """
 
-    fish = models.ForeignKey(FN125, related_name="tags", on_delete=models.CASCADE)
+    fish = models.ForeignKey(FN125, related_name="fishtags", on_delete=models.CASCADE)
     slug = models.CharField(max_length=100, unique=True)
     fish_tag_id = models.IntegerField()
     # tag fields

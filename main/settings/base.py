@@ -55,9 +55,10 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     #    'djgeojson',
     #    'leaflet',
-    #    'django_filters',
+    "django_filters",
     "rest_framework",
     "widget_tweaks",
+    "corsheaders",
 )
 
 
@@ -67,6 +68,8 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -131,7 +134,10 @@ STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../static")),)
 
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    # "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly"
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
