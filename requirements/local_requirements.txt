@@ -22,6 +22,7 @@ pip-tools==3.8.0
 pluggy==0.12.0            # via pytest
 psycopg2==2.8.3
 py==1.8.0                 # via pytest
+pyodbc==4.0.26
 pyparsing==2.4.0          # via packaging
 pytest-cov==2.7.1
 pytest-django==3.5.1
@@ -32,6 +33,7 @@ six==1.12.0               # via faker, packaging, pip-tools, python-dateutil
 sqlparse==0.3.0           # via django, django-debug-toolbar
 text-unidecode==1.2       # via faker
 wcwidth==0.1.7            # via pytest
+xlrd==1.2.0
 zipp==0.5.1               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

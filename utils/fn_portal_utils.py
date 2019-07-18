@@ -1,4 +1,4 @@
-'''
+"""
 =============================================================
 c:/1work/Python/djcode/fn_portal/utils/fn_portal_utils.py
 Created: 11 Aug 2016 14:11:10
@@ -10,9 +10,34 @@ DESCRIPTION:
 
 A. Cottrill
 =============================================================
-'''
+"""
 
 import sqlite3
+
+
+def sheet2dict(sheet):
+    """A helper function to convert a workbook sheet to a list of
+    dictionaries.  THis function assumes that the field names are in
+    the top row of the spreadsheet.  Each row is then converted to a
+    dictionary using those field names. The return value is a list of
+    dictionaries corresponding to rows in the spreadsheet.
+
+    Arguments:
+    - `sheet`: a sxlrd shee object ( e.g. - book.sheet_by_name("Sheet1"))
+
+    """
+    my_list = []
+
+    for row_index in range(sheet.nrows):
+        if row_index == 0:
+            fields = [sheet.cell(0, x).value.strip() for x in range(sheet.ncols)]
+        else:
+            vals = [sheet.cell(row_index, x).value for x in range(sheet.ncols)]
+            my_dict = {k: v for k, v in zip(fields, vals)}
+            my_list.append(my_dict)
+
+    return my_list
+
 
 def query_for_id(sql, keys, trg_db):
     """Execute the provided sql string on the target database. Issue a
@@ -32,20 +57,21 @@ def query_for_id(sql, keys, trg_db):
 
     """
 
-    #trg_conn = sqlite3.connect(trg_db, uri=True)
-    #trg_cur = trg_conn.cursor()
-    #rs = trg_cur.execute(sql)
-    #try:
+    # trg_conn = sqlite3.connect(trg_db, uri=True)
+    # trg_cur = trg_conn.cursor()
+    # rs = trg_cur.execute(sql)
+    # try:
     #    id = rs.fetchone()[0]
-    #except:
+    # except:
     #    msg = "Unable to find record with key values: \n{}"
     #    print(msg.format(keys))
     #    id = None
-    #finally:
+    # finally:
     #    trg_conn.close()
-    #return id
+    # return id
 
     import sqlite3 as db
+
     with db.connect(trg_db) as trg_conn:
         trg_cur = trg_conn.cursor()
         try:
@@ -58,8 +84,7 @@ def query_for_id(sql, keys, trg_db):
     return id
 
 
-
-#def get_project_id(prj_cd, trg_db):
+# def get_project_id(prj_cd, trg_db):
 #    """
 #
 #    Arguments:
@@ -82,9 +107,9 @@ def key_values_as_string(keys, record):
 
     """
 
-    key_values = {k:v for k,v in record.items() if k in keys}
-    tmp = ["\t{}:{}\n".format(k,v) for k, v in key_values.items()]
-    keys_as_string = ''.join(tmp)
+    key_values = {k: v for k, v in record.items() if k in keys}
+    tmp = ["\t{}:{}\n".format(k, v) for k, v in key_values.items()]
+    keys_as_string = "".join(tmp)
     return keys_as_string
 
 
@@ -98,12 +123,11 @@ def get_species_id(spc, trg_db):
 
     """
 
-    sql = 'select id from fn_portal_species where species_code={};'
+    sql = "select id from fn_portal_species where species_code={};"
     sql = sql.format(int(spc))
-    keys_as_string = 'species_code: {}'.format(spc)
+    keys_as_string = "species_code: {}".format(spc)
     id = query_for_id(sql, keys_as_string, trg_db)
     return id
-
 
 
 def get_project_id(record, trg_db):
@@ -114,8 +138,8 @@ def get_project_id(record, trg_db):
     - `trg_db`: path to a sqlite database.
     """
 
-    #FN121
-    keys = ['prj_cd']
+    # FN121
+    keys = ["prj_cd"]
 
     sql = """select fn011.id from fn_portal_fn011 as fn011
      where fn011.prj_cd='{prj_cd}'"""
@@ -133,8 +157,8 @@ def get_sample_id(record, trg_db):
     - `trg_db`: path to a sqlite database.
     """
 
-    #FN121
-    keys = ['prj_cd', 'sam']
+    # FN121
+    keys = ["prj_cd", "sam"]
 
     sql = """select fn121.id from fn_portal_fn121 as fn121
     join fn_portal_fn011 as fn011 on fn011.id=fn121.project_id
@@ -154,8 +178,8 @@ def get_effort_id(record, trg_db):
     - `trg_db`: path to a sqlite database.
     """
 
-    #key fields for the FN122 table
-    keys = ['prj_cd', 'sam', 'eff']
+    # key fields for the FN122 table
+    keys = ["prj_cd", "sam", "eff"]
 
     sql = """select fn122.id from fn_portal_fn122 as fn122
     join fn_portal_fn121 as fn121 on fn121.id=fn122.sample_id
