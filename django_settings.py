@@ -40,7 +40,8 @@ os.chdir(c:/1work/Python/djcode/fn_portal)
 import sys
 import os
 
-SETTINGS_FILE = "main.settings.local"
+# SETTINGS_FILE = "main.settings.local"
+SETTINGS_FILE = "main.settings.append_data_remote"
 
 # add the current directory to path so that we can find our settings files:
 sys.path.append(os.path.dirname(__file__))

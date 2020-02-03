@@ -4,12 +4,30 @@
 #
 #    pip-compile --output-file=requirements.txt base.in
 #
+certifi==2019.11.28       # via requests
+chardet==3.0.4            # via requests
+coreapi==2.3.3
+coreschema==0.0.4         # via coreapi
+django-cors-headers==3.0.2
+django-filter==2.2.0
+django-rest-swagger==2.2.0
 django-widget-tweaks==1.4.5
 django==2.2.3
+djangorestframework==3.10.2
+idna==2.8                 # via requests
+itypes==1.1.0             # via coreapi
+jinja2==2.11.1            # via coreschema
 markdown==3.1.1
+markupsafe==1.1.1         # via jinja2
+openapi-codec==1.3.2      # via django-rest-swagger
 psycopg2==2.8.3
 pytz==2019.1              # via django
+pyyaml==5.3
+requests==2.22.0          # via coreapi
+simplejson==3.17.0        # via django-rest-swagger
 sqlparse==0.3.0           # via django
+uritemplate==3.0.1        # via coreapi
+urllib3==1.25.8           # via requests
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.0.1        # via markdown
+# setuptools

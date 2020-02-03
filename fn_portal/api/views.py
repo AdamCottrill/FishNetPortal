@@ -2,7 +2,7 @@
 
 from rest_framework import viewsets, generics
 
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 
 from .serializers import (
     SpeciesSerializer,
@@ -55,7 +55,7 @@ class NetSetList(generics.ListCreateAPIView):
         the serializer's context"""
 
         context = super(NetSetList, self).get_serializer_context()
-        slug = self.kwargs["slug"].lower()
+        slug = self.kwargs.get("slug", "").lower()
 
         context.update({"project": FN011.objects.get(slug=slug)})
         return context
@@ -65,7 +65,7 @@ class NetSetList(generics.ListCreateAPIView):
         This view should return a list of all the net sets for a project
         as determined by the slug portion of the URL.
         """
-        slug = self.kwargs["slug"]
+        slug = self.kwargs.get("slug", "")
         slug = slug.lower()
         return FN121.objects.filter(project__slug=slug)
 
@@ -83,7 +83,7 @@ class EffortList(generics.ListCreateAPIView):
         This view should return a list of all the purchases for
         the user as determined by the username portion of the URL.
         """
-        slug = self.kwargs["slug"]
+        slug = self.kwargs.get("slug", "")
         slug = slug.lower()
         sam = self.kwargs["sample"]
 
@@ -98,7 +98,7 @@ class EffortList(generics.ListCreateAPIView):
         the serializer's context"""
 
         context = super(EffortList, self).get_serializer_context()
-        slug = self.kwargs["slug"].lower()
+        slug = self.kwargs.get("slug", "").lower()
         sam = self.kwargs["sample"]
 
         context.update({"sample": FN121.objects.get(project__slug=slug, sam=sam)})
@@ -118,7 +118,7 @@ class CatchCountList(generics.ListCreateAPIView):
         This view should return a list of all the purchases for
         the user as determined by the username portion of the URL.
         """
-        slug = self.kwargs["slug"]
+        slug = self.kwargs.get("slug", "")
         slug = slug.lower()
 
         sam = self.kwargs.get("sample")
@@ -144,7 +144,7 @@ class CatchCountList(generics.ListCreateAPIView):
         the serializer's context"""
 
         context = super(CatchCountList, self).get_serializer_context()
-        slug = self.kwargs["slug"].lower()
+        slug = self.kwargs.get("slug", "").lower()
         sam = self.kwargs["sample"]
         eff = self.kwargs.get("effort")
 
@@ -173,7 +173,7 @@ class BioSampleList(generics.ListCreateAPIView):
         the serializer's context"""
 
         context = super(BioSampleList, self).get_serializer_context()
-        slug = self.kwargs["slug"].lower()
+        slug = self.kwargs.get("slug", "").lower()
         sam = self.kwargs.get("sample")
         eff = self.kwargs.get("effort")
         spc = self.kwargs.get("species")
@@ -198,7 +198,7 @@ class BioSampleList(generics.ListCreateAPIView):
         This view should return a list of all the purchases for
         the user as determined by the username portion of the URL.
         """
-        slug = self.kwargs["slug"]
+        slug = self.kwargs.get("slug", "")
         slug = slug.lower()
 
         sam = self.kwargs.get("sample")
@@ -296,6 +296,7 @@ class FN125DetailView(generics.RetrieveUpdateDestroyAPIView):
 
     """
 
+    permission_classes = [AllowAny]
     serializer_class = FN125Serializer
     lookup_url_kwarg = "slug"
     lookup_field = "slug"
