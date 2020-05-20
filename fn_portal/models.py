@@ -456,6 +456,7 @@ class FN125_Lamprey(models.Model):
         return "{}-{}".format(self.fish, self.lamid)
 
 
+# NOTE - this should be named FN125_Tag
 class FN125Tag(models.Model):
     """ a table for the tag(s) assoicated with a fish.
     """
