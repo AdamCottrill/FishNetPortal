@@ -21,27 +21,26 @@ def project_list(request):
 
     q = request.GET.get("q")
 
+    offshore = FN011.objects.filter(source="offshore").select_related("prj_ldr")
+    nearshore = FN011.objects.filter(source="nearshore").select_related("prj_ldr")
+    smallfish = FN011.objects.filter(source="smallfish").select_related("prj_ldr")
+
     if q:
-        offshore = (
-            FN011.objects.filter(source="offshore")
-            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
-            .all()
-        )
-        nearshore = (
-            FN011.objects.filter(source="nearshore")
-            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
-            .all()
-        )
-        smallfish = (
-            FN011.objects.filter(source="smallfish")
-            .filter(Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q))
-            .all()
-        )
+        offshore = offshore.filter(
+            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+        ).all()
+
+        nearshore = nearshore.filter(
+            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+        ).all()
+        smallfish = smallfish.filter(
+            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+        ).all()
 
     else:
-        offshore = FN011.objects.filter(source="offshore").all()[:15]
-        nearshore = FN011.objects.filter(source="nearshore").all()[:15]
-        smallfish = FN011.objects.filter(source="smallfish").all()[:15]
+        offshore = nearshore.all()[:15]
+        nearshore = nearshore.all()[:15]
+        smallfish = smallfish.all()[:15]
 
     context = {
         "offshore": offshore,
@@ -55,7 +54,7 @@ def project_list(request):
 
 def projects_by_type(request, project_type):
 
-    projects = FN011.objects.filter(source=project_type).all()
+    projects = FN011.objects.select_related("prj_ldr").filter(source=project_type).all()
     paginator = Paginator(projects, 25)
     page = request.GET.get("page")
     try:
@@ -197,7 +196,7 @@ def project_catch_counts_json(request, slug):
     # catch by species for a project:
     # this is one that we will need:
     catchcounts = (
-        FN123.objects.annotate(key=F("species__common_name"))
+        FN123.objects.annotate(key=F("species__spc_nmco"))
         .annotate(project_code=F("effort__sample__project__prj_cd"))
         .values("key")
         .filter(effort__sample__project__slug=slug)
@@ -216,7 +215,7 @@ def sample_catch_counts_json(request, slug, sam):
     # catch by species for a project:
     # this is one that we will need:
     catchcounts = (
-        FN123.objects.annotate(key=F("species__common_name"))
+        FN123.objects.annotate(key=F("species__spc_nmco"))
         .values("key")
         .filter(effort__sample__project__slug=slug)
         .filter(effort__sample__sam=sam)
@@ -237,7 +236,14 @@ def project_catch_counts2(request, slug):
 
     """
 
-    project = get_object_or_404(FN011, slug=slug)
+    proj = FN011.objects.prefetch_related(
+        "samples",
+        "samples__effort",
+        "samples__effort__catch",
+        "samples__effort__catch__species",
+    )
+
+    project = get_object_or_404(proj, slug=slug)
     context = {"object": project}
     return render(request, "fn_portal/project_detail2.html", context)
 
@@ -258,7 +264,10 @@ def project_catch_counts2_json(request, slug):
     """
 
     catcnts = (
-        FN123.objects.annotate(prj_cd=F("effort__sample__project__prj_cd"))
+        FN123.objects.select_related(
+            "effort", "species", "effort__sample", "effort_sample_project"
+        )
+        .annotate(prj_cd=F("effort__sample__project__prj_cd"))
         .annotate(sam=F("effort__sample__sam"))
         .annotate(eff=F("effort__eff"))
         .annotate(lift_date=F("effort__sample__effdt1"))
@@ -269,8 +278,8 @@ def project_catch_counts2_json(request, slug):
         .annotate(sidep=F("effort__sample__sidep"))
         .annotate(effdst=F("effort__effdst"))
         .annotate(grdep=F("effort__grdep"))
-        .annotate(spc=F("species__common_name"))
-        .annotate(spc_code=F("species__species_code"))
+        .annotate(spc=F("species__spc_nmco"))
+        .annotate(spc_code=F("species__spc"))
         .annotate(catch=F("catcnt"))
         .values(
             "prj_cd",
@@ -290,7 +299,7 @@ def project_catch_counts2_json(request, slug):
             "catch",
         )
         .filter(effort__sample__project__slug=slug)
-        .exclude(spc_code=0)
+        .exclude(species__spc="000")
         .all()
     )
 
@@ -313,7 +322,7 @@ def project_spc_biodata(request, slug, spc):
     """
 
     project = get_object_or_404(FN011, slug=slug)
-    species = get_object_or_404(Species, species_code=spc)
+    species = get_object_or_404(Species, spc=spc)
     context = {"project": project, "species": species}
 
     return render(request, "fn_portal/project_spc_biodata.html", context)
@@ -358,8 +367,8 @@ def project_spc_biodata_json(request, slug, spc):
                fn011.year as yr,
                sidep,
                eff,
-               species.species_code,
-               species.common_name,
+               species.spc,
+               species.spc_nmco,
                flen, tlen, rwt, sex, mat, agea, xagem, clipc
           FROM fn_portal_fn125 fn125
                     left outer JOIN
@@ -373,8 +382,8 @@ def project_spc_biodata_json(request, slug, spc):
                JOIN
                fn_portal_fn011 fn011 ON fn011.id = fn121.project_id
                JOIN
-               fn_portal_species species ON species.id = fn123.species_id
-         WHERE slug = %s and species_code=%s and (accepted=True or accepted is null)
+               common_species species ON species.id = fn123.species_id
+         WHERE fn011.slug = %s and species.spc=%s and (preferred=True or preferred is null)
          ORDER BY sam,
                   eff;
         """
@@ -439,8 +448,8 @@ def project_catch_over_time_json(request, slug):
         .annotate(sidep=F("effort__sample__sidep"))
         .annotate(effdst=F("effort__effdst"))
         .annotate(grdep=F("effort__grdep"))
-        .annotate(spc=F("species__common_name"))
-        .annotate(spc_code=F("species__species_code"))
+        .annotate(spc=F("species__spc_nmco"))
+        .annotate(spc_code=F("species__spc"))
         .annotate(catch=F("catcnt"))
         .values(
             "prj_cd",

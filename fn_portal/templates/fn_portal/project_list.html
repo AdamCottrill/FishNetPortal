@@ -43,7 +43,7 @@
                             <tr>
                                 <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr|title }}</td>
+                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
                                 <td> {{ item.prj_date1|date:"M d, Y" }}</td>
                             </tr>
@@ -90,7 +90,7 @@
                             <tr>
                                 <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr|title }}</td>
+                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
                                 <td> {{ item.prj_date1|date:"M d, Y" }}</td>
                             </tr>
@@ -136,7 +136,7 @@
                             <tr>
                                 <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
                                 <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr|title }}</td>
+                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
                                 <td> {{ item.prj_date0|date:"M d, Y" }}</td>
                                 <td> {{ item.prj_date1|date:"M d, Y" }}</td>
                             </tr>

@@ -1,9 +1,10 @@
 """Serializers for models in fn_portal"""
 
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from common.models import Lake, Species, Grid5
 
 from fn_portal.models import (
-    Species,
     FN011,
     FN121,
     FN122,
@@ -15,19 +16,46 @@ from fn_portal.models import (
     FN127,
 )
 
+User = get_user_model()
 
 # Serializers define the API representation.
 class SpeciesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Species
-        lookup_field = "species_code"
-        fields = ("species_code", "common_name", "scientific_name")
+        lookup_field = "spc"
+        fields = ("spc", "spc_nmco", "spc_nmsc")
+
+
+# Serializers define the API representation.
+class GridSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grid5
+        lookup_field = "slug"
+        fields = ("grid", "slug")
+
+
+# Serializers define the API representation.
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        lookup_field = "username"
+        fields = ("username", "first_name", "last_name")
+
+
+# Serializers define the API representation.
+class LakeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lake
+        lookup_field = "abbrev"
+        fields = ("lake_name", "abbrev")
 
 
 # Serializers define the API representation.
 class FN011Serializer(serializers.ModelSerializer):
 
     protocol = serializers.CharField(read_only=True, source="protocol.abbrev")
+    lake = LakeSerializer(many=False)
+    prj_ldr = UserSerializer(many=False)
 
     class Meta:
         model = FN011
@@ -52,6 +80,7 @@ class FN121Serializer(serializers.ModelSerializer):
 
     effdt0 = serializers.DateField(format="%Y-%m-%d")
     effdt1 = serializers.DateField(format="%Y-%m-%d")
+    grid = GridSerializer(many=False)
 
     class Meta:
         model = FN121
@@ -87,6 +116,9 @@ class FN121Serializer(serializers.ModelSerializer):
 
 
 class FN122Serializer(serializers.ModelSerializer):
+    """
+    """
+
     class Meta:
         model = FN122
 
@@ -105,19 +137,23 @@ class FN123Serializer(serializers.ModelSerializer):
     sam = serializers.CharField(read_only=True, source="effort.sample.sam")
     eff = serializers.CharField(read_only=True, source="effort.eff")
 
-    # species = serializers.CharField(source="species.species_code")
-    species = serializers.SlugRelatedField(
-        queryset=Species.objects.all(), slug_field="species_code"
-    )
+    prj_cd = serializers.CharField(source="effort.sample.project.prj_cd")
+    spc = serializers.CharField(source="species.spc")
+    # species = serializers.SlugRelatedField(
+    #     queryset=Species.objects.all(), slug_field="spc"
+    # )
+
+    # spc = SpeciesSerializer(many=False)
 
     class Meta:
         model = FN123
         fields = (
             "id",
             "slug",
+            "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "catcnt",
             "catwt",
@@ -189,8 +225,11 @@ class FN127Serializer(serializers.ModelSerializer):
 
 class FN125Serializer(serializers.ModelSerializer):
 
+    prj_cd = serializers.CharField(
+        read_only=True, source="catch.effort.sample.project.prj_cd"
+    )
     sam = serializers.CharField(read_only=True, source="catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="catch.species.species_code")
+    species = serializers.CharField(read_only=True, source="catch.species.spc")
     eff = serializers.CharField(read_only=True, source="catch.effort.eff")
     grp = serializers.CharField(read_only=True, source="catch.grp")
 
@@ -205,6 +244,7 @@ class FN125Serializer(serializers.ModelSerializer):
         fields = (
             "id",
             "slug",
+            "prj_cd",
             "sam",
             "species",
             "eff",

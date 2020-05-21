@@ -1,9 +1,10 @@
 import factory
 import datetime
 
+from common.models import Species, Lake
+from .user_factory import UserFactory
 
 from ..models import (
-    Species,
     FNProtocol,
     FN011,
     FN121,
@@ -23,18 +24,23 @@ from ..models import (
 )
 
 
-class SpeciesFactory(factory.DjangoModelFactory):
-    """
-    A factory for Species objects.
-    """
+class LakeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Lake
+        django_get_or_create = ("abbrev",)
 
+    lake_name = "Lake Huron"
+    abbrev = "HU"
+
+
+class SpeciesFactory(factory.DjangoModelFactory):
     class Meta:
         model = Species
-        django_get_or_create = ("species_code",)
+        django_get_or_create = ("spc",)
 
-    common_name = "Lake Trout"
-    scientific_name = "Salvelinus namaycush"
-    species_code = 81
+    spc = factory.Sequence(lambda n: n)
+    spc_nmco = "Lake Trout"
+    spc_nmsc = "Salvelinus nameychush"
 
 
 class FNProtocolFactory(factory.DjangoModelFactory):
@@ -60,8 +66,8 @@ class FN011Factory(factory.DjangoModelFactory):
 
     prj_cd = "LHA_IA18_999"
     prj_nm = "Cool Project"
-    prj_ldr = "Homer Simpson"
-
+    prj_ldr = factory.SubFactory(UserFactory)
+    lake = factory.SubFactory(LakeFactory)
     protocol = factory.SubFactory(FNProtocolFactory)
 
     @factory.lazy_attribute

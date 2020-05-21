@@ -118,9 +118,9 @@
                         <tr>
                             <td>
                                 {% if species.biocnts == 0 %}
-                                {{ species.species }} ({{ species.species_code }})
+                                {{ species.species }} ({{ species.spc }})
                                 {% else %}
-                                <a href="{% url 'fn_portal:project_spc_biodata' object.slug species.species_code %}" target="_blank">{{ species.species }} ({{ species.species_code }})</a>
+                                <a href="{% url 'fn_portal:project_spc_biodata' object.slug species.spc %}" target="_blank">{{ species.species }} ({{ species.spc }})</a>
                                 {% endif %}
                             </td>
                             <td>

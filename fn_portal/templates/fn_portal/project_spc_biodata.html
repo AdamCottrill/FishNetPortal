@@ -35,7 +35,7 @@
     </style>
 
 
-    <h2>Biological Attributes of {{ species.common_name}} sampled in {{ project.prj_cd }}</h2>
+    <h2>Biological Attributes of {{ species.spc_nmco}} sampled in {{ project.prj_cd }}</h2>
 
     <div class="row">
         <div class="col-md-12">
@@ -349,7 +349,7 @@
  }
 
 
- d3.json("{% url 'fn_portal:project_spc_biodata_json' project.slug species.species_code %}", function (error, data) {
+ d3.json("{% url 'fn_portal:project_spc_biodata_json' project.slug species.spc %}", function (error, data) {
 
      var mydateformat = d3.time.format('%B %d, %Y');
      var isodateformat = d3.time.format.iso;

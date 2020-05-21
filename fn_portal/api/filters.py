@@ -28,8 +28,10 @@ class FN011Filter(django_filters.FilterSet):
     year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
 
     # lake = ValueInFilter(field_name="jurisdiction__lake__abbrev", lookup_expr="in")
-    lake = django_filters.CharFilter(field_name="lake", lookup_expr="exact")
-    lead = django_filters.CharFilter(field_name="prj_ldr", lookup_expr="exact")
+    lake = django_filters.CharFilter(field_name="lake__abbrev", lookup_expr="exact")
+    lead = django_filters.CharFilter(
+        field_name="prj_ldr__username", lookup_expr="exact"
+    )
     suffix = django_filters.CharFilter(field_name="prj_cd", lookup_expr="endswith")
 
     class Meta:

@@ -88,7 +88,7 @@ def test_FN123_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
 
     project = FN011Factory(prj_cd=project_code)
@@ -116,7 +116,7 @@ def test_FN125_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
 
@@ -144,7 +144,7 @@ def test_FN126_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
     food = 1
@@ -180,7 +180,7 @@ def test_FN127_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
     ageid = 12
@@ -215,7 +215,7 @@ def test_FN125Tags_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
     fish_tag_id = 11
@@ -252,7 +252,7 @@ def test_FN125Lamprey_xlam_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
     lamid = 11
@@ -286,7 +286,7 @@ def test_FN125Lamprey_lamijc_str():
     sam = "001"
     eff = "051"
     spc = 334
-    species = SpeciesFactory(species_code=spc)
+    species = SpeciesFactory(spc=spc)
     grp = "55"
     fish_number = 9
     lamid = 11

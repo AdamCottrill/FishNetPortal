@@ -37,7 +37,7 @@ DATABASES = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "fn_portal",
         "USER": "cottrillad",
-        "PASSWORD": get_env_variable("PGPASS"),
+        "PASSWORD": get_env_variable("PGPASSWORD"),
         "HOST": "localhost",
     }
 }

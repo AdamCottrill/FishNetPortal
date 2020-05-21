@@ -22,6 +22,12 @@ A. Cottrill
 import os
 import sys
 
+
+HOME_DIR = "c:/Users/COTTRILLAD/1work/Python/djcode/apps/fn_portal"
+
+
+os.chdir(HOME_DIR)
+
 import django_settings
 
 from xlrd import open_workbook, cellname
@@ -30,10 +36,8 @@ from fn_portal.models import FNProtocol
 from utils.fn_portal_utils import sheet2dict
 
 
-XLS = (
-    "c:/Users/COTTRILLAD/Documents/1work/Python/djcode/"
-    + "fn_portal/utils/Protocols.xlsx"
-)
+XLS = os.path.join(HOME_DIR, "utils/Protocols.xlsx")
+
 
 book = open_workbook(XLS)
 
@@ -46,3 +50,4 @@ for row in protocols:
     objects.append(protocol)
 
 FNProtocol.objects.bulk_create(objects)
+print("Done adding Protocols!")

@@ -20,7 +20,9 @@ database: FIRST_YEAR, LAST_YEAR, and SOURCE.
 This script replaces all earlier scripts that were origially used to
 get data from offshore, nearshore, and smallfish databases.
 
-- make sure to run ~/utils/get_protocols_from_xls.py first.
+- make sure to run ~/utils/get_protocols_from_xls.py first and ensure
+  that species has been populated - these two steps should only be
+  necessary if the database is being rebuild from scratch.
 
 USAGE:
 
@@ -35,6 +37,16 @@ USAGE:
 - if both FIRST_YEAR and LAST_YEAR are defined, all years >= FIRST_YEAR
   and <= LAST_YEAR will be updated.
 
+this script assumes that the source databases have existing queries
+named get_<table> for all of the FN tables. If the datasource does not
+include that table (lamprey in small fish), queries with the
+appropriate name must still exist, but return no records.
+
+
+TODOS:
+
+- update Lake Superior FCIN database
+- update other Lake Superior databases when they become available
 
 
  A. Cottrill
@@ -44,10 +56,13 @@ USAGE:
 import os
 import pyodbc
 import re
-
+import sys
 import django_settings
 
-from fn_portal.models import Species
+from django.contrib.auth import get_user_model
+
+
+from common.models import Species, Grid5, Lake
 
 from fn_portal.models import (
     FNProtocol,
@@ -62,130 +77,83 @@ from fn_portal.models import (
     FN125_Lamprey,
 )
 
-DB_DIR = "C:/Users/COTTRILLAD/Documents/1work/Python/djcode/fn_portal/utils/mdbs"
 
-FIRST_YEAR = 2004
+from utils.fn_portal_utils import (
+    get_user_attrs,
+    get_db_years,
+    get_fn_data,
+    build_years_array,
+)
+
+
+# HOMEDIR = (
+#     "c:/Users/COTTRILLAD/OneDrive - Government of Ontario/Documents/"
+#     + "1work/Python/djcode/fn_portal"
+# )
+
+User = get_user_model()
+HOMEDIR = os.path.expandvars("${HOME}/Python/djcode/apps/fn_portal")
+
+DB_DIR = os.path.join(HOMEDIR, "utils/mdbs")
+
+# year or None
+FIRST_YEAR = 2019
 LAST_YEAR = None
 
 DATA_SOURCES = [
-    {"name": "nearshore", "src_db": "Nearshore.mdb"},
-    # {"name": "offshore", "src_db": "Offshore.mdb"},
-    # {"name": "smallfish", "src_db": "smallfish.mdb"},
+    # {"name": "nearshore", "src_db": "Nearshore.accdb", "lake_abbrev": "HU"},
+    # {"name": "offshore", "src_db": "Offshore.accdb", "lake_abbrev": "HU"},
+    # {"name": "smallfish", "src_db": "smallfish.accdb", "lake_abbrev": "HU"},
+    {"name": "offshore", "src_db": "SuperiorOffshore.accdb", "lake_abbrev": "SU"}
 ]
+
+
+# users
+# check our users before we go any farther:
+
+users = {}
+
+for source in DATA_SOURCES:
+    src_db = os.path.join(DB_DIR, source["src_db"])
+    fndata = get_fn_data(src_db, "project_leads")
+
+    for rec in fndata:
+        prj_ldr = rec["prj_ldr"].upper()
+        users[prj_ldr] = get_user_attrs(prj_ldr)
+
+
+# there are a couple of duplicate entries we need to address:
+
+users["ADAM COTTRILL / JEFF SPEERS"] = users.get("ADAM COTTRILL")
+users["DAVIS / COTTRILL / SPEERS"] = users.get("JEFF SPEERS")
+users["LAKE HURON RESEARCH"] = users.get("BRIAN HENDERSON")
+users["STEPHEN GILES"] = users.get("STEPHEN GILE")
+users["STEVE GILE"] = users.get("STEPHEN GILE")
+users["Vicki Lee and Adam Cottrill"] = users.get("VICKI LEE")
+
+# now loop over all of our users and get or create each user.  When we
+# get our user back, add it as the value to our user cache so we can
+# add the relationship when we create the FN011 record.
+
+user_cache = {}
+for key, attrs in users.items():
+    if attrs:
+        user, created = User.objects.get_or_create(username=attrs["username"])
+        if created:
+            for attr, value in attrs.items():
+                setattr(user, attr, value)
+            user.save()
+        user_cache[key.upper()] = user
 
 
 # Protocols Lookup:
 protocols = {x.abbrev: x for x in FNProtocol.objects.all()}
 
-species_lookup = {"{:03d}".format(x.species_code): x for x in Species.objects.all()}
 
-# =======================================================================
+species_cache = {x.spc: x for x in Species.objects.all()}
 
-
-def build_years_array(db_years, first_year=None, last_year=None):
-    """The database queries are parameterized to accept a single year of
-    data.  This function takes a two element array [db_years] (which
-    contains year first and last years in the target database) and two
-    optional arguments that specify the earliest and latest year to
-    subset that array by.  returns an array of years that encapsulate
-    the years inthe database, subsetted by the provided first_year and
-    last_year parameters.
-
-    Arguments:
-    - `db_years`: [min([year]), max([year])]
-    - `first_year`:
-    - `last_year`:
-
-    """
-
-    fyear = max(first_year, db_years[0]) if first_year else db_years[0]
-    lyear = min(last_year, db_years[1]) if last_year else db_years[1]
-
-    return list(range(fyear, lyear + 1))
-
-
-def get_db_years(src_db):
-    """connect to our source database and get the first and last year in
-    the fn011 table. (first and last year in the fn011 table are returned
-    by a stored query [get_db_years] that must exist in the database).
-
-    Arguments:
-    - `src_db`: full path the source database.
-
-    """
-
-    constring = "DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={}"
-    with pyodbc.connect(constring.format(src_db)) as src_conn:
-        src_cur = src_conn.cursor()
-        rs = src_cur.execute("execute get_db_years")
-        yrs = rs.fetchone()
-    return [int(x) for x in yrs]
-
-
-def get_fn_data(src_db, fn_table, year):
-    """Get the data and fields from the query in the src database for the
-    fish net table specified by fn_table.  Returns list of
-    dictionaries - each element represents a single row returned by the query.
-
-    Arguments:
-    - `src_db`: full path the source database.
-    - `fn_table`:  the name of the stored query that returns the data for
-                   the specified fish net table
-
-    """
-
-    constring = "DRIVER={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={}"
-    with pyodbc.connect(constring.format(src_db)) as src_conn:
-        src_cur = src_conn.cursor()
-        rs = src_cur.execute("execute get_{} @yr='{}'".format(fn_table, year))
-        data = rs.fetchall()
-        flds = [x[0].lower() for x in src_cur.description]
-
-    records = []
-    for record in data:
-        records.append({k: v for k, v in zip(flds, record)})
-
-    return records
-
-
-# =======================================================================
-
-
-# # =======================================================================
-# # THIS IS TEMPORARY!
-# # REMOVE ONCE UGLMU_COMMON COMES ON LINE!!!
-#
-#
-# LOOKUP_DB = "C:/1work/Data_Warehouse/LookupTables.mdb"
-#
-# what = "Species"
-# table = "fn_portal_species"
-#
-# sql = (
-#     "select int(spc) as species_code, spc_nm as common_name,"
-#     + "spc_nmsc as scientific_name from [SPC]"
-# )
-#
-# print("Retrieving {} records...".format(what))
-#
-# constring = r"DRIVER={Microsoft Access Driver (*.mdb)};DBQ=%s" % LOOKUP_DB
-# with pyodbc.connect(constring) as src_conn:
-#     src_cur = src_conn.cursor()
-#     rs = src_cur.execute(sql)
-#     data = rs.fetchall()
-#     flds = [x[0] for x in src_cur.description]
-#
-# msg = "\tFound {:,} records.  Creating {} objects ..."
-# print(msg.format(len(data), what))
-#
-# my_list = []
-# for x in data:
-#     row = {k: v for k, v in zip(flds, x)}
-#     my_list.append(Species(**row))
-#
-# Species.objects.bulk_create(my_list)
-# print("\tDone adding {} records (n={:,})".format(what, len(my_list)))
-#
+lake_cache = {x.abbrev: x for x in Lake.objects.all()}
+grid_cache = {x.slug: x for x in Grid5.objects.all()}
 
 # =======================================================================
 
@@ -193,29 +161,35 @@ def get_fn_data(src_db, fn_table, year):
 for source in DATA_SOURCES:
 
     src_db = os.path.join(DB_DIR, source["src_db"])
+    if not os.path.isfile(src_db):
+        print("*** ERROR ***: Unable to find '{}'".format(source.get("src_db")))
+        break
+
     source_name = source["name"]
+    lake = lake_cache[source["lake_abbrev"]]
 
     # create a cursor that will be used to connect to our source database:
     years = get_db_years(src_db)
     years = build_years_array(years, FIRST_YEAR, LAST_YEAR)
 
     # clear out all of the old objects:
-    print("Clearing tables....")
-    FN011.objects.filter(year__in=years, source=source_name).delete()
+    print("Clearing tables from selected years and sources...")
+    FN011.objects.filter(year__in=years, source=source_name, lake=lake).delete()
     print("Done clearing tables...")
 
     for year in years:
-        # year = 2014
 
         # =======================================================
         #                FN011 - Projects
+
+        print("\n====================================================")
 
         what = "Project"
         fn_table = "FN011"
         obj_list = []
 
         # get the data
-        print("Retrieving {} records...".format(what))
+        print("Retrieving {} records for {}...".format(what, year))
         fndata = get_fn_data(src_db, fn_table, year)
         msg = "\tFound {:,} records.  Creating {} objects ..."
         print(msg.format(len(fndata), fn_table))
@@ -227,6 +201,9 @@ for source in DATA_SOURCES:
             row["slug"] = prj_cd.lower()
             protocol = row.pop("protocol")
             row["protocol"] = protocols[protocol]
+            row["lake"] = lake
+            prj_ldr = row["prj_ldr"].upper()
+            row["prj_ldr"] = user_cache[prj_ldr]
             obj_list.append(FN011(**row))
 
         FN011.objects.bulk_create(obj_list, batch_size=10000)
@@ -242,7 +219,8 @@ for source in DATA_SOURCES:
         obj_list = []
 
         parents = {
-            x.slug: x for x in FN011.objects.filter(year=year, source=source_name)
+            x.slug: x
+            for x in FN011.objects.filter(year=year, source=source_name, lake=lake)
         }
 
         # get the data
@@ -253,6 +231,10 @@ for source in DATA_SOURCES:
 
         for row in fndata:
             prj_cd = row.pop("prj_cd")
+            grid_no = int(row.pop("grid"))
+            grid_slug = "{0}-{1:04d}".format(lake.abbrev.lower(), grid_no)
+            row["grid"] = grid_cache[grid_slug]
+
             project = parents.get(prj_cd.lower())
             if project is None:
                 msg = "Could not find project with prj_cd = {}"
@@ -276,7 +258,7 @@ for source in DATA_SOURCES:
         parents = {
             x.slug: x
             for x in FN121.objects.filter(
-                project__year=year, project__source=source_name
+                project__year=year, project__source=source_name, project__lake=lake
             )
         }
 
@@ -313,7 +295,9 @@ for source in DATA_SOURCES:
         parents = {
             x.slug: x
             for x in FN122.objects.filter(
-                sample__project__year=year, sample__project__source=source_name
+                sample__project__year=year,
+                sample__project__lake=lake,
+                sample__project__source=source_name,
             )
         }
 
@@ -329,7 +313,7 @@ for source in DATA_SOURCES:
             eff = row.pop("eff")
             spc = row.pop("spc")
 
-            species = species_lookup[spc]
+            species = species_cache[spc]
 
             parent_slug = "-".join([prj_cd, sam, eff]).lower()
             parent = parents.get(parent_slug)
@@ -353,7 +337,7 @@ for source in DATA_SOURCES:
 
         for slug, effort in parents.items():
             tmp = FN123(
-                effort=effort, slug=slug + "-000-00", species=species_lookup["000"]
+                effort=effort, slug=slug + "-000-00", species=species_cache["000"]
             )
             obj_list.append(tmp)
         FN123.objects.bulk_create(obj_list, batch_size=10000)
@@ -416,6 +400,7 @@ for source in DATA_SOURCES:
             x.slug: x
             for x in FN125.objects.filter(
                 catch__effort__sample__project__year=year,
+                catch__effort__sample__project__lake=lake,
                 catch__effort__sample__project__source=source_name,
             )
         }
@@ -589,6 +574,7 @@ for source in DATA_SOURCES:
             spc = row.pop("spc")
             grp = row.pop("grp")
             fish = row.pop("fish")
+            fish_lam_id = row.pop("fish_lam_id")
             lamijc = row.pop("lamijc")
 
             parent_slug = "{}-{}-{}-{}-{}-{}".format(
@@ -602,13 +588,21 @@ for source in DATA_SOURCES:
             # add the related django objects
             row["fish"] = parent
 
-            if lamijc == "0":
+            # some data sources have individual rows for each wound already
+            # they will have a value for fish_lam_id
+            if fish_lam_id:
+                row["lamid"] = fish_lam_id
+                row["slug"] = "{}-{}".format(parent_slug, row["lamid"]).lower()
+                obj_list.append(FN125_Lamprey(**row))
+
+            elif lamijc == "0":
                 row["lamid"] = 1
                 row["slug"] = "{}-{}".format(parent_slug, row["lamid"]).lower()
                 row["lamijc"] = "0"
                 row["lamijc_type"] = "0"
                 obj_list.append(FN125_Lamprey(**row))
             else:
+                # split lamijc on every A or B and parse them into rows:
                 for i, wound in enumerate(re.findall("([(A|B)]\d+)", lamijc)):
                     row["lamijc"] = wound
                     row["lamid"] = i + 1
@@ -622,11 +616,27 @@ for source in DATA_SOURCES:
             "\tDone adding {} records for {} (n={:,})".format(what, year, len(obj_list))
         )
 
+        # ===========================================================
 
-# finally update our flag fields:
-FN125.objects.filter(fishtags__in=FN125Tag.objects.all()).update(tag_flag=True)
-FN125.objects.filter(lamprey_marks__in=FN125_Lamprey.objects.all()).update(
-    stom_flag=True
-)
-FN125.objects.filter(diet_data__in=FN126.objects.all()).update(stom_flag=True)
-FN125.objects.filter(age_estimates__in=FN127.objects.all()).update(age_flag=True)
+        # finally update our flag fields for the records we just added:
+        print("Updating tag_flag in the FN125 records...")
+        FN125.objects.filter(catch__effort__sample__project__year__in=years).filter(
+            catch__effort__sample__project__source__in=source_name
+        ).filter(fishtags__in=FN125Tag.objects.all()).update(tag_flag=True)
+
+        print("Updating lam_flag in the FN125 records...")
+        FN125.objects.filter(catch__effort__sample__project__year__in=years).filter(
+            catch__effort__sample__project__source__in=source_name
+        ).filter(lamprey_marks__in=FN125_Lamprey.objects.all()).update(lam_flag=True)
+
+        print("Updating stom_flag in the FN125 records...")
+        FN125.objects.filter(catch__effort__sample__project__year__in=years).filter(
+            catch__effort__sample__project__source__in=source_name
+        ).filter(diet_data__in=FN126.objects.all()).update(stom_flag=True)
+
+        print("Updating age_flag in the FN125 records...")
+        FN125.objects.filter(catch__effort__sample__project__year__in=years).filter(
+            catch__effort__sample__project__source__in=source_name
+        ).filter(age_estimates__in=FN127.objects.all()).update(age_flag=True)
+
+print("Done!")

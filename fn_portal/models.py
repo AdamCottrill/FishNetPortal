@@ -1,27 +1,30 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.db.models import F, Sum, Count
+from django.db.models import F, Sum
 
 from markdown import markdown
 
+from common.models import Grid5, Lake, Species
 
-class Species(models.Model):
-    species_code = models.IntegerField(unique=True)
-    common_name = models.CharField(max_length=40, null=True, blank=True)
-    scientific_name = models.CharField(max_length=50, null=True, blank=True)
+User = get_user_model()
 
-    class Meta:
-        ordering = ["common_name"]
-        verbose_name_plural = "Species"
+# class Species(models.Model):
+#     species_code = models.IntegerField(unique=True)
+#     common_name = models.CharField(max_length=40, null=True, blank=True)
+#     scientific_name = models.CharField(max_length=50, null=True, blank=True)
 
-    def __str__(self):
-        if self.scientific_name:
-            spc_unicode = "{} ({})".format(self.common_name, self.scientific_name)
-        else:
-            spc_unicode = "{}".format(self.common_name)
-        return spc_unicode
+#     class Meta:
+#         ordering = ["common_name"]
+#         verbose_name_plural = "Species"
+
+#     def __str__(self):
+#         if self.scientific_name:
+#             spc_unicode = "{} ({})".format(self.common_name, self.scientific_name)
+#         else:
+#             spc_unicode = "{}".format(self.common_name)
+#         return spc_unicode
 
 
 class FNProtocol(models.Model):
@@ -43,17 +46,24 @@ class FN011(models.Model):
         FNProtocol, related_name="projects", on_delete=models.CASCADE
     )
 
+    prj_ldr = models.ForeignKey(
+        User,
+        help_text="Project Lead",
+        related_name="creels",
+        blank=False,
+        on_delete=models.CASCADE,
+    )
+    field_crew = models.ManyToManyField(User)
+
     year = models.CharField(max_length=4, db_index=True)
     prj_cd = models.CharField(max_length=13, db_index=True, unique=True)
-    slug = models.CharField(max_length=13, unique=True)
+    slug = models.SlugField(max_length=13, unique=True)
     prj_nm = models.CharField(max_length=255)
-    prj_ldr = models.CharField(max_length=255)
+    # prj_ldr = models.CharField(max_length=255)
     prj_date0 = models.DateField()
     prj_date1 = models.DateField()
 
-    LAKE_CHOICES = (("huron", "Lake Huron"), ("superior", "Lake Superior"))
-
-    lake = models.CharField(max_length=10, choices=LAKE_CHOICES, default="huron")
+    lake = models.ForeignKey(Lake, related_name="projects", on_delete=models.CASCADE)
 
     SOURCE_CHOICES = (
         ("offshore", "Offshore Index"),
@@ -106,10 +116,11 @@ class FN011(models.Model):
 
         catcnts = (
             FN121.objects.filter(project=self)
-            .filter(effort__catch__species__species_code__gt=0)
-            .annotate(species=F("effort__catch__species__common_name"))
-            .annotate(species_code=F("effort__catch__species__species_code"))
-            .values("species", "species_code")
+            .select_related("effort__catch", "effort_species")
+            .filter(effort__catch__species__spc__gt=0)
+            .annotate(species=F("effort__catch__species__spc_nmco"))
+            .annotate(spc=F("effort__catch__species__spc"))
+            .values("species", "spc")
             .annotate(catcnts=Sum("effort__catch__catcnt"))
             .annotate(biocnts=Sum("effort__catch__biocnt"))
             .order_by("species")
@@ -147,12 +158,17 @@ class FN121(models.Model):
 
     project = models.ForeignKey(FN011, related_name="samples", on_delete=models.CASCADE)
 
-    # these will be foreign keys someday (soon):
-    grid = models.CharField(max_length=4, db_index=True)
+    grid = models.ForeignKey(
+        Grid5,
+        related_name="fn_samples",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     grtp = models.CharField(max_length=3, blank=True, null=True, db_index=True)
     gr = models.CharField(max_length=5, db_index=True, blank=True, null=True)
 
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     sam = models.CharField(max_length=5, db_index=True)
     effdt0 = models.DateField(blank=True, null=True, db_index=True)
     effdt1 = models.DateField(blank=True, null=True, db_index=True)
@@ -202,8 +218,10 @@ class FN121(models.Model):
         - `self`:
         """
 
-        total_catch = FN122.objects.filter(sample=self).aggregate(
-            total=Sum("catch__catcnt")
+        total_catch = (
+            FN122.objects.filter(sample=self)
+            .exclude(catch__species__spc="000")
+            .aggregate(total=Sum("catch__catcnt"))
         )
 
         return total_catch
@@ -217,7 +235,9 @@ class FN121(models.Model):
 
         catcnts = (
             FN122.objects.filter(sample=self)
-            .annotate(species=F("catch__species__common_name"))
+            .select_related("catch", "catch__species")
+            .exclude(catch__species__spc="000")
+            .annotate(species=F("catch__species__spc_nmco"))
             .values("species")
             .annotate(total=Sum("catch__catcnt"))
             .order_by("species")
@@ -233,7 +253,7 @@ class FN122(models.Model):
     """
 
     sample = models.ForeignKey(FN121, related_name="effort", on_delete=models.CASCADE)
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     # sam = models.CharField(max_length=5, blank=True, null=True)
     eff = models.CharField(max_length=4, db_index=True, default=1)
     effdst = models.FloatField(blank=True, null=True)
@@ -265,9 +285,9 @@ class FN123(models.Model):
 
     effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
     species = models.ForeignKey(
-        Species, related_name="species", on_delete=models.CASCADE
+        Species, related_name="catch_counts", on_delete=models.CASCADE
     )
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     grp = models.CharField(max_length=3, default="00", db_index=True)
     catcnt = models.IntegerField("Total Catch (numbers)", blank=True, null=True)
     count_only = models.IntegerField(
@@ -292,7 +312,7 @@ class FN123(models.Model):
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
-        return "{}-{}-{}".format(self.effort, self.species.species_code, self.grp)
+        return "{}-{}-{}".format(self.effort, self.species.spc, self.grp)
 
 
 class FN125(models.Model):
@@ -300,7 +320,7 @@ class FN125(models.Model):
     """
 
     catch = models.ForeignKey(FN123, related_name="fish", on_delete=models.CASCADE)
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     fish = models.CharField(max_length=6)
     flen = models.IntegerField(blank=True, null=True)
     tlen = models.IntegerField(blank=True, null=True)
@@ -345,7 +365,7 @@ class FN126(models.Model):
     """
 
     fish = models.ForeignKey(FN125, related_name="diet_data", on_delete=models.CASCADE)
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     food = models.IntegerField()
 
     taxon = models.CharField(max_length=10, db_index=True, blank=True, null=True)
@@ -375,7 +395,7 @@ class FN127(models.Model):
     fish = models.ForeignKey(
         FN125, related_name="age_estimates", on_delete=models.CASCADE
     )
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     ageid = models.IntegerField()
     agea = models.IntegerField(blank=True, null=True, db_index=True)
     preferred = models.BooleanField(default=False, db_index=True)
@@ -412,7 +432,7 @@ class FN125_Lamprey(models.Model):
     fish = models.ForeignKey(
         FN125, related_name="lamprey_marks", on_delete=models.CASCADE
     )
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     lamid = models.IntegerField()
     xlam = models.CharField(max_length=6, blank=True, null=True)
     lamijc = models.CharField(max_length=50, blank=True, null=True)
@@ -462,11 +482,11 @@ class FN125Tag(models.Model):
     """
 
     fish = models.ForeignKey(FN125, related_name="fishtags", on_delete=models.CASCADE)
-    slug = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
     fish_tag_id = models.IntegerField()
     # tag fields
     tagstat = models.CharField(max_length=5, db_index=True, blank=True, null=True)
-    tagid = models.CharField(max_length=9, blank=True, null=True)
+    tagid = models.CharField(max_length=20, db_index=True, blank=True, null=True)
     tagdoc = models.CharField(max_length=6, db_index=True, blank=True, null=True)
     xcwtseq = models.CharField(max_length=5, blank=True, null=True)
     xtaginckd = models.CharField(max_length=6, blank=True, null=True)

@@ -2,6 +2,7 @@
 
 from rest_framework import viewsets, generics
 
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 
 from .serializers import (
@@ -16,6 +17,12 @@ from .filters import FN011Filter
 from fn_portal.models import Species, FN011, FN121, FN122, FN123, FN125, FN125Tag
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = "page_size"
+    max_page_size = 1000
+
+
 class SpeciesList(generics.ListAPIView):
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
@@ -23,15 +30,40 @@ class SpeciesList(generics.ListAPIView):
 
 # ViewSets define the view behavior.
 class FN011ViewSet(viewsets.ModelViewSet):
-    queryset = FN011.objects.all()
+    """An api endpoint for projects. """
+
+    queryset = (
+        FN011.objects.select_related("protocol", "lake", "prj_ldr")
+        .defer(
+            "lake__geom",
+            "lake__geom_ontario",
+            "lake__envelope",
+            "lake__envelope_ontario",
+            "lake__centroid",
+            "lake__centroid_ontario",
+        )
+        .all()
+    )
     serializer_class = FN011Serializer
     filterset_class = FN011Filter
     lookup_field = "slug"
     permission_classes = [IsAuthenticatedOrReadOnly]
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
 
-        queryset = FN011.objects.prefetch_related("protocol").all()
+        queryset = (
+            FN011.objects.select_related("protocol", "lake", "prj_ldr")
+            .defer(
+                "lake__geom",
+                "lake__geom_ontario",
+                "lake__envelope",
+                "lake__envelope_ontario",
+                "lake__centroid",
+                "lake__centroid_ontario",
+            )
+            .all()
+        )
         # finally django-filter
         filtered_list = FN011Filter(self.request.GET, queryset=queryset)
 
@@ -39,16 +71,33 @@ class FN011ViewSet(viewsets.ModelViewSet):
 
 
 class FN121ViewSet(viewsets.ModelViewSet):
-    queryset = FN121.objects.all()
+    queryset = (
+        FN121.objects.select_related("grid", "grid__lake").defer(
+            "grid__geom",
+            "grid__envelope",
+            "grid__centroid",
+            "grid__lake__geom",
+            "grid__lake__geom_ontario",
+            "grid__lake__envelope",
+            "grid__lake__envelope_ontario",
+            "grid__lake__centroid",
+            "grid__lake__centroid_ontario",
+        )
+    ).all()
+
     serializer_class = FN121Serializer
+    pagination_class = StandardResultsSetPagination
 
     # lookup_field = "slug"
 
 
 class NetSetList(generics.ListCreateAPIView):
-    """A view to return all of the net sets associated with a project"""
+    """A view to return all of the net sets associated with a project.
+
+    TODO: add filters for gear type, depth, active (lifttime=null)"""
 
     serializer_class = FN121Serializer
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_context(self):
         """to create a new net set, we have to make the project available in
@@ -57,7 +106,16 @@ class NetSetList(generics.ListCreateAPIView):
         context = super(NetSetList, self).get_serializer_context()
         slug = self.kwargs.get("slug", "").lower()
 
-        context.update({"project": FN011.objects.get(slug=slug)})
+        project = FN011.objects.defer(
+            "lake__geom",
+            "lake__geom_ontario",
+            "lake__envelope",
+            "lake__envelope_ontario",
+            "lake__centroid",
+            "lake__centroid_ontario",
+        ).get(slug=slug)
+
+        context.update({"project": project})
         return context
 
     def get_queryset(self):
@@ -67,7 +125,24 @@ class NetSetList(generics.ListCreateAPIView):
         """
         slug = self.kwargs.get("slug", "")
         slug = slug.lower()
-        return FN121.objects.filter(project__slug=slug)
+
+        queryset = (
+            FN121.objects.filter(project__slug=slug)
+            .select_related("grid", "grid__lake")
+            .defer(
+                "grid__geom",
+                "grid__envelope",
+                "grid__centroid",
+                "grid__lake__geom",
+                "grid__lake__geom_ontario",
+                "grid__lake__envelope",
+                "grid__lake__envelope_ontario",
+                "grid__lake__centroid",
+                "grid__lake__centroid_ontario",
+            )
+        )
+
+        return queryset
 
 
 class EffortList(generics.ListCreateAPIView):
@@ -101,7 +176,11 @@ class EffortList(generics.ListCreateAPIView):
         slug = self.kwargs.get("slug", "").lower()
         sam = self.kwargs["sample"]
 
-        context.update({"sample": FN121.objects.get(project__slug=slug, sam=sam)})
+        sample = FN121.objects.select_related("project").get(
+            project__slug=slug, sam=sam
+        )
+
+        context.update({"sample": sample})
         return context
 
 
@@ -129,7 +208,7 @@ class CatchCountList(generics.ListCreateAPIView):
                 "species", "effort", "effort__sample", "effort__sample__project"
             )
             .filter(effort__sample__project__slug=slug)
-            .exclude(species__species_code=0)
+            .exclude(species__spc="000")
         )
 
         if sam:
@@ -148,13 +227,11 @@ class CatchCountList(generics.ListCreateAPIView):
         sam = self.kwargs["sample"]
         eff = self.kwargs.get("effort")
 
-        context.update(
-            {
-                "effort": FN122.objects.get(
-                    sample__project__slug=slug, sample__sam=sam, eff=eff
-                )
-            }
+        effort = FN122.objects.select_related("sample", "sample__project").get(
+            sample__project__slug=slug, sample__sam=sam, eff=eff
         )
+
+        context.update({"effort": effort})
 
         return context
 
@@ -185,7 +262,7 @@ class BioSampleList(generics.ListCreateAPIView):
                     effort__sample__project__slug=slug,
                     effort__sample__sam=sam,
                     effort__eff=eff,
-                    species__species_code=spc,
+                    species__spc=spc,
                     grp=grp,
                 )
             }
@@ -222,7 +299,7 @@ class BioSampleList(generics.ListCreateAPIView):
         if eff:
             queryset = queryset.filter(catch__effort__eff=eff)
         if spc:
-            queryset = queryset.filter(catch__species__species_code=spc)
+            queryset = queryset.filter(catch__species__spc=spc)
         if grp:
             queryset = queryset.filter(catch__grp=grp)
 

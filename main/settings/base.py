@@ -15,16 +15,6 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "fn_portal",
-        "USER": "cottrillad",
-        "PASSWORD": "django123",
-    }
-}
-
-
 def get_env_variable(var_name):
     """Get the environment variable or return exception (from page 39 of
     2-scoops"""
@@ -72,6 +62,7 @@ THIRD_PARTY_APPS = (
     "rest_framework_swagger",
     "widget_tweaks",
     "corsheaders",
+    "common",
 )
 
 
@@ -151,6 +142,3 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
-
-
-##TEST_RUNNER = "main.PytestTestRunner.py"
