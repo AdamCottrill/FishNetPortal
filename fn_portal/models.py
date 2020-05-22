@@ -101,11 +101,11 @@ class FN011(models.Model):
         - `self`:
         """
 
-        total_catch = FN121.objects.filter(project=self).aggregate(
-            total=Sum("effort__catch__catcnt")
-        )
-
-        return total_catch
+        catch_counts = self.catch_counts()
+        return {
+            "total": sum([x["catcnts"] for x in catch_counts]),
+            "spc_cnt": len(catch_counts),
+        }
 
     def catch_counts(self):
         """
@@ -116,13 +116,12 @@ class FN011(models.Model):
 
         catcnts = (
             FN121.objects.filter(project=self)
-            .select_related("effort__catch", "effort_species")
-            .filter(effort__catch__species__spc__gt=0)
             .annotate(species=F("effort__catch__species__spc_nmco"))
             .annotate(spc=F("effort__catch__species__spc"))
             .values("species", "spc")
             .annotate(catcnts=Sum("effort__catch__catcnt"))
             .annotate(biocnts=Sum("effort__catch__biocnt"))
+            .exclude(catcnts__isnull=True)
             .order_by("species")
         )
 
@@ -148,8 +147,8 @@ class FN011(models.Model):
         this project. - eventually these should match the gear tables.
 
         """
-        gear_codes = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
-        return gear_codes
+        gear = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
+        return gear
 
 
 class FN121(models.Model):
@@ -218,13 +217,11 @@ class FN121(models.Model):
         - `self`:
         """
 
-        total_catch = (
-            FN122.objects.filter(sample=self)
-            .exclude(catch__species__spc="000")
-            .aggregate(total=Sum("catch__catcnt"))
-        )
-
-        return total_catch
+        catch_counts = self.catch_counts()
+        return {
+            "total": sum([x["catcnts"] for x in catch_counts]),
+            "spc_cnt": len(catch_counts),
+        }
 
     def catch_counts(self):
         """
@@ -235,11 +232,12 @@ class FN121(models.Model):
 
         catcnts = (
             FN122.objects.filter(sample=self)
-            .select_related("catch", "catch__species")
-            .exclude(catch__species__spc="000")
             .annotate(species=F("catch__species__spc_nmco"))
-            .values("species")
-            .annotate(total=Sum("catch__catcnt"))
+            .annotate(spc=F("catch__species__spc"))
+            .values("species", "spc")
+            .annotate(catcnts=Sum("catch__catcnt"))
+            .annotate(biocnts=Sum("catch__biocnt"))
+            .exclude(catcnts__isnull=True)
             .order_by("species")
         )
 
