@@ -1,11 +1,13 @@
 # from collections import Counter
 # from django.http import HttpResponse
+
 from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Sum, F, Q, Count
+from django.db.models import Sum, F, Count, Q
+from django.views.generic import ListView
 from django.http import JsonResponse
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404, redirect
+
 
 # from django.core import serializers
 from django.db import connection
@@ -13,43 +15,120 @@ import json
 
 from datetime import datetime
 
-from fn_portal.models import FN011, FN013, FN121, FN123, Gear, Species
-from fn_portal.forms import GearForm
+from common.models import Lake
+
+from .models import FN011, FN013, FN121, FN123, Gear, Species
+from .forms import GearForm
+from .filters import FN011Filter
 
 
-def project_list(request):
+class ProjectList(ListView):
+    """
+    """
 
-    q = request.GET.get("q")
+    # modified to accept tag argument
+    #
+    filter_set = FN011Filter
+    # filterset_class = FN011Filter
+    template_name = "fn_portal/project_list.html"
+    paginate_by = 50
 
-    offshore = FN011.objects.filter(source="offshore").select_related("prj_ldr")
-    nearshore = FN011.objects.filter(source="nearshore").select_related("prj_ldr")
-    smallfish = FN011.objects.filter(source="smallfish").select_related("prj_ldr")
+    def get_queryset(self):
 
-    if q:
-        offshore = offshore.filter(
-            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-        ).all()
+        search = self.request.GET.get("search")
 
-        nearshore = nearshore.filter(
-            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-        ).all()
-        smallfish = smallfish.filter(
-            Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-        ).all()
+        qs = FN011.objects.select_related("prj_ldr").all()
 
-    else:
-        offshore = nearshore.all()[:15]
-        nearshore = nearshore.all()[:15]
-        smallfish = smallfish.all()[:15]
+        if search:
+            qs = qs.filter(Q(prj_cd__icontains=search) | Q(prj_nm__icontains=search))
 
-    context = {
-        "offshore": offshore,
-        "nearshore": nearshore,
-        "smallfish": smallfish,
-        "q": q,
-    }
+        filtered_qs = FN011Filter(self.request.GET, qs)
 
-    return render(request, "fn_portal/project_list.html", context)
+        return filtered_qs.qs
+
+    def get_context_data(self, **kwargs):
+        """
+        get any additional context information that has been passed in with
+        the request.
+        """
+
+        context = super(ProjectList, self).get_context_data(**kwargs)
+
+        context["filters"] = self.request.GET
+        context["search"] = self.request.GET.get("search")
+        context["first_year"] = self.request.GET.get("first_year")
+        context["last_year"] = self.request.GET.get("last_year")
+
+        lake_abbrev = self.request.GET.get("lake")
+        if lake_abbrev:
+            context["lake"] = Lake.objects.filter(abbrev=lake_abbrev).first()
+
+        # need to add our factetted counts:
+        qs = self.get_queryset()
+        # calculate our facets by lake:
+        lakes = (
+            qs.select_related("lake")
+            .all()
+            .values(lakeName=F("lake__lake_name"), lakeAbbrev=F("lake__abbrev"))
+            .order_by("lake")
+            .annotate(N=Count("lake__lake_name"))
+        )
+        context["lakes"] = lakes
+
+        project_source = (
+            qs.values(name=F("source")).order_by("source").annotate(N=Count("source"))
+        )
+
+        context["project_source"] = project_source
+
+        paginator = Paginator(self.object_list, self.paginate_by)
+        page = self.request.GET.get("page")
+        try:
+            paged_qs = paginator.page(page)
+        except PageNotAnInteger:
+            paged_qs = paginator.page(1)
+        except EmptyPage:
+            paged_qs = paginator.page(paginator.num_pages)
+
+        context["project_count"] = qs.count()
+        context["object_list"] = paged_qs.object_list
+
+        return context
+
+
+# def project_list(request):
+
+#     q = request.GET.get("q")
+
+#     offshore = FN011.objects.filter(source="offshore").select_related("prj_ldr")
+#     nearshore = FN011.objects.filter(source="nearshore").select_related("prj_ldr")
+#     smallfish = FN011.objects.filter(source="smallfish").select_related("prj_ldr")
+
+#     if q:
+#         offshore = offshore.filter(
+#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+#         ).all()
+
+#         nearshore = nearshore.filter(
+#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+#         ).all()
+#         smallfish = smallfish.filter(
+#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
+#         ).all()
+
+#     else:
+#         offshore = nearshore.all()[:15]
+#         nearshore = nearshore.all()[:15]
+#         smallfish = smallfish.all()[:15]
+
+#     context = {
+#         "offshore": offshore,
+#         "nearshore": nearshore,
+#         "smallfish": smallfish,
+#         "q": q,
+#     }
+
+#     return render(request, "fn_portal/project_list.html", context)
 
 
 def projects_by_type(request, project_type):

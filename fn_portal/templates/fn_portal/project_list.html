@@ -1,181 +1,436 @@
 {% extends "fn_portal/fn_portal_base.html" %}
 
+{% load static %}
+{% load fn_portal_tags %}
+
+{% block extrahead  %}
+
+    <link rel="stylesheet" href="{% static "css/theme.bootstrap.css" %}" />
+
+{% endblock %}
+
+{% block title  %} {{ block.super }}| Projects  {% endblock %}
 
 {% block content %}
 
-{% if q %}
-<h3>Projects that contain "{{q}}" in their project code or name:</h3>
-{% else %}
-<h2>Welcome to UGLMU's IA-Portal</h2>
-{% endif %}
 
-<div>
+    <div class="container">
+        <h2>Welcome to FishNet Portal</h2>
+    </div>
 
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#offshore" aria-controls="offshore" role="tab" data-toggle="tab">Offshore</a></li>
-        <li role="presentation"><a href="#nearshore" aria-controls="nearshore" role="tab" data-toggle="tab">Nearshore</a></li>
-        <li role="presentation"><a href="#smallfish" aria-controls="smallfish" role="tab" data-toggle="tab">Smallfish</a></li>
+<div class="container-fluid" >
 
-    </ul>
+    <div class="row">
+        <div class="col-md-2">
 
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="offshore">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Offshore Index Projects:</h3>
-                </div>
-                <div class="panel-body">
-                    {% if offshore %}
-                    <table class="table table-striped table-float">
-                        <thead>
-                            <tr>
-                                <th>Project Code</th>
-                                <th>Project Name</th>
-                                <th>Project Lead</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in offshore %}
-                            <tr>
-                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
-                                <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
-                                <td> {{ item.prj_date0|date:"M d, Y" }}</td>
-                                <td> {{ item.prj_date1|date:"M d, Y" }}</td>
-                            </tr>
-                            {% endfor %}
+            <h4>Refine By:</h4>                
 
-                        </tbody>
-                    </table>
-
-                    {% else %}
-
-                    <div class="alert alert-warning" role="alert">
-                        No offshore projects match that criteria.
-                    </div>
-
-                    {% endif %}
-
-
-                    {% if not q %}
-                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'offshore' %}">All Offshore Projects</a>
-                    {% endif %}
-                </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Lake
+                {% if 'lake' in filters %}
+                    <a class="pull-right" href="{% strip_parameter 'lake' %}">Reset</a>
+                {% endif %}
+            </div>
+            <div class="panel-body">
+                <ul>
+                    {% for lake in lakes %}
+                        <li> <a href="?{% query_transform lake=lake.lakeAbbrev %}">
+                            {{  lake.lakeName }} (n={{lake.N}})
+                        </a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane" id="nearshore">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Nearshore Index Projects:</h3>
-                </div>
-                <div class="panel-body">
 
-                    {% if nearshore %}
-                    <table class="table table-striped table-float">
-                        <thead>
-                            <tr>
-                                <th>Project Code</th>
-                                <th>Project Name</th>
-                                <th>Project Lead</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in nearshore %}
-                            <tr>
-                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
-                                <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
-                                <td> {{ item.prj_date0|date:"M d, Y" }}</td>
-                                <td> {{ item.prj_date1|date:"M d, Y" }}</td>
-                            </tr>
-                            {% endfor %}
+        <div class="panel panel-default">
+            <div class="panel-heading">Years
+                {% if filters.first_year or filters.last_year %}
+                    <a class="pull-right" onClick=resetYears()>Reset</a>
+                {% endif %}
 
-                        </tbody>
-                    </table>
+            </div>
+            <div class="panel-body">
 
-                    {% else %}
+                <form id="years" action={{request.get_full_path}} method="get">
 
-                    <div class="alert alert-warning" role="alert">
-                        No nearshore projects match that criteria.
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="first-year" name="first_year" placeholder =
+                                     "first year">
                     </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="last-year" name="last_year" placeholder =
+                                     "last year">
+                    </div>
+                    <button class="btn btn-default btn-sm" type="button" onClick=handleClick()>
+                        Update years
+                    </button>
 
-                    {% endif %}
+                </form>
 
-
-                    {% if not q%}
-                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'nearshore' %}">All Nearshore Projects</a>
-                    {% endif %}
-                </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane" id="smallfish">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{% if not q %}Recent {% endif %}Smallfish Projects:</h3>
-                </div>
-                <div class="panel-body">
-                    {% if smallfish %}
-                    <table class="table table-striped table-float">
-                        <thead>
-                            <tr>
-                                <th>Project Code</th>
-                                <th>Project Name</th>
-                                <th>Project Lead</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in smallfish %}
-                            <tr>
-                                <td> <a href="{% url 'fn_portal:project_catch_counts2' item.slug %}">{{ item.prj_cd }}</a> </td>
-                                <td> {{ item.prj_nm|title}}</td>
-                                <td> {{ item.prj_ldr.first_name|title }} {{ item.prj_ldr.last_name|title }}</td>
-                                <td> {{ item.prj_date0|date:"M d, Y" }}</td>
-                                <td> {{ item.prj_date1|date:"M d, Y" }}</td>
-                            </tr>
-                            {% endfor %}
 
-                        </tbody>
-                    </table>
 
-                    {% else %}
+        <div class="panel panel-default">
+            <div class="panel-heading">Project Code
+                {% if 'prj_cd' in filters %}
+                    <a class="pull-right" href="{% strip_parameter 'prj_cd' %}">Reset</a>
+                {% endif %}
+            </div>
+            <div class="panel-body">
 
-                    <div class="alert alert-warning" role="alert">
-                        No smallfish projects match that criteria.
+                <form id="prj_cd" method="get">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control"  name="prj_cd" placeholder =
+                                     "Project Code Contains..." value="{{filters.prj_cd}}">
                     </div>
 
+                    {% include "fn_portal/_search_hidden_inputs.html" %}
+
+                    {% if filters.search %}
+                        <input type="hidden" name="search" value="{{filters.search}}" />
                     {% endif %}
 
-                    {% if not q %}
-                    <a class="btn btn-info"  href="{% url 'fn_portal:projects_by_type' 'smallfish' %}">All Smallfish Projects</a>
-                    {% endif %}
+                    <button class="btn btn-default btn-sm" type="submit" >
+                        Update
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Project Source
+                {% if 'Source' in filters %}
+                    <a class="pull-right" href="{% strip_parameter 'Source' %}">Reset</a>
+                {% endif %}
+            </div>
+            <div class="panel-body">
+
+                <ul>
+                    {% for item in project_source %}
+                        <li>
+                            <a href="?{% query_transform source=item.name %}">
+                                {{  item.name }} (n={{item.N}})
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-md-9">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Project Count = {{ project_count  }}</h5>
+            </div>
+            <div class="col-md-6">
+                {% if lake %}
+                    <a class="btn btn-primary btn-xs"
+                       href="{% strip_parameter param='lake' %}" role="button">
+                        {{lake.lake_name}}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+
+                {% if filters.search %}
+                    <a class="btn btn-info btn-xs"
+                       href="{% strip_parameter param='search' %}" role="button">
+                        contains {{ filters.search }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>                        
+                {% endif %}
+
+                {% if filters.year %}
+                    <a class="btn btn-success btn-xs"
+                       href="{% strip_parameter param='year' %}" role="button">
+                        {{ filters.year }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>                       
+                {% endif %}
+
+                {% if filters.first_year %}
+                    
+                    <a class="btn btn-success btn-xs"
+                       href="{% strip_parameter param='first_year' %}" role="button">
+                        After {{ filters.first_year }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                    
+                {% endif %}
+
+                {% if filters.last_year %}
+                    <a class="btn btn-success btn-xs"
+                       href="{% strip_parameter param="last_year" %}" role="button">
+                        Before {{ filters.last_year }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+
+                {% endif %}
+
+                {% if filters.prj_ldr %}
+                    <a class="btn btn-default btn-xs"
+                       href="{% strip_parameter param="prj_ldr" %}" role="button">
+                        Run By {{ filters.prj_ldr }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+
+                {% if filters.source %}
+                    <a class="btn btn-danger btn-xs"
+                       href="{% strip_parameter param='source' %}" role="button">
+                        Source: {{ filters.source|title }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+
+                
+                {% if filters.prj_cd %}
+                    <a class="btn btn-warning btn-xs"
+                       href="{% strip_parameter param='prj_cd' %}" role="button">
+                        Project Code like: {{ filters.prj_cd }}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                    
+                {% endif %}
+
+                {% if filters %}
+                    <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear All</a>
+                {% endif %}
+
+
                 </div>
             </div>
+
+
+
+
+
+
+            {% if object_list %}
+
+                <table id="projectTable" cellspacing="0" class="table tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Project Code</th>
+                            <th>Project Name</th>
+                            <th>Project Lead</th>
+                            <th>Project Source</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in object_list %}
+                            <tr>
+                                <td>
+                                    <a href="?{% query_transform year=project.year %}">
+                                        {{ project.year }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{ project.get_absolute_url }}"> {{ project.prj_cd }}</a>
+                                </td>
+                                <td>
+                                    {{ project.prj_nm  }}
+                                </td>
+
+
+                                <td>
+                                    <a href="?{% query_transform prj_ldr=project.prj_ldr.username %}">
+                                    {{ project.prj_ldr.first_name}} {{ project.prj_ldr.last_name }}</a>
+                                </td>
+
+
+                                <td>
+                                    <a href="?{% query_transform source=project.source %}">
+                                        {{ project.source|title }}
+
+                                    </a>
+
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+
+                {% if is_paginated %}
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo;</a></li>
+    {% else %}
+                            <li class="disabled"><span>&laquo;</span></li>
+                        {% endif %}
+                        {% for i in paginator.page_range %}
+                            {% if page_obj.number == i %}
+                                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                            {% else %}
+                                <li><a href="?page={{ i }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">{{ i }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&raquo;</a></li>
+    {% else %}
+                            <li class="disabled"><span>&raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+
+
+
+
+                {% else %}
+                <br />
+                <h4>Sorry, no projects match that criteria.</h4>
+            {% endif %}
 
         </div>
     </div>
-
 </div>
 
-
-{% endblock content %}
-
+{% endblock %}
 
 
-{% block javascript %}
+{% block scripts  %}
 
-<script type="text/javascript">
- $('#myTabs a').click(function (e) {
-     e.preventDefault()
-     $(this).tab('show')
- })
-</script>
 
-{% endblock javascript %}
+    <!-- tablesorter plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.6/js/jquery.tablesorter.js" integrity="sha256-/zMRoPUv1Wfxf3urIyUFn8m1Ot0QmGwXAFHshnwubaE=" crossorigin="anonymous"></script>
+
+    <!-- tablesorter widget file - loaded after the plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.6/js/jquery.tablesorter.widgets.js" integrity="sha256-UIl6E2cmeTSpfPbrMkitLrbyAYUqlOz+zwC+Dc7bglI=" crossorigin="anonymous"></script>
+
+
+
+    <script type="text/javascript">
+
+     $(".tablesorter").tablesorter({
+         theme: 'bootstrap',
+         widthFixed: true,
+         showProcessing: true,
+         headerTemplate: '{content} {icon}',
+         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgetOptions: {
+             scroller_height: 300,
+             scroller_barWidth: 17,
+             scroller_jumpToHeader: true,
+             scroller_idPrefix: 's_'
+         }
+     });
+
+    </script>
+
+
+    <script>
+
+     function getUrlVars() {
+         var vars = {};
+         var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+             vars[key] = value;
+         });
+         return vars;
+     };
+     function getUrlParam(parameter, defaultvalue){
+         var urlparameter = defaultvalue;
+         if(window.location.href.indexOf(parameter) > -1){
+             urlparameter = getUrlVars()[parameter];
+         }
+         return urlparameter;
+     };
+
+
+
+     $(document).ready(function(){
+
+         // reload the page with the updated values.
+         let urlFirstYear = getUrlParam('first_year', "");
+         let urlLastYear = getUrlParam('last_year', "");
+
+         if (urlFirstYear){
+             document.getElementById("first-year").value = urlFirstYear;
+         }
+
+         if (urlLastYear){
+             document.getElementById("last-year").value = urlLastYear;
+         }
+
+         $(function() {
+             $("#projectTable").tablesorter();
+         });
+
+
+     })
+
+
+     const resetYears = function() {
+         let url = window.location.href;
+         let urlFirstYear = getUrlParam('first_year', "");
+         let urlLastYear = getUrlParam('last_year', "");
+         url = url.replace("first_year="+ urlFirstYear, "")
+                  .replace("last_year="+ urlLastYear, "");
+         url = url.replace('&&', '&').replace('?&', '?');
+         url = url.endsWith("?") ? url.replace("?","") : url;
+         window.location.replace(url);
+     }
+
+
+     const handleClick = function() {
+         // get the value of the first year and last inputs
+
+         // if first year is null, strip the first_year parameter from the query list
+         // if last year is null, strip the last_year parameter from the query list
+         let firstYear = document.getElementById("first-year").value;
+         let lastYear = document.getElementById("last-year").value;
+
+
+         // if first_year exists and can be parsed to an integer between 1950 and 2050, update the query string
+         // if last_year exists and can be parsed to an integer between 1950 and 2050, update the query string
+
+         // reload the page with the updated values.
+         let urlFirstYear = getUrlParam('first_year', "");
+         let urlLastYear = getUrlParam('last_year', "");
+
+         let url = window.location.href;
+
+         if (firstYear && urlFirstYear){
+             url = url.replace("first_year="+ urlFirstYear, "first_year=" + firstYear)
+         } else if (urlFirstYear) {
+             url = url.replace("&first_year="+ urlFirstYear, "");
+         } else if (firstYear) {
+             tmp = url.indexOf("?") >=0 ? "&first_year="+ firstYear :
+                   "?first_year="+ firstYear;
+             url = url + tmp ;
+         }
+
+         if (lastYear && urlLastYear){
+             url = url.replace("last_year="+ urlLastYear, "last_year=" + lastYear)
+         } else if (urlLastYear) {
+             url = url.replace("&last_year="+ urlLastYear, "");
+         } else if (lastYear) {
+             tmp = url.indexOf("?") >=0 ? "&last_year="+ lastYear :
+                   "?last_year="+ lastYear;
+             url = url + tmp ;
+         }
+
+         url = url.replace('&&', '&').replace('?&', '?')
+         window.location.replace(url);
+
+
+
+     }
+
+
+    </script>
+
+
+{% endblock %}

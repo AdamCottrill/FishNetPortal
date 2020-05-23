@@ -5,7 +5,7 @@ The will be used in both views and api serializers.
 
 import django_filters
 
-from fn_portal.models import FN011
+from .models import FN011
 
 
 class ValueInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
@@ -23,16 +23,18 @@ class FN011Filter(django_filters.FilterSet):
     # management area
     #
 
+    year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
     first_year = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
     last_year = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
-    year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
+    prj_cd = django_filters.CharFilter(lookup_expr="icontains")
 
-    # lake = ValueInFilter(field_name="jurisdiction__lake__abbrev", lookup_expr="in")
     lake = django_filters.CharFilter(field_name="lake__abbrev", lookup_expr="exact")
-    lead = django_filters.CharFilter(
-        field_name="prj_ldr__username", lookup_expr="exact"
+    prj_ldr = django_filters.CharFilter(
+        field_name="prj_ldr__username", lookup_expr="iexact"
     )
     suffix = django_filters.CharFilter(field_name="prj_cd", lookup_expr="endswith")
+
+    # source = ValueInFilter(field_name="project_type__source", lookup_expr="in")
 
     class Meta:
         model = FN011

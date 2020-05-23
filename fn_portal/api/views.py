@@ -13,7 +13,7 @@ from .serializers import (
     FN123Serializer,
     FN125Serializer,
 )
-from .filters import FN011Filter
+from ..filters import FN011Filter
 from fn_portal.models import Species, FN011, FN121, FN122, FN123, FN125, FN125Tag
 
 

@@ -5,7 +5,7 @@ from . import views
 app_name = "fn_portal"
 
 urlpatterns = [
-    url(r"^$", views.project_list, name="project_list"),
+    url(r"^$", views.ProjectList.as_view(), name="project_list"),
     url(
         r"^projects/(?P<project_type>\w+)$",
         views.projects_by_type,

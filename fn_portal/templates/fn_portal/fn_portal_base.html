@@ -59,7 +59,7 @@
                 <div class="col-sm-3">
                     <form class="navbar-form navbar-left" role="search" action={% url 'fn_portal:project_list' %}>
                         <div class="input-group">
-                            <input type="text" class="form-control" name="q"
+                            <input type="text" class="form-control" name="search"
                                    placeholder="Project Code Or Name">
                             <div class="input-group-btn">
                                 <button class="btn btn-default" type="submit">
@@ -73,23 +73,13 @@
 
         </nav>
 
-        <div class="row" >
-            <div class="col-md-2">
-                {% block sidebar  %}
-                {% endblock %}
-            </div>
-            <div class="container" >
-                <div class="col-md-10">
 
-                    {% block content  %}
-                    {% endblock %}
+        {% block content  %}
+        {% endblock %}
 
-                    {% block extracontent  %}
-                    {% endblock %}
+        {% block extracontent  %}
+        {% endblock %}
 
-                </div>
-            </div>
-        </div>
 
         {% block scripts  %}
         {% endblock %}
