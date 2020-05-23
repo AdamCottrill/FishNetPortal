@@ -6,11 +6,6 @@ app_name = "fn_portal"
 
 urlpatterns = [
     url(r"^$", views.ProjectList.as_view(), name="project_list"),
-    url(
-        r"^projects/(?P<project_type>\w+)$",
-        views.projects_by_type,
-        name="projects_by_type",
-    ),
     url(r"^gears/(?P<username>\w+)$", views.gear_list, name="gears_assigned_to"),
     url(r"^gears/$", views.gear_list, name="gear_list"),
     url(

@@ -39,295 +39,297 @@
 
     {% block content  %}
 
+        <div class="container">
+            
 
 
 
-    <h2>{{ object.prj_nm |title }}({{ object.prj_cd }})</h2>
+            <h2>{{ object.prj_nm |title }}({{ object.prj_cd }})</h2>
 
-    <h4>Net Sets</h4>
-    <div id="maprow" class="row" >
-        <div class="col-md-10" >
-            <div id="map" style="width: 900px; height: 700px;"></div>
-        </div>
-    </div>
-
-    <br />
-    <hr />
-
-
-    <div>
-
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#net-sets" aria-controls="net-sets" role="tab" data-toggle="tab">Samples</a></li>
-            <li role="presentation"><a href="#catcnts" aria-controls="catch-counts" role="tab" data-toggle="tab">Catch Counts</a></li>
-            <li role="presentation"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
-            <li role="presentation"><a href="#gear" aria-controls="gear" role="tab" data-toggle="tab">Gear</a></li>
-        </ul>
-
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="net-sets">
-                {% if object.samples.all %}
-                <h4>Net Sets</h4>
-                <table id="myTable" class="table tablesorter">
-                    <thead><tr>
-                        <td>Sample</td>
-                        <td>Set Date</td>
-                        <td>Lift Date</td>
-                        <td>Effort Duration</td>
-                        <td>Gear</td>
-                        <td>Orient</td>
-                        <td>Site Depth(m)</td>
-                        <td>Total Catch</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in object.samples.all %}
-                        <tr>
-                            <td><a href="{{ item.get_absolute_url }}">{{ item.sam }}</a></td>
-                            <td> {{ item.effdt0|date:"N j,Y" }} </td>
-                            <td> {{ item.effdt1|date:"N j,Y" }} </td>
-                            <td> {{ item.effdur|floatformat:2 }} </td>
-                            <td> {{ item.gr }} </td>
-                            <td> {{ item.orient }} </td>
-                            <td> {{ item.sidep|floatformat:2 }} </td>
-                            <td> {{ item.total_catch.total|default_if_none:0 }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <h4>Not Applicable</h4>
-                {% endif %}
-            </div>
-
-            <div role="tabpanel" class="tab-pane" id="catcnts">
-
-                <div class="row">
-                    <table class="table tablesorter" id="data-table1">
-                        <thead>
-                            <tr class='header'>
-                                <th>Species (Species Code)</th>
-                                <th>Catch Counts</th>
-                                <th>Bio-Counts</th>
-                            </tr>
-                        </thead>
-
-                        {% for species in object.catch_counts %}
-                        <tr>
-                            <td>
-                                {% if species.biocnts == 0 %}
-                                {{ species.species }} ({{ species.spc }})
-                                {% else %}
-                                <a href="{% url 'fn_portal:project_spc_biodata' object.slug species.spc %}" target="_blank">{{ species.species }} ({{ species.spc }})</a>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ species.catcnts }}
-                            </td>
-                            <td>
-                                {{ species.biocnts }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
+            <h4>Net Sets</h4>
+            <div id="maprow" class="row" >
+                <div class="col-md-10" >
+                    <div id="map" style="width: 900px; height: 700px;"></div>
                 </div>
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="graphs">
+            <br />
+            <hr />
 
 
-                <div class="row">
-                    <div id="tally_row" class="row" >
-                        <div id="tallies" class="col-md-5" >
-                            <table>
-                                <tr>
-                                    <td>Nets:</td>
-                                    <td id="net-count"></td>
-                                </tr>
-                                <tr>
-                                    <td>Species:</td>
-                                    <td id="species-count"></td>
-                                </tr>
-                                <tr>
-                                    <td>Total Catch:</td>
-                                    <td id="total-catch"></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div id="filters" class="col-md-5" >
-                            <table>
-                                <tr>
-                                    <td>Species Filter(s):</td>
-                                    <td id="species-filter">None</td>
-                                </tr>
-                                <tr>
-                                    <td>Mesh Filter(s):</td>
-                                    <td id="mesh-filter">None</td>
-                                </tr>
-                                <tr>
-                                    <td>Index Meshes:</td>
-                                    <td id="index-mesh-filter">All Meshes</td>
-                                </tr>
+            <div>
 
-                                <tr>
-                                    <td>Depth Filter:</td>
-                                    <td id="sidep-filter">None</td>
-                                </tr>
-                                <tr>
-                                    <td>Lift Date Filter:</td>
-                                    <td id="effdt1-filter">None</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Gear Filter:</td>
-                                    <td id="gear-filter">None</td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        <div id="filter-buttons" class="col-md-2" >
-                            <span>
-                                <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
-                                <a href="{% url 'fn_portal:project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <hr />
-
-
-                <div id="first-plot-row" class="row" >
-
-                    <div class="col-md-6" >
-                        <div id="catch-pie-chart">
-                            <strong>Species Composition</strong>
-                            <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6" >
-                        <div id="eff-catch-chart">
-                            <strong>Catch By Effort</strong>
-                            <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                            <div class="clearfix"></div>
-                            <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
-                                <label class="btn btn-primary active">
-                                    <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
-                                </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-6" >
-                        <div id="sidep-chart">
-                            <strong>Net Set Depth (m)</strong>
-                            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6" >
-                        <div id="gear-catch-chart">
-                            <strong>Catch By Gear Type</strong>
-                            <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-10" >
-                        <div id="effdt1-chart">
-                            <strong>Lift Date</strong>
-                            <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>  <!-- Graph tabpanel -->
-
-            <div role="tabpanel" class="tab-pane" id="gear">
-                <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'fn_portal:gear_list' %}">gear_list</a>).
-
-                <h5>Gear Codes listed in FN121 Table:</h5>
-                <ul>
-                    {% for gr in object.get_121_gear_codes %}
-                    <li> <a href="{% url 'fn_portal:gear_detail' gear_code=gr %}">{{gr}}</a> </li>
-                    {% endfor %}
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#net-sets" aria-controls="net-sets" role="tab" data-toggle="tab">Samples</a></li>
+                    <li role="presentation"><a href="#catcnts" aria-controls="catch-counts" role="tab" data-toggle="tab">Catch Counts</a></li>
+                    <li role="presentation"><a href="#graphs" aria-controls="graphs" role="tab" data-toggle="tab">Graphs</a></li>
+                    <li role="presentation"><a href="#gear" aria-controls="gear" role="tab" data-toggle="tab">Gear</a></li>
                 </ul>
 
-                <h5>Gears in the FN013 Table for this project:</h5>
-                {% for gr in object.get_gear %}
-
-
-                <div class="panel panel-default">
-                    <div class="panel-heading"> <strong> <a href="{% url 'fn_portal:gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
-                    <div class="panel-body">
-                        {% if gr.gear_effs.values %}
-                        <table class="table">
-
-                            <thead>
-                                <tr>
-                                    <td> eff </td>
-                                    <td> mesh </td>
-                                    <td> grlen </td>
-                                    <td> grht  </td>
-                                    <td> grwid </td>
-                                    <td> grcol </td>
-                                    <td> grmat </td>
-                                    <td> gryarn </td>
-                                    <td> grknot </td>
-                                    <td> eff_des </td>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="net-sets">
+                        {% if object.samples.all %}
+                            <h4>Net Sets</h4>
+                            <table id="myTable" class="table tablesorter">
+                                <thead><tr>
+                                    <td>Sample</td>
+                                    <td>Set Date</td>
+                                    <td>Lift Date</td>
+                                    <td>Effort Duration</td>
+                                    <td>Gear</td>
+                                    <td>Orient</td>
+                                    <td>Site Depth(m)</td>
+                                    <td>Total Catch</td>
                                 </tr>
-                            </thead>
-
-                            {% for eff in gr.gear_effs.values %}
-                            <tr>
-                                <td> {{eff.eff |default_if_none:"" }} </td>
-                                <td> {{eff.mesh |default_if_none:"" }} </td>
-                                <td> {{eff.grlen |default_if_none:"" }} </td>
-                                <td> {{eff.grht  |default_if_none:"" }} </td>
-                                <td> {{eff.grwid |default_if_none:"" }} </td>
-                                <td> {{eff.grcol |default_if_none:"" }} </td>
-                                <td> {{eff.grmat |default_if_none:"" }} </td>
-                                <td> {{eff.gryarn |default_if_none:"" }} </td>
-                                <td> {{eff.grknot |default_if_none:"" }} </td>
-                                <td> {{eff.eff_des |default_if_none:"" }} </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-
+                                </thead>
+                                <tbody>
+                                    {% for item in object.samples.all %}
+                                        <tr>
+                                            <td><a href="{{ item.get_absolute_url }}">{{ item.sam }}</a></td>
+                                            <td> {{ item.effdt0|date:"N j,Y" }} </td>
+                                            <td> {{ item.effdt1|date:"N j,Y" }} </td>
+                                            <td> {{ item.effdur|floatformat:2 }} </td>
+                                            <td> {{ item.gr }} </td>
+                                            <td> {{ item.orient }} </td>
+                                            <td> {{ item.sidep|floatformat:2 }} </td>
+                                            <td> {{ item.total_catch.total|default_if_none:0 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         {% else %}
-                        <p>No detailed effort information currently available.</p>
+                            <h4>Not Applicable</h4>
                         {% endif %}
+                    </div>
 
+                    <div role="tabpanel" class="tab-pane" id="catcnts">
+
+                        <div class="row">
+                            <table class="table tablesorter" id="data-table1">
+                                <thead>
+                                    <tr class='header'>
+                                        <th>Species (Species Code)</th>
+                                        <th>Catch Counts</th>
+                                        <th>Bio-Counts</th>
+                                    </tr>
+                                </thead>
+
+                                {% for species in object.catch_counts %}
+                                    <tr>
+                                        <td>
+                                            {% if species.biocnts == 0 %}
+                                                {{ species.species }} ({{ species.spc }})
+                                            {% else %}
+                                                <a href="{% url 'fn_portal:project_spc_biodata' object.slug species.spc %}" target="_blank">{{ species.species }} ({{ species.spc }})</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ species.catcnts }}
+                                        </td>
+                                        <td>
+                                            {{ species.biocnts }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="graphs">
+
+
+                        <div class="row">
+                            <div id="tally_row" class="row" >
+                                <div id="tallies" class="col-md-5" >
+                                    <table>
+                                        <tr>
+                                            <td>Nets:</td>
+                                            <td id="net-count"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Species:</td>
+                                            <td id="species-count"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Catch:</td>
+                                            <td id="total-catch"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div id="filters" class="col-md-5" >
+                                    <table>
+                                        <tr>
+                                            <td>Species Filter(s):</td>
+                                            <td id="species-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mesh Filter(s):</td>
+                                            <td id="mesh-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Index Meshes:</td>
+                                            <td id="index-mesh-filter">All Meshes</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Depth Filter:</td>
+                                            <td id="sidep-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lift Date Filter:</td>
+                                            <td id="effdt1-filter">None</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Gear Filter:</td>
+                                            <td id="gear-filter">None</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div id="filter-buttons" class="col-md-2" >
+                                    <span>
+                                        <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
+                                        <a href="{% url 'fn_portal:project_catch_over_time' object.slug %}" class="btn btn-primary btn-sm" role="button">Through Time</a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+
+
+                        <div id="first-plot-row" class="row" >
+
+                            <div class="col-md-6" >
+                                <div id="catch-pie-chart">
+                                    <strong>Species Composition</strong>
+                                    <a class="reset" href="javascript:catchPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" >
+                                <div id="eff-catch-chart">
+                                    <strong>Catch By Effort</strong>
+                                    <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                                    <div class="clearfix"></div>
+                                    <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                                        <label class="btn btn-primary active">
+                                            <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                                        </label>
+                                        <label class="btn btn-primary">
+                                            <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6" >
+                                <div id="sidep-chart">
+                                    <strong>Net Set Depth (m)</strong>
+                                    <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" >
+                                <div id="gear-catch-chart">
+                                    <strong>Catch By Gear Type</strong>
+                                    <a class="reset" href="javascript:gearCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-10" >
+                                <div id="effdt1-chart">
+                                    <strong>Lift Date</strong>
+                                    <a class="reset" href="javascript:effdt1Chart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>  <!-- Graph tabpanel -->
+
+                    <div role="tabpanel" class="tab-pane" id="gear">
+                        <h4>Gear</h4> (A complete list of gear codes can be found here: <a href="{% url 'fn_portal:gear_list' %}">gear_list</a>).
+
+                        <h5>Gear Codes listed in FN121 Table:</h5>
+                        <ul>
+                            {% for gr in object.get_121_gear_codes %}
+                                <li> <a href="{% url 'fn_portal:gear_detail' gear_code=gr %}">{{gr}}</a> </li>
+                            {% endfor %}
+                        </ul>
+
+                        <h5>Gears in the FN013 Table for this project:</h5>
+                        {% for gr in object.get_gear %}
+
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading"> <strong> <a href="{% url 'fn_portal:gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
+                                <div class="panel-body">
+                                    {% if gr.gear_effs.values %}
+                                        <table class="table">
+
+                                            <thead>
+                                                <tr>
+                                                    <td> eff </td>
+                                                    <td> mesh </td>
+                                                    <td> grlen </td>
+                                                    <td> grht  </td>
+                                                    <td> grwid </td>
+                                                    <td> grcol </td>
+                                                    <td> grmat </td>
+                                                    <td> gryarn </td>
+                                                    <td> grknot </td>
+                                                    <td> eff_des </td>
+                                                </tr>
+                                            </thead>
+
+                                            {% for eff in gr.gear_effs.values %}
+                                                <tr>
+                                                    <td> {{eff.eff |default_if_none:"" }} </td>
+                                                    <td> {{eff.mesh |default_if_none:"" }} </td>
+                                                    <td> {{eff.grlen |default_if_none:"" }} </td>
+                                                    <td> {{eff.grht  |default_if_none:"" }} </td>
+                                                    <td> {{eff.grwid |default_if_none:"" }} </td>
+                                                    <td> {{eff.grcol |default_if_none:"" }} </td>
+                                                    <td> {{eff.grmat |default_if_none:"" }} </td>
+                                                    <td> {{eff.gryarn |default_if_none:"" }} </td>
+                                                    <td> {{eff.grknot |default_if_none:"" }} </td>
+                                                    <td> {{eff.eff_des |default_if_none:"" }} </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+
+                                    {% else %}
+                                        <p>No detailed effort information currently available.</p>
+                                    {% endif %}
+
+
+                                </div>
+                            </div>
+
+                        {% endfor %}
 
                     </div>
+
+
+
                 </div>
-
-                {% endfor %}
-
             </div>
 
 
-
         </div>
-    </div>
-
-
-
 
     <script type="text/javascript">
         $( document ).ready(function() {

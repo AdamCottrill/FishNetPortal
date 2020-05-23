@@ -18,280 +18,280 @@
         <h2>Welcome to FishNet Portal</h2>
     </div>
 
-<div class="container-fluid" >
-
-    <div class="row">
-        <div class="col-md-2">
-
-            <h4>Refine By:</h4>                
-
-        <div class="panel panel-default">
-            <div class="panel-heading">Lake
-                {% if 'lake' in filters %}
-                    <a class="pull-right" href="{% strip_parameter 'lake' %}">Reset</a>
-                {% endif %}
-            </div>
-            <div class="panel-body">
-                <ul>
-                    {% for lake in lakes %}
-                        <li> <a href="?{% query_transform lake=lake.lakeAbbrev %}">
-                            {{  lake.lakeName }} (n={{lake.N}})
-                        </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">Years
-                {% if filters.first_year or filters.last_year %}
-                    <a class="pull-right" onClick=resetYears()>Reset</a>
-                {% endif %}
-
-            </div>
-            <div class="panel-body">
-
-                <form id="years" action={{request.get_full_path}} method="get">
-
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="first-year" name="first_year" placeholder =
-                                     "first year">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="last-year" name="last_year" placeholder =
-                                     "last year">
-                    </div>
-                    <button class="btn btn-default btn-sm" type="button" onClick=handleClick()>
-                        Update years
-                    </button>
-
-                </form>
-
-            </div>
-        </div>
-
-
-        <div class="panel panel-default">
-            <div class="panel-heading">Project Code
-                {% if 'prj_cd' in filters %}
-                    <a class="pull-right" href="{% strip_parameter 'prj_cd' %}">Reset</a>
-                {% endif %}
-            </div>
-            <div class="panel-body">
-
-                <form id="prj_cd" method="get">
-
-                    <div class="form-group">
-                        <input type="text" class="form-control"  name="prj_cd" placeholder =
-                                     "Project Code Contains..." value="{{filters.prj_cd}}">
-                    </div>
-
-                    {% include "fn_portal/_search_hidden_inputs.html" %}
-
-                    {% if filters.search %}
-                        <input type="hidden" name="search" value="{{filters.search}}" />
-                    {% endif %}
-
-                    <button class="btn btn-default btn-sm" type="submit" >
-                        Update
-                    </button>
-
-                </form>
-
-            </div>
-        </div>
-
-
-        <div class="panel panel-default">
-            <div class="panel-heading">Project Source
-                {% if 'Source' in filters %}
-                    <a class="pull-right" href="{% strip_parameter 'Source' %}">Reset</a>
-                {% endif %}
-            </div>
-            <div class="panel-body">
-
-                <ul>
-                    {% for item in project_source %}
-                        <li>
-                            <a href="?{% query_transform source=item.name %}">
-                                {{  item.name }} (n={{item.N}})
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-            </div>
-        </div>
-
-
-    </div>
-    <div class="col-md-9">
+    <div class="container-fluid" >
 
         <div class="row">
-            <div class="col-md-6">
-                <h5>Project Count = {{ project_count  }}</h5>
-            </div>
-            <div class="col-md-6">
-                {% if lake %}
-                    <a class="btn btn-primary btn-xs"
-                       href="{% strip_parameter param='lake' %}" role="button">
-                        {{lake.lake_name}}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-                {% endif %}
+            <div class="col-md-2">
 
-                {% if filters.search %}
-                    <a class="btn btn-info btn-xs"
-                       href="{% strip_parameter param='search' %}" role="button">
-                        contains {{ filters.search }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>                        
-                {% endif %}
+                <h4>Refine By:</h4>                
 
-                {% if filters.year %}
-                    <a class="btn btn-success btn-xs"
-                       href="{% strip_parameter param='year' %}" role="button">
-                        {{ filters.year }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>                       
-                {% endif %}
-
-                {% if filters.first_year %}
-                    
-                    <a class="btn btn-success btn-xs"
-                       href="{% strip_parameter param='first_year' %}" role="button">
-                        After {{ filters.first_year }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-                    
-                {% endif %}
-
-                {% if filters.last_year %}
-                    <a class="btn btn-success btn-xs"
-                       href="{% strip_parameter param="last_year" %}" role="button">
-                        Before {{ filters.last_year }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-
-                {% endif %}
-
-                {% if filters.prj_ldr %}
-                    <a class="btn btn-default btn-xs"
-                       href="{% strip_parameter param="prj_ldr" %}" role="button">
-                        Run By {{ filters.prj_ldr }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-                {% endif %}
-
-                {% if filters.source %}
-                    <a class="btn btn-danger btn-xs"
-                       href="{% strip_parameter param='source' %}" role="button">
-                        Source: {{ filters.source|title }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-                {% endif %}
-
-                
-                {% if filters.prj_cd %}
-                    <a class="btn btn-warning btn-xs"
-                       href="{% strip_parameter param='prj_cd' %}" role="button">
-                        Project Code like: {{ filters.prj_cd }}
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                    </a>
-                    
-                {% endif %}
-
-                {% if filters %}
-                    <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear All</a>
-                {% endif %}
-
-
+                <div class="panel panel-default">
+                    <div class="panel-heading">Lake
+                        {% if 'lake' in filters %}
+                            <a class="pull-right" href="{% strip_parameter 'lake' %}">Reset</a>
+                        {% endif %}
+                    </div>
+                    <div class="panel-body">
+                        <ul>
+                            {% for lake in lakes %}
+                                <li> <a href="?{% query_transform lake=lake.lakeAbbrev %}">
+                                    {{  lake.lakeName }} (n={{lake.N}})
+                                </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
-
-
-
-
-
-            {% if object_list %}
-
-                <table id="projectTable" cellspacing="0" class="table tablesorter">
-                    <thead>
-                        <tr>
-                            <th>Year</th>
-                            <th>Project Code</th>
-                            <th>Project Name</th>
-                            <th>Project Lead</th>
-                            <th>Project Source</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for project in object_list %}
-                            <tr>
-                                <td>
-                                    <a href="?{% query_transform year=project.year %}">
-                                        {{ project.year }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ project.get_absolute_url }}"> {{ project.prj_cd }}</a>
-                                </td>
-                                <td>
-                                    {{ project.prj_nm  }}
-                                </td>
-
-
-                                <td>
-                                    <a href="?{% query_transform prj_ldr=project.prj_ldr.username %}">
-                                    {{ project.prj_ldr.first_name}} {{ project.prj_ldr.last_name }}</a>
-                                </td>
-
-
-                                <td>
-                                    <a href="?{% query_transform source=project.source %}">
-                                        {{ project.source|title }}
-
-                                    </a>
-
-
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-
-
-                {% if is_paginated %}
-                    <ul class="pagination">
-                        {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo;</a></li>
-    {% else %}
-                            <li class="disabled"><span>&laquo;</span></li>
+                <div class="panel panel-default">
+                    <div class="panel-heading">Years
+                        {% if filters.first_year or filters.last_year %}
+                            <a class="pull-right" onClick=resetYears()>Reset</a>
                         {% endif %}
-                        {% for i in paginator.page_range %}
-                            {% if page_obj.number == i %}
-                                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                            {% else %}
-                                <li><a href="?page={{ i }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">{{ i }}</a></li>
+
+                    </div>
+                    <div class="panel-body">
+
+                        <form id="years" action={{request.get_full_path}} method="get">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="first-year" name="first_year" placeholder =
+                                             "first year">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="last-year" name="last_year" placeholder =
+                                             "last year">
+                            </div>
+                            <button class="btn btn-default btn-sm" type="button" onClick=handleClick()>
+                                Update years
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Project Code
+                        {% if 'prj_cd' in filters %}
+                            <a class="pull-right" href="{% strip_parameter 'prj_cd' %}">Reset</a>
+                        {% endif %}
+                    </div>
+                    <div class="panel-body">
+
+                        <form id="prj_cd" method="get">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control"  name="prj_cd" placeholder =
+                                             "Project Code Contains..." value="{{filters.prj_cd}}">
+                            </div>
+
+                            {% include "fn_portal/_search_hidden_inputs.html" %}
+
+                            {% if filters.search %}
+                                <input type="hidden" name="search" value="{{filters.search}}" />
                             {% endif %}
-                        {% endfor %}
-                        {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&raquo;</a></li>
-    {% else %}
-                            <li class="disabled"><span>&raquo;</span></li>
+
+                            <button class="btn btn-default btn-sm" type="submit" >
+                                Update
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">Project Source
+                        {% if 'Source' in filters %}
+                            <a class="pull-right" href="{% strip_parameter 'Source' %}">Reset</a>
                         {% endif %}
-                    </ul>
-                {% endif %}
+                    </div>
+                    <div class="panel-body">
+
+                        <ul>
+                            {% for item in project_source %}
+                                <li>
+                                    <a href="?{% query_transform source=item.name %}">
+                                        {{  item.name }} (n={{item.N}})
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-9">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Project Count = {{ project_count  }}</h5>
+                    </div>
+                    <div class="col-md-6">
+                        {% if lake %}
+                            <a class="btn btn-primary btn-xs"
+                               href="{% strip_parameter param='lake' %}" role="button">
+                                {{lake.lake_name}}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                        {% endif %}
+
+                        {% if filters.search %}
+                            <a class="btn btn-info btn-xs"
+                               href="{% strip_parameter param='search' %}" role="button">
+                                contains {{ filters.search }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>                        
+                        {% endif %}
+
+                        {% if filters.year %}
+                            <a class="btn btn-success btn-xs"
+                               href="{% strip_parameter param='year' %}" role="button">
+                                {{ filters.year }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>                       
+                        {% endif %}
+
+                        {% if filters.first_year %}
+                            
+                            <a class="btn btn-success btn-xs"
+                               href="{% strip_parameter param='first_year' %}" role="button">
+                                After {{ filters.first_year }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                            
+                        {% endif %}
+
+                        {% if filters.last_year %}
+                            <a class="btn btn-success btn-xs"
+                               href="{% strip_parameter param="last_year" %}" role="button">
+                                Before {{ filters.last_year }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+
+                        {% endif %}
+
+                        {% if filters.prj_ldr %}
+                            <a class="btn btn-default btn-xs"
+                               href="{% strip_parameter param="prj_ldr" %}" role="button">
+                                Run By {{ filters.prj_ldr }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                        {% endif %}
+
+                        {% if filters.source %}
+                            <a class="btn btn-danger btn-xs"
+                               href="{% strip_parameter param='source' %}" role="button">
+                                Source: {{ filters.source|title }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                        {% endif %}
+
+                        
+                        {% if filters.prj_cd %}
+                            <a class="btn btn-warning btn-xs"
+                               href="{% strip_parameter param='prj_cd' %}" role="button">
+                                Project Code like: {{ filters.prj_cd }}
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </a>
+                            
+                        {% endif %}
+
+                        {% if filters %}
+                            <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear All</a>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+
+
+
+
+
+                {% if object_list %}
+
+                    <table id="projectTable" cellspacing="0" class="table tablesorter">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Project Code</th>
+                                <th>Project Name</th>
+                                <th>Project Lead</th>
+                                <th>Project Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for project in object_list %}
+                                <tr>
+                                    <td>
+                                        <a href="?{% query_transform year=project.year %}">
+                                            {{ project.year }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ project.get_absolute_url }}"> {{ project.prj_cd }}</a>
+                                    </td>
+                                    <td>
+                                        {{ project.prj_nm  }}
+                                    </td>
+
+
+                                    <td>
+                                        <a href="?{% query_transform prj_ldr=project.prj_ldr.username %}">
+                                            {{ project.prj_ldr.first_name}} {{ project.prj_ldr.last_name }}</a>
+                                    </td>
+
+
+                                    <td>
+                                        <a href="?{% query_transform source=project.source %}">
+                                            {{ project.source|title }}
+
+                                        </a>
+
+
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+
+                    {% if is_paginated %}
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                                <li><a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo;</a></li>
+    {% else %}
+                                <li class="disabled"><span>&laquo;</span></li>
+                            {% endif %}
+                            {% for i in paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                {% else %}
+                                    <li><a href="?page={{ i }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li><a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&raquo;</a></li>
+    {% else %}
+                                <li class="disabled"><span>&raquo;</span></li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
 
 
 
 
                 {% else %}
-                <br />
-                <h4>Sorry, no projects match that criteria.</h4>
+                    <br />
+                    <h4>Sorry, no projects match that criteria.</h4>
             {% endif %}
 
         </div>

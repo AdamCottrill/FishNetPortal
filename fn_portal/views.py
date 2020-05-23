@@ -96,60 +96,6 @@ class ProjectList(ListView):
         return context
 
 
-# def project_list(request):
-
-#     q = request.GET.get("q")
-
-#     offshore = FN011.objects.filter(source="offshore").select_related("prj_ldr")
-#     nearshore = FN011.objects.filter(source="nearshore").select_related("prj_ldr")
-#     smallfish = FN011.objects.filter(source="smallfish").select_related("prj_ldr")
-
-#     if q:
-#         offshore = offshore.filter(
-#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-#         ).all()
-
-#         nearshore = nearshore.filter(
-#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-#         ).all()
-#         smallfish = smallfish.filter(
-#             Q(prj_cd__icontains=q) | Q(prj_nm__icontains=q)
-#         ).all()
-
-#     else:
-#         offshore = nearshore.all()[:15]
-#         nearshore = nearshore.all()[:15]
-#         smallfish = smallfish.all()[:15]
-
-#     context = {
-#         "offshore": offshore,
-#         "nearshore": nearshore,
-#         "smallfish": smallfish,
-#         "q": q,
-#     }
-
-#     return render(request, "fn_portal/project_list.html", context)
-
-
-def projects_by_type(request, project_type):
-
-    projects = FN011.objects.select_related("prj_ldr").filter(source=project_type).all()
-    paginator = Paginator(projects, 25)
-    page = request.GET.get("page")
-    try:
-        projects = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        projects = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        projects = paginator.page(paginator.num_pages)
-
-    context = {"projects": projects, "project_type": project_type}
-
-    return render(request, "fn_portal/projects_by_type_list.html", context)
-
-
 def gear_list(request, username=None):
     """Return a simple list of Gears in our Gear table.
 

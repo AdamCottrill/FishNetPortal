@@ -137,7 +137,7 @@ class TestFN011List(APITestCase):
     def test_fn011_project_lead_filter(self):
         "Verify that we can filter projects based on the project leads username"
         url = reverse("fn_portal_api:fn011-list")
-        response = self.client.get(url, {"lead": "simpsonba"})
+        response = self.client.get(url, {"prj_ldr": "simpsonba"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.data["results"]
         self.assertEqual(len(results), 1)

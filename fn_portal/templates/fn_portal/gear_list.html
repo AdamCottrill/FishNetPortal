@@ -12,6 +12,9 @@
 
     {% block content  %}
 
+        <div class="container">
+            
+
 
 <h3>Gears{% if user %} assigned to {{ user.first_name }} {{ user.last_name }}{% endif %}:</h3>
 
@@ -60,8 +63,9 @@
 </table>
 
 {% if user %}
-<a class="btn btn-primary pull-right" href="{% url 'fn_portal:gear_list' %}" role="button">Gear List</a>
+    <a class="btn btn-primary pull-right" href="{% url 'fn_portal:gear_list' %}" role="button">Gear List</a>
 {% endif %}
 
+        </div>
 
 {% endblock %}

@@ -28,13 +28,13 @@ class FN011Filter(django_filters.FilterSet):
     last_year = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
     prj_cd = django_filters.CharFilter(lookup_expr="icontains")
 
-    lake = django_filters.CharFilter(field_name="lake__abbrev", lookup_expr="exact")
+    lake = django_filters.CharFilter(field_name="lake__abbrev", lookup_expr="iexact")
     prj_ldr = django_filters.CharFilter(
         field_name="prj_ldr__username", lookup_expr="iexact"
     )
     suffix = django_filters.CharFilter(field_name="prj_cd", lookup_expr="endswith")
 
-    # source = ValueInFilter(field_name="project_type__source", lookup_expr="in")
+    # source = ValueInFilter(field_name="source", lookup_expr="iexact")
 
     class Meta:
         model = FN011
@@ -46,4 +46,5 @@ class FN011Filter(django_filters.FilterSet):
             # "prj_date0",
             # "prj_date1",
             "lake",
+            "source",
         ]
