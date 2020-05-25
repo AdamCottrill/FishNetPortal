@@ -2,6 +2,7 @@ import pytest
 
 from datetime import datetime, time
 
+from ..models import FN123
 from .user_factory import UserFactory
 from .factories import (
     SpeciesFactory,
@@ -10,6 +11,7 @@ from .factories import (
     FN121Factory,
     FN122Factory,
     FN123Factory,
+    FN125Factory,
 )
 
 
@@ -70,6 +72,21 @@ def project():
     FN123Factory(effort=eff2, species=anyspc, catcnt=None)
 
     return project
+
+
+@pytest.fixture
+def somefish(project):
+    """ Add some fish to our project fixture - for those test that need it.
+    """
+
+    fn123 = FN123.objects.get(
+        effort__sample__project=project, effort__sample__sam=1, species__spc="334"
+    )
+
+    fish1 = FN125Factory(catch=fn123)
+    fish2 = FN125Factory(catch=fn123)
+
+    return [fish1, fish2]
 
 
 @pytest.fixture
