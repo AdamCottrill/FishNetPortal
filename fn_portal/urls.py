@@ -1,79 +1,80 @@
-from django.conf.urls import url
+from django.urls import path
 
-from . import views
+from .views import (
+    ProjectList,
+    project_detail,
+    sample_detail,
+    project_spc_biodata,
+    project_catch_over_time,
+    gear_list,
+    gear_detail,
+    edit_gear,
+    edit_subgear,
+    project_catch_counts2_json,
+    project_catch_counts_json,
+    project_spc_biodata_json,
+    project_catch_over_time_json,
+    sample_catch_counts_json,
+)
 
 app_name = "fn_portal"
 
 urlpatterns = [
-    url(r"^$", views.ProjectList.as_view(), name="project_list"),
-    url(
-        r"^project_detail/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$",
-        views.project_detail,
-        name="project_detail",
+    path("", view=ProjectList.as_view(), name="project_list"),
+    path("project_detail/<slug:slug>/", view=project_detail, name="project_detail"),
+    path(
+        "sample_detail/<slug:slug>/<str:sam>/", view=sample_detail, name="sample_detail"
     ),
-    url(
-        r"^sample_detail/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/(?P<sam>[\w-]+)/$",
-        views.sample_detail,
-        name="sample_detail",
-    ),
-    # urls for  biodata for a particular species and project
-    url(
-        r"^biodata/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<spc>\d{2,3})/$",
-        views.project_spc_biodata,
+    # re_paths for  biodata for a particular species and project
+    path(
+        "biodata/<slug:slug>/<str:spc>/",
+        view=project_spc_biodata,
         name="project_spc_biodata",
     ),
-    # urls for catch-counts through time for projects with matching prj_cd
-    url(
-        r"^catch_over_time/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$",
-        views.project_catch_over_time,
+    # re_paths for catch-counts through time for projects with matching prj_cd
+    path(
+        "catch_over_time/<slug:slug>/",
+        view=project_catch_over_time,
         name="project_catch_over_time",
     ),
     # =============================================
     #                GEAR
-    url(r"^gears/(?P<username>\w+)$", views.gear_list, name="gears_assigned_to"),
-    url(r"^gears/$", views.gear_list, name="gear_list"),
-    url(
-        r"^gears/gear_detail/(?P<gear_code>[A-Z0-9]{1,4})$",
-        views.gear_detail,
-        name="gear_detail",
-    ),
-    url(
-        r"^gears/edit_gear/(?P<gear_code>[A-Z0-9]{1,4})$",
-        views.edit_gear,
-        name="edit_gear",
-    ),
-    url(
-        r"^gears/edit_subgear/(?P<gear_code>[A-Z0-9]{1,4})$/(?P<eff>\d{1,3})$",
-        views.edit_subgear,
+    path("gears/<str:username>/", view=gear_list, name="gears_assigned_to"),
+    path("gears/", view=gear_list, name="gear_list"),
+    path("gears/gear_detail/<str:gear_code>)/", view=gear_detail, name="gear_detail"),
+    path("gears/edit_gear/<str:gear_code>/", view=edit_gear, name="edit_gear"),
+    path(
+        "gears/edit_subgear/<str:gear_code>/<str:eff>/",
+        view=edit_subgear,
         name="edit_subgear",
     ),
     # =============================================
     #  API VIEWS / AJAX endpoints used in templates
     # my attempt to get all of the catch count data in its lowest form
     # (catch by effort by species) and analyze it with server side js.
-    url(
-        r"^api/catcnts2/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$",
-        views.project_catch_counts2_json,
+    path(
+        "api/catcnts2/<slug:slug>/",
+        view=project_catch_counts2_json,
         name="project_catch_counts2_json",
     ),
-    url(
-        r"^api/catcnts/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$",
-        views.project_catch_counts_json,
+    path(
+        "api/catcnts/<slug:slug>/",
+        view=project_catch_counts_json,
         name="project_catch_counts_json",
     ),
-    url(
-        r"^api/biodata/(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<spc>\d{2,3})/$",
-        views.project_spc_biodata_json,
+    path(
+        "api/biodata/(<slug:slug>/<str:spc>/",
+        view=project_spc_biodata_json,
         name="project_spc_biodata_json",
     ),
-    url(
-        r"^api/catch_over_time/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/$",
-        views.project_catch_over_time_json,
+    path(
+        "api/catch_over_time/<slug:slug>/",
+        view=project_catch_over_time_json,
         name="project_catch_over_time_json",
     ),
-    url(
-        r"^api/catcnts/(?P<slug>[a-z]{3}_[a-z]{2}\d{2}_([a-z]|\d){3})/(?P<sam>[\w-]+)/$",
-        views.sample_catch_counts_json,
+    path(
+        "api/catcnts/<slug:slug>/<str:sam>/",
+        view=sample_catch_counts_json,
         name="sample_catch_counts_json",
     ),
 ]

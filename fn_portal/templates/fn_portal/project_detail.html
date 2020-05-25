@@ -367,7 +367,7 @@
 
 
 
-     d3.json("{% url 'fn_portal:project_catch_counts2_json' project.slug %}", function (error, data) {
+     d3.json("{% url 'fn_portal:project_catch_counts2_json' slug=project.slug %}", function (error, data) {
 
          var lat = 45
          var lon = -82
