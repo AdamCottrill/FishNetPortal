@@ -16,18 +16,6 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-
-{% endblock %}
-
-{% block sidebar %}
-
-{% sidebar_projects %}
-
-{% endblock %}
-
-{% block content  %}
-
-
     <style type="text/css" media="screen">
      .dc-chart g.row text {fill: black;}
      }
@@ -35,147 +23,159 @@
     </style>
 
 
-    <h2>Biological Attributes of {{ species.spc_nmco}} sampled in {{ project.prj_cd }}</h2>
 
-    <div class="row">
-        <div class="col-md-12">
-            <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right" role="button">Reset All</a>
-        </div>
-    </div>
+{% endblock %}
 
+{% block sidebar %}
 
+    {% sidebar_projects %}
 
+{% endblock %}
 
-<div id="age-length-row" class="row">
-    <div id="age-column" class="col-md-6" >
-        <div id="age-chart">
-            <strong>Age Distribution:</strong>
-            <a class="reset" href="javascript:ageChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+{% block content  %}
 
-        </div>
-    </div>
+    <div class="container">
+        <h2>Biological Attributes of {{ species.spc_nmco}} sampled in {{ project.prj_cd }}</h2>
 
-    <div id="length-column" class="col-md-6" >
-        <div id="length-chart">
-            <strong>Length Distribution:</strong>
-            <a class="reset" href="javascript:lengthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        </div>
-    </div>
-
-</div>
-
-
-
-<div id="growth-row" class="row">
-    <div id="growth-column" class="col-md-6" >
-        <div id="size-at-age-all-chart">
-            <strong>Size At Age (all fish):</strong> (<a href="#" id="vonB">by sex</a>)
-            <a class="reset" href="javascript:sizeAtAgeAllChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <div class="row">
+            <div class="col-md-12">
+                <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right" role="button">Reset All</a>
+            </div>
         </div>
 
-        <div id="size-at-age-sex-chart">
-            <strong>Size At Age by Sex:</strong>(<a href="#" id="vonB">all</a>)
-            <a class="reset" href="javascript:sizeAtAgeSexChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+
+
+        <div id="age-length-row" class="row">
+            <div id="age-column" class="col-md-6" >
+                <div id="age-chart">
+                    <strong>Age Distribution:</strong>
+                    <a class="reset" href="javascript:ageChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+                </div>
+            </div>
+
+            <div id="length-column" class="col-md-6" >
+                <div id="length-chart">
+                    <strong>Length Distribution:</strong>
+                    <a class="reset" href="javascript:lengthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
 
         </div>
 
 
-    </div>
 
-    <div id="weight-length-column" class="col-md-6" >
-        <div id="weight-length-chart">
-            <strong>Length-Weight:</strong>
-            <a class="reset" href="javascript:weightLengthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-<h3>Filters:</h3>
-<div id="eff-sidep-row" class="row">
-    <div id="effort-column" class="col-md-6" >
-        <div id="eff-chart">
-                <strong>Mesh Size:</strong>
-                <a class="reset" href="javascript:effChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-                <div id="mesh-group-btn" class="btn-group btn-group-xs" data-toggle="buttons">
-                    <label class="btn btn-primary active">
-                        <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
-                    </label>
-                    <label class="btn btn-primary">
-                        <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
-                    </label>
+        <div id="growth-row" class="row">
+            <div id="growth-column" class="col-md-6" >
+                <div id="size-at-age-all-chart">
+                    <strong>Size At Age (all fish):</strong> (<a href="#" id="vonB">by sex</a>)
+                    <a class="reset" href="javascript:sizeAtAgeAllChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
                 </div>
 
-        </div>
-    </div>
+                <div id="size-at-age-sex-chart">
+                    <strong>Size At Age by Sex:</strong>(<a href="#" id="vonB">all</a>)
+                    <a class="reset" href="javascript:sizeAtAgeSexChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-    <div id="sidep-column" class="col-md-6" >
-        <div id="sidep-chart">
-            <strong>Site Depth(m):</strong>
-            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        </div>
-    </div>
+                </div>
 
-</div>
 
-<div id="lift_date_row" class="row" >
+            </div>
 
-    <div id="lift-date-col" class="col-md-12" >
-        <div id="liftdate-chart">
-            <strong>Lift Date:</strong>
-            <a class="reset" href="javascript:liftDateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div id="weight-length-column" class="col-md-6" >
+                <div id="weight-length-chart">
+                    <strong>Length-Weight:</strong>
+                    <a class="reset" href="javascript:weightLengthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
         </div>
 
-    </div>
-
-</div>
 
 
-<div id="sex-mat-row" class="row">
-    <div id="sex-column" class="col-md-6" >
-        <div id="sex-chart">
-            <strong>Sex:</strong>
-            <a class="reset" href="javascript:sexChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+
+
+
+
+
+        <h3>Filters:</h3>
+        <div id="eff-sidep-row" class="row">
+            <div id="effort-column" class="col-md-6" >
+                <div id="eff-chart">
+                    <strong>Mesh Size:</strong>
+                    <a class="reset" href="javascript:effChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div id="mesh-group-btn" class="btn-group btn-group-xs" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="sidep-column" class="col-md-6" >
+                <div id="sidep-chart">
+                    <strong>Site Depth(m):</strong>
+                    <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
 
         </div>
-    </div>
 
-    <div id="mat-column" class="col-md-6" >
-        <div id="maturity-chart">
-            <strong>Maturity:</strong>
-            <a class="reset" href="javascript:maturityChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <div id="lift_date_row" class="row" >
+
+            <div id="lift-date-col" class="col-md-12" >
+                <div id="liftdate-chart">
+                    <strong>Lift Date:</strong>
+                    <a class="reset" href="javascript:liftDateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+
+            </div>
+
         </div>
-    </div>
-
-</div>
 
 
-<div id="clipc-grp-row" class="row">
-    <div id="clipc-column" class="col-md-6" >
-        <div id="clipc-chart">
-            <strong>Clip-on-Capture (CLIPC):</strong>
-            <a class="reset" href="javascript:clipcChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <div id="sex-mat-row" class="row">
+            <div id="sex-column" class="col-md-6" >
+                <div id="sex-chart">
+                    <strong>Sex:</strong>
+                    <a class="reset" href="javascript:sexChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+                </div>
+            </div>
+
+            <div id="mat-column" class="col-md-6" >
+                <div id="maturity-chart">
+                    <strong>Maturity:</strong>
+                    <a class="reset" href="javascript:maturityChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
+
         </div>
-    </div>
 
-    <div id="grp-column" class="col-md-6" >
-        <div id="grp-chart">
-            <strong>Group Code (GRP):</strong>
-            <a class="reset" href="javascript:grpChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div id="clipc-grp-row" class="row">
+            <div id="clipc-column" class="col-md-6" >
+                <div id="clipc-chart">
+                    <strong>Clip-on-Capture (CLIPC):</strong>
+                    <a class="reset" href="javascript:clipcChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
+
+            <div id="grp-column" class="col-md-6" >
+                <div id="grp-chart">
+                    <strong>Group Code (GRP):</strong>
+                    <a class="reset" href="javascript:grpChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                </div>
+            </div>
+
         </div>
+
+
     </div>
-
-</div>
-
-
-
 
 
 <script type="text/javascript">

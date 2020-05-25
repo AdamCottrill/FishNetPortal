@@ -92,7 +92,7 @@ class FN011(models.Model):
         return "{}".format(self.prj_cd)
 
     def get_absolute_url(self):
-        return reverse("fn_portal:project_catch_counts2", args=[str(self.slug)])
+        return reverse("fn_portal:project_detail", args=[str(self.slug)])
 
     def total_catch(self):
         """
@@ -131,6 +131,8 @@ class FN011(models.Model):
         """Not sure if this is the right way to do this or not or if we even
         need this. - get the list of Gear codes the the 121 table for
         this project. - eventually these should match the gear tables.
+
+        returns None or a list of gear codes (e.g. ['GL10', 'GL21'])
 
         """
         gear_codes = (

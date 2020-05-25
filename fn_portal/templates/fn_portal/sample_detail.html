@@ -1,0 +1,246 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load humanize %}
+{% load fn_portal_tags %}
+
+{% block extrahead  %}
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.js"></script>
+
+
+    <style>
+     text {
+         font: 12px sans-serif;
+     }
+     svg {
+         display: block;
+         float: left;
+         height: 500px !important;
+         width: 800px !important;
+     }
+     html, body {
+         margin: 0px;
+         padding: 0px;
+         height: 100%;
+         width: 100%;
+     }
+     #accordion {
+         padding-left: 20px;
+
+     }
+
+    </style>
+
+
+{% endblock %}
+
+{% block sidebar %}
+
+    {% sidebar_projects %}
+
+{% endblock %}
+
+{% block content  %}
+
+
+    <div class="container">
+        
+
+        
+        <h2>Sample Details: {{sample.sam}} from <a href="{{ sample.project.get_absolute_url }}">{{ sample.project.prj_cd }}</a></h2>
+
+
+        <h3>Catch Composition ({{ sample.total_catch.total|floatformat:"0"|intcomma }} fish in total)</h3>
+
+        <div class="row" >
+            <svg id="test1" class="mypiechart"></svg>
+        </div>
+
+        <div class="row" >
+            <div class="col-md-12">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#net-attrs" aria-controls="samples" role="tab" data-toggle="tab">Sample Attributes</a></li>
+                    <li role="presentation"><a href="#catcnts" aria-controls="catcnts" role="tab" data-toggle="tab">Catch Counts</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="net-attrs">
+
+                        <div class="container">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    
+                                    <h4>Net Set Attributes</h4>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Sample</td>                                
+                                                <td>{{ sample.sam }}</td>
+                                            </tr>                            
+                                            <tr>
+                                                <td>Set Date
+                                                    {% if sample.efftm0  %}
+                                                        and Time
+                                                    {% endif %}                                                
+                                                </td>                                
+                                                <td> {{ sample.effdt0|date:"N j, Y" }}
+                                                    {% if sample.efftm0  %}
+                                                        at {{ sample.efftm0|time:"H:i" }} </td>
+                                                    {% endif %}
+                                            </tr>
+
+                                            <tr>
+                                                <td>Lift Date
+                                                    {% if sample.efftm1  %}
+                                                        and Time
+                                                    {% endif %}                                                
+                                                </td>
+                                                <td> {{ sample.effdt1|date:"N j, Y" }}
+                                                    {% if sample.efftm1  %}
+                                                        at {{ sample.efftm1|time:"H:i" }} </td>
+                                                    {% endif %}                                                
+                                            </tr>
+
+                                            
+                                            <tr>
+                                                <td>Effort Duration (hrs)</td>                                
+                                                <td> {{ sample.effdur|floatformat:2 }} </td>
+                                            </tr>                            
+                                            <tr>
+                                                <td>Gear</td>                                
+                                                <td> {{ sample.gr }} </td>
+                                            </tr>                            
+                                            <tr>
+                                                <td>Orient</td>                                
+                                                <td> {{ sample.orient|default:"---" }} </td>
+                                            </tr>                            
+                                            <tr>
+                                                <td>Site Depth(m)</td>                                
+                                                <td> {{ sample.sidep }} </td>                                
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane" id="catcnts">
+                        <h4>Catch Counts</h4>
+                        <table id="myTable" class="table tablesorter">
+                            <thead><tr>
+                                <td>Species</td>
+                                <td>Catch</td>
+                                <td>Bio-Samples</td>                            
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                                {% if sample.catch_counts %}
+                                    
+                                    {% for item in sample.catch_counts %}
+                                        {% if item.species %}
+                                            <tr>
+                                                <td>{{ item.species|title }} ({{ item.spc }})</td>
+                                                <td> {{ item.catcnts }} </td>
+                                                <td> {{ item.biocnts }} </td>                                
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <h4>No Catch Information is Available</h4>
+                                    {% endif %}
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div> <!-- tabcontent -->
+            </div>
+        </div> <!-- row -->
+
+    </div>
+    
+    {% endblock %}
+
+    {% block scripts %}
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+        // prepare the sidebar by expanding just the current year
+        var my_year={{ project.year }}{{sample.project.year}};
+        var div_name = "#project-year-" + my_year;
+        $(div_name).show();
+
+        });
+    </script>
+
+
+    <!-- tablesorter plugin-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.js"></script>
+
+    <!-- tablesorter widget file - loaded after the plugin -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.widgets.js"></script>
+
+
+    <script type="text/javascript">
+
+     $(".tablesorter").tablesorter({
+         theme: 'bootstrap',
+         widthFixed: true,
+         showProcessing: true,
+         headerTemplate: '{content} {icon}',
+         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgetOptions: {
+             scroller_height: 300,
+             scroller_barWidth: 17,
+             scroller_jumpToHeader: true,
+             scroller_idPrefix: 's_'
+         }
+     });
+
+    </script>
+
+    <script>
+
+     //nvd3 piechart of catch counts
+        d3.json({% if project %}
+"{% url 'fn_portal:project_catch_counts_json' project.slug %}"
+{% else %}
+"{% url 'fn_portal:sample_catch_counts_json' sample.project.slug sample.sam %}"
+{% endif %}
+,
+        function(error, data)
+        {
+        data.forEach(function(d) {
+        d.key = d.key;
+        d.y = d.y;
+        } )
+
+        var height = 500;
+        var width = 800;
+        nv.addGraph(function() {
+        var chart = nv.models.pieChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.y })
+        .width(width)
+        .height(height)
+        .showTooltipPercent(true);
+        d3.select("#test1")
+        .datum(data)
+        .transition().duration(1200)
+        .attr('width', width)
+        .attr('height', height)
+        .call(chart);
+        return chart;
+        });
+        });
+
+    </script>
+
+    {% endblock %}

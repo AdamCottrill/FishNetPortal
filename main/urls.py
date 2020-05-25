@@ -12,8 +12,10 @@ API_TITLE = "Fishnet Portal API"
 API_DESC = "A Restful API for your Fishnet-II Data"
 schema_view = get_swagger_view(title=API_TITLE)
 
+from fn_portal.views import ProjectList
 
 urlpatterns = [
+    path("", view=ProjectList.as_view(), name="home"),
     path("admin/", admin.site.urls),
     path("fn_portal/", include("fn_portal.urls")),
     path("api-auth/", include("rest_framework.urls")),

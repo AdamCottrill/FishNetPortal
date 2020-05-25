@@ -22,6 +22,34 @@ from .forms import GearForm
 from .filters import FN011Filter
 
 
+# ==============================================
+#             UTILS
+
+
+def dictfetchall(cursor):
+    """Return all rows from a cursor as a dict
+    from: https://docs.djangoproject.com/en/1.10/topics/db/sql/"""
+
+    columns = [col[0] for col in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    """to serialize dates using json.dumps.
+    Copied from: http://stackoverflow.com/questions/11875770
+    """
+
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
+# ==============================================
+#            PROJECT VIEWS
+
+
 class ProjectList(ListView):
     """
     """
@@ -96,89 +124,32 @@ class ProjectList(ListView):
         return context
 
 
-def gear_list(request, username=None):
-    """Return a simple list of Gears in our Gear table.
+def project_detail(request, slug):
+    """This view is used to display the catch count information for a
+    single project. The template contains linked, interactive maps and
+    graphics.  Data for the map and graphics are provide by a complimentary json
+    request (project_catch_counts2_json)
 
     Arguments:
     - `request`:
-    - `slug`:
+
     """
 
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        user = None
-
-    if user:
-        gear_list = Gear.objects.filter(assigned_to=user).order_by("gr_code")
-    else:
-        gear_list = Gear.objects.all().order_by("gr_code")
-
-    context = {"gear_list": gear_list, "user": user}
-
-    return render(request, "fn_portal/gear_list.html", context)
-
-
-def edit_gear(request, gear_code):
-    """A view that will allow us to edit our gear attributes."""
-
-    gear = Gear.objects.filter(gr_code=gear_code).first()
-
-    if request.method == "POST":
-        form = GearForm(request.POST, instance=gear)
-        if form.is_valid():
-            gear = form.save()
-            gear.gr_code = gear_code
-            gear.save()
-            return redirect("fn_portal:gear_detail", gear_code=gear.gr_code)
-    else:
-        form = GearForm(instance=gear)
-        context = {"gear_code": gear_code, "form": form}
-        return render(request, "fn_portal/gear_form.html", context)
-
-
-def edit_subgear(request, gear_code, eff):
-    """A view that will allow us to edit our gear attributes."""
-    pass
-
-
-def gear_detail(request, gear_code):
-    """
-
-    Arguments:
-    - `request`:
-    - `slug`:
-    """
-
-    gear = Gear.objects.filter(gr_code=gear_code).first()
-
-    fn013_gear = FN013.objects.filter(gr=str(gear_code)).all()
-
-    projects = (
-        FN011.objects.filter(samples__gr=str(gear_code))
-        .distinct()
-        .annotate(N=Count("samples"))
+    proj = FN011.objects.prefetch_related(
+        "samples",
+        "samples__effort",
+        "samples__effort__catch",
+        "samples__effort__catch__species",
     )
 
-    context = {
-        "fn013_gear": fn013_gear,
-        "gear": gear,
-        "gear_code": gear_code,
-        "projects": projects,
-    }
-    return render(request, "fn_portal/gear_detail.html", context)
-
-
-def project_detail(request, slug):
-    """
-
-    Arguments:
-    - `request`:
-    - `slug`:
-    """
-
-    project = get_object_or_404(FN011, slug=slug)
-    context = {"project": project}
+    project = get_object_or_404(proj, slug=slug)
+    netsets = (
+        FN121.objects.filter(project__slug=slug)
+        .select_related("project")
+        .order_by("project", "sam")
+        .annotate(total_catch_count=Sum("effort__catch__catcnt"))
+    )
+    context = {"project": project, "netsets": netsets}
 
     return render(request, "fn_portal/project_detail.html", context)
 
@@ -193,23 +164,9 @@ def sample_detail(request, slug, sam):
 
     """
 
-    project = get_object_or_404(FN011, slug=slug)
-    sample = get_object_or_404(FN121, project=project, sam=sam)
+    sample = get_object_or_404(FN121.objects.filter(project__slug=slug), sam=sam)
     context = {"sample": sample}
-    return render(request, "fn_portal/project_detail.html", context)
-
-
-def project_catch_counts(request, prj_cd):
-    """
-
-    Arguments:
-    - `request`:
-    """
-
-    project = get_object_or_404(FN011, prj_cd=prj_cd)
-    context = {"project": project}
-
-    return render(request, "fn_portal/project_detail.html", context)
+    return render(request, "fn_portal/sample_detail.html", context)
 
 
 def project_catch_counts_json(request, slug):
@@ -244,33 +201,11 @@ def sample_catch_counts_json(request, slug, sam):
         .values("key")
         .filter(effort__sample__project__slug=slug)
         .filter(effort__sample__sam=sam)
+        .exclude(catcnt__isnull=True)
         .annotate(y=Sum("catcnt"))
         .order_by("key")
     )
     return JsonResponse(list(catchcounts), safe=False)
-
-
-def project_catch_counts2(request, slug):
-    """This view is used to display the catch count information for a
-    single project. The template contains linked, interactive maps and
-    graphics.  Data for the map and graphics are provide by a complimentary json
-    request (project_catch_counts2_json)
-
-    Arguments:
-    - `request`:
-
-    """
-
-    proj = FN011.objects.prefetch_related(
-        "samples",
-        "samples__effort",
-        "samples__effort__catch",
-        "samples__effort__catch__species",
-    )
-
-    project = get_object_or_404(proj, slug=slug)
-    context = {"object": project}
-    return render(request, "fn_portal/project_detail2.html", context)
 
 
 def project_catch_counts2_json(request, slug):
@@ -351,26 +286,6 @@ def project_spc_biodata(request, slug, spc):
     context = {"project": project, "species": species}
 
     return render(request, "fn_portal/project_spc_biodata.html", context)
-
-
-def dictfetchall(cursor):
-    """Return all rows from a cursor as a dict
-    from: https://docs.djangoproject.com/en/1.10/topics/db/sql/"""
-
-    columns = [col[0] for col in cursor.description]
-    return [dict(zip(columns, row)) for row in cursor.fetchall()]
-
-
-class DateTimeEncoder(json.JSONEncoder):
-    """to serialize dates using json.dumps.
-    Copied from: http://stackoverflow.com/questions/11875770
-    """
-
-    def default(self, o):
-        if isinstance(o, datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
 
 
 def project_spc_biodata_json(request, slug, spc):
@@ -461,7 +376,8 @@ def project_catch_over_time_json(request, slug):
     # TODO - select_related
 
     catcnts = (
-        FN123.objects.annotate(year=F("effort__sample__project__year"))
+        FN123.objects.exclude(catcnt__isnull=True)
+        .annotate(year=F("effort__sample__project__year"))
         .annotate(prj_cd=F("effort__sample__project__prj_cd"))
         .annotate(sam=F("effort__sample__sam"))
         .annotate(eff=F("effort__eff"))
@@ -499,3 +415,80 @@ def project_catch_over_time_json(request, slug):
     )
 
     return JsonResponse(list(catcnts), safe=False)
+
+
+# =================================================
+#            GEAR VIEWS
+
+
+def gear_list(request, username=None):
+    """Return a simple list of Gears in our Gear table.
+
+    Arguments:
+    - `request`:
+    - `slug`:
+    """
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = None
+
+    if user:
+        gear_list = Gear.objects.filter(assigned_to=user).order_by("gr_code")
+    else:
+        gear_list = Gear.objects.all().order_by("gr_code")
+
+    context = {"gear_list": gear_list, "user": user}
+
+    return render(request, "fn_portal/gear_list.html", context)
+
+
+def edit_gear(request, gear_code):
+    """A view that will allow us to edit our gear attributes."""
+
+    gear = Gear.objects.filter(gr_code=gear_code).first()
+
+    if request.method == "POST":
+        form = GearForm(request.POST, instance=gear)
+        if form.is_valid():
+            gear = form.save()
+            gear.gr_code = gear_code
+            gear.save()
+            return redirect("fn_portal:gear_detail", gear_code=gear.gr_code)
+    else:
+        form = GearForm(instance=gear)
+        context = {"gear_code": gear_code, "form": form}
+        return render(request, "fn_portal/gear_form.html", context)
+
+
+def edit_subgear(request, gear_code, eff):
+    """A view that will allow us to edit our gear attributes."""
+    pass
+
+
+def gear_detail(request, gear_code):
+    """
+
+    Arguments:
+    - `request`:
+    - `slug`:
+    """
+
+    gear = Gear.objects.filter(gr_code=gear_code).first()
+
+    fn013_gear = FN013.objects.filter(gr=str(gear_code)).all()
+
+    projects = (
+        FN011.objects.filter(samples__gr=str(gear_code))
+        .distinct()
+        .annotate(N=Count("samples"))
+    )
+
+    context = {
+        "fn013_gear": fn013_gear,
+        "gear": gear,
+        "gear_code": gear_code,
+        "projects": projects,
+    }
+    return render(request, "fn_portal/gear_detail.html", context)

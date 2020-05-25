@@ -26,7 +26,7 @@ def project():
     prj_cd = "LHA_IA19_000"
     project = FN011Factory(prj_cd=prj_cd, prj_nm="Test Project")
 
-    net1 = FN121Factory(sam="1", gr="GL00", project=project)
+    net1 = FN121Factory(sam="1", gr="GL00", sidep=25, effdur=24.1211, project=project)
     eff1 = FN122Factory(sample=net1)
 
     FN123Factory(effort=eff1, species=perch, catcnt=3, biocnt=0)
@@ -34,7 +34,7 @@ def project():
     FN123Factory(effort=eff1, species=walleye, catcnt=9, biocnt=3)
     FN123Factory(effort=eff1, species=anyspc, catcnt=None)
 
-    net2 = FN121Factory(sam="2", gr="TP99", project=project)
+    net2 = FN121Factory(sam="2", gr="TP99", sidep=5, effdur=22.5, project=project)
     eff2 = FN122Factory(sample=net2)
 
     FN123Factory(effort=eff2, species=perch, catcnt=1, biocnt=0)
