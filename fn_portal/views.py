@@ -202,7 +202,7 @@ def sample_catch_counts_json(request, slug, sam):
         .filter(effort__sample__project__slug=slug)
         .filter(effort__sample__sam=sam)
         .exclude(catcnt__isnull=True)
-        .annotate(y=Sum("catcnt"))
+        .annotate(catcnt=Sum("catcnt"))
         .order_by("key")
     )
     return JsonResponse(list(catchcounts), safe=False)

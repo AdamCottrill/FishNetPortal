@@ -1,5 +1,7 @@
 import pytest
 
+from datetime import datetime, time
+
 from .user_factory import UserFactory
 from .factories import (
     SpeciesFactory,
@@ -26,7 +28,24 @@ def project():
     prj_cd = "LHA_IA19_000"
     project = FN011Factory(prj_cd=prj_cd, prj_nm="Test Project")
 
-    net1 = FN121Factory(sam="1", gr="GL00", sidep=25, effdur=24.1211, project=project)
+    setdate = datetime(2019, 9, 15)
+    liftdate = datetime(2019, 9, 16)
+
+    settime = time(10, 30)
+    lifttime = time(15, 15)
+
+    net1 = FN121Factory(
+        sam="1",
+        gr="GL00",
+        sidep=25,
+        effdur=24.1211,
+        project=project,
+        orient=1,
+        effdt0=setdate,
+        effdt1=liftdate,
+        efftm0=settime,
+        efftm1=lifttime,
+    )
     eff1 = FN122Factory(sample=net1)
 
     FN123Factory(effort=eff1, species=perch, catcnt=3, biocnt=0)
@@ -34,7 +53,15 @@ def project():
     FN123Factory(effort=eff1, species=walleye, catcnt=9, biocnt=3)
     FN123Factory(effort=eff1, species=anyspc, catcnt=None)
 
-    net2 = FN121Factory(sam="2", gr="TP99", sidep=5, effdur=22.5, project=project)
+    net2 = FN121Factory(
+        sam="2",
+        gr="TP99",
+        sidep=5,
+        effdur=22.5,
+        project=project,
+        effdt0=setdate,
+        effdt1=liftdate,
+    )
     eff2 = FN122Factory(sample=net2)
 
     FN123Factory(effort=eff2, species=perch, catcnt=1, biocnt=0)

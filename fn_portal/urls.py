@@ -57,6 +57,25 @@ urlpatterns = [
         view=project_catch_counts2_json,
         name="project_catch_counts2_json",
     ),
+    # this url is a copy of catch_counts2 - follows the convention of
+    # accesing the data using view-api pattern.
+    path(
+        "api/project_detail/<slug:slug>/",
+        view=project_catch_counts2_json,
+        name="project_detail_json",
+    ),
+    path(
+        "api/catcnts/<slug:slug>/<str:sam>/",
+        view=sample_catch_counts_json,
+        name="sample_catch_counts_json",
+    ),
+    # this url is a copy of sample_catch_counts - follows the convention of
+    # accesing the data using view-api pattern.
+    path(
+        "api/sample_detail/<slug:slug>/<str:sam>/",
+        view=sample_catch_counts_json,
+        name="sample_detail_json",
+    ),
     path(
         "api/catcnts/<slug:slug>/",
         view=project_catch_counts_json,
@@ -71,10 +90,5 @@ urlpatterns = [
         "api/catch_over_time/<slug:slug>/",
         view=project_catch_over_time_json,
         name="project_catch_over_time_json",
-    ),
-    path(
-        "api/catcnts/<slug:slug>/<str:sam>/",
-        view=sample_catch_counts_json,
-        name="sample_catch_counts_json",
     ),
 ]
