@@ -128,7 +128,7 @@ def project_detail(request, slug):
     """This view is used to display the catch count information for a
     single project. The template contains linked, interactive maps and
     graphics.  Data for the map and graphics are provide by a complimentary json
-    request (project_catch_counts2_json)
+    request (project_catch_counts_json)
 
     Arguments:
     - `request`:
@@ -155,7 +155,8 @@ def project_detail(request, slug):
 
 
 def sample_detail(request, slug, sam):
-    """
+    """Render a simple template with the attributes of a single net set
+    and the associated catch and biosample counts.
 
     Arguments:
     - `request`:
@@ -170,45 +171,6 @@ def sample_detail(request, slug, sam):
 
 
 def project_catch_counts_json(request, slug):
-    """
-
-    Arguments:
-    - `request`:
-    """
-    # catch by species for a project:
-    # this is one that we will need:
-    catchcounts = (
-        FN123.objects.annotate(key=F("species__spc_nmco"))
-        .annotate(project_code=F("effort__sample__project__prj_cd"))
-        .values("key")
-        .filter(effort__sample__project__slug=slug)
-        .annotate(y=Sum("catcnt"))
-        .order_by("key")
-    )
-    return JsonResponse(list(catchcounts), safe=False)
-
-
-def sample_catch_counts_json(request, slug, sam):
-    """
-
-    Arguments:
-    - `request`:
-    """
-    # catch by species for a project:
-    # this is one that we will need:
-    catchcounts = (
-        FN123.objects.annotate(key=F("species__spc_nmco"))
-        .values("key")
-        .filter(effort__sample__project__slug=slug)
-        .filter(effort__sample__sam=sam)
-        .exclude(catcnt__isnull=True)
-        .annotate(catcnt=Sum("catcnt"))
-        .order_by("key")
-    )
-    return JsonResponse(list(catchcounts), safe=False)
-
-
-def project_catch_counts2_json(request, slug):
     """THis view returns the catch count data for the project detail
     pages.  Data returned is a combination of the 121, 122 and 123 data
     for a SINGLE project.
@@ -264,6 +226,26 @@ def project_catch_counts2_json(request, slug):
     )
 
     return JsonResponse(list(catcnts), safe=False)
+
+
+def sample_catch_counts_json(request, slug, sam):
+    """
+
+    Arguments:
+    - `request`:
+    """
+    # catch by species for a project:
+    # this is one that we will need:
+    catchcounts = (
+        FN123.objects.annotate(key=F("species__spc_nmco"))
+        .values("key")
+        .filter(effort__sample__project__slug=slug)
+        .filter(effort__sample__sam=sam)
+        .exclude(catcnt__isnull=True)
+        .annotate(catcnt=Sum("catcnt"))
+        .order_by("key")
+    )
+    return JsonResponse(list(catchcounts), safe=False)
 
 
 def project_spc_biodata(request, slug, spc):

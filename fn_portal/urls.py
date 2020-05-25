@@ -10,7 +10,6 @@ from .views import (
     gear_detail,
     edit_gear,
     edit_subgear,
-    project_catch_counts2_json,
     project_catch_counts_json,
     project_spc_biodata_json,
     project_catch_over_time_json,
@@ -54,14 +53,14 @@ urlpatterns = [
     # (catch by effort by species) and analyze it with server side js.
     path(
         "api/catcnts2/<slug:slug>/",
-        view=project_catch_counts2_json,
-        name="project_catch_counts2_json",
+        view=project_catch_counts_json,
+        name="project_catch_counts_json",
     ),
-    # this url is a copy of catch_counts2 - follows the convention of
+    # this url is a copy of catch_counts - follows the convention of
     # accesing the data using view-api pattern.
     path(
         "api/project_detail/<slug:slug>/",
-        view=project_catch_counts2_json,
+        view=project_catch_counts_json,
         name="project_detail_json",
     ),
     path(
@@ -75,11 +74,6 @@ urlpatterns = [
         "api/sample_detail/<slug:slug>/<str:sam>/",
         view=sample_catch_counts_json,
         name="sample_detail_json",
-    ),
-    path(
-        "api/catcnts/<slug:slug>/",
-        view=project_catch_counts_json,
-        name="project_catch_counts_json",
     ),
     path(
         "api/biodata/(<slug:slug>/<str:spc>/",
