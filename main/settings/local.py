@@ -28,4 +28,4 @@ INSTALLED_APPS += (
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
-# COR_ORIGIN_WHITELIST = ("http://127.0.0.1:3000", "http://localhost:3000")
+COR_ORIGIN_WHITELIST = ("http://127.0.0.1:3000", "http://localhost:3000")

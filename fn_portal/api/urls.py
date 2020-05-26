@@ -11,7 +11,7 @@
 
 """
 
-from django.conf.urls import url
+
 from django.urls import include, path
 
 from rest_framework import routers
@@ -39,49 +39,37 @@ router.register("project", FN011ViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    url(r"^", include(router.urls)),
-    url("^species_list$", SpeciesList.as_view(), name="species-list"),
-    url("^net_sets/(?P<slug>.+)/$", NetSetList.as_view(), name="project-samples"),
-    url(
-        "^catch_counts/(?P<slug>.+)/$",
+    path("", include(router.urls)),
+    path("species_list/", SpeciesList.as_view(), name="species-list"),
+    path("net_sets/<slug:slug>/", NetSetList.as_view(), name="project-samples"),
+    path(
+        "catch_counts/<slug:slug>/",
         CatchCountList.as_view(),
         name="project-catch-counts",
     ),
-    url(
-        "^biosamples/(?P<slug>.+)/$",
-        BioSampleList.as_view(),
-        name="project-bio-samples",
+    path(
+        "biosamples/<slug:slug>/", BioSampleList.as_view(), name="project-bio-samples"
     ),
-    url(
-        "(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/samples$",
-        NetSetList.as_view(),
-        name="project-samples2",
+    path("<slug:slug>/samples/", NetSetList.as_view(), name="project-samples2"),
+    path(
+        "<slug:slug>/<str:sample>/efforts", EffortList.as_view(), name="sample-efforts"
     ),
-    url(
-        "(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<sample>.+)/efforts$",
-        EffortList.as_view(),
-        name="sample-efforts",
-    ),
-    url(
-        (
-            "(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<sample>.+)"
-            + "/(?P<effort>.+)/catch_counts$"
-        ),
+    path(
+        ("<slug:slug>/<slug:sample>/<str:effort>/catch_counts/"),
         CatchCountList.as_view(),
         name="efforts-catches",
     ),
-    url(
+    path(
         (
-            "(?P<slug>[A-Za-z]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/(?P<sample>.+)"
-            + "/(?P<effort>.+)/(?P<species>.+)/(?P<group>.+)/biosamples$"
+            "<slug:slug>/<slug:sample>/<str:effort>/<str:species>/<str:group>/biosamples/"
         ),
         BioSampleList.as_view(),
         name="catch-biosamples",
     ),
-    path("fn121/<str:slug>/", FN121DetailView.as_view(), name="FN121_detail_view"),
-    path("fn122/<str:slug>/", FN122DetailView.as_view(), name="FN122_detail_view"),
-    path("fn123/<str:slug>/", FN123DetailView.as_view(), name="FN123_detail_view"),
-    path("fn125/<str:slug>/", FN125DetailView.as_view(), name="FN125_detail_view"),
+    path("fn121/<slug:slug>/", FN121DetailView.as_view(), name="FN121_detail_view"),
+    path("fn122/<slug:slug>/", FN122DetailView.as_view(), name="FN122_detail_view"),
+    path("fn123/<slug:slug>/", FN123DetailView.as_view(), name="FN123_detail_view"),
+    path("fn125/<slug:slug>/", FN125DetailView.as_view(), name="FN125_detail_view"),
 ]
 
 
