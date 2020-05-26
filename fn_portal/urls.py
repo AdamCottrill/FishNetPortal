@@ -1,4 +1,8 @@
-from django.urls import path
+from django.urls import path, include
+
+# from rest_framework.schemas import get_schema_view
+from rest_framework.documentation import include_docs_urls
+from rest_framework_swagger.views import get_swagger_view
 
 from .views import (
     ProjectList,
@@ -16,10 +20,24 @@ from .views import (
     sample_catch_counts_json,
 )
 
+
+API_TITLE = "Fishnet Portal API"
+API_DESC = "A Restful API for your Fishnet-II Data"
+schema_view = get_swagger_view(title=API_TITLE)
+
+
 app_name = "fn_portal"
 
 urlpatterns = [
     path("", view=ProjectList.as_view(), name="project_list"),
+    # =============================================
+    #          API AND DOCUMENTATION
+    # api documentation
+    path("swagger-docs/", schema_view),
+    path("docs/", include_docs_urls(title=API_TITLE, description=API_DESC)),
+    # path("schema/", schema_view),
+    # =============================================
+    #               PROJECT VIEWS
     path("project_detail/<slug:slug>/", view=project_detail, name="project_detail"),
     path(
         "sample_detail/<slug:slug>/<str:sam>/", view=sample_detail, name="sample_detail"

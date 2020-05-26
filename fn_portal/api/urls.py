@@ -31,7 +31,6 @@ from .views import (
 
 app_name = "fn_portal_api"
 
-
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register("project", FN011ViewSet)
