@@ -49,11 +49,11 @@ class FN011(models.Model):
     prj_ldr = models.ForeignKey(
         User,
         help_text="Project Lead",
-        related_name="creels",
+        related_name="fn_projects",
         blank=False,
         on_delete=models.CASCADE,
     )
-    field_crew = models.ManyToManyField(User)
+    field_crew = models.ManyToManyField(User, related_name="fn_field_crew")
 
     year = models.CharField(max_length=4, db_index=True)
     prj_cd = models.CharField(max_length=13, db_index=True, unique=True)
@@ -284,9 +284,7 @@ class FN123(models.Model):
     """
 
     effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
-    species = models.ForeignKey(
-        Species, related_name="catch_counts", on_delete=models.CASCADE
-    )
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
     grp = models.CharField(max_length=3, default="00", db_index=True)
     catcnt = models.IntegerField("Total Catch (numbers)", blank=True, null=True)

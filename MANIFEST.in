@@ -3,3 +3,5 @@ include README.rst
 recursive-include fn_portal/docs *
 recursive-include fn_portal/static *
 recursive-include fn_portal/templates *
+recursive-exclude utils *
+recursive-exclude main *

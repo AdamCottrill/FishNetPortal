@@ -22,11 +22,14 @@ Quick start
     INSTALLED_APPS = [
         ...,        
         "rest_framework",
+        "rest_framework_swagger",
         "django_filters",
         "common",
         "fn_portal",
     ]
 
+1.1. Install associated dependancies that are not stricly django apps: 
+    
 2. Include the fn_portal URLconf in your project urls.py like this::
 
      path("fn_portal/", include(fn_portal_urls, namespace="fn_portal")),
