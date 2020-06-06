@@ -36,3 +36,5 @@ class GearForm(forms.ModelForm):
         self.fields["gr_des"].label = "Detailed Description"
         self.fields["effcnt"].label = "Effort Count"
         self.fields["effdst"].label = "Effort Distance"
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"] = "form-control"

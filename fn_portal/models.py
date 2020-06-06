@@ -284,7 +284,9 @@ class FN123(models.Model):
     """
 
     effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
-    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+    species = models.ForeignKey(
+        Species, related_name="fn_catch_counts", on_delete=models.CASCADE
+    )
     slug = models.SlugField(max_length=100, unique=True)
     grp = models.CharField(max_length=3, default="00", db_index=True)
     catcnt = models.IntegerField("Total Catch (numbers)", blank=True, null=True)

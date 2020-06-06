@@ -2,7 +2,7 @@
 
 {% load humanize %}
 {% load fn_portal_tags %}
-{% load i18n widget_tweaks %}
+
 
 {% block sidebar %}
 
@@ -25,7 +25,7 @@
                             <div class="form-group has-error">
                                 <label class="col-sm-2 control-label" for="id_{{ field.name }}">{{ field.label }}</label>
                                 <div class="col-sm-10">
-                                    {{ field|attr:"class:form-control" }}
+                                    {{ field }}
                                     <span class="help-block">
                                         {% for error in  field.errors %}{{ error }}{% endfor %}
                                     </span>
@@ -35,7 +35,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="id_{{ field.name }}">{{ field.label }}</label>
                                 <div class="col-sm-10">
-                                    {{ field|attr:"class:form-control" }}
+                                    {{ field }}
                                     {% if field.help_text %}
                                         <p class="help-block"><small>{{ field.help_text }}</small></p>
                                     {% endif %}
@@ -44,8 +44,10 @@
                         {% endif %}
                     {% endfor %}
                     <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-primary">{% trans "Submit" %}</button>
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>  
+                            </div>
                         </div>
                     </div>
                 </form>
