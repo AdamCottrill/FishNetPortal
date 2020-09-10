@@ -18,14 +18,20 @@ from rest_framework import routers
 
 from .views import (
     SpeciesList,
+    # readonly endpoints:
     FN011ViewSet,
     NetSetList,
+    EffortList,
     CatchCountList,
     BioSampleList,
-    EffortList,
+    # CRUD Endpoints:
+    FN121ListView,
     FN121DetailView,
+    FN122ListView,
     FN122DetailView,
+    FN123ListView,
     FN123DetailView,
+    FN125ListView,
     FN125DetailView,
 )
 
@@ -41,35 +47,40 @@ router.register("project", FN011ViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path("species_list/", SpeciesList.as_view(), name="species-list"),
-    path("net_sets/<slug:slug>/", NetSetList.as_view(), name="project-samples"),
+    # these three urls are configured  with slug at the end. Is this what we want?
     path(
         "catch_counts/<slug:slug>/",
         CatchCountList.as_view(),
         name="project-catch-counts",
     ),
+    # =========================
+    # READONLY ListViews:
+    path("fn121/", NetSetList.as_view(), name="netset-list"),
+    path("fn125/", BioSampleList.as_view(), name="biosample-list"),
+    # =========================
+    # CRUD ENDPOINTS:
+    # these urls are configured <prj_cd>/<sam>/<eff>
+    # path("<slug:slug>/samples/", NetSetList.as_view(), name="project-samples2"),
+    # FN121
+    path("<slug:prj_cd>/", FN121ListView.as_view(), name="FN121_listview"),
+    path("fn121/<slug:slug>/", FN121DetailView.as_view(), name="FN121_detailview"),
+    # FN122
+    path("<slug:prj_cd>/<str:sample>", FN122ListView.as_view(), name="FN122_listview"),
+    path("fn122/<slug:slug>/", FN122DetailView.as_view(), name="FN122_detailview"),
+    # FN123
     path(
-        "biosamples/<slug:slug>/", BioSampleList.as_view(), name="project-bio-samples"
+        ("<slug:prj_cd>/<slug:sample>/<str:effort>"),
+        FN123ListView.as_view(),
+        name="FN123_listview",
     ),
-    path("<slug:slug>/samples/", NetSetList.as_view(), name="project-samples2"),
+    path("fn123/<slug:slug>/", FN123DetailView.as_view(), name="FN123_detailview"),
+    # FN125
     path(
-        "<slug:slug>/<str:sample>/efforts", EffortList.as_view(), name="sample-efforts"
+        ("<slug:prj_cd>/<slug:sample>/<str:effort>/<str:species>/<str:group>/"),
+        FN125ListView.as_view(),
+        name="FN125_listview",
     ),
-    path(
-        ("<slug:slug>/<slug:sample>/<str:effort>/catch_counts/"),
-        CatchCountList.as_view(),
-        name="efforts-catches",
-    ),
-    path(
-        (
-            "<slug:slug>/<slug:sample>/<str:effort>/<str:species>/<str:group>/biosamples/"
-        ),
-        BioSampleList.as_view(),
-        name="catch-biosamples",
-    ),
-    path("fn121/<slug:slug>/", FN121DetailView.as_view(), name="FN121_detail_view"),
-    path("fn122/<slug:slug>/", FN122DetailView.as_view(), name="FN122_detail_view"),
-    path("fn123/<slug:slug>/", FN123DetailView.as_view(), name="FN123_detail_view"),
-    path("fn125/<slug:slug>/", FN125DetailView.as_view(), name="FN125_detail_view"),
+    path("fn125/<slug:slug>/", FN125DetailView.as_view(), name="FN125_detailview"),
 ]
 
 

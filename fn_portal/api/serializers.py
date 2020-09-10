@@ -31,7 +31,8 @@ class GridSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grid5
         lookup_field = "slug"
-        fields = ("grid", "slug")
+        fields = ("slug", "grid")
+        read_only_fields = ("slug",)
 
 
 # Serializers define the API representation.
@@ -84,7 +85,7 @@ class FN121Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN121
-
+        lookup_field = "slug"
         # need to get prj_cd from FN011 table.
 
         fields = (
@@ -110,9 +111,53 @@ class FN121Serializer(serializers.ModelSerializer):
             "secchi",
         )
 
+        read_only_fields = ("slug", "id")
+
     def create(self, validated_data):
-        validated_data["project"] = self.context["project"]
-        return FN121.objects.create(**validated_data)
+        """Custom create method to handle grid - nested serializer."""
+        project = self.context["project"]
+        validated_data["project"] = project
+
+        grid_data = validated_data.pop("grid")
+        validated_data["grid"] = Grid5.objects.get(
+            lake=project.lake, grid=grid_data["grid"]
+        )
+
+        instance = FN121.objects.create(**validated_data)
+
+        return instance
+
+    def update(self, instance, validated_data):
+        """We need a custom update method to handle grid
+
+        """
+
+        grid_no = validated_data["grid"].get("grid")
+        if grid_no != instance.grid.grid:
+            grid = Grid5.objects.get(lake=instance.grid.lake, grid=grid_no)
+            instance.grid = grid
+
+        instance.sam = validated_data.get("sam", instance.sam)
+        instance.effdt0 = validated_data.get("effdt0", instance.effdt0)
+        instance.effdt1 = validated_data.get("effdt1", instance.effdt1)
+        instance.effdur = validated_data.get("effdur", instance.effdur)
+        instance.efftm0 = validated_data.get("efftm0", instance.efftm0)
+        instance.efftm1 = validated_data.get("efftm1", instance.efftm1)
+        instance.effst = validated_data.get("effst", instance.effst)
+        instance.grtp = validated_data.get("grtp", instance.grtp)
+        instance.gr = validated_data.get("gr", instance.gr)
+        instance.orient = validated_data.get("orient", instance.orient)
+        instance.sidep = validated_data.get("sidep", instance.sidep)
+        instance.site = validated_data.get("site", instance.site)
+        instance.dd_lat = validated_data.get("dd_lat", instance.dd_lat)
+        instance.dd_lon = validated_data.get("dd_lon", instance.dd_lon)
+        instance.sitem = validated_data.get("sitem", instance.sitem)
+        instance.comment = validated_data.get("comment1", instance.comment1)
+        instance.secchi = validated_data.get("secchi", instance.secchi)
+
+        instance.save()
+
+        return instance
 
 
 class FN122Serializer(serializers.ModelSerializer):

@@ -1,8 +1,12 @@
-from django.urls import path, include
+from django.urls import path, re_path
 
 # from rest_framework.schemas import get_schema_view
-from rest_framework.documentation import include_docs_urls
-from rest_framework_swagger.views import get_swagger_view
+# from rest_framework.documentation import include_docs_urls
+# from rest_framework_swagger.views import get_swagger_view
+
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from .views import (
     ProjectList,
@@ -23,7 +27,20 @@ from .views import (
 
 API_TITLE = "Fishnet Portal API"
 API_DESC = "A Restful API for your Fishnet-II Data"
-schema_view = get_swagger_view(title=API_TITLE)
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title=API_TITLE,
+        default_version="v1",
+        description=API_DESC,
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="adam.cottrill@ontario.ca"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 
 app_name = "fn_portal"
@@ -33,9 +50,17 @@ urlpatterns = [
     # =============================================
     #          API AND DOCUMENTATION
     # api documentation
-    path("swagger-docs/", schema_view),
-    path("docs/", include_docs_urls(title=API_TITLE, description=API_DESC)),
-    # path("schema/", schema_view),
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     # =============================================
     #               PROJECT VIEWS
     path("project_detail/<slug:slug>/", view=project_detail, name="project_detail"),

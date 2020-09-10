@@ -1,7 +1,7 @@
 import factory
 import datetime
 
-from common.models import Species, Lake
+from common.models import Species, Lake, Grid5
 from .user_factory import UserFactory
 
 from ..models import (
@@ -31,6 +31,27 @@ class LakeFactory(factory.DjangoModelFactory):
 
     lake_name = "Lake Huron"
     abbrev = "HU"
+
+
+class Grid5Factory(factory.DjangoModelFactory):
+    """
+    A factory for 5-minute grid objects.
+    """
+
+    class Meta:
+        model = Grid5
+        django_get_or_create = ("lake", "grid")
+
+    grid = 1234
+    lake = factory.SubFactory(LakeFactory)
+
+    @factory.lazy_attribute
+    def slug(self):
+        """
+        calculate a slug using lake abbrev and grid number
+        """
+
+        return "{}-{:04d}".format(self.lake.abbrev.lower(), self.grid)
 
 
 class SpeciesFactory(factory.DjangoModelFactory):

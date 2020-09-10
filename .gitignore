@@ -7,3 +7,4 @@ utils/mdbs/*
 node/*
 htmlcov/*
 db/*
+*htmlcov*
