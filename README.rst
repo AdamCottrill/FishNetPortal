@@ -14,9 +14,9 @@ More detailed documentation is in the "docs" directory.
 Quick start
 -----------
 
-0. > pip install tfat.zip
+0. > pip install fn_portal.zip
 
-1. Add fn_portal, django restframework, django_filter, and common and
+1. Add fn_portal, django restframework, django_filter, drf_yasg and common and
    to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
@@ -26,6 +26,7 @@ Quick start
         "django_filters",
         "common",
         "fn_portal",
+        "drf_yasg"
     ]
 
 1.1. Install associated dependancies that are not stricly django apps: 
@@ -33,11 +34,6 @@ Quick start
 2. Include the fn_portal URLconf in your project urls.py like this::
 
      path("fn_portal/", include(fn_portal_urls, namespace="fn_portal")),
-     #optional urls:
-     path("api/v1/fn_portal/", include("fn_portal.api.urls", namespace="fn_portal_api")),
-     path("docs/", include_docs_urls(title=API_TITLE, description=API_DESC)),
-     # path("schema/", schema_view),
-     path("swagger-docs/", schema_view),
      
 3. Run `python manage.py migrate` to create the fn_portal models.
 

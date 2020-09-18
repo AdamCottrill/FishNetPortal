@@ -106,6 +106,20 @@ def test_fn121_listview(api_client, project, net_sets):
         assert x in data
 
 
+@pytest.mark.django_db
+def test_fn121_listview_none(api_client, project, net_sets):
+    """If the list view is provided a project code that does not exist, it
+    should return a 404 response and not throw an error.
+
+    """
+    # create a project code that does not exist:
+    prj_cd = project.prj_cd[:-1] + "X"
+
+    url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": prj_cd})
+    response = api_client.get(url)
+    assert response.status_code == status.HTTP_404_NOT_
+
+
 # parameters for our list filter test.  Filter, value, and the expected
 # sample numbers that should be returned.
 filter_list = [

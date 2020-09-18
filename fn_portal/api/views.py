@@ -18,7 +18,14 @@ from .serializers import (
     FN123Serializer,
     FN125Serializer,
 )
-from ..filters import FN011Filter, FN121Filter, FN121InProjectFilter, FN125Filter
+from ..filters import (
+    FN011Filter,
+    FN121Filter,
+    FN121InProjectFilter,
+    FN122Filter,
+    FN123Filter,
+    FN125Filter,
+)
 from .permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 
 
@@ -151,93 +158,93 @@ class FN011ViewSet(viewsets.ModelViewSet):
 #         return queryset
 
 
-class EffortList(generics.ListCreateAPIView):
-    """A view to return all of the efforts associated with a net set
-    (within a project).
+# class EffortList(generics.ListCreateAPIView):
+#     """A view to return all of the efforts associated with a net set
+#     (within a project).
 
-    """
+#     """
 
-    serializer_class = FN122Serializer
+#     serializer_class = FN122Serializer
 
-    def get_queryset(self):
-        """
-        This view should return a list of all the purchases for
-        the user as determined by the username portion of the URL.
-        """
-        slug = self.kwargs.get("slug", "")
-        slug = slug.lower()
-        sam = self.kwargs["sample"]
+#     def get_queryset(self):
+#         """
+#         This view should return a list of all the purchases for
+#         the user as determined by the username portion of the URL.
+#         """
+#         slug = self.kwargs.get("slug", "")
+#         slug = slug.lower()
+#         sam = self.kwargs["sample"]
 
-        queryset = FN122.objects.select_related("sample", "sample__project").filter(
-            sample__project__slug=slug, sample__sam=sam
-        )
+#         queryset = FN122.objects.select_related("sample", "sample__project").filter(
+#             sample__project__slug=slug, sample__sam=sam
+#         )
 
-        return queryset
+#         return queryset
 
-    def get_serializer_context(self):
-        """to create a new net set, we have to make the project available in
-        the serializer's context"""
+#     def get_serializer_context(self):
+#         """to create a new net set, we have to make the project available in
+#         the serializer's context"""
 
-        context = super(EffortList, self).get_serializer_context()
-        slug = self.kwargs.get("slug", "").lower()
-        sam = self.kwargs["sample"]
+#         context = super(EffortList, self).get_serializer_context()
+#         slug = self.kwargs.get("slug", "").lower()
+#         sam = self.kwargs["sample"]
 
-        sample = FN121.objects.select_related("project").get(
-            project__slug=slug, sam=sam
-        )
+#         sample = FN121.objects.select_related("project").get(
+#             project__slug=slug, sam=sam
+#         )
 
-        context.update({"sample": sample})
-        return context
+#         context.update({"sample": sample})
+#         return context
 
 
-class CatchCountList(generics.ListCreateAPIView):
-    """A view to return all of the catch counts associated with a project
+# class CatchCountList(generics.ListCreateAPIView):
+#     """A view to return all of the catch counts associated with a project
 
-    TODO: filter by SAM, EFF, SPC (and maybe GRP?)
-"""
+#     TODO: filter by SAM, EFF, SPC (and maybe GRP?)
+# """
 
-    serializer_class = FN123Serializer
+#     serializer_class = FN123Serializer
 
-    def get_queryset(self):
-        """
-        """
-        slug = self.kwargs.get("slug", "")
-        slug = slug.lower()
+#     def get_queryset(self):
+#         """
+#         """
+#         slug = self.kwargs.get("slug", "")
+#         slug = slug.lower()
 
-        sam = self.kwargs.get("sample")
-        eff = self.kwargs.get("effort")
+#         sam = self.kwargs.get("sample")
+#         eff = self.kwargs.get("effort")
 
-        queryset = (
-            FN123.objects.select_related(
-                "species", "effort", "effort__sample", "effort__sample__project"
-            )
-            .filter(effort__sample__project__slug=slug)
-            .exclude(species__spc="000")
-        )
-        # this is also a hack - move the list by project out to its own endpoint!
-        if sam:
-            queryset = queryset.filter(effort__sample__sam=sam)
-        if eff:
-            queryset = queryset.filter(effort__eff=eff)
+#         queryset = (
+#             FN123.objects.select_related(
+#                 "species", "effort", "effort__sample", "effort__sample__project"
+#             )
+#             .filter(effort__sample__project__slug=slug)
+#             .exclude(species__spc="000")
+#         )
+#         # this is also a hack - move the list by project out to its own endpoint!
+#         if sam:
+#             queryset = queryset.filter(effort__sample__sam=sam)
+#         if eff:
+#             queryset = queryset.filter(effort__eff=eff)
 
-        return queryset
+#         return queryset
 
-    def get_serializer_context(self):
-        """to create a new catch count, we have to make the effort available in
-        the serializer's context"""
+#     def get_serializer_context(self):
+#         """to create a new catch count, we have to make the effort available in
+#         the serializer's context"""
 
-        context = super(CatchCountList, self).get_serializer_context()
-        slug = self.kwargs.get("slug", "").lower()
-        sam = self.kwargs.get("sample")
-        eff = self.kwargs.get("effort")
+#         context = super(CatchCountList, self).get_serializer_context()
+#         slug = self.kwargs.get("slug", "").lower()
+#         sam = self.kwargs.get("sample")
+#         eff = self.kwargs.get("effort")
 
-        if sam and eff:
-            effort = FN122.objects.select_related("sample", "sample__project").get(
-                sample__project__slug=slug, sample__sam=sam, eff=eff
-            )
-            context.update({"effort": effort})
+#         if sam and eff:
+#             effort = FN122.objects.select_related("sample", "sample__project").get(
+#                 sample__project__slug=slug, sample__sam=sam, eff=eff
+#             )
+#             context.update({"effort": effort})
 
-        return context
+#         return context
 
 
 # class BioSampleList(generics.ListCreateAPIView):
@@ -318,7 +325,7 @@ class CatchCountList(generics.ListCreateAPIView):
 
 class NetSetList(generics.ListAPIView):
     """A read-only endpoint to return net set objects.  Accepts query
-    parameter filters for year, proejct codes, site depth, lift and
+    parameter filters for year, project codes, site depth, lift and
     set dates and times, gear types, and grid(s).
 
     """
@@ -342,9 +349,39 @@ class NetSetList(generics.ListAPIView):
     ).all()
 
 
+class EffortList(generics.ListAPIView):
+    """A read-only endpoint to return effort (gill net panels or trap net
+    lifts) objects.  Accepts query parameter filters for year, project
+    codes, site depth, lift and set dates and times, gear types, and
+    grid(s).
+
+    """
+
+    serializer_class = FN122Serializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN122Filter
+    queryset = FN122.objects.select_related("sample", "sample__project")
+
+
+class CatchCountList(generics.ListAPIView):
+    """A read-only endpoint to return net set objects.  Accepts query
+    parameter filters for year, project codes, site depth, lift and
+    set dates and times, gear types, and grid(s).
+
+    """
+
+    serializer_class = FN123Serializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN123Filter
+
+    queryset = FN123.objects.select_related(
+        "species", "effort", "effort__sample", "effort__sample__project"
+    ).exclude(species__spc="000")
+
+
 class BioSampleList(generics.ListAPIView):
     """A read-only endpoint to return net set objects.  Accepts query
-    parameter filters for year, proejct codes, site depth, lift and
+    parameter filters for year, project codes, site depth, lift and
     set dates and times, gear types, and grid(s).
 
     """

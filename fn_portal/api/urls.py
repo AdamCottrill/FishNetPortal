@@ -12,7 +12,7 @@
 """
 
 
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from rest_framework import routers
 
@@ -35,34 +35,30 @@ from .views import (
     FN125DetailView,
 )
 
+PRJ_CD_REGEX = r"(?P<prj_cd>[A-Za-z0-9]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$"
+
 app_name = "fn_portal_api"
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register("project", FN011ViewSet)
+router.register("fn011", FN011ViewSet)
 
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path("", include(router.urls)),
-    path("species_list/", SpeciesList.as_view(), name="species-list"),
-    # these three urls are configured  with slug at the end. Is this what we want?
-    path(
-        "catch_counts/<slug:slug>/",
-        CatchCountList.as_view(),
-        name="project-catch-counts",
-    ),
     # =========================
     # READONLY ListViews:
-    path("fn121/", NetSetList.as_view(), name="netset-list"),
-    path("fn125/", BioSampleList.as_view(), name="biosample-list"),
+    path("species_list/", SpeciesList.as_view(), name="species_list"),
+    path("fn121/", NetSetList.as_view(), name="netset_list"),
+    path("fn122/", EffortList.as_view(), name="effort_list"),
+    path("fn123/", CatchCountList.as_view(), name="catchcount_list"),
+    path("fn125/", BioSampleList.as_view(), name="biosample_list"),
     # =========================
     # CRUD ENDPOINTS:
-    # these urls are configured <prj_cd>/<sam>/<eff>
-    # path("<slug:slug>/samples/", NetSetList.as_view(), name="project-samples2"),
     # FN121
-    path("<slug:prj_cd>/", FN121ListView.as_view(), name="FN121_listview"),
+    re_path(PRJ_CD_REGEX, FN121ListView.as_view(), name="FN121_listview"),
     path("fn121/<slug:slug>/", FN121DetailView.as_view(), name="FN121_detailview"),
     # FN122
     path("<slug:prj_cd>/<str:sample>", FN122ListView.as_view(), name="FN122_listview"),
