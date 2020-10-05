@@ -16,8 +16,11 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js" integrity="sha256-fNoRrwkP2GuYPbNSJmMJOCyfRB2DhPQe0rGTgzRsyso=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
 
     <script src="{% static 'leaflet-bubble.js' %}"></script>
 
@@ -445,7 +448,7 @@
          var effdt1Catch = effdt1Dim.group().reduceSum(function(d) {return d.catcnt;});
 
          netCount.valueAccessor(function (x) {return x; })
-                                  .group(bin_counter(netGroup));
+                 .group(bin_counter(netGroup));
 
          speciesCount.valueAccessor(function (x) { return x; })
                      .group(bin_counter(speciesCatchGroup));
@@ -506,13 +509,13 @@
 
 
          sidepChart.width(width)
-                   .height(height)
-                   .dimension(sidepDim)
-                   .group(sidepGroup)
-                   .x(d3.scale.linear().domain([0,100]))
-                   .yAxisLabel('Total Catch')
-                   .elasticX(true)
-                   .render();
+                      .height(height)
+                      .dimension(sidepDim)
+                      .group(sidepGroup)
+                      .x(d3.scale.linear().domain([0,100]))
+                      .yAxisLabel('Total Catch')
+                      .elasticX(true)
+                      .render();
 
          //update the filter elements on the page to show the current filters
          sidepChart.renderlet(function(chart) {
@@ -528,13 +531,13 @@
 
 
          gearCatchChart.width(width)
-                       .height(height)
-                       .dimension(gearDim)
-                       .group(gearCatchGroup)
-                       .x(d3.scale.linear().domain([0,100]))
-                       .elasticX(true)
-             //.colors(d3.scale.ordinal().range('blue'))
-                       .render();
+                   .height(height)
+                   .dimension(gearDim)
+                   .group(gearCatchGroup)
+                   .x(d3.scale.linear().domain([0,100]))
+                   .elasticX(true)
+         //.colors(d3.scale.ordinal().range('blue'))
+                   .render();
 
          //update the filter elements on the page to show the current filters
          gearCatchChart.renderlet(function(chart) {
@@ -563,13 +566,13 @@
 
 
          effdt1Chart.width(width * 2)
-                   .height(height)
-                   .dimension(effdt1Dim)
-                   .group(effdt1Group)
+                    .height(height)
+                    .dimension(effdt1Dim)
+                    .group(effdt1Group)
                     .x(d3.time.scale().domain([minDate,maxDate]))
                     .yAxisLabel('Total Catch')
-                   .elasticX(true)
-                   .render();
+                    .elasticX(true)
+                    .render();
 
          effdt1Chart.xAxis().tickFormat(d3.time.format('%b-%d'));
 
@@ -655,7 +658,7 @@
                          "lift_date": mydateformat(d.lift_date),
                          "total_catch": d.total_catch,
                          'species':spc_list
-                     }});
+                 }});
              });
 
              var geojson =  {"type": "FeatureCollection",
@@ -693,12 +696,13 @@
                  }
              };
 
-             L.mapbox.accessToken = 'pk.eyJ1IjoiYWNvdHRyaWxsIiwiYSI6ImNpazVmb3Q2eDAwMWZpZm0yZTQ1cjF3NTkifQ.Pb1wCYs0lKgjnTGz43DjVQ';
-             // Replace 'mapbox.streets' with your map id.
-             var mapboxTiles = L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + L.mapbox.accessToken, {
-                 attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
+
+             // add the OpenStreetMap tiles
+             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                 attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
              }).addTo(map);
 
+             
              var netsetMarkers = new L.FeatureGroup();
              // this will get a point for each of the original net sets:
              var netsetPoints = get_net_set_points(data);
@@ -758,20 +762,20 @@
          //        DATA TABLE
 
          dataTable.dimension(speciesDim)
-                              .group(function(d){ return "Catch Table"})
-                              .size(100)
-                              .columns([
-                                  function (d) { return d.prj_cd; },
-                                  function (d) { return d.sam; },
-                                  function (d) { return d.eff; },
-                                  function (d) { return d.spc; },
-                                  function (d) { return d.grp; },
-                                  function (d) { return d.catcnt; }
-                              ])
-                              .sortBy(function(d){
-                                  return [d.prj_cd, d.sam, d.eff, d.spc].join();
-                              })
-                              .order(d3.descending);
+                  .group(function(d){ return "Catch Table"})
+                  .size(100)
+                  .columns([
+                      function (d) { return d.prj_cd; },
+                      function (d) { return d.sam; },
+                      function (d) { return d.eff; },
+                      function (d) { return d.spc; },
+                      function (d) { return d.grp; },
+                      function (d) { return d.catcnt; }
+                  ])
+                  .sortBy(function(d){
+                      return [d.prj_cd, d.sam, d.eff, d.spc].join();
+                  })
+                  .order(d3.descending);
 
          dataTable.on("renderlet", function(table) {
              table.selectAll('.dc-table-group').remove();

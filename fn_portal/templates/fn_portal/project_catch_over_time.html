@@ -16,91 +16,89 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
-    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
-
-    <script src="{% static 'leaflet-bubble.js' %}"></script>
 
 {% endblock %}
 
 {% block sidebar %}
 
-{% sidebar_projects %}
+    {% sidebar_projects %}
 
 {% endblock %}
 
 {% block content  %}
 
-<h2>Catch in Projects like "{{ project.prj_cd|slice:":6" }}YY{{ project.prj_cd|slice:"8:" }}"</h2>
+    <div class="container">
+        
+        <h2>Catch in Projects like "{{ project.prj_cd|slice:":6" }}YY{{ project.prj_cd|slice:"8:" }}"</h2>
 
-<style type="text/css" media="screen">
- .dc-chart g.row text {fill: black;}
-}
+        <style type="text/css" media="screen">
+         .dc-chart g.row text {fill: black;}
+         }
 
-</style>
-
-
-<div id="catch-row" class="row" >
-                        <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right">Reset All</a>
-    <div id="catch" class="col-md-12" >
-        <div id="catch-over-time">
-            <strong>Catch-Over-Time</strong>
-            <a class="reset" href="javascript:catchTimeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-</div>
-
-<div id="catch-row" class="row" >
-    <div id="catch" class="col-md-6" >
-        <div id="spc-catch-row">
-            <strong>Species Catch:</strong>
-            <a class="reset" href="javascript:spcCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-        </div>
-    </div>
+        </style>
 
 
-    <div id="mesh-size" class="col-md-6" >
-        <div id="eff-catch-row">
-            <strong>Mesh Size (EFF):</strong>
-            <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-            <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
-                </label>
+        <div id="catch-row" class="row" >
+            <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm pull-right">Reset All</a>
+            <div id="catch" class="col-md-12" >
+                <div id="catch-over-time">
+                    <strong>Catch-Over-Time</strong>
+                    <a class="reset" href="javascript:catchTimeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+        <div id="catch-row" class="row" >
+            <div id="catch" class="col-md-6" >
+                <div id="spc-catch-row">
+                    <strong>Species Catch:</strong>
+                    <a class="reset" href="javascript:spcCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
 
 
-<div id="filter-row" class="row" >
-    <div class="col-md-6" >
-        <div id="sidep-chart">
-            <strong>Site Depth(m):</strong>
-            <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
+            <div id="mesh-size" class="col-md-6" >
+                <div id="eff-catch-row">
+                    <strong>Mesh Size (EFF):</strong>
+                    <a class="reset" href="javascript:effCatchChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                    <div id="mesh-group-btn" class="btn-group btn-group-xs pull-right" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="options" id="all" autocomplete="off" checked> All Meshes
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="radio" name="options" id="index_only" autocomplete="off"> Index Meshes
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
 
-    <div class="col-md-6" >
-        <div id="month-chart">
-            <strong>By Month:</strong>
-            <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
+
+        <div id="filter-row" class="row" >
+            <div class="col-md-6" >
+                <div id="sidep-chart">
+                    <strong>Site Depth(m):</strong>
+                    <a class="reset" href="javascript:sidepChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6" >
+                <div id="month-chart">
+                    <strong>By Month:</strong>
+                    <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
         </div>
+
     </div>
-
-
-</div>
-
-
 
 <script type="text/javascript">
 
