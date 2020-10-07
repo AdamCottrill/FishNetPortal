@@ -6,6 +6,7 @@ The will be used in both views and api serializers.
 import django_filters
 
 from .models import FN011, FN121, FN122, FN123, FN125
+from common.models import Species
 
 
 class ValueInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
@@ -14,6 +15,23 @@ class ValueInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
 
 class NumberInFilter(django_filters.BaseInFilter, django_filters.NumberFilter):
     pass
+
+
+class SpeciesFilter(django_filters.FilterSet):
+
+    spc = ValueInFilter(field_name="spc")
+
+    spc_nmco_like = django_filters.CharFilter(
+        field_name="spc_nmco", lookup_expr="icontains"
+    )
+
+    spc_nmsc_like = django_filters.CharFilter(
+        field_name="spc_nmsc", lookup_expr="icontains"
+    )
+
+    class Meta:
+        model = Species
+        fields = ["spc", "spc_nmco", "spc_nmsc"]
 
 
 class FN011Filter(django_filters.FilterSet):
@@ -26,13 +44,51 @@ class FN011Filter(django_filters.FilterSet):
     year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
     first_year = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
     last_year = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
+
+    start_date = django_filters.DateFilter(
+        field_name="prj_date0", help_text="format: yyyy-mm-dd"
+    )
+    start_date_gte = django_filters.DateFilter(
+        field_name="prj_date0", lookup_expr="gte", help_text="format: yyyy-mm-dd"
+    )
+    start_date_lte = django_filters.DateFilter(
+        field_name="prj_date0", lookup_expr="lte", help_text="format: yyyy-mm-dd"
+    )
+
+    end_date = django_filters.DateFilter(
+        field_name="prj_date1", help_text="format: yyyy-mm-dd"
+    )
+    end_date_gte = django_filters.DateFilter(
+        field_name="prj_date1", lookup_expr="gte", help_text="format: yyyy-mm-dd"
+    )
+    end_date_lte = django_filters.DateFilter(
+        field_name="prj_date1", lookup_expr="lte", help_text="format: yyyy-mm-dd"
+    )
+
     prj_cd = django_filters.CharFilter(lookup_expr="icontains")
+
+    prj_cd_in = ValueInFilter(field_name="prj_cd")
+
+    prj_cd_like = django_filters.CharFilter(
+        field_name="prj_cd", lookup_expr="icontains"
+    )
+
+    prj_nm_like = django_filters.CharFilter(
+        field_name="prj_nm", lookup_expr="icontains"
+    )
 
     lake = django_filters.CharFilter(field_name="lake__abbrev", lookup_expr="iexact")
     prj_ldr = django_filters.CharFilter(
         field_name="prj_ldr__username", lookup_expr="iexact"
     )
     suffix = django_filters.CharFilter(field_name="prj_cd", lookup_expr="endswith")
+
+    spc_caught = ValueInFilter(field_name="samples__effort__catch__species__spc")
+
+    # spc_caught
+    # spc_sampled
+    # gr
+    # grtp
 
     # source = ValueInFilter(field_name="source", lookup_expr="iexact")
 
@@ -41,10 +97,10 @@ class FN011Filter(django_filters.FilterSet):
         fields = [
             "year",
             "prj_cd",
-            # "prj_nm",
+            "prj_nm",
             "prj_ldr",
-            # "prj_date0",
-            # "prj_date1",
+            "prj_date0",
+            "prj_date1",
             "lake",
             "source",
         ]
