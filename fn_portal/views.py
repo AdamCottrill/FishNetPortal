@@ -1,13 +1,13 @@
 # from collections import Counter
 # from django.http import HttpResponse
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Sum, F, Count, Q
 from django.views.generic import ListView
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-
 
 # from django.core import serializers
 from django.db import connection
@@ -21,6 +21,8 @@ from .models import FN011, FN013, FN121, FN123, Gear, Species
 from .forms import GearForm
 from .filters import FN011Filter
 
+
+User = get_user_model()
 
 # ==============================================
 #             UTILS

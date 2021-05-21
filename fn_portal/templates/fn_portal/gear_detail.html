@@ -148,10 +148,10 @@
                                                         <td> {{eff.grlen |default_if_none:"" }} </td>
                                                         <td> {{eff.grht  |default_if_none:"" }} </td>
                                                         <td> {{eff.grwid |default_if_none:"" }} </td>
-                                                        <td> {{eff.grcol |default_if_none:"" }} </td>
-                                                        <td> {{eff.grmat |default_if_none:"" }} </td>
-                                                        <td> {{eff.gryarn |default_if_none:"" }} </td>
-                                                        <td> {{eff.grknot |default_if_none:"" }} </td>
+                                                        <td> {{eff.get_grcol_display |default_if_none:"" }} </td>
+                                                        <td> {{eff.get_grmat_display |default_if_none:"" }} </td>
+                                                        <td> {{eff.get_gryarn_display |default_if_none:"" }} </td>
+                                                        <td> {{eff.get_grknot_display |default_if_none:"" }} </td>
                                                         <td> {{eff.eff_des |default_if_none:"" }} </td>
                                                     </tr>
                                                 {% endfor %}
