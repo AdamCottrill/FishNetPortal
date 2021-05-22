@@ -28,7 +28,7 @@ DATADIR = "c:/Users/COTTRILLAD/1work/Python/djcode/apps/fn_portal/utils/gear_tab
 
 TRG_PARS = {
     "host": "localhost",
-    "database": "fn_portal",
+    "database": "gldjango",
     "user": "cottrillad",
     "password": "django123",
 }
@@ -98,7 +98,7 @@ trg_conn = pg2.connect(**TRG_PARS)
 trg_cursor = trg_conn.cursor()
 
 
-trg_cursor.executemany(sql, [x[:1] for x in data])
+trg_cursor.executemany(sql, [x[1:] for x in data])
 
 trg_conn.commit()
 
@@ -131,11 +131,12 @@ rs = trg_cursor.fetchall()
 gearfamily_map = {x[1]: x[0] for x in rs}
 
 
-sql = "select id, username from auth_user"
-trg_cursor.execute(sql)
-rs = trg_cursor.fetchall()
+# sql = "select id, username from auth_user"
+# trg_cursor.execute(sql)
+# rs = trg_cursor.fetchall()
 
-user_map = {x[1]: x[0] for x in rs}
+# user_map = {x[1]: x[0] for x in rs}
+
 
 gear_map = {}
 

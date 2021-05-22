@@ -9,7 +9,7 @@
 CREATE ROLE glb_readonly;
 
 GRANT CONNECT
-  ON database fn_portal
+  ON database gldjango
   TO glb_readonly;
 
 GRANT USAGE
@@ -59,7 +59,7 @@ commit;
 
 
 CREATE USER glb_user
-WITH password 'fwsb';
+WITH password 'fwsb2020';
 
 -- add our user to our group
 GRANT glb_readonly
