@@ -31,19 +31,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "+$#d4bga+%7h2xd@9d@o51#vs7q5527lehp0i##_je8c*^)t#9"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-
-ALLOWED_HOSTS = ["172.16.28.181", "142.143.160.42", "127.0.0.1"]
-
 # Application definition
-
-
-DJANGO_APPS = (
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,9 +41,9 @@ DJANGO_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.gis",
-)
+]
 
-THIRD_PARTY_APPS = (
+THIRD_PARTY_APPS = [
     #    'djgeojson',
     #    'leaflet',
     "django_filters",
@@ -63,10 +52,12 @@ THIRD_PARTY_APPS = (
     # "widget_tweaks",
     "corsheaders",
     "common",
-)
+]
 
 
-MY_APPS = ("fn_portal",)
+MY_APPS = [
+    "fn_portal",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 

@@ -2,32 +2,31 @@
 
 from collections import OrderedDict
 
-from rest_framework import viewsets, generics
-
+from django.http import Http404
+from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag, Species
+from rest_framework import generics, viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-
-from fn_portal.models import Species, FN011, FN121, FN122, FN123, FN125, FN125Tag
-from .serializers import (
-    SpeciesSerializer,
-    FN011Serializer,
-    FN121Serializer,
-    FN122Serializer,
-    FN123Serializer,
-    FN125Serializer,
-)
 from ..filters import (
-    SpeciesFilter,
     FN011Filter,
     FN121Filter,
     FN121InProjectFilter,
     FN122Filter,
     FN123Filter,
     FN125Filter,
+    SpeciesFilter,
 )
 from .permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
+from .serializers import (
+    FN011Serializer,
+    FN121Serializer,
+    FN122Serializer,
+    FN123Serializer,
+    FN125Serializer,
+    SpeciesSerializer,
+)
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -74,8 +73,7 @@ class FN011ListView(generics.ListAPIView):
 
 
 class FN011DetailView(generics.RetrieveAPIView):
-    """A read-only endpoint to return a single project object.
-    """
+    """A read-only endpoint to return a single project object."""
 
     serializer_class = FN011Serializer
     lookup_field = "slug"
@@ -207,19 +205,21 @@ class FN121ListView(generics.ListCreateAPIView):
         Arguments:
         - `self`:
         """
-
         prj_cd = self.kwargs.get("prj_cd", "").lower()
+        try:
+            project = FN011.objects.defer(
+                "lake__geom",
+                "lake__geom_ontario",
+                "lake__envelope",
+                "lake__envelope_ontario",
+                "lake__centroid",
+                "lake__centroid_ontario",
+            ).get(slug=prj_cd)
 
-        project = FN011.objects.defer(
-            "lake__geom",
-            "lake__geom_ontario",
-            "lake__envelope",
-            "lake__envelope_ontario",
-            "lake__centroid",
-            "lake__centroid_ontario",
-        ).get(slug=prj_cd)
+            return project
 
-        return project
+        except FN011.DoesNotExist:
+            raise Http404
 
     def get_queryset(self):
         """
@@ -325,8 +325,7 @@ class FN123ListView(generics.ListCreateAPIView):
     permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
 
     def get_queryset(self):
-        """
-        """
+        """"""
         prj_cd = self.kwargs.get("prj_cd", "").lower()
 
         sam = self.kwargs.get("sample")
@@ -428,9 +427,7 @@ class FN125ListView(generics.ListCreateAPIView):
         return context
 
     def get_queryset(self):
-        """
-
-        """
+        """"""
         prj_cd = self.kwargs.get("prj_cd", "").lower()
 
         sam = self.kwargs.get("sample")

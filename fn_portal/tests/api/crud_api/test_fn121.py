@@ -56,8 +56,7 @@ from ..fixtures import project, lake, grid, net_sets, api_client, users
 
 @pytest.fixture
 def netset_data(grid):
-    """A fixture that returns a dictionary corresponding to a net set object.
-    """
+    """A fixture that returns a dictionary corresponding to a net set object."""
 
     netset_data = {
         "sam": "16",
@@ -117,7 +116,7 @@ def test_fn121_listview_none(api_client, project, net_sets):
 
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": prj_cd})
     response = api_client.get(url)
-    assert response.status_code == status.HTTP_404_NOT_
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 # parameters for our list filter test.  Filter, value, and the expected
@@ -257,7 +256,7 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.secchi == netset_data["secchi"]
 
     grid = fn121.grid
-    assert grid.grid == netset_data["grid"]["grid"]
+    assert str(grid.grid) == netset_data["grid"]["grid"]
     assert grid.slug == netset_data["grid"]["slug"]
 
 
@@ -269,8 +268,7 @@ usernames = [None, "gcostanza", "hsimpson", "bgumble", "mburns"]
 def test_fn121_detailview_get_permissions(
     api_client, project, net_sets, netset_data, username
 ):
-    """a get request should be available to anyone.
-    """
+    """a get request should be available to anyone."""
 
     net_set = net_sets[0]
 
@@ -400,8 +398,7 @@ def test_fn121_update(api_client, project, net_sets):
 @pytest.mark.parametrize("username", usernames)
 @pytest.mark.django_db
 def test_fn121_detailview_destroy_permissions(api_client, project, net_sets, username):
-    """A delete request should only be available to authorized users.
-    """
+    """A delete request should only be available to authorized users."""
 
     net_set = net_sets[0]
 

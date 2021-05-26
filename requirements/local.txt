@@ -4,62 +4,132 @@
 #
 #    pip-compile --output-file=local.txt base.in local.in
 #
-atomicwrites==1.4.0       # via pytest
-attrs==19.3.0             # via pytest
-certifi==2020.4.5.1       # via requests
-chardet==3.0.4            # via requests
-click==7.1.2              # via flask, pip-tools
-colorama==0.4.3           # via pytest
-coreapi==2.3.3            # via drf-yasg
-coreschema==0.0.4         # via coreapi, drf-yasg
-coverage==5.1             # via pytest-cov
-django-cors-headers==3.3.0  # via -r base.in
-django-debug-toolbar==2.2  # via -r local.in
-django-filter==2.2.0      # via -r base.in
-django==2.2.12            # via -r base.in, django-cors-headers, django-debug-toolbar, django-filter, djangorestframework, drf-yasg
-djangorestframework==3.11.0  # via -r base.in, drf-yasg
-drf-yasg==1.17.1          # via -r base.in
-factory-boy==2.12.0       # via -r local.in
-faker==4.1.0              # via factory-boy
-flask==1.1.2              # via geos
-file:///C:/Users/COTTRILLAD/Downloads/GDAL-3.0.4-cp37-cp37m-win32.whl  # via -r local.in
-geos==0.2.2               # via -r local.in
-idna==2.9                 # via requests
-importlib-metadata==1.6.0  # via pluggy, pytest
-inflection==0.5.1         # via drf-yasg
-itsdangerous==1.1.0       # via flask
-itypes==1.2.0             # via coreapi
-jinja2==2.11.2            # via coreschema, flask
-lxml==4.5.1               # via geos
-markdown==3.1.1           # via -r base.in
-markupsafe==1.1.1         # via jinja2
-more-itertools==8.3.0     # via pytest
-packaging==20.4           # via drf-yasg, pytest
-pillow==7.1.2             # via geos
-pip-tools==5.1.2          # via -r local.in
-pluggy==0.13.1            # via pytest
-psycopg2==2.8.5           # via -r base.in
-py==1.8.1                 # via pytest
-pyodbc==4.0.30            # via -r local.in
-pyparsing==2.4.7          # via packaging
-pytest-cov==2.8.1         # via -r local.in
-pytest-django==3.9.0      # via -r local.in
-pytest==5.4.2             # via -r local.in, pytest-cov, pytest-django
-python-dateutil==2.8.1    # via faker
-pytz==2020.1              # via django
-requests==2.23.0          # via coreapi
-ruamel.yaml.clib==0.2.2   # via ruamel.yaml
-ruamel.yaml==0.16.12      # via drf-yasg
-six==1.14.0               # via drf-yasg, packaging, pip-tools, python-dateutil
-sqlparse==0.3.1           # via django, django-debug-toolbar
-text-unidecode==1.3       # via faker
-uritemplate==3.0.1        # via coreapi, drf-yasg
-urllib3==1.25.9           # via requests
-wcwidth==0.1.9            # via pytest
-werkzeug==1.0.1           # via flask
-xlrd==1.2.0               # via -r local.in
-zipp==3.1.0               # via importlib-metadata
+atomicwrites==1.4.0
+    # via pytest
+attrs==19.3.0
+    # via pytest
+certifi==2020.4.5.1
+    # via requests
+chardet==3.0.4
+    # via requests
+click==7.1.2
+    # via pip-tools
+colorama==0.4.3
+    # via pytest
+coreapi==2.3.3
+    # via drf-yasg
+coreschema==0.0.4
+    # via
+    #   coreapi
+    #   drf-yasg
+coverage==5.1
+    # via pytest-cov
+django-cors-headers==3.7.0
+    # via -r base.in
+django-debug-toolbar==3.2.1
+    # via -r local.in
+django-extensions==3.1.3
+    # via -r local.in
+django-filter==2.4.0
+    # via -r base.in
+django==2.2.23
+    # via
+    #   -r base.in
+    #   django-cors-headers
+    #   django-debug-toolbar
+    #   django-extensions
+    #   django-filter
+    #   djangorestframework
+    #   drf-yasg
+djangorestframework==3.12.4
+    # via
+    #   -r base.in
+    #   drf-yasg
+drf-yasg==1.20.0
+    # via -r base.in
+factory-boy==2.12.0
+    # via -r local.in
+faker==4.1.0
+    # via factory-boy
+file:///C:/Users/COTTRILLAD/1work/Python/djcode/apps/uglmu_common/dist/fwsb-common-0.2.2.tar.gz
+    # via -r base.in
+file:///C:/Users/COTTRILLAD/Downloads/GDAL-3.2.3-cp37-cp37m-win32.whl
+    # via -r base.in
+idna==2.9
+    # via requests
+importlib-metadata==1.6.0
+    # via
+    #   markdown
+    #   pluggy
+    #   pytest
+inflection==0.5.1
+    # via drf-yasg
+itypes==1.2.0
+    # via coreapi
+jinja2==2.11.2
+    # via coreschema
+markdown==3.3.4
+    # via -r base.in
+markupsafe==1.1.1
+    # via jinja2
+more-itertools==8.3.0
+    # via pytest
+packaging==20.4
+    # via
+    #   drf-yasg
+    #   pytest
+pip-tools==5.1.2
+    # via -r local.in
+pluggy==0.13.1
+    # via pytest
+psycopg2==2.8.6
+    # via -r base.in
+py==1.8.1
+    # via pytest
+pyodbc==4.0.30
+    # via -r local.in
+pyparsing==2.4.7
+    # via packaging
+pytest-cov==2.8.1
+    # via -r local.in
+pytest-django==3.9.0
+    # via -r local.in
+pytest==5.4.2
+    # via
+    #   -r local.in
+    #   pytest-cov
+    #   pytest-django
+python-dateutil==2.8.1
+    # via faker
+pytz==2020.1
+    # via django
+requests==2.23.0
+    # via coreapi
+ruamel.yaml.clib==0.2.2
+    # via ruamel.yaml
+ruamel.yaml==0.16.12
+    # via drf-yasg
+six==1.14.0
+    # via
+    #   packaging
+    #   pip-tools
+    #   python-dateutil
+sqlparse==0.3.1
+    # via
+    #   django
+    #   django-debug-toolbar
+text-unidecode==1.3
+    # via faker
+uritemplate==3.0.1
+    # via
+    #   coreapi
+    #   drf-yasg
+urllib3==1.25.9
+    # via requests
+wcwidth==0.1.9
+    # via pytest
+zipp==3.1.0
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
-# setuptools

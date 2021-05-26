@@ -5,38 +5,29 @@
 from main.settings.base import *
 
 import os
-
-# GEOS_LIBRARY_PATH = "c:/OSGeo4W/bin/geos_c.dll"
-# GDAL_LIBRARY_PATH = "C:/OSGeo4W/bin/gdal300.dll"
-
-OSGEO_VENV = "C:/1work/.virtualenv/fn_portal/Lib/site-packages/osgeo"
-GEOS_LIBRARY_PATH = os.path.join(OSGEO_VENV, "geos_c.dll")
-GDAL_LIBRARY_PATH = os.path.join(OSGEO_VENV, "gdal300.dll")
-os.environ["PATH"] += os.pathsep + str(OSGEO_VENV)
-
-# import os
-# import pickle
-
-# vars = {}
-# for key, value in os.environ.items():
-#     vars[key] = value
-
-# pickle.dump(vars, open("vars.py", "wb"))
-
-
 import sys
+
+# install gdal in virtualenv:
+VIRTUAL_ENV = os.environ["VIRTUAL_ENV"]
+OSGEO_VENV = os.path.join(VIRTUAL_ENV, "Lib/site-packages/osgeo")
+GEOS_LIBRARY_PATH = os.path.join(OSGEO_VENV, "geos_c.dll")
+GDAL_LIBRARY_PATH = os.path.join(OSGEO_VENV, "gdal302.dll")
+PROJ_LIB = os.path.join(VIRTUAL_ENV, "Lib/site-packages/osgeo/data/proj")
+
+os.environ["GDAL_DATA"] = os.path.join(VIRTUAL_ENV, "Lib/site-packages/osgeo/data/gdal")
+os.environ["PROJ_LIB"] = PROJ_LIB
+os.environ["PATH"] += os.pathsep + str(OSGEO_VENV)
 
 print("Using main.settngs.test....")
 print("sys.path={}".format(sys.path))
 
-
-SECRET_KEY = "testing"
+SECRET_KEY = "testing_secret_key"
 
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "fn_portal",
-        "USER": "cottrillad",
+        "USER": get_env_variable("PGUSER"),
         "PASSWORD": get_env_variable("PGPASSWORD"),
         "HOST": "localhost",
     }

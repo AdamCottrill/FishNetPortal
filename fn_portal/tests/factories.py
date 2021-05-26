@@ -24,7 +24,7 @@ from ..models import (
 )
 
 
-class LakeFactory(factory.DjangoModelFactory):
+class LakeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Lake
         django_get_or_create = ("abbrev",)
@@ -33,7 +33,7 @@ class LakeFactory(factory.DjangoModelFactory):
     abbrev = "HU"
 
 
-class Grid5Factory(factory.DjangoModelFactory):
+class Grid5Factory(factory.django.DjangoModelFactory):
     """
     A factory for 5-minute grid objects.
     """
@@ -54,7 +54,7 @@ class Grid5Factory(factory.DjangoModelFactory):
         return "{}-{:04d}".format(self.lake.abbrev.lower(), self.grid)
 
 
-class SpeciesFactory(factory.DjangoModelFactory):
+class SpeciesFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Species
         django_get_or_create = ("spc",)
@@ -64,9 +64,8 @@ class SpeciesFactory(factory.DjangoModelFactory):
     spc_nmsc = "Salvelinus nameychush"
 
 
-class FNProtocolFactory(factory.DjangoModelFactory):
-    """A factory for protocl objects.
-    """
+class FNProtocolFactory(factory.django.DjangoModelFactory):
+    """A factory for protocl objects."""
 
     class Meta:
         model = FNProtocol
@@ -76,7 +75,7 @@ class FNProtocolFactory(factory.DjangoModelFactory):
     abbrev = "FAP"
 
 
-class FN011Factory(factory.DjangoModelFactory):
+class FN011Factory(factory.django.DjangoModelFactory):
     """A factory for FN011 objects.  Project year, start date and end date
     are all generated after the fact based on project code.
     """
@@ -124,7 +123,7 @@ class FN011Factory(factory.DjangoModelFactory):
         return year
 
 
-class FN121Factory(factory.DjangoModelFactory):
+class FN121Factory(factory.django.DjangoModelFactory):
     """A factory for FN121 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -138,7 +137,7 @@ class FN121Factory(factory.DjangoModelFactory):
     sam = factory.Sequence(lambda n: "{:03d}".format(n))
 
 
-class FN122Factory(factory.DjangoModelFactory):
+class FN122Factory(factory.django.DjangoModelFactory):
     """A factory for FN122 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -152,7 +151,7 @@ class FN122Factory(factory.DjangoModelFactory):
     eff = factory.Sequence(lambda n: "{:03d}".format(n))
 
 
-class FN123Factory(factory.DjangoModelFactory):
+class FN123Factory(factory.django.DjangoModelFactory):
     """A factory for FN123 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -166,7 +165,7 @@ class FN123Factory(factory.DjangoModelFactory):
     grp = factory.Sequence(lambda n: "{:02d}".format(n))
 
 
-class FN125Factory(factory.DjangoModelFactory):
+class FN125Factory(factory.django.DjangoModelFactory):
     """A factory for FN125 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -180,7 +179,7 @@ class FN125Factory(factory.DjangoModelFactory):
     fish = factory.Sequence(lambda n: "{:03d}".format(n))
 
 
-class FN125TagFactory(factory.DjangoModelFactory):
+class FN125TagFactory(factory.django.DjangoModelFactory):
     """A factory for FNTag objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -197,7 +196,7 @@ class FN125TagFactory(factory.DjangoModelFactory):
     tagstat = "C"
 
 
-class FN125LampreyFactory(factory.DjangoModelFactory):
+class FN125LampreyFactory(factory.django.DjangoModelFactory):
     """A factory for FNTag objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -214,7 +213,7 @@ class FN125LampreyFactory(factory.DjangoModelFactory):
     lamijc_size = 35
 
 
-class FN126Factory(factory.DjangoModelFactory):
+class FN126Factory(factory.django.DjangoModelFactory):
     """A factory for FN126 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -230,7 +229,7 @@ class FN126Factory(factory.DjangoModelFactory):
     foodcnt = 6
 
 
-class FN127Factory(factory.DjangoModelFactory):
+class FN127Factory(factory.django.DjangoModelFactory):
     """A factory for FN127 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -245,7 +244,7 @@ class FN127Factory(factory.DjangoModelFactory):
     agea = 6
 
 
-class FN013Factory(factory.DjangoModelFactory):
+class FN013Factory(factory.django.DjangoModelFactory):
     """A factory for FN013 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -259,7 +258,7 @@ class FN013Factory(factory.DjangoModelFactory):
     gr = "TP99"
 
 
-class FN014Factory(factory.DjangoModelFactory):
+class FN014Factory(factory.django.DjangoModelFactory):
     """A factory for FN014 objects.  Only fields that are required or have
     been tested are currently inlcuded in this factory.
 
@@ -273,7 +272,7 @@ class FN014Factory(factory.DjangoModelFactory):
     eff = "00"
 
 
-class GearFamilyFactory(factory.DjangoModelFactory):
+class GearFamilyFactory(factory.django.DjangoModelFactory):
     """A factory for GearFamily objects.  Only fields that are required or
     have been tested are currently inlcuded in this factory.
 
@@ -288,7 +287,7 @@ class GearFamilyFactory(factory.DjangoModelFactory):
     gear_type = "GL"
 
 
-class GearFactory(factory.DjangoModelFactory):
+class GearFactory(factory.django.DjangoModelFactory):
     """A factory for Gear objects.  Only fields that are required or
     have been tested are currently inlcuded in this factory.
 
@@ -304,7 +303,7 @@ class GearFactory(factory.DjangoModelFactory):
     gr_des = "This is a fake gear used for testing."
 
 
-class SubGearFactory(factory.DjangoModelFactory):
+class SubGearFactory(factory.django.DjangoModelFactory):
     """A factory for SubGear objects.  Only fields that are required or
     have been tested are currently inlcuded in this factory.
 
@@ -319,7 +318,7 @@ class SubGearFactory(factory.DjangoModelFactory):
     eff = "051"
 
 
-class Gear2SubGearFactory(factory.DjangoModelFactory):
+class Gear2SubGearFactory(factory.django.DjangoModelFactory):
     """A factory for Gear2SubGear objects.  Only fields that are required or
     have been tested are currently inlcuded in this factory.
 
