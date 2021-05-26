@@ -174,3 +174,241 @@ class FN014(models.Model):
 
     def __str__(self):
         return "{}-{} ({})".format(self.gear.gr, self.eff, self.gear.project.prj_cd)
+
+
+class FN022(models.Model):
+    """Class to represent the seasons (temporal strata) used in each project."""
+
+    project = models.ForeignKey(
+        "FN011", related_name="seasons", on_delete=models.CASCADE
+    )
+    ssn = models.CharField(
+        help_text="Season Code", max_length=2, blank=False, db_index=True
+    )
+    ssn_des = models.CharField(
+        help_text="Season Description", max_length=60, blank=False
+    )
+    ssn_date0 = models.DateField(help_text="Season Start Date", blank=False)
+    ssn_date1 = models.DateField(help_text="Season End Date", blank=False)
+
+    v0 = models.CharField(max_length=4, blank=False)
+
+    slug = models.SlugField(blank=True, unique=True, editable=False)
+
+    class Meta:
+        verbose_name = "FN022 - Season"
+        ordering = ["ssn"]
+        unique_together = ["project", "ssn"]
+
+    def save(self, *args, **kwargs):
+        """"""
+
+        raw_slug = "-".join([self.project.prj_cd, self.ssn])
+
+        self.slug = slugify(raw_slug)
+        super(FN022, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """return the season name, code and project code associated with this
+        particular season."""
+
+        repr = "<Season: {} ({}) [{}]>"
+        return repr.format(self.ssn_des, self.ssn, self.project.prj_cd)
+
+    @property
+    def label(self):
+        """a string that will be used in serialized respoonse for this strata.
+        If both the ssn, and ssn des are available, return them, otherwise,
+        return just the snn code.
+
+        Arguments:
+        - `self`:
+
+        """
+        if self.ssn_des:
+            label = "{}-{}".format(self.ssn, self.ssn_des.title())
+        else:
+            label = "{}".format(self.ssn)
+        return label
+
+
+class FN026(models.Model):
+    """Class to represent the spatial strat used in a project."""
+
+    project = models.ForeignKey(
+        "FN011", related_name="spatial_strata", on_delete=models.CASCADE
+    )
+
+    label = models.CharField(max_length=110, blank=False, help_text="Space Label")
+
+    space = models.CharField(
+        max_length=2, blank=False, help_text="Space Code", db_index=True
+    )
+    space_des = models.CharField(
+        max_length=100, blank=False, help_text="Space Description"
+    )
+    space_siz = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="The relative size of a space (i.e. spatial stratum).",
+    )
+
+    area_lst = models.CharField(
+        max_length=100, blank=False, help_text="Space Description"
+    )
+    aru = models.CharField(
+        max_length=100, blank=False, help_text="Aquatic Resource Unit Id"
+    )
+    grdep_ge = models.FloatField(
+        blank=True, null=True, help_text="The lower limit of gear depth (in metres)."
+    )
+
+    grdep_lt = models.FloatField(
+        blank=True, null=True, help_text="The upper limit of gear depth (in metres)."
+    )
+
+    sidep_ge = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="The upper depth limit (in metres) of sites that belong to the corresponding spatial stratum",
+    )
+    sidep_lt = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="The lower depth limit (in metres) of sites that belong to the corresponding spatial stratum. ",
+    )
+
+    grid_ge = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="The lower limit of grid values belonging to a spatial stratum",
+    )
+    grid_lt = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="The upper limit of grid values belonging to a spatial stratum",
+    )
+
+    site_lst = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="A list of SITEs that belong to the corresponding spatial stratum",
+    )
+    sitp_lst = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="A list of site types, delimited by comma",
+    )
+
+    slug = models.SlugField(blank=True, unique=True, editable=False)
+
+    ddlat = models.FloatField(blank=True, null=True)
+    ddlon = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "FN026 - Spatial Strata"
+        verbose_name_plural = "FN026 - Spatial Strata"
+        ordering = ["space"]
+        unique_together = ["project", "space"]
+
+    def __str__(self):
+        """return the object type, the space name, the space code, and
+        project code of the project this record is assoicated with.
+
+        """
+
+        repr = "<Space: {} ({}) [{}]>"
+        return repr.format(self.space_des, self.space, self.project.prj_cd)
+
+    def save(self, *args, **kwargs):
+        """
+        Create a space label as a combination of the space description
+        and space code.
+        """
+
+        raw_slug = "-".join([self.project.prj_cd, self.space])
+
+        self.slug = slugify(raw_slug)
+
+        if self.space_des:
+            self.label = "{}-{}".format(self.space, self.space_des.title())
+        else:
+            self.label = "{}".format(self.space)
+        super(FN026, self).save(*args, **kwargs)
+
+
+class FN028(models.Model):
+    """Class to represent the fishing modes used in a project."""
+
+    project = models.ForeignKey("FN011", related_name="modes", on_delete=models.CASCADE)
+    mode = models.CharField(
+        help_text="Mode Code", max_length=2, blank=False, db_index=True
+    )
+    mode_des = models.CharField(
+        help_text="Fishing Mode Description", max_length=100, blank=False
+    )
+
+    gr = models.CharField(
+        help_text="Fishing Mode Description", max_length=4, blank=False
+    )
+    gruse = models.CharField(
+        help_text="Code to identify how a gear was used", max_length=2, blank=False
+    )
+    orient = models.CharField(help_text="Gear Orientation", max_length=2, blank=False)
+    effdur_ge = models.IntegerField(
+        blank=True, null=True, help_text="The minimum duration of a fishing effort."
+    )
+    effdur_lt = models.IntegerField(
+        blank=True, null=True, help_text="The maximum duration of a fishing effort."
+    )
+    efftm0_ge = models.TimeField(
+        blank=True,
+        null=True,
+        help_text="The earliest time of day that fishing effort starts",
+    )
+    efftm0_lt = models.TimeField(
+        blank=True,
+        null=True,
+        help_text="The latest time of day that fishing effort starts",
+    )
+
+    slug = models.SlugField(blank=True, unique=True, editable=False)
+
+    class Meta:
+        verbose_name = "FN028 - Fishing Mode"
+        ordering = ["mode"]
+        unique_together = ["project", "mode"]
+
+    def __str__(self):
+        """return the object type, the mode name, the mode code, and
+        project code of the project this record is assoicated with.
+
+        """
+
+        repr = "<FishingMode: {} ({}) [{}]>"
+        return repr.format(self.mode_des, self.mode, self.project.prj_cd)
+
+    @property
+    def label(self):
+        """a string that will be used in serialized response for this strata.
+        If both the mode, and mode_des are available, return them, otherwise,
+        return just the snn code.
+
+        Arguments:
+        - `self`:
+
+        """
+        if self.mode_des:
+            label = "{}-{}".format(self.mode, self.mode_des.title())
+        else:
+            label = "{}".format(self.mode)
+        return label
+
+    def save(self, *args, **kwargs):
+        """Create a unique slug for each fishing mode in this project."""
+
+        raw_slug = "-".join([self.project.prj_cd, self.mode])
+        self.slug = slugify(raw_slug)
+        super(FN028, self).save(*args, **kwargs)

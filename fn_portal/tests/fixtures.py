@@ -9,11 +9,24 @@ from .factories import (
     SpeciesFactory,
     LakeFactory,
     FN011Factory,
+    FN022Factory,
+    FN026Factory,
+    FN028Factory,
     FN121Factory,
     FN122Factory,
     FN123Factory,
     FN125Factory,
 )
+
+
+SCOPE = "function"
+
+
+@pytest.fixture(scope=SCOPE)
+def api_client():
+    from rest_framework.test import APIClient
+
+    return APIClient()
 
 
 @pytest.fixture
@@ -29,6 +42,40 @@ def project():
 
     prj_cd = "LHA_IA19_000"
     project = FN011Factory(prj_cd=prj_cd, prj_nm="Test Project")
+
+    ssn = "32"
+    ssn_des = "August"
+    ssn_date0 = datetime.strptime("2019-08-01", "%Y-%m-%d")
+    ssn_date1 = datetime.strptime("2019-08-31", "%Y-%m-%d")
+    FN022Factory(
+        project=project,
+        ssn=ssn,
+        ssn_des=ssn_des,
+        ssn_date0=ssn_date0,
+        ssn_date1=ssn_date1,
+    )
+
+    ssn = "33"
+    ssn_des = "September"
+    ssn_date0 = datetime.strptime("2019-09-01", "%Y-%m-%d")
+    ssn_date1 = datetime.strptime("2019-09-30", "%Y-%m-%d")
+    FN022Factory(
+        project=project,
+        ssn=ssn,
+        ssn_des=ssn_des,
+        ssn_date0=ssn_date0,
+        ssn_date1=ssn_date1,
+    )
+
+    FN026Factory(
+        project=project, space="S1", space_des="Space 1", ddlat=45.1, ddlon=-81.1
+    )
+    FN026Factory(
+        project=project, space="S2", space_des="Space 2", ddlat=45.2, ddlon=-81.2
+    )
+
+    FN028Factory(project=project, mode="m1", mode_des="Mode 1")
+    FN028Factory(project=project, mode="m2", mode_des="Mode 2")
 
     setdate = datetime(2019, 9, 15)
     liftdate = datetime(2019, 9, 16)

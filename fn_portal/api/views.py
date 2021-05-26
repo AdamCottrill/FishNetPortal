@@ -9,7 +9,17 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrR
 from rest_framework.response import Response
 
 from common.models import Species
-from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag
+from fn_portal.models import (
+    FN011,
+    FN121,
+    FN122,
+    FN123,
+    FN125,
+    FN125Tag,
+    FN022,
+    FN026,
+    FN028,
+)
 
 from ..filters import (
     FN011Filter,
@@ -23,6 +33,9 @@ from ..filters import (
 from .permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from .serializers import (
     FN011Serializer,
+    FN022Serializer,
+    FN026Serializer,
+    FN028Serializer,
     FN121Serializer,
     FN122Serializer,
     FN123Serializer,
@@ -93,6 +106,96 @@ class FN011DetailView(generics.RetrieveAPIView):
         )
         .all()
     )
+
+
+class FN022ListView(generics.ListAPIView):
+    """an api end point to list all of the seasons (FN022) associated with a
+    project."""
+
+    serializer_class = FN022Serializer
+
+    def get_queryset(self):
+        """"""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN022.objects.filter(project__slug=prj_cd.lower()).select_related(
+            "project"
+        )
+
+
+class FN022DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An api endpoint for get, put and delete endpoints for season
+    objects associated with a specfic project"""
+
+    lookup_field = "ssn"
+    serializer_class = FN022Serializer
+    permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
+
+    def get_queryset(self):
+        """return only those season objects associate with this project."""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN022.objects.filter(project__slug=prj_cd.lower()).select_related(
+            "project"
+        )
+
+
+class FN026ListView(generics.ListAPIView):
+    """an api end point to list all of the spaces (FN026) associated with a
+    project."""
+
+    serializer_class = FN026Serializer
+
+    def get_queryset(self):
+        """"""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN026.objects.filter(project__slug=prj_cd.lower())
+
+
+class FN026DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An api endpoint for get, put and delete endpoints for
+    space/area objects associated with a specfic project
+
+    """
+
+    lookup_field = "space"
+    serializer_class = FN026Serializer
+    permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
+
+    def get_queryset(self):
+        """"""
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN026.objects.filter(project__slug=prj_cd.lower())
+
+
+class FN028ListView(generics.ListAPIView):
+    """an api end point to list all of the fishing modes (FN022) associated with a
+    project."""
+
+    serializer_class = FN028Serializer
+
+    def get_queryset(self):
+        """"""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN028.objects.filter(project__slug=prj_cd.lower())
+
+
+class FN028DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An api endpoint for get, put and delete endpoints for fishing mode
+    objects associated with a specfic project.
+
+    """
+
+    lookup_field = "mode"
+    serializer_class = FN028Serializer
+    permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
+
+    def get_queryset(self):
+        """"""
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN028.objects.filter(project__slug=prj_cd.lower())
 
 
 class NetSetList(generics.ListAPIView):

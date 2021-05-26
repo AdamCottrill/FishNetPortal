@@ -5,7 +5,7 @@ from .user_factory import UserFactory
 
 from .common_factories import LakeFactory
 
-from ...models import FNProtocol, FN011, FN013, FN014
+from ...models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
 
 
 class FNProtocolFactory(factory.django.DjangoModelFactory):
@@ -93,3 +93,51 @@ class FN014Factory(factory.django.DjangoModelFactory):
 
     gear = factory.SubFactory(FN013Factory)
     eff = "00"
+
+
+class FN022Factory(factory.django.DjangoModelFactory):
+    """a factory for seasons"""
+
+    class Meta:
+        model = FN022
+        django_get_or_create = ["project", "ssn"]
+
+    project = factory.SubFactory(FN011Factory)
+    ssn = "01"
+    ssn_des = "Spring"
+
+    @factory.lazy_attribute
+    def ssn_date0(a):
+        datestring = "April 15, 2015"
+        ssn_date0 = datetime.datetime.strptime(datestring, "%B %d, %Y")
+        return ssn_date0
+
+    @factory.lazy_attribute
+    def ssn_date1(a):
+        datestring = "June 15, 2015"
+        ssn_date1 = datetime.datetime.strptime(datestring, "%B %d, %Y")
+        return ssn_date1
+
+
+class FN026Factory(factory.django.DjangoModelFactory):
+    """a factory for spatial strata"""
+
+    class Meta:
+        model = FN026
+        django_get_or_create = ["project", "space"]
+
+    space = "01"
+    space_des = "The Lake"
+    project = factory.SubFactory(FN011Factory)
+
+
+class FN028Factory(factory.django.DjangoModelFactory):
+    """a factory for fishing modes"""
+
+    class Meta:
+        model = FN028
+        django_get_or_create = ["project", "mode"]
+
+    mode = "01"
+    mode_des = "Gillnet 2-6 inch"
+    project = factory.SubFactory(FN011Factory)

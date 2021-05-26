@@ -3,6 +3,9 @@ import pytest
 from .factories import (
     SpeciesFactory,
     FN011Factory,
+    FN022Factory,
+    FN026Factory,
+    FN028Factory,
     FN121Factory,
     FN122Factory,
     FN123Factory,
@@ -32,6 +35,57 @@ def test_FN011_str():
 
     obj = FN011Factory(prj_cd=project_code, prj_nm=project_name)
     assert str(obj) == "{} ({})".format(project_name, project_code)
+
+
+@pytest.mark.django_db
+def test_FN022_str():
+    """Verify that a sesaon is represented by object type, season description,
+    season code, project code and for the associated project."""
+
+    ssn = "11"
+    ssn_des = "Early Summer"
+    prj_cd = "LHA_IA11_123"
+
+    project = FN011Factory.build(prj_cd=prj_cd)
+    season = FN022Factory.build(project=project, ssn=ssn, ssn_des=ssn_des)
+
+    shouldbe = "<Season: {} ({}) [{}]>".format(ssn_des, ssn, prj_cd)
+
+    assert str(season) == shouldbe
+
+
+def test_FN026_str():
+    """Verify that a spatial strata are represented by object type,
+    the space description, the space code and the project code
+    and for the associated project."""
+
+    prj_cd = "LHA_IA11_123"
+    space = "AB"
+    space_des = "the river"
+    project = FN011Factory.build(prj_cd=prj_cd)
+
+    spatial_strata = FN026Factory.build(
+        project=project, space=space, space_des=space_des
+    )
+    shouldbe = "<Space: {} ({}) [{}]>".format(space_des, space, prj_cd)
+
+    assert str(spatial_strata) == shouldbe
+
+
+def test_FN028_str():
+    """Verify that a fishing mode is represented by object type,
+    the mode description, the mode code and the project code
+    and for the associated project."""
+
+    prj_cd = "LHA_SC11_123"
+    mode = "AB"
+    mode_des = "trolling"
+    project = FN011Factory.build(prj_cd=prj_cd)
+
+    fishing_mode = FN028Factory.build(project=project, mode=mode, mode_des=mode_des)
+    shouldbe = "<FishingMode: {} ({}) [{}]>".format(mode_des, mode, prj_cd)
+
+    assert str(fishing_mode) == shouldbe
 
 
 @pytest.mark.django_db

@@ -6,6 +6,9 @@ from common.models import Lake, Species, Grid5
 
 from fn_portal.models import (
     FN011,
+    FN022,
+    FN026,
+    FN028,
     FN121,
     FN122,
     FN123,
@@ -51,6 +54,16 @@ class LakeSerializer(serializers.ModelSerializer):
         fields = ("lake_name", "abbrev")
 
 
+class SimpleFN011Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = FN011
+        lookup_field = "prj_cd"
+        fields = (
+            "prj_cd",
+            "prj_nm",
+        )
+
+
 # Serializers define the API representation.
 class FN011Serializer(serializers.ModelSerializer):
 
@@ -74,6 +87,60 @@ class FN011Serializer(serializers.ModelSerializer):
             "source",
             "lake",
             "comment0",
+        )
+
+
+class FN022Serializer(serializers.ModelSerializer):
+    """Class to serialize the seasons (temporal strata) used in each project."""
+
+    project = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="slug"
+    )
+
+    class Meta:
+        model = FN022
+        fields = ("slug", "project", "ssn", "ssn_des", "ssn_date0", "ssn_date1")
+
+
+class FN026Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = FN026
+        fields = (
+            "project",
+            "label",
+            "space",
+            "space_des",
+            "space_siz",
+            "area_lst",
+            "aru",
+            "grdep_ge",
+            "grdep_lt",
+            "sidep_ge",
+            "sidep_lt",
+            "grid_ge",
+            "grid_lt",
+            "site_lst",
+            "sitp_lst",
+            "ddlat",
+            "ddlon",
+        )
+
+
+class FN028Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = FN028
+        fields = (
+            "slug",
+            "project",
+            "mode",
+            "mode_des",
+            "gr",
+            "gruse",
+            "orient",
+            "effdur_ge",
+            "effdur_lt",
+            "efftm0_ge",
+            "efftm0_lt",
         )
 
 
@@ -128,9 +195,7 @@ class FN121Serializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        """We need a custom update method to handle grid
-
-        """
+        """We need a custom update method to handle grid"""
 
         grid_no = validated_data["grid"].get("grid")
         if grid_no != instance.grid.grid:
@@ -161,8 +226,7 @@ class FN121Serializer(serializers.ModelSerializer):
 
 
 class FN122Serializer(serializers.ModelSerializer):
-    """
-    """
+    """"""
 
     class Meta:
         model = FN122
