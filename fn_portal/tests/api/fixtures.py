@@ -16,8 +16,13 @@
 import pytest
 from datetime import datetime, time
 
-from ..factories import LakeFactory, Grid5Factory, FN011Factory, FN121Factory
-from ..user_factory import UserFactory
+from ..factories import (
+    LakeFactory,
+    Grid5Factory,
+    FN011Factory,
+    FN121Factory,
+    UserFactory,
+)
 
 
 @pytest.fixture
@@ -69,16 +74,14 @@ def project(users):
 
 @pytest.fixture
 def lake():
-    """
-    """
+    """"""
     lake = LakeFactory(lake_name="Lake Huron", abbrev="HU")
     return lake
 
 
 @pytest.fixture
 def grid(lake):
-    """
-    """
+    """"""
     grid = Grid5Factory(lake=lake, grid=1234)
     return grid
 

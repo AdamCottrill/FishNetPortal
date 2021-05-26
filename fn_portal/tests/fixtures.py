@@ -3,8 +3,9 @@ import pytest
 from datetime import datetime, time
 
 from ..models import FN123
-from .user_factory import UserFactory
+
 from .factories import (
+    UserFactory,
     SpeciesFactory,
     LakeFactory,
     FN011Factory,
@@ -17,8 +18,7 @@ from .factories import (
 
 @pytest.fixture
 def project():
-    """ fixture to setup a basic project - two net sets with three species in each.
-    """
+    """fixture to setup a basic project - two net sets with three species in each."""
 
     perch = SpeciesFactory(
         spc="331", spc_nmco="Yellow Perch", spc_nmsc="Perca flavescens"
@@ -76,8 +76,7 @@ def project():
 
 @pytest.fixture
 def somefish(project):
-    """ Add some fish to our project fixture - for those test that need it.
-    """
+    """Add some fish to our project fixture - for those test that need it."""
 
     fn123 = FN123.objects.get(
         effort__sample__project=project, effort__sample__sam=1, species__spc="334"

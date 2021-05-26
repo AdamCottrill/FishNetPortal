@@ -15,9 +15,9 @@ import json
 
 from datetime import datetime
 
-from common.models import Lake
+from common.models import Lake, Species
 
-from .models import FN011, FN013, FN121, FN123, Gear, Species
+from .models import FN011, FN013, FN121, FN123, Gear
 from .forms import GearForm
 from .filters import FN011Filter
 
@@ -53,8 +53,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 class ProjectList(ListView):
-    """
-    """
+    """"""
 
     # modified to accept tag argument
     #

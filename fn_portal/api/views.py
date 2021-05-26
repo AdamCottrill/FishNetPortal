@@ -3,11 +3,13 @@
 from collections import OrderedDict
 
 from django.http import Http404
-from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag, Species
 from rest_framework import generics, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+
+from common.models import Species
+from fn_portal.models import FN011, FN121, FN122, FN123, FN125, FN125Tag
 
 from ..filters import (
     FN011Filter,

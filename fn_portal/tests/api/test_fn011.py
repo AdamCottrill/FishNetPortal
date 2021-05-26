@@ -4,14 +4,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from fn_portal.tests.factories import FN011Factory, LakeFactory
-from ..user_factory import UserFactory
+from fn_portal.tests.factories import FN011Factory, LakeFactory, UserFactory
 
 
 @pytest.fixture
 def db_setup():
-    """
-    """
+    """"""
     homer = UserFactory(first_name="Homer", last_name="Simpson")
     bart = UserFactory(first_name="Bart", last_name="Simpson")
     huron = LakeFactory(lake_name="Huron", abbrev="HU")
