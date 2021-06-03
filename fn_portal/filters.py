@@ -5,7 +5,17 @@ The will be used in both views and api serializers.
 
 import django_filters
 
-from .models import FN011, FN121, FN122, FN123, FN125
+from .models import (
+    FN011,
+    FN121,
+    FN122,
+    FN123,
+    FN125,
+    FN125_Lamprey,
+    FN125Tag,
+    FN126,
+    FN127,
+)
 from common.models import Species
 
 
@@ -40,6 +50,7 @@ class FN011Filter(django_filters.FilterSet):
     # protocol
     # management area
     # Region of interest.
+    # within km of point proximity=0.5;POINT(45.5 -81.1)
 
     year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
     first_year = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
@@ -106,7 +117,7 @@ class FN011Filter(django_filters.FilterSet):
         ]
 
 
-class FN121InProjectFilter(django_filters.FilterSet):
+class FN121SubFilter(django_filters.FilterSet):
     """A fitlerset that allows us to select subsets of net set objects by
     net set attributes."""
 
@@ -181,16 +192,9 @@ class FN121InProjectFilter(django_filters.FilterSet):
         ]
 
 
-class FN121Filter(FN121InProjectFilter):
-    """Extends the FN121InProjectFilter to include additional fields that
-    are assoicated with parent objects. There is no point in filtering
-    net sets by year when they are all from the same project - by
-    definintion, they are all from the same year anyway.
-
-    inheriting from an existing filterset keeps the documentation
-    cleaner as it does not include filters that wouldn't really apply
-    to some endpoints.
-
+class FN121Filter(FN121SubFilter):
+    """Extends the FN121SubFilter to include additional fields that
+    are assoicated with parent objects.
     """
 
     year = django_filters.CharFilter(field_name="project__year", lookup_expr="exact")
@@ -227,7 +231,7 @@ class FN121Filter(FN121InProjectFilter):
         ]
 
 
-class FN122InProjectFilter(django_filters.FilterSet):
+class FN122SubFilter(django_filters.FilterSet):
     """A fitlerset that allows us to select subsets of catch count objects by
     by attributes of the catch counts (fn122 data only)"""
 
@@ -240,8 +244,8 @@ class FN122InProjectFilter(django_filters.FilterSet):
         fields = ["eff"]
 
 
-class FN122Filter(FN122InProjectFilter):
-    """A filter that is inherited from FN122InProjectFilter and allows
+class FN122Filter(FN122SubFilter):
+    """A filter that is inherited from FN122SubFilter and allows
     additional filters based on attributes of the parent tables
     (project, net set attributes).
 
@@ -337,7 +341,7 @@ class FN122Filter(FN122InProjectFilter):
         fields = ["eff"]
 
 
-class FN123InProjectFilter(django_filters.FilterSet):
+class FN123SubFilter(django_filters.FilterSet):
     """A fitlerset that allows us to select subsets of catch count objects by
     by attributes of the catch counts (fn123 data only)"""
 
@@ -349,8 +353,8 @@ class FN123InProjectFilter(django_filters.FilterSet):
         fields = ["species__spc", "grp"]
 
 
-class FN123Filter(FN123InProjectFilter):
-    """A filter that is inherited from FN123InProjectFilter and allows
+class FN123Filter(FN123SubFilter):
+    """A filter that is inherited from FN123SubFilter and allows
     additional filters based on attributes of the parent tables
     (project, net and effort Attributes).
 
@@ -466,7 +470,7 @@ class FN123Filter(FN123InProjectFilter):
         fields = ["species__spc", "grp"]
 
 
-class FN125InProjectFilter(django_filters.FilterSet):
+class FN125SubFilter(django_filters.FilterSet):
     """A fitlerset that allows us to select subsets of bio-sample objects by
     by attributes of the biological samples (fn125 data only)"""
 
@@ -496,7 +500,7 @@ class FN125InProjectFilter(django_filters.FilterSet):
         fields = ["sex", "mat", "gon", "tlen", "flen", "rwt", "clipc"]
 
 
-class FN125Filter(FN125InProjectFilter):
+class FN125Filter(FN125SubFilter):
     """A fitlerset that allows us to select subsets of bio-sample objects
     by attributes of the biological data as well as the parent tables:
     net set, effort, and catch attributes.
@@ -614,6 +618,638 @@ class FN125Filter(FN125InProjectFilter):
         field_name="catch__effort__sample__project__lake__abbrev", lookup_expr="iexact"
     )
 
+    tlen = django_filters.NumberFilter(field_name="fish__tlen")
+    tlen_gte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gte")
+    tlen_lte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lte")
+
+    flen = django_filters.NumberFilter(field_name="fish__flen")
+    flen_gte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gte")
+    flen_lte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lte")
+
+    rwt = django_filters.NumberFilter(field_name="fish__rwt")
+    rwt_null = django_filters.BooleanFilter(
+        field_name="fish__rwt", lookup_expr="isnull"
+    )
+    rwt_gte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gte")
+    rwt_lte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lte")
+
+    mat = ValueInFilter(field_name="fish__mat")
+    gon = ValueInFilter(field_name="fish__gon")
+    sex = ValueInFilter(field_name="fish__sex")
+    clipc = ValueInFilter(field_name="fish__clipc")
+
     class Meta:
         model = FN125
         fields = ["sex", "mat", "gon", "tlen", "flen", "rwt", "clipc"]
+
+
+class FN125LampreySubFilter(django_filters.FilterSet):
+    """A fitlerset that allows us to select subsets of lamprey records by
+    by attributes of the the lamprey wounds (fn125Lam data only)"""
+
+    lamijc_size = django_filters.NumberFilter(field_name="lamijc_size")
+    lamijc_size_gte = django_filters.NumberFilter(
+        field_name="lamijc_size", lookup_expr="gte"
+    )
+    lamijc_size_lte = django_filters.NumberFilter(
+        field_name="lamijc_size", lookup_expr="lte"
+    )
+    lamijc_size_gt = django_filters.NumberFilter(
+        field_name="lamijc_size", lookup_expr="gt"
+    )
+    lamijc_size_lt = django_filters.NumberFilter(
+        field_name="lamijc_size", lookup_expr="lt"
+    )
+
+    xlam = ValueInFilter(field_name="xlam")
+    lamijc = ValueInFilter(field_name="lamijc")
+    lamijc_type = ValueInFilter(field_name="lamijc_type")
+
+    class Meta:
+        model = FN125_Lamprey
+        fields = ["xlam", "lamijc", "lamijc_type", "lamijc_size"]
+
+
+class FN125LampreyFilter(FN125LampreySubFilter):
+    """A fitlerset that allows us to select subsets of lamprey wound records
+    by attributes of the wound as well as the parent tables:
+    net set, effort, and catch attributes.
+
+    """
+
+    # catch attributes:
+    grp = ValueInFilter(field_name="fish__catch__grp")
+    spc = ValueInFilter(field_name="fish__catch__species__spc")
+
+    # Effort Attributes
+    # we could add gear depth here if it was populated more regularly.
+    eff = ValueInFilter(field_name="fish__catch__effort__eff")
+
+    # net set attributes:
+
+    sidep_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="gte"
+    )
+    sidep_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="lte"
+    )
+
+    grtp = ValueInFilter(field_name="fish__catch__effort__sample__grtp")
+    gr = ValueInFilter(field_name="fish__catch__effort__sample__gr")
+
+    # grid is a little trick - requires us to filter lake too - user beware!
+    grid = NumberInFilter(field_name="fish__catch__effort__sample__grid__grid")
+
+    effdur_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="gte"
+    )
+    effdur_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="lte"
+    )
+
+    set_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0", help_text="format: yyyy-mm-dd"
+    )
+    set_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    set_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    lift_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1", help_text="format: yyyy-mm-dd"
+    )
+    lift_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    lift_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    set_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0", help_text="format: HH:MM"
+    )
+    set_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    set_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    lift_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1", help_text="format: HH:MM"
+    )
+    lift_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    lift_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    # project attributes
+    year = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="exact"
+    )
+    first_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="gte"
+    )
+    last_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    prj_cd = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd"
+    )
+
+    prj_cd_in = ValueInFilter(field_name="fish__catch__effort__sample__project__prj_cd")
+
+    prj_cd_like = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd",
+        lookup_expr="icontains",
+    )
+
+    lake = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__lake__abbrev",
+        lookup_expr="iexact",
+    )
+
+    class Meta:
+        model = FN125_Lamprey
+        fields = ["xlam", "lamijc", "lamijc_type", "lamijc_size"]
+
+
+class FN125TagSubFilter(django_filters.FilterSet):
+    """A fitlerset that allows us to select subsets of tag objects by
+    by attributes of the tag (fn125 tag data only)"""
+
+    tagid_like = ValueInFilter(field_name="tagid", lookup_expr="icontains")
+    tagdoc_like = ValueInFilter(field_name="tagdoc", lookup_expr="icontains")
+
+    tagstat = ValueInFilter(field_name="tagstat")
+    tagid = ValueInFilter(field_name="tagid")
+    tagdoc = ValueInFilter(field_name="tagdoc")
+
+    # consider splitting up tagdoc into consitiuent fields to make it
+    # easier to filter by colour, placement tag type and agency.
+
+    class Meta:
+        model = FN125Tag
+        fields = ["tagstat", "tagid", "tagdoc"]
+
+
+class FN125TagFilter(FN125TagSubFilter):
+    """A fitlerset that allows us to select subsets of tags objects
+    by attributes of the tag data as well as the parent tables:
+    net set, effort, catch and fish attributes.
+
+    """
+
+    # catch attributes:
+    grp = ValueInFilter(field_name="fish__catch__grp")
+    spc = ValueInFilter(field_name="fish__catch__species__spc")
+
+    # Effort Attributes
+    # we could add gear depth here if it was populated more regularly.
+    eff = ValueInFilter(field_name="fish__catch__effort__eff")
+
+    # net set attributes:
+
+    sidep_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="gte"
+    )
+    sidep_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="lte"
+    )
+
+    grtp = ValueInFilter(field_name="fish__catch__effort__sample__grtp")
+    gr = ValueInFilter(field_name="fish__catch__effort__sample__gr")
+
+    # grid is a little trick - requires us to filter lake too - user beware!
+    grid = NumberInFilter(field_name="fish__catch__effort__sample__grid__grid")
+
+    effdur_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="gte"
+    )
+    effdur_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="lte"
+    )
+
+    set_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0", help_text="format: yyyy-mm-dd"
+    )
+    set_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    set_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    lift_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1", help_text="format: yyyy-mm-dd"
+    )
+    lift_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    lift_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    set_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0", help_text="format: HH:MM"
+    )
+    set_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    set_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    lift_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1", help_text="format: HH:MM"
+    )
+    lift_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    lift_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    # project attributes
+    year = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="exact"
+    )
+    first_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="gte"
+    )
+    last_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    prj_cd = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd"
+    )
+
+    prj_cd_in = ValueInFilter(field_name="fish__catch__effort__sample__project__prj_cd")
+
+    prj_cd_like = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd",
+        lookup_expr="icontains",
+    )
+
+    lake = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__lake__abbrev",
+        lookup_expr="iexact",
+    )
+
+    class Meta:
+        model = FN125Tag
+        fields = ["tagstat", "tagid", "tagdoc"]
+
+
+class FN126SubFilter(django_filters.FilterSet):
+    """A fitlerset that allows us to select subsets of FN126 table (diet data) by
+    by attributes of the diet items (fn126 data only)"""
+
+    taxon_like = ValueInFilter(field_name="taxon", lookup_expr="icontains")
+    taxon = ValueInFilter(field_name="taxon")
+
+    foodcnt = django_filters.NumberFilter(field_name="foodcnt")
+    foodcnt_gte = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="gte")
+    foodcnt_lte = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="lte")
+
+    foodcnt_gt = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="gt")
+    foodcnt_lt = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="lt")
+
+    class Meta:
+        model = FN126
+        fields = ["taxon"]
+
+
+class FN126Filter(FN126SubFilter):
+    """A fitlerset that allows us to select subsets of tags objects
+    by attributes of the tag data as well as the parent tables:
+    net set, effort, catch and fish attributes.
+
+    """
+
+    # catch attributes:
+    grp = ValueInFilter(field_name="fish__catch__grp")
+    spc = ValueInFilter(field_name="fish__catch__species__spc")
+
+    # Effort Attributes
+    # we could add gear depth here if it was populated more regularly.
+    eff = ValueInFilter(field_name="fish__catch__effort__eff")
+
+    # net set attributes:
+
+    sidep_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="gte"
+    )
+    sidep_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="lte"
+    )
+
+    grtp = ValueInFilter(field_name="fish__catch__effort__sample__grtp")
+    gr = ValueInFilter(field_name="fish__catch__effort__sample__gr")
+
+    # grid is a little trick - requires us to filter lake too - user beware!
+    grid = NumberInFilter(field_name="fish__catch__effort__sample__grid__grid")
+
+    effdur_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="gte"
+    )
+    effdur_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="lte"
+    )
+
+    set_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0", help_text="format: yyyy-mm-dd"
+    )
+    set_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    set_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    lift_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1", help_text="format: yyyy-mm-dd"
+    )
+    lift_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    lift_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    set_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0", help_text="format: HH:MM"
+    )
+    set_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    set_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    lift_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1", help_text="format: HH:MM"
+    )
+    lift_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    lift_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    # project attributes
+    year = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="exact"
+    )
+    first_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="gte"
+    )
+    last_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    prj_cd = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd"
+    )
+
+    prj_cd_in = ValueInFilter(field_name="fish__catch__effort__sample__project__prj_cd")
+
+    prj_cd_like = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd",
+        lookup_expr="icontains",
+    )
+
+    lake = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__lake__abbrev",
+        lookup_expr="iexact",
+    )
+
+    class Meta:
+        model = FN126
+        fields = ["taxon", "foodcnt"]
+
+
+class FN127SubFilter(django_filters.FilterSet):
+    """A fitlerset that allows us to select subsets of FN127 table (age estimates/interpretations) by
+    by attributes of the age estimates (FN127 data only)"""
+
+    # preferred = True/False
+    # agemt - in, like
+    # xagem in and like
+    # conf =, gte, lte, gt, lt
+    # nca =, gte, lte, gt, lt
+    # agea =, gte, lte, gt, lt
+    # edge in
+
+    # fish = slug_in
+
+    preferred = django_filters.BooleanFilter(field_name="preferred")
+
+    agemt_like = ValueInFilter(field_name="agemt", lookup_expr="icontains")
+    agemt = ValueInFilter(field_name="agemt")
+
+    xagem_like = ValueInFilter(field_name="xagem", lookup_expr="icontains")
+    xagem = ValueInFilter(field_name="xagem")
+
+    edge = ValueInFilter(field_name="edge")
+
+    agea = django_filters.NumberFilter(field_name="agea")
+    agea_gte = django_filters.NumberFilter(field_name="agea", lookup_expr="gte")
+    agea_lte = django_filters.NumberFilter(field_name="agea", lookup_expr="lte")
+    agea_gt = django_filters.NumberFilter(field_name="agea", lookup_expr="gt")
+    agea_lt = django_filters.NumberFilter(field_name="agea", lookup_expr="lt")
+
+    nca = django_filters.NumberFilter(field_name="nca")
+    nca_gte = django_filters.NumberFilter(field_name="nca", lookup_expr="gte")
+    nca_lte = django_filters.NumberFilter(field_name="nca", lookup_expr="lte")
+    nca_gt = django_filters.NumberFilter(field_name="nca", lookup_expr="gt")
+    nca_lt = django_filters.NumberFilter(field_name="nca", lookup_expr="lt")
+
+    conf = django_filters.NumberFilter(field_name="conf")
+    conf_gte = django_filters.NumberFilter(field_name="conf", lookup_expr="gte")
+    conf_lte = django_filters.NumberFilter(field_name="conf", lookup_expr="lte")
+    conf_gt = django_filters.NumberFilter(field_name="conf", lookup_expr="gt")
+    conf_lt = django_filters.NumberFilter(field_name="conf", lookup_expr="lt")
+
+    class Meta:
+        model = FN127
+        fields = ["conf", "nca", "agea", "edge", "xagem", "agemt", "preferred"]
+
+
+class FN127Filter(FN127SubFilter):
+    """A fitlerset that allows us to select subsets of age estimate objects
+    by attributes of the age estimate as well as the parent tables:
+    net set, effort, catch and fish attributes.
+
+    """
+
+    # catch attributes:
+    grp = ValueInFilter(field_name="fish__catch__grp")
+    spc = ValueInFilter(field_name="fish__catch__species__spc")
+
+    # Effort Attributes
+    # we could add gear depth here if it was populated more regularly.
+    eff = ValueInFilter(field_name="fish__catch__effort__eff")
+
+    # net set attributes:
+
+    sidep_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="gte"
+    )
+    sidep_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__sidep", lookup_expr="lte"
+    )
+
+    grtp = ValueInFilter(field_name="fish__catch__effort__sample__grtp")
+    gr = ValueInFilter(field_name="fish__catch__effort__sample__gr")
+
+    # grid is a little trick - requires us to filter lake too - user beware!
+    grid = NumberInFilter(field_name="fish__catch__effort__sample__grid__grid")
+
+    effdur_gte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="gte"
+    )
+    effdur_lte = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__effdur", lookup_expr="lte"
+    )
+
+    set_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0", help_text="format: yyyy-mm-dd"
+    )
+    set_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    set_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    lift_date = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1", help_text="format: yyyy-mm-dd"
+    )
+    lift_date_gte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    lift_date_lte = django_filters.DateFilter(
+        field_name="fish__catch__effort__sample__effdt1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    set_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0", help_text="format: HH:MM"
+    )
+    set_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    set_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm0",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    lift_time = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1", help_text="format: HH:MM"
+    )
+    lift_time_gte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="gte",
+        help_text="format: HH:MM",
+    )
+    lift_time_lte = django_filters.TimeFilter(
+        field_name="fish__catch__effort__sample__efftm1",
+        lookup_expr="lte",
+        help_text="format: HH:MM",
+    )
+
+    # project attributes
+    year = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="exact"
+    )
+    first_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="gte"
+    )
+    last_year = django_filters.NumberFilter(
+        field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    prj_cd = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd"
+    )
+
+    prj_cd_in = ValueInFilter(field_name="fish__catch__effort__sample__project__prj_cd")
+
+    prj_cd_like = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__prj_cd",
+        lookup_expr="icontains",
+    )
+
+    lake = django_filters.CharFilter(
+        field_name="fish__catch__effort__sample__project__lake__abbrev",
+        lookup_expr="iexact",
+    )
+
+    class Meta:
+        model = FN127
+        fields = ["conf", "nca", "agea", "edge", "xagem", "agemt", "preferred"]

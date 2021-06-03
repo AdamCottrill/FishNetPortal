@@ -8,3 +8,9 @@ node/*
 htmlcov/*
 db/*
 *htmlcov*
+*.wksp*
+.coveragerc
+.flake8
+.vscode/
+static/*
+dist/*

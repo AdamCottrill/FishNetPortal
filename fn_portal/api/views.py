@@ -11,23 +11,29 @@ from rest_framework.response import Response
 from common.models import Species
 from fn_portal.models import (
     FN011,
+    FN022,
+    FN026,
+    FN028,
     FN121,
     FN122,
     FN123,
     FN125,
     FN125Tag,
-    FN022,
-    FN026,
-    FN028,
+    FN125_Lamprey,
+    FN126,
+    FN127,
 )
 
 from ..filters import (
     FN011Filter,
     FN121Filter,
-    FN121InProjectFilter,
     FN122Filter,
     FN123Filter,
     FN125Filter,
+    FN125LampreyFilter,
+    FN125TagFilter,
+    FN126Filter,
+    FN127Filter,
     SpeciesFilter,
 )
 from .permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
@@ -40,6 +46,10 @@ from .serializers import (
     FN122Serializer,
     FN123Serializer,
     FN125Serializer,
+    FN125TagSerializer,
+    FN125LampreySerializer,
+    FN126Serializer,
+    FN127Serializer,
     SpeciesSerializer,
 )
 
@@ -280,6 +290,74 @@ class BioSampleList(generics.ListAPIView):
     ).prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
 
 
+class FN125LampreyReadOnlyList(generics.ListAPIView):
+    """A read-only endpoint to return diet objects.
+
+    TODO - add filter for FN125Lamprey objects
+
+    """
+
+    serializer_class = FN125LampreySerializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN125LampreyFilter
+    queryset = FN125_Lamprey.objects.select_related(
+        "fish",
+        "fish__catch",
+        "fish__catch__species",
+        "fish__catch__effort__sample",
+        "fish__catch__effort__sample__project",
+    )
+
+
+class FN125TagReadOnlyList(generics.ListAPIView):
+    """A read-only endpoint to return fish tags that have been either applied or recoved."""
+
+    serializer_class = FN125TagSerializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN125TagFilter
+    queryset = FN125Tag.objects.select_related(
+        "fish",
+        "fish__catch",
+        "fish__catch__species",
+        "fish__catch__effort__sample",
+        "fish__catch__effort__sample__project",
+    )
+
+
+class FN126ReadOnlyList(generics.ListAPIView):
+    """A read-only endpoint to return diet objects."""
+
+    serializer_class = FN126Serializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN126Filter
+    queryset = FN126.objects.select_related(
+        "fish",
+        "fish__catch",
+        "fish__catch__species",
+        "fish__catch__effort__sample",
+        "fish__catch__effort__sample__project",
+    )
+
+
+class FN127ReadOnlyList(generics.ListAPIView):
+    """A read-only endpoint to return age estimates objects.
+
+    TODO - add filter for FN126 objects
+
+    """
+
+    serializer_class = FN127Serializer
+    pagination_class = StandardResultsSetPagination
+    filterset_class = FN127Filter
+    queryset = FN127.objects.select_related(
+        "fish",
+        "fish__catch",
+        "fish__catch__species",
+        "fish__catch__effort__sample",
+        "fish__catch__effort__sample__project",
+    )
+
+
 # ========================================================
 #      RETRIEVE-UPDATE-DESTROY
 
@@ -301,7 +379,7 @@ class FN121ListView(generics.ListCreateAPIView):
 
     serializer_class = FN121Serializer
     permission_classes = [IsAdminUser | IsPrjLeadCrewOrAdminOrReadOnly]
-    filterset_class = FN121InProjectFilter
+    filterset_class = FN121Filter
     pagination_class = StandardResultsSetPagination
 
     def get_project(self):

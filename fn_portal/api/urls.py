@@ -32,6 +32,10 @@ from .views import (
     EffortList,
     CatchCountList,
     BioSampleList,
+    FN125TagReadOnlyList,
+    FN125LampreyReadOnlyList,
+    FN126ReadOnlyList,
+    FN127ReadOnlyList,
     # CRUD Endpoints:
     FN121ListView,
     FN121DetailView,
@@ -65,6 +69,10 @@ urlpatterns = [
     path("fn122/", EffortList.as_view(), name="effort_list"),
     path("fn123/", CatchCountList.as_view(), name="catchcount_list"),
     path("fn125/", BioSampleList.as_view(), name="biosample_list"),
+    path("fn125tags/", FN125TagReadOnlyList.as_view(), name="fn125tags_list"),
+    path("fn125lamprey/", FN125LampreyReadOnlyList.as_view(), name="fn125lamprey_list"),
+    path("fn126/", FN126ReadOnlyList.as_view(), name="fn126_list"),
+    path("fn127/", FN127ReadOnlyList.as_view(), name="fn127_list"),
     # =========================
     # CRUD ENDPOINTS:
     # FN121

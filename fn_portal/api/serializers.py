@@ -99,7 +99,7 @@ class FN022Serializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN022
-        fields = ("slug", "project", "ssn", "ssn_des", "ssn_date0", "ssn_date1")
+        fields = ("project", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug")
 
 
 class FN026Serializer(serializers.ModelSerializer):
@@ -130,7 +130,6 @@ class FN028Serializer(serializers.ModelSerializer):
     class Meta:
         model = FN028
         fields = (
-            "slug",
             "project",
             "mode",
             "mode_des",
@@ -141,11 +140,13 @@ class FN028Serializer(serializers.ModelSerializer):
             "effdur_lt",
             "efftm0_ge",
             "efftm0_lt",
+            "slug",
         )
 
 
 class FN121Serializer(serializers.ModelSerializer):
 
+    prj_cd = serializers.CharField(source="project.prj_cd")
     effdt0 = serializers.DateField(format="%Y-%m-%d")
     effdt1 = serializers.DateField(format="%Y-%m-%d")
     grid = GridSerializer(many=False)
@@ -157,7 +158,7 @@ class FN121Serializer(serializers.ModelSerializer):
 
         fields = (
             "id",
-            "slug",
+            "prj_cd",
             "sam",
             "effdt0",
             "effdt1",
@@ -176,6 +177,7 @@ class FN121Serializer(serializers.ModelSerializer):
             "sitem",
             "comment1",
             "secchi",
+            "slug",
         )
 
         read_only_fields = ("slug", "id")
@@ -227,11 +229,14 @@ class FN121Serializer(serializers.ModelSerializer):
 
 class FN122Serializer(serializers.ModelSerializer):
     """"""
+    prj_cd = serializers.CharField(read_only=True, source="effort.sample.project.prj_cd")
+    sam = serializers.CharField(read_only=True, source="effort.sample.sam")
+    eff = serializers.CharField(read_only=True, source="effort.eff")
 
     class Meta:
         model = FN122
 
-        fields = ("id", "slug", "eff", "effdst", "grdep", "grtem0", "grtem1")
+        fields = ("id", "prj", "sam", "eff", "effdst", "grdep", "grtem0", "grtem1", "slug",)
 
     def create(self, validated_data):
         """When we create an effort object, we need to add the associated
@@ -243,10 +248,11 @@ class FN122Serializer(serializers.ModelSerializer):
 
 class FN123Serializer(serializers.ModelSerializer):
 
+    prj_cd = serializers.CharField(source="effort.sample.project.prj_cd")
     sam = serializers.CharField(read_only=True, source="effort.sample.sam")
     eff = serializers.CharField(read_only=True, source="effort.eff")
 
-    prj_cd = serializers.CharField(source="effort.sample.project.prj_cd")
+
     spc = serializers.CharField(source="species.spc")
     # species = serializers.SlugRelatedField(
     #     queryset=Species.objects.all(), slug_field="spc"
@@ -258,7 +264,6 @@ class FN123Serializer(serializers.ModelSerializer):
         model = FN123
         fields = (
             "id",
-            "slug",
             "prj_cd",
             "sam",
             "eff",
@@ -268,6 +273,7 @@ class FN123Serializer(serializers.ModelSerializer):
             "catwt",
             "biocnt",
             "comment",
+            "slug",
         )
 
     def create(self, validated_data):
@@ -278,7 +284,7 @@ class FN123Serializer(serializers.ModelSerializer):
         return FN123.objects.create(**validated_data)
 
 
-class FN125TagSerializer(serializers.ModelSerializer):
+class FN125TagNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FN125Tag
         fields = (
@@ -294,7 +300,7 @@ class FN125TagSerializer(serializers.ModelSerializer):
         )
 
 
-class FN125LampreySerializer(serializers.ModelSerializer):
+class FN125LampreyNestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FN125_Lamprey
         fields = (
@@ -308,13 +314,13 @@ class FN125LampreySerializer(serializers.ModelSerializer):
         )
 
 
-class FN126Serializer(serializers.ModelSerializer):
+class FN126NestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FN126
         fields = ("id", "food", "taxon", "foodcnt", "comment6")
 
 
-class FN127Serializer(serializers.ModelSerializer):
+class FN127NestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FN127
         fields = (
@@ -343,20 +349,19 @@ class FN125Serializer(serializers.ModelSerializer):
     grp = serializers.CharField(read_only=True, source="catch.grp")
 
     # child tables
-    lamprey_marks = FN125LampreySerializer(many=True, required=False, allow_null=True)
-    fishtags = FN125TagSerializer(many=True, required=False, allow_null=True)
-    diet_data = FN126Serializer(many=True, required=False, allow_null=True)
-    age_estimates = FN127Serializer(many=True, required=False, allow_null=True)
+    lamprey_marks = FN125LampreyNestedSerializer(many=True, required=False, allow_null=True)
+    fishtags = FN125TagNestedSerializer(many=True, required=False, allow_null=True)
+    diet_data = FN126NestedSerializer(many=True, required=False, allow_null=True)
+    age_estimates = FN127NestedSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = FN125
         fields = (
             "id",
-            "slug",
             "prj_cd",
             "sam",
-            "species",
             "eff",
+            "species",
             "grp",
             "fish",
             "flen",
@@ -376,6 +381,7 @@ class FN125Serializer(serializers.ModelSerializer):
             "age_estimates",
             "diet_data",
             "comment5",
+            "slug",
         )
 
     def create(self, validated_data):
@@ -493,3 +499,126 @@ class FN125Serializer(serializers.ModelSerializer):
 #                 FN125_Lamprey.objects.create(fish=instance, **mark)
 #
 #         return instance
+
+
+class FN125TagSerializer(serializers.ModelSerializer):
+
+    prj_cd = serializers.CharField(
+        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
+    )
+    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
+    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
+    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
+    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+
+    class Meta:
+        model = FN125Tag
+        fields = (
+            "id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "species",
+            "grp",
+            "fish",
+            "fish_tag_id",
+            "tagstat",
+            "tagid",
+            "tagdoc",
+            "xcwtseq",
+            "xtaginckd",
+            "xtag_chk",
+            "comment_tag",
+            "slug"
+        )
+
+
+class FN125LampreySerializer(serializers.ModelSerializer):
+
+    prj_cd = serializers.CharField(
+        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
+    )
+    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
+    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
+    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
+    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+
+    class Meta:
+        model = FN125_Lamprey
+        fields = (
+            "prj_cd",
+            "sam",
+            "eff",
+            "species",
+            "grp",
+            "fish",
+            "id",
+            "lamid",
+            "xlam",
+            "lamijc",
+            "lamijc_type",
+            "lamijc_size",
+            "comment_lam",
+            "slug"
+        )
+
+
+class FN126Serializer(serializers.ModelSerializer):
+
+    prj_cd = serializers.CharField(
+        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
+    )
+    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
+    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
+    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
+    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+
+
+    class Meta:
+        model = FN126
+        fields = ("id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "species",
+            "grp",
+            "fish",
+                  "food", "taxon", "foodcnt", "comment6", "slug")
+
+
+class FN127Serializer(serializers.ModelSerializer):
+
+    prj_cd = serializers.CharField(
+        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
+    )
+    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
+    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
+    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
+    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+
+    class Meta:
+        model = FN127
+        fields = (
+            "id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "species",
+            "grp",
+            "fish",
+            "ageid",
+            "agemt",
+            "xagem",
+            "agea",
+            "preferred",
+            "conf",
+            "nca",
+            "edge",
+            "agest",
+            "comment7",
+            "slug"
+        )
