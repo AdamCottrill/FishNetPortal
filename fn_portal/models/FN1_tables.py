@@ -171,6 +171,31 @@ class FN123(models.Model):
         return "{}-{}-{}".format(self.effort, self.species.spc, self.grp)
 
 
+class FN124(models.Model):
+    """a table for catch tallies."""
+
+    catch = models.ForeignKey(
+        FN123, related_name="length_tallies", on_delete=models.CASCADE
+    )
+    slug = models.SlugField(max_length=100, unique=True)
+    siz = models.PositiveIntegerField()
+    sizcnt = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ("catch", "siz")
+
+    def __str__(self):
+        return self.slug.upper()
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.fishnet_keys())
+        super(FN124, self).save(*args, **kwargs)
+
+    def fishnet_keys(self):
+        """return the fish-net II key fields for this record"""
+        return "{}-{}".format(self.catch, self.siz)
+
+
 class FN125(models.Model):
     """A table for biological data collected from fish"""
 
@@ -280,7 +305,7 @@ class FN127(models.Model):
 
 
 class FN125_Lamprey(models.Model):
-    """ a table for lamprey data. """
+    """a table for lamprey data."""
 
     fish = models.ForeignKey(
         FN125, related_name="lamprey_marks", on_delete=models.CASCADE

@@ -3,7 +3,17 @@ import factory
 
 from .FN0_factories import FN011Factory
 
-from ...models import FN121, FN122, FN123, FN125, FN126, FN127, FN125Tag, FN125_Lamprey
+from ...models import (
+    FN121,
+    FN122,
+    FN123,
+    FN124,
+    FN125,
+    FN127,
+    FN126,
+    FN125Tag,
+    FN125_Lamprey,
+)
 
 
 class FN121Factory(factory.django.DjangoModelFactory):
@@ -46,6 +56,21 @@ class FN123Factory(factory.django.DjangoModelFactory):
 
     effort = factory.SubFactory(FN122Factory)
     grp = factory.Sequence(lambda n: "{:02d}".format(n))
+
+
+class FN124Factory(factory.django.DjangoModelFactory):
+    """A factory for FN124 objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = FN124
+        django_get_or_create = ("catch", "siz")
+
+    catch = factory.SubFactory(FN123Factory)
+    siz = 350
+    sizcnt = 12
 
 
 class FN125Factory(factory.django.DjangoModelFactory):

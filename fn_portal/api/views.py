@@ -17,6 +17,7 @@ from fn_portal.models import (
     FN121,
     FN122,
     FN123,
+    FN124,
     FN125,
     FN125Tag,
     FN125_Lamprey,
@@ -45,6 +46,7 @@ from .serializers import (
     FN121Serializer,
     FN122Serializer,
     FN123Serializer,
+    FN124Serializer,
     FN125Serializer,
     FN125TagSerializer,
     FN125LampreySerializer,
@@ -268,6 +270,29 @@ class CatchCountList(generics.ListAPIView):
             "species", "effort", "effort__sample", "effort__sample__project"
         )
         .exclude(species__spc="000")
+        .distinct()
+    )
+
+
+class LengthTallyList(generics.ListAPIView):
+    """A read-only endpoint to return length tally objects.  Accepts query
+    parameter filters for attributes of the length tally, the catch,
+    the effort, the sample and the project.
+
+    """
+
+    serializer_class = FN124Serializer
+    pagination_class = StandardResultsSetPagination
+    # filterset_class = FN124Filter
+
+    queryset = (
+        FN124.objects.select_related(
+            "catch__species",
+            "catch__effort",
+            "catch__effort__sample",
+            "catch__effort__sample__project",
+        )
+        .exclude(catch__species__spc="000")
         .distinct()
     )
 

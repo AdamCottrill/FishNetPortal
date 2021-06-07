@@ -14,6 +14,7 @@ from .FN1_factories import (
     FN121Factory,
     FN122Factory,
     FN123Factory,
+    FN124Factory,
     FN125Factory,
     FN125LampreyFactory,
     FN125TagFactory,

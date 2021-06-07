@@ -31,6 +31,7 @@ from .views import (
     NetSetList,
     EffortList,
     CatchCountList,
+    LengthTallyList,
     BioSampleList,
     FN125TagReadOnlyList,
     FN125LampreyReadOnlyList,
@@ -64,10 +65,11 @@ urlpatterns = [
     # READONLY ListViews:
     path("species_list/", SpeciesList.as_view(), name="species_list"),
     path("fn011/", FN011ListView.as_view(), name="project_list"),
-    path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="prject_detail"),
+    path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="project_detail"),
     path("fn121/", NetSetList.as_view(), name="netset_list"),
     path("fn122/", EffortList.as_view(), name="effort_list"),
     path("fn123/", CatchCountList.as_view(), name="catchcount_list"),
+    path("fn124/", LengthTallyList.as_view(), name="fn124_list"),
     path("fn125/", BioSampleList.as_view(), name="biosample_list"),
     path("fn125tags/", FN125TagReadOnlyList.as_view(), name="fn125tags_list"),
     path("fn125lamprey/", FN125LampreyReadOnlyList.as_view(), name="fn125lamprey_list"),
@@ -79,7 +81,7 @@ urlpatterns = [
     re_path(PRJ_CD_REGEX, FN121ListView.as_view(), name="FN121_listview"),
     path("<str:prj_cd>/seasons", FN022ListView.as_view(), name="fn022-list"),
     path(
-        "/<str:prj_cd>/season/<str:ssn>",
+        "<str:prj_cd>/season/<str:ssn>",
         FN022DetailView.as_view(),
         name="fn022-detail",
     ),
@@ -90,7 +92,7 @@ urlpatterns = [
         name="fn026-detail",
     ),
     path(
-        "/<str:prj_cd>/modes",
+        "<str:prj_cd>/modes",
         FN028ListView.as_view(),
         name="fn028-list",
     ),

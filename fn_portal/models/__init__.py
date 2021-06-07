@@ -4,6 +4,7 @@ from .FN1_tables import (
     FN121,
     FN122,
     FN123,
+    FN124,
     FN125,
     FN125_Lamprey,
     FN125Tag,

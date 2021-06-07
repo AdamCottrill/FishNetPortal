@@ -126,11 +126,11 @@ class SubGear(models.Model):
 
     """
 
-    GRYARN_CHOICES = {(1, "Monofilament"), (2, "Multifilament"), (3, "no data")}
+    GRYARN_CHOICES = [(1, "Monofilament"), (2, "Multifilament"), (3, "no data")]
 
-    GRKNOT_CHOICES = {(1, "Knotless"), (2, "Knots present"), (3, "other")}
+    GRKNOT_CHOICES = [(1, "Knotless"), (2, "Knots present"), (3, "other")]
 
-    GRCOL_CHOICES = {
+    GRCOL_CHOICES = [
         ("1", "White"),
         ("2", "Black"),
         ("3", "Green"),
@@ -139,16 +139,16 @@ class SubGear(models.Model):
         ("6", "Transparent"),
         ("7", "Other"),
         ("8", "Grey"),
-    }
+    ]
 
-    GRMAT_CHOICES = {
+    GRMAT_CHOICES = [
         ("1", "Polyamide (e.g. Nylon)"),
         ("2", "Polypropylene (e.g. Ulstron)"),
         ("3", "Polyethylene"),
         ("4", "Polyester"),
         ("5", "Cotton"),
         ("6", "Other"),
-    }
+    ]
 
     gear = models.ManyToManyField(
         "Gear", through="Gear2SubGear", related_name="subgears"
