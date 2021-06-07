@@ -19,7 +19,7 @@
     + seasons must not overlap - each date can only belong to one season
     + there should not be any gaps - days that do not belong to a season.
 
- A. Cottrill
+
 =============================================================
 
 """

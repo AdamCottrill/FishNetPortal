@@ -13,7 +13,7 @@
   + the space detail endpoint will return the space code, space
   description, ddlat, ddlon.
 
- A. Cottrill
+
 =============================================================
 
 """

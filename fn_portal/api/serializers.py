@@ -303,7 +303,7 @@ class FN124Serializer(serializers.ModelSerializer):
     grp = serializers.CharField(source="catch.species.spc")
 
     class Meta:
-        model = FN123
+        model = FN124
         fields = (
             "id",
             "prj_cd",
@@ -312,7 +312,8 @@ class FN124Serializer(serializers.ModelSerializer):
             "spc",
             "grp",
             "siz",
-            "sizcnt" "slug",
+            "sizcnt",
+            "slug",
         )
 
     def create(self, validated_data):

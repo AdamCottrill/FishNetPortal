@@ -13,7 +13,6 @@
   + the mode detail endpoint will return the mode code, mode
   description, ddlat, ddlon.
 
- A. Cottrill
 =============================================================
 
 """

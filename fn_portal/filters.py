@@ -76,6 +76,8 @@ class FN011Filter(django_filters.FilterSet):
         field_name="prj_date1", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
+    protocol = ValueInFilter(field_name="protocol__abbrev")
+
     prj_cd = django_filters.CharFilter(lookup_expr="icontains")
 
     prj_cd_in = ValueInFilter(field_name="prj_cd")
@@ -205,6 +207,8 @@ class FN121Filter(FN121SubFilter):
         field_name="project__year", lookup_expr="lte"
     )
 
+    protocol = ValueInFilter(field_name="project__protocol__abbrev")
+
     prj_cd = django_filters.CharFilter(field_name="project__prj_cd")
 
     prj_cd_in = ValueInFilter(field_name="project__prj_cd")
@@ -323,6 +327,8 @@ class FN122Filter(FN122SubFilter):
     last_year = django_filters.NumberFilter(
         field_name="sample__project__year", lookup_expr="lte"
     )
+
+    protocol = ValueInFilter(field_name="sample__project__protocol__abbrev")
 
     prj_cd = django_filters.CharFilter(field_name="sample__project__prj_cd")
 
@@ -452,6 +458,8 @@ class FN123Filter(FN123SubFilter):
     last_year = django_filters.NumberFilter(
         field_name="effort__sample__project__year", lookup_expr="lte"
     )
+
+    protocol = ValueInFilter(field_name="effort__sample__project__protocol__abbrev")
 
     prj_cd = django_filters.CharFilter(field_name="effort__sample__project__prj_cd")
 
@@ -602,6 +610,10 @@ class FN125Filter(FN125SubFilter):
     )
     last_year = django_filters.NumberFilter(
         field_name="catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    protocol = ValueInFilter(
+        field_name="catch__effort__sample__project__protocol__abbrev"
     )
 
     prj_cd = django_filters.CharFilter(
@@ -774,6 +786,10 @@ class FN125LampreyFilter(FN125LampreySubFilter):
         field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
     )
 
+    protocol = ValueInFilter(
+        field_name="fish__catch__effort__sample__project__protocol__abbrev"
+    )
+
     prj_cd = django_filters.CharFilter(
         field_name="fish__catch__effort__sample__project__prj_cd"
     )
@@ -918,6 +934,10 @@ class FN125TagFilter(FN125TagSubFilter):
         field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
     )
 
+    protocol = ValueInFilter(
+        field_name="fish__catch__effort__sample__project__protocol__abbrev"
+    )
+
     prj_cd = django_filters.CharFilter(
         field_name="fish__catch__effort__sample__project__prj_cd"
     )
@@ -1060,6 +1080,10 @@ class FN126Filter(FN126SubFilter):
     )
     last_year = django_filters.NumberFilter(
         field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    protocol = ValueInFilter(
+        field_name="fish__catch__effort__sample__project__protocol__abbrev"
     )
 
     prj_cd = django_filters.CharFilter(
@@ -1232,6 +1256,10 @@ class FN127Filter(FN127SubFilter):
     )
     last_year = django_filters.NumberFilter(
         field_name="fish__catch__effort__sample__project__year", lookup_expr="lte"
+    )
+
+    protocol = ValueInFilter(
+        field_name="fish__catch__effort__sample__project__protocol__abbrev"
     )
 
     prj_cd = django_filters.CharFilter(

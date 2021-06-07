@@ -8,7 +8,6 @@
   exected values and acccomdates filters for species, common name, and
   scientific_name.
 
- A. Cottrill
 =============================================================
 
 """
@@ -25,8 +24,7 @@ from .fixtures import api_client
 
 @pytest.fixture
 def species_list():
-    """
-    """
+    """ """
 
     spc_081 = (
         SpeciesFactory(

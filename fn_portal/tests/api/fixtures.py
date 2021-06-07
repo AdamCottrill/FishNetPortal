@@ -5,9 +5,9 @@
  DESCRIPTION:
 
   A number of fixtures that will be used in testing the api endpoints
-  for creel portal
+  for fn_portal
 
- A. Cottrill
+
 =============================================================
 
 """

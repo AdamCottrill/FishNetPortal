@@ -33,7 +33,7 @@ DEBUG = True
 
 INTERNAL_IPS = ("127.0.0.1",)
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
 INSTALLED_APPS += ["debug_toolbar", "django_extensions"]
 
 SECRET_KEY = get_env_variable("SECRET_KEY")
