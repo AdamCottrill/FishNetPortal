@@ -214,6 +214,7 @@ def test_fn121_listview_permissions(
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
 
+    print("response={}".format(response))
     assert response.status_code == expected
 
 
@@ -328,7 +329,7 @@ def test_fn121_detailview(api_client, net_sets):
 def test_fn121_detailview_put_permissions(
     api_client, project, net_sets, netset_data, username
 ):
-    """a put (update) request should only be available to authorized users. """
+    """a put (update) request should only be available to authorized users."""
 
     net_set = net_sets[0]
 

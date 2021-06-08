@@ -17,7 +17,7 @@ from django.urls import path, re_path
 # from rest_framework import routers
 
 from .views import (
-    SpeciesList,
+    SpeciesListView,
     # readonly endpoints:
     # FN011ViewSet,
     FN011ListView,
@@ -63,7 +63,7 @@ urlpatterns = [
     # path("", include(router.urls)),
     # =========================
     # READONLY ListViews:
-    path("species_list/", SpeciesList.as_view(), name="species_list"),
+    path("species_list/", SpeciesListView.as_view(), name="species_list"),
     path("fn011/", FN011ListView.as_view(), name="project_list"),
     path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="project_detail"),
     path("fn121/", NetSetList.as_view(), name="netset_list"),

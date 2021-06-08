@@ -1,14 +1,10 @@
 """Serializers for models in fn_portal"""
 
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from common.models import Lake, Species, Grid5
+
+from common.models import Grid5
 
 from fn_portal.models import (
-    FN011,
-    FN022,
-    FN026,
-    FN028,
     FN121,
     FN122,
     FN123,
@@ -20,129 +16,7 @@ from fn_portal.models import (
     FN127,
 )
 
-User = get_user_model()
-
-# Serializers define the API representation.
-class SpeciesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Species
-        lookup_field = "spc"
-        fields = ("spc", "spc_nmco", "spc_nmsc")
-
-
-# Serializers define the API representation.
-class GridSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Grid5
-        lookup_field = "slug"
-        fields = ("slug", "grid")
-        read_only_fields = ("slug",)
-
-
-# Serializers define the API representation.
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        lookup_field = "username"
-        fields = ("username", "first_name", "last_name")
-
-
-# Serializers define the API representation.
-class LakeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lake
-        lookup_field = "abbrev"
-        fields = ("lake_name", "abbrev")
-
-
-class SimpleFN011Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = FN011
-        lookup_field = "prj_cd"
-        fields = (
-            "prj_cd",
-            "prj_nm",
-        )
-
-
-# Serializers define the API representation.
-class FN011Serializer(serializers.ModelSerializer):
-
-    protocol = serializers.CharField(read_only=True, source="protocol.abbrev")
-    lake = LakeSerializer(many=False)
-    prj_ldr = UserSerializer(many=False)
-
-    class Meta:
-        model = FN011
-        lookup_field = "prj_cd"
-        fields = (
-            "id",
-            "year",
-            "prj_cd",
-            "slug",
-            "prj_nm",
-            "prj_ldr",
-            "prj_date0",
-            "prj_date1",
-            "protocol",
-            "source",
-            "lake",
-            "comment0",
-        )
-
-
-class FN022Serializer(serializers.ModelSerializer):
-    """Class to serialize the seasons (temporal strata) used in each project."""
-
-    project = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field="slug"
-    )
-
-    class Meta:
-        model = FN022
-        fields = ("project", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug")
-
-
-class FN026Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = FN026
-        fields = (
-            "project",
-            "label",
-            "space",
-            "space_des",
-            "space_siz",
-            "area_lst",
-            "aru",
-            "grdep_ge",
-            "grdep_lt",
-            "sidep_ge",
-            "sidep_lt",
-            "grid_ge",
-            "grid_lt",
-            "site_lst",
-            "sitp_lst",
-            "ddlat",
-            "ddlon",
-        )
-
-
-class FN028Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = FN028
-        fields = (
-            "project",
-            "mode",
-            "mode_des",
-            "gr",
-            "gruse",
-            "orient",
-            "effdur_ge",
-            "effdur_lt",
-            "efftm0_ge",
-            "efftm0_lt",
-            "slug",
-        )
+from .common_serializers import GridSerializer
 
 
 class FN121Serializer(serializers.ModelSerializer):
