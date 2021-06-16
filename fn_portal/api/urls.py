@@ -22,6 +22,10 @@ from .views import (
     # FN011ViewSet,
     FN011ListView,
     FN011DetailView,
+    FN013ListView,
+    FN013DetailView,
+    FN014ListView,
+    FN014DetailView,
     FN022ListView,
     FN022DetailView,
     FN026ListView,
@@ -79,6 +83,18 @@ urlpatterns = [
     # CRUD ENDPOINTS:
     # FN121
     re_path(PRJ_CD_REGEX, FN121ListView.as_view(), name="FN121_listview"),
+    path("<str:prj_cd>/fn013", FN013ListView.as_view(), name="fn013-list"),
+    path(
+        "<str:prj_cd>/fn013/<str:gr>",
+        FN013DetailView.as_view(),
+        name="fn013-detail",
+    ),
+    path("<str:prj_cd>/fn014/<str:gr>", FN014ListView.as_view(), name="fn014-list"),
+    path(
+        "<str:prj_cd>/fn014/<str:gr>/<str:eff>",
+        FN014DetailView.as_view(),
+        name="fn014-detail",
+    ),
     path("<str:prj_cd>/seasons", FN022ListView.as_view(), name="fn022-list"),
     path(
         "<str:prj_cd>/season/<str:ssn>",

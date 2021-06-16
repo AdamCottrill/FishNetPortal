@@ -93,6 +93,13 @@ class FN014Factory(factory.django.DjangoModelFactory):
 
     gear = factory.SubFactory(FN013Factory)
     eff = "00"
+    mesh = "038"
+    grlen = "25"
+    grht = "1.8"
+    grcol = "G"
+    grmat = "3"
+    gryarn = "1"
+    grknot = "2"
 
 
 class FN022Factory(factory.django.DjangoModelFactory):

@@ -3,7 +3,7 @@
 
 from rest_framework import generics
 
-from fn_portal.models import FN011, FN022, FN026, FN028
+from fn_portal.models import FN011, FN013, FN014, FN022, FN026, FN028
 
 from ...filters import FN011Filter
 
@@ -12,6 +12,8 @@ from ..utils import StandardResultsSetPagination
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from ..serializers import (
     FN011Serializer,
+    FN013Serializer,
+    FN014Serializer,
     FN022Serializer,
     FN026Serializer,
     FN028Serializer,
@@ -62,6 +64,72 @@ class FN011DetailView(generics.RetrieveAPIView):
         )
         .all()
     )
+
+
+class FN013ListView(generics.ListAPIView):
+    """an api end point to list all of the gears  (FN013) associated with a
+    project."""
+
+    serializer_class = FN013Serializer
+
+    def get_queryset(self):
+        """"""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        return FN013.objects.filter(project__slug=prj_cd.lower()).select_related(
+            "project"
+        )
+
+
+class FN013DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An api endpoint for get, put and delete endpoints for gear
+    objects associated with a specfic project"""
+
+    lookup_field = "gr"
+    serializer_class = FN013Serializer
+    permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
+
+    def get_queryset(self):
+        """return only those season objects associate with this project."""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        gr = self.kwargs.get("gr")
+        return FN013.objects.filter(gr=gr, project__slug=prj_cd.lower()).select_related(
+            "project"
+        )
+
+
+class FN014ListView(generics.ListAPIView):
+    """an api end point to list all of the gear detail objects (FN014) associated with a
+    project."""
+
+    serializer_class = FN014Serializer
+
+    def get_queryset(self):
+        """"""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        gr = self.kwargs.get("gr")
+        return FN014.objects.filter(gear__project__slug=prj_cd.lower(), gear__gr=gr)
+
+
+class FN014DetailView(generics.RetrieveUpdateDestroyAPIView):
+    """An api endpoint for get, put and delete endpoints for gear panel
+    objects associated with a specfic gear within a project"""
+
+    lookup_field = "eff"
+    serializer_class = FN014Serializer
+    permission_classes = [IsPrjLeadCrewOrAdminOrReadOnly]
+
+    def get_queryset(self):
+        """return only those season objects associate with this project."""
+
+        prj_cd = self.kwargs.get("prj_cd")
+        gr = self.kwargs.get("gr")
+        eff = self.kwargs.get("eff")
+        return FN014.objects.filter(
+            gear__project__slug=prj_cd.lower(), gear__gr=gr, eff=eff
+        )
 
 
 class FN022ListView(generics.ListAPIView):

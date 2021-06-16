@@ -147,8 +147,18 @@ class FN013(models.Model):
     effdst = models.FloatField(blank=True, null=True)
     gr_des = models.TextField(blank=True, null=True)
 
+    slug = models.SlugField(max_length=20, unique=True)
+
     def __str__(self):
         return "{} ({})".format(self.gr, self.project.prj_cd)
+
+    def save(self, *args, **kwargs):
+        """"""
+
+        raw_slug = "-".join([self.project.prj_cd, self.gr])
+
+        self.slug = slugify(raw_slug)
+        super(FN013, self).save(*args, **kwargs)
 
     def get_projects(self):
         return FN011.objects.filter(samples__gr=self.gr).all()
@@ -169,11 +179,21 @@ class FN014(models.Model):
     grknot = models.IntegerField(blank=True, null=True)
     eff_des = models.TextField(blank=True, null=True)
 
+    slug = models.SlugField(max_length=30, unique=True)
+
     class Meta:
         ordering = ["eff"]
 
     def __str__(self):
         return "{}-{} ({})".format(self.gear.gr, self.eff, self.gear.project.prj_cd)
+
+    def save(self, *args, **kwargs):
+        """"""
+
+        raw_slug = "-".join([self.gear.project.prj_cd, self.gear.gr, self.eff])
+
+        self.slug = slugify(raw_slug)
+        super(FN014, self).save(*args, **kwargs)
 
 
 class FN022(models.Model):

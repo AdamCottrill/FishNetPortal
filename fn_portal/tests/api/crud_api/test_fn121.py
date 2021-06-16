@@ -211,10 +211,10 @@ def test_fn121_listview_permissions(
         login = api_client.login(username=username, password="Abcd1234")
         assert login is True
 
+    netset_data["prj_cd"] = project.prj_cd
+
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
-
-    print("response={}".format(response))
     assert response.status_code == expected
 
 
@@ -228,6 +228,8 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
 
     login = api_client.login(username="hsimpson", password="Abcd1234")
     assert login is True
+
+    netset_data["prj_cd"] = project.prj_cd
 
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
@@ -336,6 +338,8 @@ def test_fn121_detailview_put_permissions(
     if username:
         login = api_client.login(username=username, password="Abcd1234")
         assert login is True
+
+    netset_data["prj_cd"] = project.prj_cd
 
     url = reverse("fn_portal_api:FN121_detailview", kwargs={"slug": net_set.slug})
     response = api_client.put(url, netset_data, format="json")

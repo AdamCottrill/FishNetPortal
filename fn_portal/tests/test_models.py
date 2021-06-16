@@ -3,6 +3,8 @@ import pytest
 from .factories import (
     SpeciesFactory,
     FN011Factory,
+    FN013Factory,
+    FN014Factory,
     FN022Factory,
     FN026Factory,
     FN028Factory,
@@ -15,8 +17,6 @@ from .factories import (
     FN125TagFactory,
     FN125LampreyFactory,
     FN127Factory,
-    FN013Factory,
-    FN014Factory,
     GearFamilyFactory,
     GearFactory,
     SubGearFactory,

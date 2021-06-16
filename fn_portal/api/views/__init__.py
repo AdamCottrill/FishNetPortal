@@ -2,6 +2,10 @@ from .common_views import SpeciesListView
 from .FN0_views import (
     FN011ListView,
     FN011DetailView,
+    FN013ListView,
+    FN013DetailView,
+    FN014ListView,
+    FN014DetailView,
     FN022ListView,
     FN022DetailView,
     FN026ListView,

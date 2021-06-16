@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from fn_portal.models import (
     FN011,
+    FN013,
+    FN014,
     FN022,
     FN026,
     FN028,
@@ -45,6 +47,41 @@ class FN011Serializer(serializers.ModelSerializer):
             "source",
             "lake",
             "comment0",
+        )
+
+
+class FN013Serializer(serializers.ModelSerializer):
+    """Class to serialize the FN013 (gears) used in each project."""
+
+    project = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="slug"
+    )
+
+    class Meta:
+        model = FN013
+        fields = ("project", "gr", "effcnt", "effdst", "gr_des", "slug")
+
+
+class FN014Serializer(serializers.ModelSerializer):
+    """Class to serialize the FN014 (gear/panel detail) used in each project."""
+
+    gear = serializers.SlugRelatedField(many=False, read_only=True, slug_field="slug")
+
+    class Meta:
+        model = FN014
+        fields = (
+            "gear",
+            "eff",
+            "mesh",
+            "grlen",
+            "grht",
+            "grwid",
+            "grcol",
+            "grmat",
+            "gryarn",
+            "grknot",
+            "eff_des",
+            "slug",
         )
 
 

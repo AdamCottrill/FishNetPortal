@@ -121,7 +121,7 @@ class FN122(models.Model):
     comment2 = models.TextField(blank=True, null=True)
 
     class Meta:
-        # ordering = ['last_name', 'first_name']
+        ordering = ("sample", "eff")
         unique_together = ("sample", "eff")
 
     def __str__(self):
@@ -156,7 +156,7 @@ class FN123(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
-        # ordering = ['last_name', 'first_name']
+        ordering = ("effort", "species", "grp")
         unique_together = ("effort", "species", "grp")
 
     def __str__(self):
@@ -182,6 +182,7 @@ class FN124(models.Model):
     sizcnt = models.PositiveIntegerField()
 
     class Meta:
+        ordering = ["catch", "siz"]
         unique_together = ("catch", "siz")
 
     def __str__(self):
@@ -225,7 +226,7 @@ class FN125(models.Model):
     comment5 = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
-        # ordering = ['last_name', 'first_name']
+        ordering = ["catch", "fish"]
         unique_together = ("catch", "fish")
 
     def __str__(self):

@@ -9,6 +9,8 @@ from .factories import (
     SpeciesFactory,
     LakeFactory,
     FN011Factory,
+    FN013Factory,
+    FN014Factory,
     FN022Factory,
     FN026Factory,
     FN028Factory,
@@ -42,6 +44,18 @@ def project():
 
     prj_cd = "LHA_IA19_000"
     project = FN011Factory(prj_cd=prj_cd, prj_nm="Test Project")
+
+    gl01 = FN013Factory(
+        project=project, gr="GL01", effcnt=3, effdst=300, gr_des="Multifilament"
+    )
+
+    FN013Factory(
+        project=project, gr="GL32", effcnt=8, effdst=400, gr_des="Monofilament"
+    )
+
+    FN014Factory(gear=gl01, eff="038", mesh=38, grlen=100)
+    FN014Factory(gear=gl01, eff="051", mesh=51, grlen=100)
+    FN014Factory(gear=gl01, eff="064", mesh=64, grlen=100)
 
     ssn = "32"
     ssn_des = "August"
