@@ -88,17 +88,3 @@ def test_FN125Readonly_only_get_allowed(api_client):
 
     response = api_client.delete(url, data={})
     assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.xfail
-def test_FN125Readonly_filters():
-    """The readonly api endpoint for FN125 objects accepts a large number
-    of potential parameters as filters. This test will verify that only
-    catch counts matcing the specified criteria are returned.
-
-    This test will be parameterized with a list of two element tuples,
-    the filter to apply, and a list of the FN125 slugs expected in the
-    response.
-
-    """
-    assert 0 == 1

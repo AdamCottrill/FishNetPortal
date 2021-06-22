@@ -176,6 +176,48 @@ class FN127Filter(FN127SubFilter):
         lookup_expr="iexact",
     )
 
+    # FISH ATTRIBUTES:
+    tlen = django_filters.NumberFilter(field_name="fish__tlen")
+    tlen__gte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gte")
+    tlen__lte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lte")
+    tlen__gt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gt")
+    tlen__lt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lt")
+
+    flen = django_filters.NumberFilter(field_name="fish__flen")
+    flen__gte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gte")
+    flen__lte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lte")
+    flen__gt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gt")
+    flen__lt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lt")
+
+    rwt = django_filters.NumberFilter(field_name="fish__rwt")
+    rwt_null = django_filters.BooleanFilter(
+        field_name="fish__rwt", lookup_expr="isnull"
+    )
+    rwt__gte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gte")
+    rwt__lte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lte")
+    rwt__gt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gt")
+    rwt__lt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lt")
+
+    mat = ValueInFilter(field_name="fish__mat")
+    mat_null = django_filters.BooleanFilter(
+        field_name="fish__mat", lookup_expr="isnull"
+    )
+
+    gon = ValueInFilter(field_name="fish__gon")
+    gon_null = django_filters.BooleanFilter(
+        field_name="fish__gon", lookup_expr="isnull"
+    )
+
+    sex = ValueInFilter(field_name="fish__sex")
+    sex_null = django_filters.BooleanFilter(
+        field_name="fish__sex", lookup_expr="isnull"
+    )
+
+    clipc = ValueInFilter(field_name="fish__clipc")
+    clipc_null = django_filters.BooleanFilter(
+        field_name="fish__clipc", lookup_expr="isnull"
+    )
+
     class Meta:
         model = FN127
         fields = ["conf", "nca", "agea", "edge", "xagem", "agemt", "preferred"]

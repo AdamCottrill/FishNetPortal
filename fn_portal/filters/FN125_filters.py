@@ -9,23 +9,36 @@ class FN125SubFilter(django_filters.FilterSet):
     """A fitlerset that allows us to select subsets of bio-sample objects by
     by attributes of the biological samples (fn125 data only)"""
 
-    tlen = django_filters.NumberFilter(field_name="tlen")
+    tlen = django_filters.NumberFilter(field_name="tlen")  # , lookup_expr="exact")
     tlen__gte = django_filters.NumberFilter(field_name="tlen", lookup_expr="gte")
     tlen__lte = django_filters.NumberFilter(field_name="tlen", lookup_expr="lte")
+    tlen__gt = django_filters.NumberFilter(field_name="tlen", lookup_expr="gt")
+    tlen__lt = django_filters.NumberFilter(field_name="tlen", lookup_expr="lt")
 
     flen = django_filters.NumberFilter(field_name="flen")
     flen__gte = django_filters.NumberFilter(field_name="flen", lookup_expr="gte")
     flen__lte = django_filters.NumberFilter(field_name="flen", lookup_expr="lte")
+    flen__gt = django_filters.NumberFilter(field_name="flen", lookup_expr="gt")
+    flen__lt = django_filters.NumberFilter(field_name="flen", lookup_expr="lt")
 
     rwt = django_filters.NumberFilter(field_name="rwt")
     rwt_null = django_filters.BooleanFilter(field_name="rwt", lookup_expr="isnull")
     rwt__gte = django_filters.NumberFilter(field_name="rwt", lookup_expr="gte")
     rwt__lte = django_filters.NumberFilter(field_name="rwt", lookup_expr="lte")
+    rwt__gt = django_filters.NumberFilter(field_name="rwt", lookup_expr="gt")
+    rwt__lt = django_filters.NumberFilter(field_name="rwt", lookup_expr="lt")
 
     mat = ValueInFilter(field_name="mat")
+    mat_null = django_filters.BooleanFilter(field_name="mat", lookup_expr="isnull")
+
     gon = ValueInFilter(field_name="gon")
+    gon_null = django_filters.BooleanFilter(field_name="gon", lookup_expr="isnull")
+
     sex = ValueInFilter(field_name="sex")
+    sex_null = django_filters.BooleanFilter(field_name="sex", lookup_expr="isnull")
+
     clipc = ValueInFilter(field_name="clipc")
+    clipc_null = django_filters.BooleanFilter(field_name="clipc", lookup_expr="isnull")
 
     # girth, agest, fate,
     # these are child tables and might be harder to filter on: age_estimates, lamprey, tags, diet_data
@@ -156,30 +169,6 @@ class FN125Filter(FN125SubFilter):
     lake = django_filters.CharFilter(
         field_name="catch__effort__sample__project__lake__abbrev", lookup_expr="iexact"
     )
-
-    tlen = django_filters.NumberFilter(field_name="fish__tlen")
-    tlen_gte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gte")
-    tlen_lte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lte")
-
-    flen = django_filters.NumberFilter(field_name="fish__flen")
-    flen_gte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gte")
-    flen_lte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lte")
-
-    rwt = django_filters.NumberFilter(field_name="fish__rwt")
-    rwt_null = django_filters.BooleanFilter(
-        field_name="fish__rwt", lookup_expr="isnull"
-    )
-    rwt_gte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gte")
-    rwt_lte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lte")
-
-    mat = ValueInFilter(field_name="fish__mat")
-    gon = ValueInFilter(field_name="fish__gon")
-    sex = ValueInFilter(field_name="fish__sex")
-    clipc = ValueInFilter(field_name="fish__clipc")
-
-    class Meta:
-        model = FN125
-        fields = ["sex", "mat", "gon", "tlen", "flen", "rwt", "clipc"]
 
 
 class FN125LampreySubFilter(django_filters.FilterSet):
@@ -333,6 +322,48 @@ class FN125LampreyFilter(FN125LampreySubFilter):
         lookup_expr="iexact",
     )
 
+    # FISH ATTRIBUTES:
+    tlen = django_filters.NumberFilter(field_name="fish__tlen")
+    tlen__gte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gte")
+    tlen__lte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lte")
+    tlen__gt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gt")
+    tlen__lt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lt")
+
+    flen = django_filters.NumberFilter(field_name="fish__flen")
+    flen__gte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gte")
+    flen__lte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lte")
+    flen__gt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gt")
+    flen__lt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lt")
+
+    rwt = django_filters.NumberFilter(field_name="fish__rwt")
+    rwt_null = django_filters.BooleanFilter(
+        field_name="fish__rwt", lookup_expr="isnull"
+    )
+    rwt__gte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gte")
+    rwt__lte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lte")
+    rwt__gt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gt")
+    rwt__lt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lt")
+
+    mat = ValueInFilter(field_name="fish__mat")
+    mat_null = django_filters.BooleanFilter(
+        field_name="fish__mat", lookup_expr="isnull"
+    )
+
+    gon = ValueInFilter(field_name="fish__gon")
+    gon_null = django_filters.BooleanFilter(
+        field_name="fish__gon", lookup_expr="isnull"
+    )
+
+    sex = ValueInFilter(field_name="fish__sex")
+    sex_null = django_filters.BooleanFilter(
+        field_name="fish__sex", lookup_expr="isnull"
+    )
+
+    clipc = ValueInFilter(field_name="fish__clipc")
+    clipc_null = django_filters.BooleanFilter(
+        field_name="fish__clipc", lookup_expr="isnull"
+    )
+
     class Meta:
         model = FN125_Lamprey
         fields = ["xlam", "lamijc", "lamijc_type", "lamijc_size"]
@@ -479,6 +510,48 @@ class FN125TagFilter(FN125TagSubFilter):
     lake = django_filters.CharFilter(
         field_name="fish__catch__effort__sample__project__lake__abbrev",
         lookup_expr="iexact",
+    )
+
+    # FISH ATTRIBUTES:
+    tlen = django_filters.NumberFilter(field_name="fish__tlen")
+    tlen__gte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gte")
+    tlen__lte = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lte")
+    tlen__gt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="gt")
+    tlen__lt = django_filters.NumberFilter(field_name="fish__tlen", lookup_expr="lt")
+
+    flen = django_filters.NumberFilter(field_name="fish__flen")
+    flen__gte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gte")
+    flen__lte = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lte")
+    flen__gt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="gt")
+    flen__lt = django_filters.NumberFilter(field_name="fish__flen", lookup_expr="lt")
+
+    rwt = django_filters.NumberFilter(field_name="fish__rwt")
+    rwt_null = django_filters.BooleanFilter(
+        field_name="fish__rwt", lookup_expr="isnull"
+    )
+    rwt__gte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gte")
+    rwt__lte = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lte")
+    rwt__gt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="gt")
+    rwt__lt = django_filters.NumberFilter(field_name="fish__rwt", lookup_expr="lt")
+
+    mat = ValueInFilter(field_name="fish__mat")
+    mat_null = django_filters.BooleanFilter(
+        field_name="fish__mat", lookup_expr="isnull"
+    )
+
+    gon = ValueInFilter(field_name="fish__gon")
+    gon_null = django_filters.BooleanFilter(
+        field_name="fish__gon", lookup_expr="isnull"
+    )
+
+    sex = ValueInFilter(field_name="fish__sex")
+    sex_null = django_filters.BooleanFilter(
+        field_name="fish__sex", lookup_expr="isnull"
+    )
+
+    clipc = ValueInFilter(field_name="fish__clipc")
+    clipc_null = django_filters.BooleanFilter(
+        field_name="fish__clipc", lookup_expr="isnull"
     )
 
     class Meta:
