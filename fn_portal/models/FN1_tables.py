@@ -104,7 +104,7 @@ class FN121(models.Model):
 
 
 class FN122(models.Model):
-    """A table to hold inforamtion about indivual fishing
+    """A table to hold information about individual fishing
     efforts(mesh/panel attributes)
 
     """

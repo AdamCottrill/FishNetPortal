@@ -100,6 +100,34 @@ class FN121Filter(FN121SubFilter):
     year__gt = django_filters.NumberFilter(field_name="project__year", lookup_expr="gt")
     year__lt = django_filters.NumberFilter(field_name="project__year", lookup_expr="lt")
 
+    prj_date0 = django_filters.DateFilter(
+        field_name="project__prj_date0", help_text="format: yyyy-mm-dd"
+    )
+    prj_date0__gte = django_filters.DateFilter(
+        field_name="project__prj_date0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date0__lte = django_filters.DateFilter(
+        field_name="project__prj_date0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    prj_date1 = django_filters.DateFilter(
+        field_name="project__prj_date1", help_text="format: yyyy-mm-dd"
+    )
+    prj_date1__gte = django_filters.DateFilter(
+        field_name="project__prj_date1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date1__lte = django_filters.DateFilter(
+        field_name="project__prj_date1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
     protocol = ValueInFilter(field_name="project__protocol__abbrev")
     protocol__not = ValueInFilter(field_name="project__protocol__abbrev", exclude=True)
 

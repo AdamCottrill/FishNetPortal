@@ -205,6 +205,34 @@ class FN123Filter(FN123SubFilter):
         field_name="effort__sample__project__year", lookup_expr="lt"
     )
 
+    prj_date0 = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date0", help_text="format: yyyy-mm-dd"
+    )
+    prj_date0__gte = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date0__lte = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    prj_date1 = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date1", help_text="format: yyyy-mm-dd"
+    )
+    prj_date1__gte = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date1__lte = django_filters.DateFilter(
+        field_name="effort__sample__project__prj_date1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
     protocol = ValueInFilter(field_name="effort__sample__project__protocol__abbrev")
     protocol__not = ValueInFilter(
         field_name="effort__sample__project__protocol__abbrev", exclude=True

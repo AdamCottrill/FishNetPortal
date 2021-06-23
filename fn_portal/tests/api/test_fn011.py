@@ -288,12 +288,12 @@ def test_fn011_prj_nm_filter(client, db_setup, value):
 
 
 project_date_params = (
-    ["start_date", "2000-4-10", ["LHA_IS00_123"]],
-    ["start_date__lte", "2002-10-10", ["LHA_IS00_123", "LHA_IA02_123"]],
-    ["start_date__gte", "2010-8-25", ["LSA_IA10_123", "LHA_IA15_002"]],
-    ["end_date", "2000-4-25", ["LHA_IS00_123"]],
-    ["end_date__lte", "2002-10-15", ["LHA_IS00_123", "LHA_IA02_123"]],
-    ["end_date__gte", "2010-9-15", ["LSA_IA10_123", "LHA_IA15_002"]],
+    ["prj_date0", "2000-4-10", ["LHA_IS00_123"]],
+    ["prj_date0__lte", "2002-10-10", ["LHA_IS00_123", "LHA_IA02_123"]],
+    ["prj_date0__gte", "2010-8-25", ["LSA_IA10_123", "LHA_IA15_002"]],
+    ["prj_date1", "2000-4-25", ["LHA_IS00_123"]],
+    ["prj_date1__lte", "2002-10-15", ["LHA_IS00_123", "LHA_IA02_123"]],
+    ["prj_date1__gte", "2010-9-15", ["LSA_IA10_123", "LHA_IA15_002"]],
 )
 
 

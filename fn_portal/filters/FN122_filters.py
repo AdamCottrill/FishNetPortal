@@ -60,6 +60,7 @@ class FN122Filter(FN122InProjectFilter):
 
     grtp = ValueInFilter(field_name="sample__grtp")
     grtp__not = ValueInFilter(field_name="sample__grtp", exclude=True)
+
     gr = ValueInFilter(field_name="sample__gr")
     gr__not = ValueInFilter(field_name="sample__gr", exclude=True)
 
@@ -130,6 +131,34 @@ class FN122Filter(FN122InProjectFilter):
     )
     year__lt = django_filters.NumberFilter(
         field_name="sample__project__year", lookup_expr="lt"
+    )
+
+    prj_date0 = django_filters.DateFilter(
+        field_name="sample__project__prj_date0", help_text="format: yyyy-mm-dd"
+    )
+    prj_date0__gte = django_filters.DateFilter(
+        field_name="sample__project__prj_date0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date0__lte = django_filters.DateFilter(
+        field_name="sample__project__prj_date0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    prj_date1 = django_filters.DateFilter(
+        field_name="sample__project__prj_date1", help_text="format: yyyy-mm-dd"
+    )
+    prj_date1__gte = django_filters.DateFilter(
+        field_name="sample__project__prj_date1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date1__lte = django_filters.DateFilter(
+        field_name="sample__project__prj_date1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
     )
 
     prj_cd = ValueInFilter(field_name="sample__project__prj_cd")

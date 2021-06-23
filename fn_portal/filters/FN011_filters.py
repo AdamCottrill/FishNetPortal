@@ -25,23 +25,23 @@ class FN011Filter(django_filters.FilterSet):
     first_year = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
     last_year = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
 
-    start_date = django_filters.DateFilter(
+    prj_date0 = django_filters.DateFilter(
         field_name="prj_date0", help_text="format: yyyy-mm-dd"
     )
-    start_date__gte = django_filters.DateFilter(
+    prj_date0__gte = django_filters.DateFilter(
         field_name="prj_date0", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    start_date__lte = django_filters.DateFilter(
+    prj_date0__lte = django_filters.DateFilter(
         field_name="prj_date0", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
-    end_date = django_filters.DateFilter(
+    prj_date1 = django_filters.DateFilter(
         field_name="prj_date1", help_text="format: yyyy-mm-dd"
     )
-    end_date__gte = django_filters.DateFilter(
+    prj_date1__gte = django_filters.DateFilter(
         field_name="prj_date1", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    end_date__lte = django_filters.DateFilter(
+    prj_date1__lte = django_filters.DateFilter(
         field_name="prj_date1", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
