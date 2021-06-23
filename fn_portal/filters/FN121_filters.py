@@ -15,10 +15,14 @@ class FN121SubFilter(django_filters.FilterSet):
     sidep__lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
 
     grtp = ValueInFilter(field_name="grtp")
+    grtp__not = ValueInFilter(field_name="grtp", exclude=True)
+
     gr = ValueInFilter(field_name="gr")
+    gr__not = ValueInFilter(field_name="gr", exclude=True)
 
     # grid is a little trick - requires us to filter lake too - user beware!
     grid = NumberInFilter(field_name="grid__grid")
+    grid__not = NumberInFilter(field_name="grid__grid", exclude=True)
 
     effdur__gte = django_filters.NumberFilter(field_name="effdur", lookup_expr="gte")
     effdur__lte = django_filters.NumberFilter(field_name="effdur", lookup_expr="lte")
@@ -82,7 +86,7 @@ class FN121SubFilter(django_filters.FilterSet):
 
 class FN121Filter(FN121SubFilter):
     """Extends the FN121SubFilter to include additional fields that
-    are assoicated with parent objects.
+    are associated with parent objects.
     """
 
     year = django_filters.CharFilter(field_name="project__year", lookup_expr="exact")
@@ -97,16 +101,22 @@ class FN121Filter(FN121SubFilter):
     year__lt = django_filters.NumberFilter(field_name="project__year", lookup_expr="lt")
 
     protocol = ValueInFilter(field_name="project__protocol__abbrev")
+    protocol__not = ValueInFilter(field_name="project__protocol__abbrev", exclude=True)
 
     prj_cd = ValueInFilter(field_name="project__prj_cd")
+    prj_cd__not = ValueInFilter(field_name="project__prj_cd", exclude=True)
 
     prj_cd__like = django_filters.CharFilter(
         field_name="project__prj_cd", lookup_expr="icontains"
     )
 
-    lake = django_filters.CharFilter(
-        field_name="project__lake__abbrev", lookup_expr="iexact"
+    prj_cd__not_like = django_filters.CharFilter(
+        field_name="project__prj_cd", lookup_expr="icontains", exclude=True
     )
+
+    lake = ValueInFilter(field_name="project__lake__abbrev")
+
+    lake__not = ValueInFilter(field_name="project__lake__abbrev", exclude=True)
 
     class Meta:
         model = FN121

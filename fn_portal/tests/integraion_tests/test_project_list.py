@@ -106,13 +106,6 @@ filter_attrs = [
         ["LSA_IA10_444", "LSA_IA15_222"],
         ["LHA_IA19_000", "LHA_IA19_333", "LHA_IA10_111", "LHA_IA15_555"],
     ),
-    # lake should be case insensitive
-    (
-        "lake",
-        "su",
-        ["LSA_IA10_444", "LSA_IA15_222"],
-        ["LHA_IA19_000", "LHA_IA19_333", "LHA_IA10_111", "LHA_IA15_555"],
-    ),
     (
         "source",
         "offshore",
