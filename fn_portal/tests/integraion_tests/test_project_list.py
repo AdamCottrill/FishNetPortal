@@ -126,7 +126,7 @@ filter_attrs = [
         ["LSA_IA10_444", "LHA_IA15_555", "LHA_IA19_666"],
     ),
     (
-        "prj_cd",
+        "prj_cd__like",
         "LSA",
         ["LSA_IA15_222", "LSA_IA10_444"],
         [
@@ -138,7 +138,7 @@ filter_attrs = [
         ],
     ),
     (
-        "prj_cd",
+        "prj_cd__like",
         "lsa",
         ["LSA_IA15_222", "LSA_IA10_444"],
         [
@@ -319,7 +319,7 @@ filter_buttons = [
      </a>""",
     ),
     (
-        "prj_cd",
+        "prj_cd__like",
         "_123",
         """<a class='btn btn-warning btn-xs'
      href='/fn_portal/' role='button'>

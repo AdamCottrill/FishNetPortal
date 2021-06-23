@@ -119,7 +119,7 @@ def test_fn011_first_year_filter(client, db_setup):
     that should be returned."""
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"first_year": 2005})
+    response = client.get(url, {"year__gte": 2005})
     assert response.status_code == status.HTTP_200_OK
 
     results = response.data["results"]
@@ -138,7 +138,7 @@ def test_fn011_last_year_filter(client, db_setup):
     that should be returned."""
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"last_year": 2002})
+    response = client.get(url, {"year__lte": 2002})
     assert response.status_code == status.HTTP_200_OK
 
     results = response.data["results"]
@@ -155,7 +155,7 @@ def test_fn011_between_years_filter(client, db_setup):
     of a range."""
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"first_year": 2002, "last_year": 2010})
+    response = client.get(url, {"year__gte": 2002, "year__lte": 2010})
     assert response.status_code == status.HTTP_200_OK
 
     results = response.data["results"]
@@ -241,7 +241,7 @@ def test_fn011_prj_cd_filter(client, db_setup, value, expected):
     code. It should be case insensitive"""
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"prj_cd_in": ",".join(value)})
+    response = client.get(url, {"prj_cd": ",".join(value)})
     assert response.status_code == status.HTTP_200_OK
     results = response.data["results"]
     assert len(results) == len(expected)
@@ -257,7 +257,7 @@ def test_fn011_prj_cd_like(client, db_setup):
     expected = ["LHA_IS00_123", "LHA_IS05_999"]
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"prj_cd_like": "_IS"})
+    response = client.get(url, {"prj_cd__like": "_IS"})
     assert response.status_code == status.HTTP_200_OK
 
     results = response.data["results"]
@@ -278,7 +278,7 @@ def test_fn011_prj_nm_filter(client, db_setup, value):
     expected = ["LHA_IS00_123", "LHA_IS05_999", "LSA_IA10_123"]
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"prj_nm_like": value})
+    response = client.get(url, {"prj_nm__like": value})
     assert response.status_code == status.HTTP_200_OK
     results = response.data["results"]
 
@@ -289,11 +289,11 @@ def test_fn011_prj_nm_filter(client, db_setup, value):
 
 project_date_params = (
     ["start_date", "2000-4-10", ["LHA_IS00_123"]],
-    ["start_date_lte", "2002-10-10", ["LHA_IS00_123", "LHA_IA02_123"]],
-    ["start_date_gte", "2010-8-25", ["LSA_IA10_123", "LHA_IA15_002"]],
+    ["start_date__lte", "2002-10-10", ["LHA_IS00_123", "LHA_IA02_123"]],
+    ["start_date__gte", "2010-8-25", ["LSA_IA10_123", "LHA_IA15_002"]],
     ["end_date", "2000-4-25", ["LHA_IS00_123"]],
-    ["end_date_lte", "2002-10-15", ["LHA_IS00_123", "LHA_IA02_123"]],
-    ["end_date_gte", "2010-9-15", ["LSA_IA10_123", "LHA_IA15_002"]],
+    ["end_date__lte", "2002-10-15", ["LHA_IS00_123", "LHA_IA02_123"]],
+    ["end_date__gte", "2010-9-15", ["LSA_IA10_123", "LHA_IA15_002"]],
 )
 
 

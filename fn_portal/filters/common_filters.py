@@ -15,11 +15,11 @@ class SpeciesFilter(django_filters.FilterSet):
 
     spc = ValueInFilter(field_name="spc")
 
-    spc_nmco_like = django_filters.CharFilter(
+    spc_nmco__like = django_filters.CharFilter(
         field_name="spc_nmco", lookup_expr="icontains"
     )
 
-    spc_nmsc_like = django_filters.CharFilter(
+    spc_nmsc__like = django_filters.CharFilter(
         field_name="spc_nmsc", lookup_expr="icontains"
     )
 

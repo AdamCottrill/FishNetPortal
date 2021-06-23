@@ -74,17 +74,17 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading">Project Code
-                        {% if 'prj_cd' in filters %}
-                            <a class="pull-right" href="{% strip_parameter 'prj_cd' %}">Reset</a>
+                        {% if 'prj_cd__like' in filters %}
+                            <a class="pull-right" href="{% strip_parameter 'prj_cd__like' %}">Reset</a>
                         {% endif %}
                     </div>
                     <div class="panel-body">
 
-                        <form id="prj_cd" method="get">
+                        <form id="prj_cd__like" method="get">
 
                             <div class="form-group">
-                                <input type="text" class="form-control"  name="prj_cd" placeholder =
-                                             "Project Code Contains..." value="{{filters.prj_cd}}">
+                                <input type="text" class="form-control"  name="prj_cd__like" placeholder =
+                                             "Project Code Contains..." value="{{filters.prj_cd__like}}">
                             </div>
 
                             {% include "fn_portal/_search_hidden_inputs.html" %}
@@ -193,10 +193,10 @@
                         {% endif %}
 
                         
-                        {% if filters.prj_cd %}
+                        {% if filters.prj_cd__like %}
                             <a class="btn btn-warning btn-xs"
-                               href="{% strip_parameter param='prj_cd' %}" role="button">
-                                Project Code like: {{ filters.prj_cd }}
+                               href="{% strip_parameter param='prj_cd__like' %}" role="button">
+                                Project Code like: {{ filters.prj_cd__like }}
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>
                             

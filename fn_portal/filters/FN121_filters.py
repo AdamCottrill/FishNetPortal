@@ -11,8 +11,8 @@ class FN121SubFilter(django_filters.FilterSet):
 
     active = django_filters.BooleanFilter(field_name="effdt1", lookup_expr="isnull")
 
-    sidep_gte = django_filters.NumberFilter(field_name="sidep", lookup_expr="gte")
-    sidep_lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
+    sidep__gte = django_filters.NumberFilter(field_name="sidep", lookup_expr="gte")
+    sidep__lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
 
     grtp = ValueInFilter(field_name="grtp")
     gr = ValueInFilter(field_name="gr")
@@ -20,44 +20,44 @@ class FN121SubFilter(django_filters.FilterSet):
     # grid is a little trick - requires us to filter lake too - user beware!
     grid = NumberInFilter(field_name="grid__grid")
 
-    effdur_gte = django_filters.NumberFilter(field_name="effdur", lookup_expr="gte")
-    effdur_lte = django_filters.NumberFilter(field_name="effdur", lookup_expr="lte")
+    effdur__gte = django_filters.NumberFilter(field_name="effdur", lookup_expr="gte")
+    effdur__lte = django_filters.NumberFilter(field_name="effdur", lookup_expr="lte")
 
     set_date = django_filters.DateFilter(
         field_name="effdt0", help_text="format: yyyy-mm-dd"
     )
-    set_date_gte = django_filters.DateFilter(
+    set_date__gte = django_filters.DateFilter(
         field_name="effdt0", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    set_date_lte = django_filters.DateFilter(
+    set_date__lte = django_filters.DateFilter(
         field_name="effdt0", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
     lift_date = django_filters.DateFilter(
         field_name="effdt1", help_text="format: yyyy-mm-dd"
     )
-    lift_date_gte = django_filters.DateFilter(
+    lift_date__gte = django_filters.DateFilter(
         field_name="effdt1", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    lift_date_lte = django_filters.DateFilter(
+    lift_date__lte = django_filters.DateFilter(
         field_name="effdt1", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
     set_time = django_filters.TimeFilter(field_name="efftm0", help_text="format: HH:MM")
-    set_time_gte = django_filters.TimeFilter(
+    set_time__gte = django_filters.TimeFilter(
         field_name="efftm0", lookup_expr="gte", help_text="format: HH:MM"
     )
-    set_time_lte = django_filters.TimeFilter(
+    set_time__lte = django_filters.TimeFilter(
         field_name="efftm0", lookup_expr="lte", help_text="format: HH:MM"
     )
 
     lift_time = django_filters.TimeFilter(
         field_name="efftm1", help_text="format: HH:MM"
     )
-    lift_time_gte = django_filters.TimeFilter(
+    lift_time__gte = django_filters.TimeFilter(
         field_name="efftm1", lookup_expr="gte", help_text="format: HH:MM"
     )
-    lift_time_lte = django_filters.TimeFilter(
+    lift_time__lte = django_filters.TimeFilter(
         field_name="efftm1", lookup_expr="lte", help_text="format: HH:MM"
     )
 
@@ -86,20 +86,21 @@ class FN121Filter(FN121SubFilter):
     """
 
     year = django_filters.CharFilter(field_name="project__year", lookup_expr="exact")
-    first_year = django_filters.NumberFilter(
+    year__gte = django_filters.NumberFilter(
         field_name="project__year", lookup_expr="gte"
     )
-    last_year = django_filters.NumberFilter(
+    year__lte = django_filters.NumberFilter(
         field_name="project__year", lookup_expr="lte"
     )
 
+    year__gt = django_filters.NumberFilter(field_name="project__year", lookup_expr="gt")
+    year__lt = django_filters.NumberFilter(field_name="project__year", lookup_expr="lt")
+
     protocol = ValueInFilter(field_name="project__protocol__abbrev")
 
-    prj_cd = django_filters.CharFilter(field_name="project__prj_cd")
+    prj_cd = ValueInFilter(field_name="project__prj_cd")
 
-    prj_cd_in = ValueInFilter(field_name="project__prj_cd")
-
-    prj_cd_like = django_filters.CharFilter(
+    prj_cd__like = django_filters.CharFilter(
         field_name="project__prj_cd", lookup_expr="icontains"
     )
 

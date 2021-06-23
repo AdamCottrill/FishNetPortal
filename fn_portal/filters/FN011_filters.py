@@ -16,40 +16,43 @@ class FN011Filter(django_filters.FilterSet):
     # within km of point proximity=0.5;POINT(45.5 -81.1)
 
     year = django_filters.CharFilter(field_name="year", lookup_expr="exact")
+    year__gte = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
+    year__lte = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
+    year__gt = django_filters.NumberFilter(field_name="year", lookup_expr="gt")
+    year__lt = django_filters.NumberFilter(field_name="year", lookup_expr="lt")
+
     first_year = django_filters.NumberFilter(field_name="year", lookup_expr="gte")
     last_year = django_filters.NumberFilter(field_name="year", lookup_expr="lte")
 
     start_date = django_filters.DateFilter(
         field_name="prj_date0", help_text="format: yyyy-mm-dd"
     )
-    start_date_gte = django_filters.DateFilter(
+    start_date__gte = django_filters.DateFilter(
         field_name="prj_date0", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    start_date_lte = django_filters.DateFilter(
+    start_date__lte = django_filters.DateFilter(
         field_name="prj_date0", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
     end_date = django_filters.DateFilter(
         field_name="prj_date1", help_text="format: yyyy-mm-dd"
     )
-    end_date_gte = django_filters.DateFilter(
+    end_date__gte = django_filters.DateFilter(
         field_name="prj_date1", lookup_expr="gte", help_text="format: yyyy-mm-dd"
     )
-    end_date_lte = django_filters.DateFilter(
+    end_date__lte = django_filters.DateFilter(
         field_name="prj_date1", lookup_expr="lte", help_text="format: yyyy-mm-dd"
     )
 
     protocol = ValueInFilter(field_name="protocol__abbrev")
 
-    prj_cd = django_filters.CharFilter(lookup_expr="icontains")
+    prj_cd = ValueInFilter(field_name="prj_cd")
 
-    prj_cd_in = ValueInFilter(field_name="prj_cd")
-
-    prj_cd_like = django_filters.CharFilter(
+    prj_cd__like = django_filters.CharFilter(
         field_name="prj_cd", lookup_expr="icontains"
     )
 
-    prj_nm_like = django_filters.CharFilter(
+    prj_nm__like = django_filters.CharFilter(
         field_name="prj_nm", lookup_expr="icontains"
     )
 

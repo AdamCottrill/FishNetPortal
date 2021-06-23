@@ -98,7 +98,7 @@ def test_species_listview_nmco_filter(api_client, species_list, value):
 
     """
 
-    q = "?spc_nmco_like={}".format(value)
+    q = "?spc_nmco__like={}".format(value)
     url = reverse("fn_portal_api:species_list")
     response = api_client.get(url + q)
     assert response.status_code == status.HTTP_200_OK
@@ -125,7 +125,7 @@ def test_species_listview_nmsc_filter(api_client, species_list, value):
 
     """
 
-    q = "?spc_nmsc_like={}".format(value)
+    q = "?spc_nmsc__like={}".format(value)
     url = reverse("fn_portal_api:species_list")
     response = api_client.get(url + q)
     assert response.status_code == status.HTTP_200_OK
