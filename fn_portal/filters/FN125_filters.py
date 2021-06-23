@@ -59,116 +59,85 @@ class FN125Filter(FN125SubFilter):
 
     """
 
-    # catch attributes:
+    # FN011 ATTRIBUTES
 
-    grp = ValueInFilter(field_name="catch__grp")
-    grp__not = ValueInFilter(field_name="catch__grp", exclude=True)
-
-    spc = ValueInFilter(field_name="catch__species__spc")
-    spc__not = ValueInFilter(field_name="catch__species__spc", exclude=True)
-
-    catcnt = django_filters.NumberFilter(
-        field_name="catch__catcnt", lookup_expr="exact"
+    year = django_filters.CharFilter(
+        field_name="catch__effort__sample__project__year", lookup_expr="exact"
     )
-    catcnt__gte = django_filters.NumberFilter(
-        field_name="catch__catcnt", lookup_expr="gte"
+    year__gte = django_filters.NumberFilter(
+        field_name="catch__effort__sample__project__year", lookup_expr="gte"
     )
-    catcnt__lte = django_filters.NumberFilter(
-        field_name="catch__catcnt", lookup_expr="lte"
-    )
-    catcnt__gt = django_filters.NumberFilter(
-        field_name="catch__catcnt", lookup_expr="gt"
-    )
-    catcnt__lt = django_filters.NumberFilter(
-        field_name="catch__catcnt", lookup_expr="lt"
+    year__lte = django_filters.NumberFilter(
+        field_name="catch__effort__sample__project__year", lookup_expr="lte"
     )
 
-    biocnt = django_filters.NumberFilter(
-        field_name="catch__biocnt", lookup_expr="exact"
+    year__gt = django_filters.NumberFilter(
+        field_name="catch__effort__sample__project__year", lookup_expr="gt"
     )
-    biocnt__gte = django_filters.NumberFilter(
-        field_name="catch__biocnt", lookup_expr="gte"
-    )
-    biocnt__lte = django_filters.NumberFilter(
-        field_name="catch__biocnt", lookup_expr="lte"
-    )
-    biocnt__gt = django_filters.NumberFilter(
-        field_name="catch__biocnt", lookup_expr="gt"
-    )
-    biocnt__lt = django_filters.NumberFilter(
-        field_name="catch__biocnt", lookup_expr="lt"
+    year__lt = django_filters.NumberFilter(
+        field_name="catch__effort__sample__project__year", lookup_expr="lt"
     )
 
-    # Effort Attributes
-    # we could add gear depth here if it was populated more regularly.
-    eff = ValueInFilter(field_name="catch__effort__eff")
-    eff__not = ValueInFilter(field_name="catch__effort__eff", exclude=True)
-
-    effdst = django_filters.NumberFilter(
-        field_name="catch__effort__effdst", lookup_expr="exact"
+    prj_date0 = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date0",
+        help_text="format: yyyy-mm-dd",
     )
-    effdst__gte = django_filters.NumberFilter(
-        field_name="catch__effort__effdst", lookup_expr="gte"
+    prj_date0__gte = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
     )
-    effdst__lte = django_filters.NumberFilter(
-        field_name="catch__effort__effdst", lookup_expr="lte"
-    )
-    effdst__gt = django_filters.NumberFilter(
-        field_name="catch__effort__effdst", lookup_expr="gt"
-    )
-    effdst__lt = django_filters.NumberFilter(
-        field_name="catch__effort__effdst", lookup_expr="lt"
+    prj_date0__lte = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
     )
 
-    grdep = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="exact"
+    prj_date1 = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date1",
+        help_text="format: yyyy-mm-dd",
     )
-    grdep__gte = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="gte"
+    prj_date1__gte = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
     )
-    grdep__lte = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="lte"
-    )
-    grdep__gt = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="gt"
-    )
-    grdep__lt = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="lt"
-    )
-
-    grtem0 = django_filters.NumberFilter(
-        field_name="catch__effort__grtem0", lookup_expr="exact"
-    )
-    grtem0__gte = django_filters.NumberFilter(
-        field_name="catch__effort__grtem0", lookup_expr="gte"
-    )
-    grtem0__lte = django_filters.NumberFilter(
-        field_name="catch__effort__grtem0", lookup_expr="lte"
-    )
-    grtem0__gt = django_filters.NumberFilter(
-        field_name="catch__effort__grtem0", lookup_expr="gt"
-    )
-    grtem0__lt = django_filters.NumberFilter(
-        field_name="catch__effort__grtem0", lookup_expr="lt"
+    prj_date1__lte = django_filters.DateFilter(
+        field_name="catch__effort__sample__project__prj_date1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
     )
 
-    grtem1 = django_filters.NumberFilter(
-        field_name="catch__effort__grtem1", lookup_expr="exact"
-    )
-    grtem1__gte = django_filters.NumberFilter(
-        field_name="catch__effort__grtem1", lookup_expr="gte"
-    )
-    grtem1__lte = django_filters.NumberFilter(
-        field_name="catch__effort__grtem1", lookup_expr="lte"
-    )
-    grtem1__gt = django_filters.NumberFilter(
-        field_name="catch__effort__grtem1", lookup_expr="gt"
-    )
-    grtem1__lt = django_filters.NumberFilter(
-        field_name="catch__effort__grtem1", lookup_expr="lt"
+    protocol = ValueInFilter(
+        field_name="catch__effort__sample__project__protocol__abbrev"
     )
 
-    # net set attributes:
+    protocol__not = ValueInFilter(
+        field_name="catch__effort__sample__project__protocol__abbrev", exclude=True
+    )
+
+    prj_cd = ValueInFilter(field_name="catch__effort__sample__project__prj_cd")
+    prj_cd__not = ValueInFilter(
+        field_name="catch__effort__sample__project__prj_cd", exclude=True
+    )
+
+    prj_cd__like = django_filters.CharFilter(
+        field_name="catch__effort__sample__project__prj_cd", lookup_expr="icontains"
+    )
+
+    prj_cd__not_like = django_filters.CharFilter(
+        field_name="catch__effort__sample__project__prj_cd",
+        lookup_expr="icontains",
+        exclude=True,
+    )
+
+    lake = ValueInFilter(field_name="catch__effort__sample__project__lake__abbrev")
+
+    lake__not = ValueInFilter(
+        field_name="catch__effort__sample__project__lake__abbrev", exclude=True
+    )
+
+    # FN121 ATTRIBUTES
 
     sidep__gte = django_filters.NumberFilter(
         field_name="catch__effort__sample__sidep", lookup_expr="gte"
@@ -251,79 +220,111 @@ class FN125Filter(FN125SubFilter):
         help_text="format: HH:MM",
     )
 
-    # project attributes
-    year = django_filters.CharFilter(
-        field_name="catch__effort__sample__project__year", lookup_expr="exact"
+    # FN122 ATTRIBUTES
+
+    eff = ValueInFilter(field_name="catch__effort__eff")
+    eff__not = ValueInFilter(field_name="catch__effort__eff", exclude=True)
+
+    effdst = django_filters.NumberFilter(
+        field_name="catch__effort__effdst", lookup_expr="exact"
     )
-    year__gte = django_filters.NumberFilter(
-        field_name="catch__effort__sample__project__year", lookup_expr="gte"
+    effdst__gte = django_filters.NumberFilter(
+        field_name="catch__effort__effdst", lookup_expr="gte"
     )
-    year__lte = django_filters.NumberFilter(
-        field_name="catch__effort__sample__project__year", lookup_expr="lte"
+    effdst__lte = django_filters.NumberFilter(
+        field_name="catch__effort__effdst", lookup_expr="lte"
+    )
+    effdst__gt = django_filters.NumberFilter(
+        field_name="catch__effort__effdst", lookup_expr="gt"
+    )
+    effdst__lt = django_filters.NumberFilter(
+        field_name="catch__effort__effdst", lookup_expr="lt"
     )
 
-    year__gt = django_filters.NumberFilter(
-        field_name="catch__effort__sample__project__year", lookup_expr="gt"
+    grdep = django_filters.NumberFilter(
+        field_name="catch__effort__grdep", lookup_expr="exact"
     )
-    year__lt = django_filters.NumberFilter(
-        field_name="catch__effort__sample__project__year", lookup_expr="lt"
+    grdep__gte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep", lookup_expr="gte"
     )
-
-    prj_date0 = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date0",
-        help_text="format: yyyy-mm-dd",
+    grdep__lte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep", lookup_expr="lte"
     )
-    prj_date0__gte = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date0",
-        lookup_expr="gte",
-        help_text="format: yyyy-mm-dd",
+    grdep__gt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep", lookup_expr="gt"
     )
-    prj_date0__lte = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date0",
-        lookup_expr="lte",
-        help_text="format: yyyy-mm-dd",
+    grdep__lt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep", lookup_expr="lt"
     )
 
-    prj_date1 = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date1",
-        help_text="format: yyyy-mm-dd",
+    grtem0 = django_filters.NumberFilter(
+        field_name="catch__effort__grtem0", lookup_expr="exact"
     )
-    prj_date1__gte = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date1",
-        lookup_expr="gte",
-        help_text="format: yyyy-mm-dd",
+    grtem0__gte = django_filters.NumberFilter(
+        field_name="catch__effort__grtem0", lookup_expr="gte"
     )
-    prj_date1__lte = django_filters.DateFilter(
-        field_name="catch__effort__sample__project__prj_date1",
-        lookup_expr="lte",
-        help_text="format: yyyy-mm-dd",
+    grtem0__lte = django_filters.NumberFilter(
+        field_name="catch__effort__grtem0", lookup_expr="lte"
     )
-
-    protocol = ValueInFilter(
-        field_name="catch__effort__sample__project__protocol__abbrev"
+    grtem0__gt = django_filters.NumberFilter(
+        field_name="catch__effort__grtem0", lookup_expr="gt"
+    )
+    grtem0__lt = django_filters.NumberFilter(
+        field_name="catch__effort__grtem0", lookup_expr="lt"
     )
 
-    protocol__not = ValueInFilter(
-        field_name="catch__effort__sample__project__protocol__abbrev", exclude=True
+    grtem1 = django_filters.NumberFilter(
+        field_name="catch__effort__grtem1", lookup_expr="exact"
+    )
+    grtem1__gte = django_filters.NumberFilter(
+        field_name="catch__effort__grtem1", lookup_expr="gte"
+    )
+    grtem1__lte = django_filters.NumberFilter(
+        field_name="catch__effort__grtem1", lookup_expr="lte"
+    )
+    grtem1__gt = django_filters.NumberFilter(
+        field_name="catch__effort__grtem1", lookup_expr="gt"
+    )
+    grtem1__lt = django_filters.NumberFilter(
+        field_name="catch__effort__grtem1", lookup_expr="lt"
     )
 
-    prj_cd = ValueInFilter(field_name="catch__effort__sample__project__prj_cd")
-    prj_cd__not = ValueInFilter(
-        field_name="catch__effort__sample__project__prj_cd", exclude=True
+    # FN123 ATTRIBUTES
+
+    grp = ValueInFilter(field_name="catch__grp")
+    grp__not = ValueInFilter(field_name="catch__grp", exclude=True)
+
+    spc = ValueInFilter(field_name="catch__species__spc")
+    spc__not = ValueInFilter(field_name="catch__species__spc", exclude=True)
+
+    catcnt = django_filters.NumberFilter(
+        field_name="catch__catcnt", lookup_expr="exact"
+    )
+    catcnt__gte = django_filters.NumberFilter(
+        field_name="catch__catcnt", lookup_expr="gte"
+    )
+    catcnt__lte = django_filters.NumberFilter(
+        field_name="catch__catcnt", lookup_expr="lte"
+    )
+    catcnt__gt = django_filters.NumberFilter(
+        field_name="catch__catcnt", lookup_expr="gt"
+    )
+    catcnt__lt = django_filters.NumberFilter(
+        field_name="catch__catcnt", lookup_expr="lt"
     )
 
-    prj_cd__like = django_filters.CharFilter(
-        field_name="catch__effort__sample__project__prj_cd", lookup_expr="icontains"
+    biocnt = django_filters.NumberFilter(
+        field_name="catch__biocnt", lookup_expr="exact"
     )
-
-    prj_cd__not_like = django_filters.CharFilter(
-        field_name="catch__effort__sample__project__prj_cd",
-        lookup_expr="icontains",
-        exclude=True,
+    biocnt__gte = django_filters.NumberFilter(
+        field_name="catch__biocnt", lookup_expr="gte"
     )
-
-    lake = ValueInFilter(field_name="catch__effort__sample__project__lake__abbrev")
-
-    lake__not = ValueInFilter(
-        field_name="catch__effort__sample__project__lake__abbrev", exclude=True
+    biocnt__lte = django_filters.NumberFilter(
+        field_name="catch__biocnt", lookup_expr="lte"
+    )
+    biocnt__gt = django_filters.NumberFilter(
+        field_name="catch__biocnt", lookup_expr="gt"
+    )
+    biocnt__lt = django_filters.NumberFilter(
+        field_name="catch__biocnt", lookup_expr="lt"
     )

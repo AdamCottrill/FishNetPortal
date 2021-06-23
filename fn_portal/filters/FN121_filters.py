@@ -89,6 +89,7 @@ class FN121Filter(FN121SubFilter):
     are associated with parent objects.
     """
 
+    # FN011 ATTRIBUTES
     year = django_filters.CharFilter(field_name="project__year", lookup_expr="exact")
     year__gte = django_filters.NumberFilter(
         field_name="project__year", lookup_expr="gte"

@@ -49,7 +49,72 @@ class FN122Filter(FN122InProjectFilter):
     (project, net set attributes).
     """
 
-    # net set attributes:
+    # FN011 attributes
+    year = django_filters.CharFilter(
+        field_name="sample__project__year", lookup_expr="exact"
+    )
+    year__gte = django_filters.NumberFilter(
+        field_name="sample__project__year", lookup_expr="gte"
+    )
+    year__lte = django_filters.NumberFilter(
+        field_name="sample__project__year", lookup_expr="lte"
+    )
+
+    year__gt = django_filters.NumberFilter(
+        field_name="sample__project__year", lookup_expr="gt"
+    )
+    year__lt = django_filters.NumberFilter(
+        field_name="sample__project__year", lookup_expr="lt"
+    )
+
+    prj_date0 = django_filters.DateFilter(
+        field_name="sample__project__prj_date0", help_text="format: yyyy-mm-dd"
+    )
+    prj_date0__gte = django_filters.DateFilter(
+        field_name="sample__project__prj_date0",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date0__lte = django_filters.DateFilter(
+        field_name="sample__project__prj_date0",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    prj_date1 = django_filters.DateFilter(
+        field_name="sample__project__prj_date1", help_text="format: yyyy-mm-dd"
+    )
+    prj_date1__gte = django_filters.DateFilter(
+        field_name="sample__project__prj_date1",
+        lookup_expr="gte",
+        help_text="format: yyyy-mm-dd",
+    )
+    prj_date1__lte = django_filters.DateFilter(
+        field_name="sample__project__prj_date1",
+        lookup_expr="lte",
+        help_text="format: yyyy-mm-dd",
+    )
+
+    prj_cd = ValueInFilter(field_name="sample__project__prj_cd")
+    prj_cd__not = ValueInFilter(field_name="sample__project__prj_cd", exclude=True)
+
+    prj_cd__like = django_filters.CharFilter(
+        field_name="sample__project__prj_cd", lookup_expr="icontains"
+    )
+
+    prj_cd__not_like = django_filters.CharFilter(
+        field_name="sample__project__prj_cd", lookup_expr="icontains", exclude=True
+    )
+
+    lake = django_filters.CharFilter(
+        field_name="sample__project__lake__abbrev", lookup_expr="iexact"
+    )
+
+    lake__not = django_filters.CharFilter(
+        field_name="sample__project__lake__abbrev", lookup_expr="iexact", exclude=True
+    )
+
+    # FN121 Attributes
 
     sidep__gte = django_filters.NumberFilter(
         field_name="sample__sidep", lookup_expr="gte"
@@ -113,71 +178,6 @@ class FN122Filter(FN122InProjectFilter):
     )
     lift_time__lte = django_filters.TimeFilter(
         field_name="sample__efftm1", lookup_expr="lte", help_text="format: HH:MM"
-    )
-
-    # project attributes
-    year = django_filters.CharFilter(
-        field_name="sample__project__year", lookup_expr="exact"
-    )
-    year__gte = django_filters.NumberFilter(
-        field_name="sample__project__year", lookup_expr="gte"
-    )
-    year__lte = django_filters.NumberFilter(
-        field_name="sample__project__year", lookup_expr="lte"
-    )
-
-    year__gt = django_filters.NumberFilter(
-        field_name="sample__project__year", lookup_expr="gt"
-    )
-    year__lt = django_filters.NumberFilter(
-        field_name="sample__project__year", lookup_expr="lt"
-    )
-
-    prj_date0 = django_filters.DateFilter(
-        field_name="sample__project__prj_date0", help_text="format: yyyy-mm-dd"
-    )
-    prj_date0__gte = django_filters.DateFilter(
-        field_name="sample__project__prj_date0",
-        lookup_expr="gte",
-        help_text="format: yyyy-mm-dd",
-    )
-    prj_date0__lte = django_filters.DateFilter(
-        field_name="sample__project__prj_date0",
-        lookup_expr="lte",
-        help_text="format: yyyy-mm-dd",
-    )
-
-    prj_date1 = django_filters.DateFilter(
-        field_name="sample__project__prj_date1", help_text="format: yyyy-mm-dd"
-    )
-    prj_date1__gte = django_filters.DateFilter(
-        field_name="sample__project__prj_date1",
-        lookup_expr="gte",
-        help_text="format: yyyy-mm-dd",
-    )
-    prj_date1__lte = django_filters.DateFilter(
-        field_name="sample__project__prj_date1",
-        lookup_expr="lte",
-        help_text="format: yyyy-mm-dd",
-    )
-
-    prj_cd = ValueInFilter(field_name="sample__project__prj_cd")
-    prj_cd__not = ValueInFilter(field_name="sample__project__prj_cd", exclude=True)
-
-    prj_cd__like = django_filters.CharFilter(
-        field_name="sample__project__prj_cd", lookup_expr="icontains"
-    )
-
-    prj_cd__not_like = django_filters.CharFilter(
-        field_name="sample__project__prj_cd", lookup_expr="icontains", exclude=True
-    )
-
-    lake = django_filters.CharFilter(
-        field_name="sample__project__lake__abbrev", lookup_expr="iexact"
-    )
-
-    lake__not = django_filters.CharFilter(
-        field_name="sample__project__lake__abbrev", lookup_expr="iexact", exclude=True
     )
 
     class Meta:
