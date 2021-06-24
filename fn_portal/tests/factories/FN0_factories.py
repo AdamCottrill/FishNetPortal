@@ -1,11 +1,10 @@
-import factory
 import datetime
 
-from .user_factory import UserFactory
+import factory
 
+from ...models import FN011, FN013, FN014, FN022, FN026, FN028, FNProtocol
 from .common_factories import LakeFactory
-
-from ...models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
+from .user_factory import UserFactory
 
 
 class FNProtocolFactory(factory.django.DjangoModelFactory):

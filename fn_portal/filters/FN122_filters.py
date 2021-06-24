@@ -106,13 +106,33 @@ class FN122Filter(FN122InProjectFilter):
         field_name="sample__project__prj_cd", lookup_expr="icontains", exclude=True
     )
 
-    lake = django_filters.CharFilter(
-        field_name="sample__project__lake__abbrev", lookup_expr="iexact"
+    prj_cd__endswith = django_filters.CharFilter(
+        field_name="sample__project__prj_cd", lookup_expr="endswith"
+    )
+    prj_cd__not_endswith = django_filters.CharFilter(
+        field_name="sample__project__prj_cd", lookup_expr="endswith", exclude=True
     )
 
-    lake__not = django_filters.CharFilter(
-        field_name="sample__project__lake__abbrev", lookup_expr="iexact", exclude=True
+    prj_nm__like = django_filters.CharFilter(
+        field_name="sample__project__prj_nm", lookup_expr="icontains"
     )
+
+    prj_nm__not_like = django_filters.CharFilter(
+        field_name="sample__project__prj_nm", lookup_expr="icontains", exclude=True
+    )
+
+    prj_ldr = django_filters.CharFilter(
+        field_name="sample__project__prj_ldr__username", lookup_expr="iexact"
+    )
+
+    protocol = ValueInFilter(field_name="sample__project__protocol__abbrev")
+    protocol__not = ValueInFilter(
+        field_name="sample__project__protocol__abbrev", exclude=True
+    )
+
+    lake = ValueInFilter(field_name="sample__project__lake__abbrev")
+
+    lake__not = ValueInFilter(field_name="sample__project__lake__abbrev", exclude=True)
 
     # FN121 Attributes
 

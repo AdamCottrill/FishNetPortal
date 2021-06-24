@@ -84,11 +84,6 @@ class FN123Filter(FN123SubFilter):
         help_text="format: yyyy-mm-dd",
     )
 
-    protocol = ValueInFilter(field_name="effort__sample__project__protocol__abbrev")
-    protocol__not = ValueInFilter(
-        field_name="effort__sample__project__protocol__abbrev", exclude=True
-    )
-
     prj_cd = ValueInFilter(field_name="effort__sample__project__prj_cd")
     prj_cd__not = ValueInFilter(
         field_name="effort__sample__project__prj_cd", exclude=True
@@ -102,6 +97,34 @@ class FN123Filter(FN123SubFilter):
         field_name="effort__sample__project__prj_cd",
         lookup_expr="icontains",
         exclude=True,
+    )
+
+    prj_cd__endswith = django_filters.CharFilter(
+        field_name="effort__sample__project__prj_cd", lookup_expr="endswith"
+    )
+    prj_cd__not_endswith = django_filters.CharFilter(
+        field_name="effort__sample__project__prj_cd",
+        lookup_expr="endswith",
+        exclude=True,
+    )
+
+    prj_nm__like = django_filters.CharFilter(
+        field_name="effort__sample__project__prj_nm", lookup_expr="icontains"
+    )
+
+    prj_nm__not_like = django_filters.CharFilter(
+        field_name="effort__sample__project__prj_nm",
+        lookup_expr="icontains",
+        exclude=True,
+    )
+
+    prj_ldr = django_filters.CharFilter(
+        field_name="effort__sample__project__prj_ldr__username", lookup_expr="iexact"
+    )
+
+    protocol = ValueInFilter(field_name="effort__sample__project__protocol__abbrev")
+    protocol__not = ValueInFilter(
+        field_name="effort__sample__project__protocol__abbrev", exclude=True
     )
 
     lake = ValueInFilter(field_name="effort__sample__project__lake__abbrev")

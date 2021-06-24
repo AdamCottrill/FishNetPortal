@@ -55,7 +55,7 @@ class FN123Factory(factory.django.DjangoModelFactory):
         django_get_or_create = ("effort", "species", "grp")
 
     effort = factory.SubFactory(FN122Factory)
-    grp = factory.Sequence(lambda n: "{:02d}".format(n))
+    grp = "00"
 
 
 class FN124Factory(factory.django.DjangoModelFactory):

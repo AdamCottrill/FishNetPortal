@@ -143,6 +143,25 @@ class FN121Filter(FN121SubFilter):
         field_name="project__prj_cd", lookup_expr="icontains", exclude=True
     )
 
+    prj_cd__endswith = django_filters.CharFilter(
+        field_name="project__prj_cd", lookup_expr="endswith"
+    )
+    prj_cd__not_endswith = django_filters.CharFilter(
+        field_name="project__prj_cd", lookup_expr="endswith", exclude=True
+    )
+
+    prj_nm__like = django_filters.CharFilter(
+        field_name="project__prj_nm", lookup_expr="icontains"
+    )
+
+    prj_nm__not_like = django_filters.CharFilter(
+        field_name="project__prj_nm", lookup_expr="icontains", exclude=True
+    )
+
+    prj_ldr = django_filters.CharFilter(
+        field_name="project__prj_ldr__username", lookup_expr="iexact"
+    )
+
     lake = ValueInFilter(field_name="project__lake__abbrev")
 
     lake__not = ValueInFilter(field_name="project__lake__abbrev", exclude=True)

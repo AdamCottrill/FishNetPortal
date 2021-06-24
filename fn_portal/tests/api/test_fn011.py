@@ -196,7 +196,7 @@ def test_fn011_project_suffix_filter(client, db_setup):
     "Verify that we can filter projects based on the project suffix"
 
     url = reverse("fn_portal_api:project_list")
-    response = client.get(url, {"suffix": "999"})
+    response = client.get(url, {"prj_cd__endswith": "999"})
     assert response.status_code == status.HTTP_200_OK
     results = response.data["results"]
     assert len(results) == 1

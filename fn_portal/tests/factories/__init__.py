@@ -2,6 +2,7 @@ from .common_factories import LakeFactory, Grid5Factory, SpeciesFactory
 
 from .user_factory import UserFactory
 from .FN0_factories import (
+    FNProtocolFactory,
     FN011Factory,
     FN013Factory,
     FN014Factory,
