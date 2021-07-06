@@ -1,8 +1,7 @@
 import django_filters
 
-from .common_filters import ValueInFilter, NumberInFilter
-
 from ..models import FN125, FN125_Lamprey, FN125Tag
+from .common_filters import NumberInFilter, ValueInFilter
 
 
 class FN125SubFilter(django_filters.FilterSet):
@@ -43,13 +42,52 @@ class FN125SubFilter(django_filters.FilterSet):
     clipc = ValueInFilter(field_name="clipc")
     clipc__not = ValueInFilter(field_name="clipc", exclude=True)
     clipc__null = django_filters.BooleanFilter(field_name="clipc", lookup_expr="isnull")
+    clipc__like = django_filters.CharFilter(field_name="clipc", lookup_expr="icontains")
+    clipc__not_like = django_filters.CharFilter(
+        field_name="clipc", lookup_expr="icontains", exclude=True
+    )
+
+    clipa = ValueInFilter(field_name="clipa")
+    clipa__not = ValueInFilter(field_name="clipa", exclude=True)
+    clipa__null = django_filters.BooleanFilter(field_name="clipa", lookup_expr="isnull")
+    clipa__like = django_filters.CharFilter(field_name="clipa", lookup_expr="icontains")
+    clipa__not_like = django_filters.CharFilter(
+        field_name="clipa", lookup_expr="icontains", exclude=True
+    )
+
+    nodc = ValueInFilter(field_name="nodc")
+    nodc__not = ValueInFilter(field_name="nodc", exclude=True)
+    nodc__null = django_filters.BooleanFilter(field_name="nodc", lookup_expr="isnull")
+    nodc__like = django_filters.CharFilter(field_name="nodc", lookup_expr="icontains")
+    nodc__not_like = django_filters.CharFilter(
+        field_name="nodc", lookup_expr="icontains", exclude=True
+    )
+
+    noda = ValueInFilter(field_name="noda")
+    noda__not = ValueInFilter(field_name="noda", exclude=True)
+    noda__null = django_filters.BooleanFilter(field_name="noda", lookup_expr="isnull")
+    noda__like = django_filters.CharFilter(field_name="noda", lookup_expr="icontains")
+    noda__not_like = django_filters.CharFilter(
+        field_name="noda", lookup_expr="icontains", exclude=True
+    )
 
     # girth, agest, fate,
     # these are child tables and might be harder to filter on: age_estimates, lamprey, tags, diet_data
 
     class Meta:
         model = FN125
-        fields = ["sex", "mat", "gon", "tlen", "flen", "rwt", "clipc"]
+        fields = [
+            "sex",
+            "mat",
+            "gon",
+            "tlen",
+            "flen",
+            "rwt",
+            "clipc",
+            "clipa",
+            "nodc",
+            "noda",
+        ]
 
 
 class FN125Filter(FN125SubFilter):
@@ -115,12 +153,6 @@ class FN125Filter(FN125SubFilter):
 
     prj_cd__like = django_filters.CharFilter(
         field_name="catch__effort__sample__project__prj_cd", lookup_expr="icontains"
-    )
-
-    prj_cd__not_like = django_filters.CharFilter(
-        field_name="catch__effort__sample__project__prj_cd",
-        lookup_expr="icontains",
-        exclude=True,
     )
 
     prj_cd__not_like = django_filters.CharFilter(

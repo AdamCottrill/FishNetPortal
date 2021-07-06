@@ -1,6 +1,6 @@
 import django_filters
 
-from .common_filters import ValueInFilter, NumberInFilter
+from .common_filters import NumberInFilter, ValueInFilter
 
 
 class FishAttrFilters(django_filters.FilterSet):
@@ -357,4 +357,46 @@ class FishAttrFilters(django_filters.FilterSet):
     clipc__not = ValueInFilter(field_name="fish__clipc", exclude=True)
     clipc__null = django_filters.BooleanFilter(
         field_name="fish__clipc", lookup_expr="isnull"
+    )
+    clipc__like = django_filters.CharFilter(
+        field_name="fish__clipc", lookup_expr="icontains"
+    )
+    clipc__not_like = django_filters.CharFilter(
+        field_name="fish__clipc", lookup_expr="icontains", exclude=True
+    )
+
+    clipa = ValueInFilter(field_name="fish__clipa")
+    clipa__not = ValueInFilter(field_name="fish__clipa", exclude=True)
+    clipa__null = django_filters.BooleanFilter(
+        field_name="fish__clipa", lookup_expr="isnull"
+    )
+    clipa__like = django_filters.CharFilter(
+        field_name="fish__clipa", lookup_expr="icontains"
+    )
+    clipa__not_like = django_filters.CharFilter(
+        field_name="fish__clipa", lookup_expr="icontains", exclude=True
+    )
+
+    nodc = ValueInFilter(field_name="fish__nodc")
+    nodc__not = ValueInFilter(field_name="fish__nodc", exclude=True)
+    nodc__null = django_filters.BooleanFilter(
+        field_name="fish__nodc", lookup_expr="isnull"
+    )
+    nodc__like = django_filters.CharFilter(
+        field_name="fish__nodc", lookup_expr="icontains"
+    )
+    nodc__not_like = django_filters.CharFilter(
+        field_name="fish__nodc", lookup_expr="icontains", exclude=True
+    )
+
+    noda = ValueInFilter(field_name="fish__noda")
+    noda__not = ValueInFilter(field_name="fish__noda", exclude=True)
+    noda__null = django_filters.BooleanFilter(
+        field_name="fish__noda", lookup_expr="isnull"
+    )
+    noda__like = django_filters.CharFilter(
+        field_name="fish__noda", lookup_expr="icontains"
+    )
+    noda__not_like = django_filters.CharFilter(
+        field_name="fish__noda", lookup_expr="icontains", exclude=True
     )

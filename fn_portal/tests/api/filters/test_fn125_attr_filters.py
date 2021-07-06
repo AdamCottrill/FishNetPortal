@@ -2,7 +2,7 @@
 
 The tests in this file ensure that the filters associated with the attributes of
 the sampled fish (FN125 records) work as expected on the fn125 end point, as
-well as the child  tables for lamprey, tags, age estimates, and diet times.  
+well as the child  tables for lamprey, tags, age estimates, and diet times.
 
 The fixtures returns an array of fish (or one child element per fish), apply a
 filter, and verify that the reponse contains the expected records given the
@@ -61,11 +61,37 @@ filter_args = [
     ({"mat__null": True}, [1, 4]),
     ({"mat__null": False}, [0, 2, 3, 5]),
     ({"clipc": 0}, [0, 3]),
-    ({"clipc": "1,5"}, [1, 2]),
+    ({"clipc": "2,5"}, [1, 2]),
     ({"clipc__not": 0}, [1, 2, 4, 5]),
-    ({"clipc__not": "1,5"}, [0, 3, 4, 5]),
+    ({"clipc__not": "2,5"}, [0, 3, 4, 5]),
     ({"clipc__null": True}, [5]),
     ({"clipc__null": False}, [0, 1, 2, 3, 4]),
+    ({"clipc__like": "2"}, [1, 4]),
+    ({"clipc__not_like": "2"}, [0, 2, 3, 5]),
+    ({"clipa": "7"}, [3]),
+    ({"clipa": "5,7"}, [2, 3]),
+    ({"clipa__not": "7"}, [0, 1, 2, 4, 5]),
+    ({"clipa__not": "5,7"}, [0, 1, 4, 5]),
+    ({"clipa__null": True}, [0, 1]),
+    ({"clipa__null": False}, [2, 3, 4, 5]),
+    ({"clipa__like": "5"}, [2, 4]),
+    ({"clipa__not_like": "5"}, [0, 1, 3, 5]),
+    ({"nodc": "711"}, [4, 5]),
+    ({"nodc": "711,714"}, [0, 1, 4, 5]),
+    ({"nodc__not": "711"}, [0, 1, 2, 3]),
+    ({"nodc__not": "711,714"}, [2, 3]),
+    ({"nodc__null": True}, [2]),
+    ({"nodc__null": False}, [0, 1, 3, 4, 5]),
+    ({"nodc__like": "11"}, [4, 5]),
+    ({"nodc__not_like": "11"}, [0, 1, 2, 3]),
+    ({"noda": "711"}, [0, 5]),
+    ({"noda": "711,714"}, [0, 4, 5]),
+    ({"noda__not": "711"}, [1, 2, 3, 4]),
+    ({"noda__not": "711,714"}, [1, 2, 3]),
+    ({"noda__null": True}, [1, 2]),
+    ({"noda__null": False}, [0, 3, 4, 5]),
+    ({"noda__like": "11"}, [0, 5]),
+    ({"noda__not_like": "11"}, [1, 2, 3, 4]),
 ]
 
 

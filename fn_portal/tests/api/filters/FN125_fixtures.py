@@ -13,13 +13,13 @@ parameters array in the test file.
 import pytest
 
 from ...factories import (
-    SpeciesFactory,
     FN123Factory,
     FN125Factory,
-    FN125TagFactory,
     FN125LampreyFactory,
+    FN125TagFactory,
     FN126Factory,
     FN127Factory,
+    SpeciesFactory,
 )
 
 
@@ -33,16 +33,56 @@ def fish():
     catch2 = FN123Factory(species=species2)
 
     fish0 = FN125Factory(
-        catch=catch2, flen=225, tlen=250, rwt=None, clipc="0", gon=None, mat=9, sex=9
+        catch=catch2,
+        flen=225,
+        tlen=250,
+        rwt=None,
+        clipc="0",
+        clipa=None,
+        gon=None,
+        mat=9,
+        sex=9,
+        noda="711",
+        nodc="714",
     )
     fish1 = FN125Factory(
-        catch=catch1, flen=275, tlen=300, rwt=500, clipc="1", gon=None, mat=None, sex=1
+        catch=catch1,
+        flen=275,
+        tlen=300,
+        rwt=500,
+        clipc="2",
+        clipa=None,
+        gon=None,
+        mat=None,
+        sex=1,
+        noda=None,
+        nodc="714",
     )
     fish2 = FN125Factory(
-        catch=catch2, flen=375, tlen=400, rwt=1000, clipc="5", gon=10, mat=1, sex=1
+        catch=catch2,
+        flen=375,
+        tlen=400,
+        rwt=1000,
+        clipc="5",
+        clipa="5",
+        gon=10,
+        mat=1,
+        sex=1,
+        noda=None,
+        nodc=None,
     )
     fish3 = FN125Factory(
-        catch=catch1, flen=375, tlen=400, rwt=1100, clipc="0", gon=20, mat=2, sex=2
+        catch=catch1,
+        flen=375,
+        tlen=400,
+        rwt=1100,
+        clipc="0",
+        clipa="7",
+        gon=20,
+        mat=2,
+        sex=2,
+        noda="716",
+        nodc="716",
     )
     fish4 = FN125Factory(
         catch=catch2,
@@ -50,12 +90,25 @@ def fish():
         tlen=350,
         rwt=800,
         clipc="23",
+        clipa="25",
         gon=30,
         mat=None,
         sex=None,
+        noda="714",
+        nodc="711",
     )
     fish5 = FN125Factory(
-        catch=catch1, flen=225, tlen=250, rwt=500, clipc=None, gon=9, mat=9, sex=None
+        catch=catch1,
+        flen=225,
+        tlen=250,
+        rwt=500,
+        clipc=None,
+        clipa="2",
+        gon=9,
+        mat=9,
+        sex=None,
+        noda="711",
+        nodc="711",
     )
 
     return [fish0, fish1, fish2, fish3, fish4, fish5]

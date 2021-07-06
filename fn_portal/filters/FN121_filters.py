@@ -129,9 +129,6 @@ class FN121Filter(FN121SubFilter):
         help_text="format: yyyy-mm-dd",
     )
 
-    protocol = ValueInFilter(field_name="project__protocol__abbrev")
-    protocol__not = ValueInFilter(field_name="project__protocol__abbrev", exclude=True)
-
     prj_cd = ValueInFilter(field_name="project__prj_cd")
     prj_cd__not = ValueInFilter(field_name="project__prj_cd", exclude=True)
 
@@ -161,6 +158,9 @@ class FN121Filter(FN121SubFilter):
     prj_ldr = django_filters.CharFilter(
         field_name="project__prj_ldr__username", lookup_expr="iexact"
     )
+
+    protocol = ValueInFilter(field_name="project__protocol__abbrev")
+    protocol__not = ValueInFilter(field_name="project__protocol__abbrev", exclude=True)
 
     lake = ValueInFilter(field_name="project__lake__abbrev")
 
