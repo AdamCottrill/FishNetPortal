@@ -1,20 +1,18 @@
 """Serializers for models in fn_portal"""
 
-from rest_framework import serializers
-
 from common.models import Grid5
-
 from fn_portal.models import (
     FN121,
     FN122,
     FN123,
     FN124,
     FN125,
-    FN125Tag,
-    FN125_Lamprey,
     FN126,
     FN127,
+    FN125_Lamprey,
+    FN125Tag,
 )
+from rest_framework import serializers
 
 from .common_serializers import GridSerializer
 
@@ -426,7 +424,7 @@ class FN125TagSerializer(serializers.ModelSerializer):
     species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
     eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
     grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.fish")
 
     class Meta:
         model = FN125Tag
@@ -459,7 +457,7 @@ class FN125LampreySerializer(serializers.ModelSerializer):
     species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
     eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
     grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.fish")
 
     class Meta:
         model = FN125_Lamprey
@@ -490,7 +488,7 @@ class FN126Serializer(serializers.ModelSerializer):
     species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
     eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
     grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.fish")
 
     class Meta:
         model = FN126
@@ -519,7 +517,7 @@ class FN127Serializer(serializers.ModelSerializer):
     species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
     eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
     grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.catch.grp")
+    fish = serializers.CharField(read_only=True, source="fish.catch.fish")
 
     class Meta:
         model = FN127
