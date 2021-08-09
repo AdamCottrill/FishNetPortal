@@ -2,10 +2,6 @@
 
 
 from django.http import Http404
-from rest_framework import generics
-
-from rest_framework.permissions import IsAdminUser
-
 from fn_portal.models import (
     FN011,
     FN121,
@@ -13,13 +9,13 @@ from fn_portal.models import (
     FN123,
     FN124,
     FN125,
-    FN125Tag,
-    FN125_Lamprey,
     FN126,
     FN127,
+    FN125_Lamprey,
+    FN125Tag,
 )
-
-from ..utils import StandardResultsSetPagination
+from rest_framework import generics
+from rest_framework.permissions import IsAdminUser
 
 from ...filters import (
     FN121Filter,
@@ -32,18 +28,18 @@ from ...filters import (
     FN127Filter,
 )
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly
-
 from ..serializers import (
     FN121Serializer,
     FN122Serializer,
     FN123Serializer,
     FN124Serializer,
+    FN125LampreySerializer,
     FN125Serializer,
     FN125TagSerializer,
-    FN125LampreySerializer,
     FN126Serializer,
     FN127Serializer,
 )
+from ..utils import StandardResultsSetPagination
 
 
 class NetSetList(generics.ListAPIView):
@@ -59,16 +55,16 @@ class NetSetList(generics.ListAPIView):
 
     queryset = (
         (
-            FN121.objects.select_related("grid", "grid__lake").defer(
-                "grid__geom",
-                "grid__envelope",
-                "grid__centroid",
-                "grid__lake__geom",
-                "grid__lake__geom_ontario",
-                "grid__lake__envelope",
-                "grid__lake__envelope_ontario",
-                "grid__lake__centroid",
-                "grid__lake__centroid_ontario",
+            FN121.objects.select_related("grid5", "grid5__lake").defer(
+                "grid5__geom",
+                "grid5__envelope",
+                "grid5__centroid",
+                "grid5__lake__geom",
+                "grid5__lake__geom_ontario",
+                "grid5__lake__envelope",
+                "grid5__lake__envelope_ontario",
+                "grid5__lake__centroid",
+                "grid5__lake__centroid_ontario",
             )
         )
         .all()
@@ -275,17 +271,17 @@ class FN121ListView(generics.ListCreateAPIView):
 
         queryset = (
             FN121.objects.filter(project__slug=prj_cd)
-            .select_related("grid", "grid__lake")
+            .select_related("grid5", "grid5__lake")
             .defer(
-                "grid__geom",
-                "grid__envelope",
-                "grid__centroid",
-                "grid__lake__geom",
-                "grid__lake__geom_ontario",
-                "grid__lake__envelope",
-                "grid__lake__envelope_ontario",
-                "grid__lake__centroid",
-                "grid__lake__centroid_ontario",
+                "grid5__geom",
+                "grid5__envelope",
+                "grid5__centroid",
+                "grid5__lake__geom",
+                "grid5__lake__geom_ontario",
+                "grid5__lake__envelope",
+                "grid5__lake__envelope_ontario",
+                "grid5__lake__centroid",
+                "grid5__lake__centroid_ontario",
             )
         )
 

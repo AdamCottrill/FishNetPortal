@@ -1,19 +1,19 @@
 import factory
 
-
-from .FN0_factories import FN011Factory
-
 from ...models import (
     FN121,
     FN122,
     FN123,
     FN124,
     FN125,
-    FN127,
     FN126,
-    FN125Tag,
+    FN127,
     FN125_Lamprey,
+    FN125Tag,
 )
+from .FN0_factories import FN011Factory
+
+# FN022Factory, FN026Factory, FN028Factory
 
 
 class FN121Factory(factory.django.DjangoModelFactory):
@@ -28,6 +28,10 @@ class FN121Factory(factory.django.DjangoModelFactory):
 
     project = factory.SubFactory(FN011Factory)
     sam = factory.Sequence(lambda n: "{:03d}".format(n))
+
+    # ssn = factory.SubFactory(FN022Factory)
+    # space = factory.SubFactory(FN026Factory)
+    # mode = factory.SubFactory(FN028Factory)
 
 
 class FN122Factory(factory.django.DjangoModelFactory):

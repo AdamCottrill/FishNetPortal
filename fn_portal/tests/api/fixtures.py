@@ -13,14 +13,15 @@
 """
 
 
-import pytest
 from datetime import datetime, time
 
+import pytest
+
 from ..factories import (
-    LakeFactory,
-    Grid5Factory,
     FN011Factory,
     FN121Factory,
+    Grid5Factory,
+    LakeFactory,
     UserFactory,
 )
 
@@ -97,7 +98,7 @@ def net_sets(project, grid):
         efftm0=time(10, 30),
         efftm1=time(8, 30),
         effdur=22.0,
-        grid=grid,
+        grid5=grid,
         sidep=40,
         gr="GL32",
         grtp="GL",

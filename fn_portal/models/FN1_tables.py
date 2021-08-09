@@ -1,12 +1,11 @@
+from common.models import Grid5, Species
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import F, Sum
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.db.models import F, Sum
 
-from common.models import Grid5, Species
-
-from .FN0_tables import FN011
+from .FN0_tables import FN011, FN022, FN026, FN028
 
 User = get_user_model()
 
@@ -16,37 +15,71 @@ class FN121(models.Model):
 
     project = models.ForeignKey(FN011, related_name="samples", on_delete=models.CASCADE)
 
-    grid = models.ForeignKey(
+    ssn = models.ForeignKey(
+        FN022, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
+    )
+    space = models.ForeignKey(
+        FN026, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
+    )
+    mode = models.ForeignKey(
+        FN028, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
+    )
+
+    grid5 = models.ForeignKey(
         Grid5,
         related_name="fn_samples",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
+    # move to gear and fn028
     grtp = models.CharField(max_length=3, blank=True, null=True, db_index=True)
     gr = models.CharField(max_length=5, db_index=True, blank=True, null=True)
+    orient = models.CharField(max_length=2, blank=True, null=True, db_index=True)
+
+    sam = models.CharField(max_length=5, db_index=True)
+    effdt0 = models.DateField("Effort Start Date", blank=True, null=True, db_index=True)
+    effdt1 = models.DateField("Effort End Date", blank=True, null=True, db_index=True)
+    effdur = models.FloatField("Effort Duration (hours)", blank=True, null=True)
+    efftm0 = models.TimeField("Effort Start Date", blank=True, null=True, db_index=True)
+    efftm1 = models.TimeField("Effort End Time", blank=True, null=True, db_index=True)
+    effst = models.CharField(
+        "Effort Status", max_length=2, blank=True, null=True, db_index=True
+    )
+
+    sitp = models.CharField("Site Type", max_length=4, blank=True, null=True)
+    site = models.CharField("Site Label", max_length=100, blank=True, null=True)
+
+    sitem = models.FloatField("Site Temperature (degrees C)", blank=True, null=True)
+    sitem0 = models.FloatField(
+        "Start Site Temperature (degrees C)", blank=True, null=True
+    )
+    sitem1 = models.FloatField(
+        "End Site Temperature (degrees C)", blank=True, null=True
+    )
+
+    sidep = models.FloatField("Site Depth (m)", blank=True, null=True, db_index=True)
+    grdepmin = models.FloatField(
+        "Min. Gear Depth (m)", blank=True, null=True, db_index=True
+    )
+    grdepmax = models.FloatField(
+        "Max. Gear Depth (m)", blank=True, null=True, db_index=True
+    )
+    secchi = models.FloatField(blank=True, null=True)
+    xslime = models.IntegerField(blank=True, null=True)
 
     slug = models.SlugField(max_length=100, unique=True)
-    sam = models.CharField(max_length=5, db_index=True)
-    effdt0 = models.DateField(blank=True, null=True, db_index=True)
-    effdt1 = models.DateField(blank=True, null=True, db_index=True)
-    effdur = models.FloatField(blank=True, null=True)
-    efftm0 = models.TimeField(blank=True, null=True, db_index=True)
-    efftm1 = models.TimeField(blank=True, null=True, db_index=True)
-    effst = models.CharField(max_length=2, blank=True, null=True, db_index=True)
+    dd_lat = models.FloatField("Start Latitude(dd)", blank=True, null=True)
+    dd_lon = models.FloatField("Start Longitude (dd)", blank=True, null=True)
 
-    orient = models.CharField(max_length=2, blank=True, null=True, db_index=True)
-    sidep = models.FloatField(default=0, blank=True, null=True, db_index=True)
-    secchi = models.FloatField(blank=True, null=True)
+    dd_lat1 = models.FloatField("End Latitude (dd)", blank=True, null=True)
+    dd_lon1 = models.FloatField("End Longitude (dd)", blank=True, null=True)
 
-    site = models.CharField(max_length=100, blank=True, null=True)
-    sitem = models.CharField(max_length=5, blank=True, null=True)
-    dd_lat = models.FloatField(blank=True, null=True)
-    dd_lon = models.FloatField(blank=True, null=True)
     # TODO:
     # geom = models.PointField(srid=4326,
     #                         help_text='Represented as (longitude, latitude)')
 
+    crew = models.CharField(max_length=100, blank=True, null=True)
     comment1 = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:

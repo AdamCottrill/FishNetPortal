@@ -26,7 +26,7 @@
    + "orient"
    + "sidep"
    + "site"
-   + "grid":
+   + "grid5":
    + "dd_lat"
    + "dd_lon"
    + "sitem"
@@ -43,15 +43,14 @@ field crew (who cannot edit or create projects)
 """
 
 
-import pytest
-
 from datetime import datetime
-from django.urls import reverse
 
+import pytest
+from django.urls import reverse
+from fn_portal.models import FN121
 from rest_framework import status
 
-from fn_portal.models import FN121
-from ..fixtures import project, lake, grid, net_sets, api_client, users
+from ..fixtures import api_client, grid, lake, net_sets, project, users
 
 
 @pytest.fixture
@@ -73,7 +72,7 @@ def netset_data(grid):
         "site": "44",
         "dd_lat": 45.8595,
         "dd_lon": -80.8095,
-        "grid": {"grid": str(grid.grid), "slug": grid.slug},
+        "grid5": {"grid": str(grid.grid), "slug": grid.slug},
         "sitem": 23,
         "comment1": "Some sample data",
         "secchi": 10,
@@ -253,14 +252,14 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.dd_lat == netset_data["dd_lat"]
     assert fn121.dd_lon == netset_data["dd_lon"]
     # assert fn121.gear == netset_data["grid"]
-    # sitem should be a float:
-    assert fn121.sitem == str(netset_data["sitem"])
+
+    assert fn121.sitem == netset_data["sitem"]
     assert fn121.comment1 == netset_data["comment1"]
     assert fn121.secchi == netset_data["secchi"]
 
-    grid = fn121.grid
-    assert str(grid.grid) == netset_data["grid"]["grid"]
-    assert grid.slug == netset_data["grid"]["slug"]
+    grid = fn121.grid5
+    assert str(grid.grid) == netset_data["grid5"]["grid"]
+    assert grid.slug == netset_data["grid5"]["slug"]
 
 
 usernames = [None, "gcostanza", "hsimpson", "bgumble", "mburns"]
@@ -314,7 +313,7 @@ def test_fn121_detailview(api_client, net_sets):
         "orient": net_set.orient,
         "sidep": net_set.sidep,
         "site": net_set.site,
-        "grid": {"grid": str(net_set.grid.grid), "slug": net_set.grid.slug},
+        "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
         "dd_lat": net_set.dd_lat,
         "dd_lon": net_set.dd_lon,
         "sitem": net_set.sitem,

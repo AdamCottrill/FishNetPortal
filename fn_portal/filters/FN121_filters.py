@@ -1,8 +1,7 @@
 import django_filters
 
-from .common_filters import ValueInFilter, NumberInFilter
-
 from ..models import FN121
+from .common_filters import NumberInFilter, ValueInFilter
 
 
 class FN121SubFilter(django_filters.FilterSet):
@@ -21,8 +20,8 @@ class FN121SubFilter(django_filters.FilterSet):
     gr__not = ValueInFilter(field_name="gr", exclude=True)
 
     # grid is a little trick - requires us to filter lake too - user beware!
-    grid = NumberInFilter(field_name="grid__grid")
-    grid__not = NumberInFilter(field_name="grid__grid", exclude=True)
+    grid = NumberInFilter(field_name="grid5__grid")
+    grid__not = NumberInFilter(field_name="grid5__grid", exclude=True)
 
     effdur__gte = django_filters.NumberFilter(field_name="effdur", lookup_expr="gte")
     effdur__lte = django_filters.NumberFilter(field_name="effdur", lookup_expr="lte")
@@ -77,7 +76,7 @@ class FN121SubFilter(django_filters.FilterSet):
             "project__prj_cd",
             "project__lake",
             "project__source",
-            "grid__grid",
+            "grid5__grid",
             "sidep",
             "gr",
             "grtp",
@@ -173,7 +172,7 @@ class FN121Filter(FN121SubFilter):
             "project__prj_cd",
             "project__lake",
             "project__source",
-            "grid__grid",
+            "grid5__grid",
             "sidep",
             "gr",
             "grtp",

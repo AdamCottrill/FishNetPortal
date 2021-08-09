@@ -22,7 +22,7 @@ class FN121Serializer(serializers.ModelSerializer):
     prj_cd = serializers.CharField(source="project.prj_cd")
     effdt0 = serializers.DateField(format="%Y-%m-%d")
     effdt1 = serializers.DateField(format="%Y-%m-%d")
-    grid = GridSerializer(many=False)
+    grid5 = GridSerializer(many=False)
 
     class Meta:
         model = FN121
@@ -44,7 +44,7 @@ class FN121Serializer(serializers.ModelSerializer):
             "orient",
             "sidep",
             "site",
-            "grid",
+            "grid5",
             "dd_lat",
             "dd_lon",
             "sitem",
@@ -60,8 +60,8 @@ class FN121Serializer(serializers.ModelSerializer):
         project = self.context["project"]
         validated_data["project"] = project
 
-        grid_data = validated_data.pop("grid")
-        validated_data["grid"] = Grid5.objects.get(
+        grid_data = validated_data.pop("grid5")
+        validated_data["grid5"] = Grid5.objects.get(
             lake=project.lake, grid=grid_data["grid"]
         )
 
@@ -72,10 +72,10 @@ class FN121Serializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """We need a custom update method to handle grid"""
 
-        grid_no = validated_data["grid"].get("grid")
-        if grid_no != instance.grid.grid:
-            grid = Grid5.objects.get(lake=instance.grid.lake, grid=grid_no)
-            instance.grid = grid
+        grid_no = validated_data["grid5"].get("grid")
+        if grid_no != instance.grid5.grid:
+            grid = Grid5.objects.get(lake=instance.grid5.lake, grid=grid_no)
+            instance.grid5 = grid
 
         instance.sam = validated_data.get("sam", instance.sam)
         instance.effdt0 = validated_data.get("effdt0", instance.effdt0)
