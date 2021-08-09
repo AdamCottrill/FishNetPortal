@@ -1,30 +1,22 @@
 from django.urls import path, re_path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
+from .api.urls import urlpatterns as api_urls
+from .views import (ProjectList, edit_gear, edit_subgear, gear_detail,
+                    gear_list, project_catch_counts_json,
+                    project_catch_over_time, project_catch_over_time_json,
+                    project_data_upload, project_detail, project_spc_biodata,
+                    project_spc_biodata_json, sample_catch_counts_json,
+                    sample_detail)
 
 # from rest_framework.schemas import get_schema_view
 # from rest_framework.documentation import include_docs_urls
 # from rest_framework_swagger.views import get_swagger_view
 
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 
-from .api.urls import urlpatterns as api_urls
 
-from .views import (
-    ProjectList,
-    project_detail,
-    sample_detail,
-    project_spc_biodata,
-    project_catch_over_time,
-    gear_list,
-    gear_detail,
-    edit_gear,
-    edit_subgear,
-    project_catch_counts_json,
-    project_spc_biodata_json,
-    project_catch_over_time_json,
-    sample_catch_counts_json,
-)
 
 
 API_TITLE = "Fishnet Portal API"
@@ -53,6 +45,10 @@ urlpatterns = [
         view=project_catch_over_time,
         name="project_catch_over_time",
     ),
+
+    path("project_data_upload/", view=project_data_upload, name="upload_project_data"),
+
+
     # =============================================
     #                GEAR
     path("gears/<str:username>/", view=gear_list, name="gears_assigned_to"),

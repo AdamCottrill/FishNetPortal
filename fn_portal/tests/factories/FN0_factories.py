@@ -4,6 +4,7 @@ import factory
 
 from ...models import FN011, FN013, FN014, FN022, FN026, FN028, FNProtocol
 from .common_factories import LakeFactory
+from .gear_factories import GearFactory
 from .user_factory import UserFactory
 
 
@@ -147,3 +148,4 @@ class FN028Factory(factory.django.DjangoModelFactory):
     mode = "01"
     mode_des = "Gillnet 2-6 inch"
     project = factory.SubFactory(FN011Factory)
+    gr = factory.SubFactory(GearFactory)

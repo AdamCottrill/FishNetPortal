@@ -1,13 +1,13 @@
+from common.models import Lake
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import F, Sum
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.db.models import F, Sum
-
-
-from common.models import Lake
 
 User = get_user_model()
+
+from .Gear import Gear
 
 
 class FNProtocol(models.Model):
@@ -21,7 +21,13 @@ class FNProtocol(models.Model):
 
 
 class FN011(models.Model):
-    """Project meta data."""
+    """Project meta data.
+
+    .. note:: field_crew is currently used in permissions - only dba, project
+       lead or field crew members are currently allowed to edit records.  This
+       should be refined in the future.
+
+    """
 
     protocol = models.ForeignKey(
         FNProtocol, related_name="projects", on_delete=models.CASCADE
@@ -34,15 +40,16 @@ class FN011(models.Model):
         blank=False,
         on_delete=models.CASCADE,
     )
+
     field_crew = models.ManyToManyField(User, related_name="fn_field_crew")
 
     year = models.CharField(max_length=4, db_index=True)
     prj_cd = models.CharField(max_length=13, db_index=True, unique=True)
-    slug = models.SlugField(max_length=13, unique=True)
     prj_nm = models.CharField(max_length=255)
-    # prj_ldr = models.CharField(max_length=255)
     prj_date0 = models.DateField()
     prj_date1 = models.DateField()
+
+    slug = models.SlugField(max_length=13, unique=True)
 
     lake = models.ForeignKey(Lake, related_name="projects", on_delete=models.CASCADE)
 
@@ -169,6 +176,7 @@ class FN014(models.Model):
 
     gear = models.ForeignKey(FN013, related_name="gear_effs", on_delete=models.CASCADE)
     eff = models.CharField(max_length=4, blank=True, null=True)
+    eff_des = models.TextField(blank=True, null=True)
     mesh = models.IntegerField(blank=True, null=True)
     grlen = models.FloatField(blank=True, null=True)
     grht = models.FloatField(blank=True, null=True)
@@ -177,7 +185,6 @@ class FN014(models.Model):
     grmat = models.CharField(max_length=10, blank=True, null=True)
     gryarn = models.IntegerField(blank=True, null=True)
     grknot = models.IntegerField(blank=True, null=True)
-    eff_des = models.TextField(blank=True, null=True)
 
     slug = models.SlugField(max_length=30, unique=True)
 
@@ -197,7 +204,13 @@ class FN014(models.Model):
 
 
 class FN022(models.Model):
-    """Class to represent the seasons (temporal strata) used in each project."""
+    """Class to represent the seasons (temporal strata) used in each project.
+
+    .. todo:: Add range constraints to ssn_date0 and ssn_date1 - they cannot
+    overlap each other and must be contained within the project start and end
+    dates (project.prj_date0 and project.prj_date1).
+
+    """
 
     project = models.ForeignKey(
         "FN011", related_name="seasons", on_delete=models.CASCADE
@@ -210,8 +223,6 @@ class FN022(models.Model):
     )
     ssn_date0 = models.DateField(help_text="Season Start Date", blank=False)
     ssn_date1 = models.DateField(help_text="Season End Date", blank=False)
-
-    v0 = models.CharField(max_length=4, blank=False)
 
     slug = models.SlugField(blank=True, unique=True, editable=False)
 
@@ -253,7 +264,20 @@ class FN022(models.Model):
 
 
 class FN026(models.Model):
-    """Class to represent the spatial strat used in a project."""
+    """Class to represent the spatial strat used in a project.
+
+    .. note:: We need to revisit how area_lst, site_lst, and sitp_lst work.
+       These were original fishnet files. If we keep them, they should be
+       changed to fk relationships with associated tables rather than comma
+       separated lists
+       - clearly and anti-pattern.
+
+    .. note:: we should add a polgyon to this table to capture the spatial
+       extent of each spatial strata.  lat-lon are used to provide a centroid -
+       may still be required so we can plot spatial strata without polygon
+       geoms.
+
+    """
 
     project = models.ForeignKey(
         "FN011", related_name="spatial_strata", on_delete=models.CASCADE
@@ -267,17 +291,23 @@ class FN026(models.Model):
     space_des = models.CharField(
         max_length=100, blank=False, help_text="Space Description"
     )
-    space_siz = models.IntegerField(
+    # this should be fk relationship to another table
+    site_lst = models.CharField(
+        max_length=100,
         blank=True,
         null=True,
-        help_text="The relative size of a space (i.e. spatial stratum).",
+        help_text="A list of SITEs that belong to the corresponding spatial stratum",
     )
-
+    # this should be fk relationship to another table
+    sitp_lst = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="A list of site types, delimited by comma",
+    )
+    # this should be fk relationship to another table
     area_lst = models.CharField(
         max_length=100, blank=False, help_text="Space Description"
-    )
-    aru = models.CharField(
-        max_length=100, blank=False, help_text="Aquatic Resource Unit Id"
     )
     grdep_ge = models.FloatField(
         blank=True, null=True, help_text="The lower limit of gear depth (in metres)."
@@ -307,19 +337,6 @@ class FN026(models.Model):
         blank=True,
         null=True,
         help_text="The upper limit of grid values belonging to a spatial stratum",
-    )
-
-    site_lst = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text="A list of SITEs that belong to the corresponding spatial stratum",
-    )
-    sitp_lst = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text="A list of site types, delimited by comma",
     )
 
     slug = models.SlugField(blank=True, unique=True, editable=False)
@@ -369,10 +386,10 @@ class FN028(models.Model):
     mode_des = models.CharField(
         help_text="Fishing Mode Description", max_length=100, blank=False
     )
-
-    gr = models.CharField(
-        help_text="Fishing Mode Description", max_length=4, blank=False
-    )
+    gr = models.ForeignKey("Gear", related_name="modes", on_delete=models.CASCADE)
+    # gr = models.CharField(
+    #     help_text="Gear Code", max_length=4, blank=False
+    # )
     gruse = models.CharField(
         help_text="Code to identify how a gear was used", max_length=2, blank=False
     )

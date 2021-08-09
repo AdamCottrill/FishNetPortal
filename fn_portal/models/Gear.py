@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-
 from markdown import markdown
 
-from .FN1_tables import FN121
+# from .FN1_tables import FN121
 
 User = get_user_model()
 
@@ -111,8 +110,8 @@ class Gear(models.Model):
 
         return my_subgears
 
-    def get_samcount(self):
-        return FN121.objects.filter(gr=self.gr_code).count()
+    # def get_samcount(self):
+    #     return FN121.objects.filter(gr=self.gr_code).count()
 
 
 class SubGear(models.Model):

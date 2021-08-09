@@ -1,26 +1,26 @@
 # from collections import Counter
 # from django.http import HttpResponse
 
-# from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Sum, F, Count, Q
-from django.views.generic import ListView
-from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
-
-# from django.core import serializers
-from django.db import connection
 import json
-
 from datetime import datetime
 
 from common.models import Lake, Species
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-from .models import FN011, FN013, FN121, FN123, Gear
-from .forms import GearForm
+# from django.core import serializers
+from django.db import connection
+from django.db.models import Count, F, Q, Sum
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.generic import ListView
+
 from .filters import FN011Filter
-
+from .forms import GearForm
+from .models import FN011, FN013, FN121, FN123, Gear
 
 User = get_user_model()
 
@@ -475,3 +475,78 @@ def gear_detail(request, gear_code):
         "projects": projects,
     }
     return render(request, "fn_portal/gear_detail.html", context)
+
+
+# # move this to someplace more appropriate:
+# def handle_uploaded_file(f):
+#     with open("some/file/name.txt", "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
+#     # now connect to the uploaded file and insert the contents in the appropriate tables...
+
+
+# # @login_required
+# def project_data_upload(request):
+#     if request.method == "POST":
+#         form = UploadFileForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             # handle_uploaded_file(request.FILES['file'])
+#             return HttpResponseRedirect("/success/url/")
+#     else:
+#         form = UploadFileForm()
+#     return render(request, "project_data_upload.html", {"form": form})
+
+
+# @login_required
+def project_data_upload(request):
+    """A view to process data uploads.  It will be only available to logged in users.
+
+    The uploaded file will be check for validity with cerberus - if it
+    looks like it has the correct shape, the data will be passed to a
+    stocking event formset, that will allow final editing and form
+    validation. Once submitted, the stocking event objects will be
+    created.
+
+    Only new stocking model objects can be created for now. An
+    extension will be to allow users to bulk edit rrecords - as long
+    as the stock_id number can be matched back to the original record.
+
+    """
+
+    if request.method == "GET":
+        return render(request, "fn_portal/project_data_upload.html")
+
+    try:
+        data_file = request.FILES["data_file"]
+        if not (data_file.name.endswith(".accdb") or data_file.name.endswith(".db")):
+            msg = "Choosen file is not an Access (*.accdb) file!"
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+        # if file is too large, return
+        if data_file.multiple_chunks():
+            filesize = data_file.size / (1000 * 1000)
+            msg = "Uploaded file is too big ({.2f} MB).".format(filesize)
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+
+        import pdb
+
+        pdb.set_trace()
+
+        # process validate:...
+        # xls_events = xls2dicts(data_file)
+        # valid, msg = validate_upload(xls_events, request.user)
+        # if not valid:
+        #     messages.error(request, msg)
+        #     return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+
+        # insert data in a transaction - backout if it fails.  Hurray if it works!
+        # xls_errors = validate_events(xls_events)
+        # request.session["data"] = xls_events
+        # request.session["errors"] = xls_errors
+
+        # return HttpResponseRedirect(reverse("stocking:xls-events-form"))
+
+    except Exception as e:
+        messages.error(request, "Unable to upload file. " + repr(e))
+        return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))

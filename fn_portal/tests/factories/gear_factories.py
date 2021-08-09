@@ -1,11 +1,6 @@
 import factory
 
-from ...models import (
-    GearFamily,
-    Gear,
-    SubGear,
-    Gear2SubGear,
-)
+from ...models import Gear, Gear2SubGear, GearFamily, SubGear
 
 
 class GearFamilyFactory(factory.django.DjangoModelFactory):
@@ -31,7 +26,7 @@ class GearFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Gear
-        # django_get_or_create = ("gear",)
+        django_get_or_create = ("gr_code",)
 
     family = factory.SubFactory(GearFamilyFactory)
     gr_label = "Monofilament Gillnet"

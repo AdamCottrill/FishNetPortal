@@ -1,15 +1,7 @@
 """Serializers for models in fn_portal"""
 
+from fn_portal.models import FN011, FN013, FN014, FN022, FN026, FN028
 from rest_framework import serializers
-
-from fn_portal.models import (
-    FN011,
-    FN013,
-    FN014,
-    FN022,
-    FN026,
-    FN028,
-)
 
 from .common_serializers import LakeSerializer, UserSerializer
 
@@ -105,9 +97,7 @@ class FN026Serializer(serializers.ModelSerializer):
             "label",
             "space",
             "space_des",
-            "space_siz",
             "area_lst",
-            "aru",
             "grdep_ge",
             "grdep_lt",
             "sidep_ge",

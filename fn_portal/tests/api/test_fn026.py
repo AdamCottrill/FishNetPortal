@@ -18,17 +18,13 @@
 
 """
 
-import pytest
 import json
 
-
+import pytest
 from django.urls import reverse
-
-from rest_framework import status
-
 from fn_portal.models import FN026
-
-from fn_portal.tests.fixtures import project, api_client
+from fn_portal.tests.fixtures import api_client, project
+from rest_framework import status
 
 
 @pytest.mark.django_db
@@ -79,9 +75,7 @@ def test_fn026_detail(api_client, project):
         "label",
         "space",
         "space_des",
-        "space_siz",
         "area_lst",
-        "aru",
         "grdep_ge",
         "grdep_lt",
         "sidep_ge",
