@@ -57,9 +57,22 @@ class GearFamily(models.Model):
 
 
 class Gear(models.Model):
-    """A master table of gears.  This will evaully replace the FN013
-    table.  Each gear will only be defined once and will be associated
-    to each SAM by foreign key.
+    """A master table of gears.
+
+    This will replaces the FN013 table which descibibed the gears used in each
+    project. Each gear will only be defined once and will be associated to each
+    Fishing mode by foreign key.
+
+    Gear label is used to display a more meaningful message on gear detail page.
+
+    Custom save method converts the markdown in gr_des to html and populates
+    gear type if it is null.
+
+    .. todo:: consider adding constrain to grtp - by convention it has always
+       been the first two characters of gear code. Stored as a separate field so
+       that an index can be applied to it (it is regularlly used to select
+       samples).
+
     """
 
     assigned_to = models.ForeignKey(
@@ -73,11 +86,12 @@ class Gear(models.Model):
     family = models.ForeignKey(
         GearFamily, related_name="gears", on_delete=models.CASCADE
     )
-    gr_label = models.CharField(max_length=100)
-    gr_code = models.CharField(max_length=4, db_index=True, unique=True)
-    effcnt = models.IntegerField(blank=True, null=True)
-    effdst = models.FloatField(blank=True, null=True)
-    gr_des = models.TextField(blank=True, null=True)
+    gr_label = models.CharField("Gear Label", max_length=100)
+    grtp = models.CharField("Gear Type", max_length=2, db_index=True)
+    gr_code = models.CharField("Gear Code", max_length=4, db_index=True, unique=True)
+    effcnt = models.IntegerField("Effort Count", blank=True, null=True)
+    effdst = models.FloatField("Effort Distance(m)", blank=True, null=True)
+    gr_des = models.TextField("Gear Description", blank=True, null=True)
     gr_des_html = models.TextField(blank=True, null=True)
     # has this gear been confirmed - accurate and correct.
     confirmed = models.BooleanField(default=False)
@@ -87,6 +101,8 @@ class Gear(models.Model):
         return "{} ({})".format(self.gr_label, self.gr_code)
 
     def save(self, *args, **kwargs):
+        if self.grtp is None:
+            self.grtp = self.gr_code[:2]
         self.gr_des_html = markdown(self.gr_des)
         super(Gear, self).save(*args, **kwargs)
 

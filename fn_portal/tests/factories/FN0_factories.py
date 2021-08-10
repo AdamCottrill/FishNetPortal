@@ -37,22 +37,22 @@ class FN011Factory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def prj_date0(self):
         """
-        create the start date from the project code
+        Create the start date from the project code - January 1 by default.
         """
         yr_string = self.prj_cd[6:8]
         year = "19" + yr_string if int(yr_string) > 50 else "20" + yr_string
-        datestring = "January 15, {0}".format(year)
+        datestring = "January 1, {0}".format(year)
         prj_date0 = datetime.datetime.strptime(datestring, "%B %d, %Y")
         return prj_date0
 
     @factory.lazy_attribute
     def prj_date1(self):
         """
-        create the end date from the project code
+        create the end date from the project code - use December 31 by default.
         """
         yr_string = self.prj_cd[6:8]
         year = "19" + yr_string if int(yr_string) > 50 else "20" + yr_string
-        datestring = "January 16, {0}".format(year)
+        datestring = "December 31, {0}".format(year)
         prj_date1 = datetime.datetime.strptime(datestring, "%B %d, %Y")
         return prj_date1
 
@@ -114,16 +114,19 @@ class FN022Factory(factory.django.DjangoModelFactory):
     ssn_des = "Spring"
 
     @factory.lazy_attribute
-    def ssn_date0(a):
-        datestring = "April 15, 2015"
-        ssn_date0 = datetime.datetime.strptime(datestring, "%B %d, %Y")
-        return ssn_date0
+    def ssn_date0(self):
+
+        # datestring = "April 15, 2015"
+        # ssn_date0 = datetime.datetime.strptime(datestring, "%B %d, %Y")
+        # return ssn_date0
+        return self.project.prj_date0
 
     @factory.lazy_attribute
-    def ssn_date1(a):
-        datestring = "June 15, 2015"
-        ssn_date1 = datetime.datetime.strptime(datestring, "%B %d, %Y")
-        return ssn_date1
+    def ssn_date1(self):
+        return self.project.prj_date1
+        # datestring = "June 15, 2015"
+        # ssn_date1 = datetime.datetime.strptime(datestring, "%B %d, %Y")
+        # return ssn_date1
 
 
 class FN026Factory(factory.django.DjangoModelFactory):
@@ -148,4 +151,6 @@ class FN028Factory(factory.django.DjangoModelFactory):
     mode = "01"
     mode_des = "Gillnet 2-6 inch"
     project = factory.SubFactory(FN011Factory)
-    gr = factory.SubFactory(GearFactory)
+    gear = factory.SubFactory(GearFactory)
+    orient = 2
+    gruse = 1

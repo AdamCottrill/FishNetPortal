@@ -90,7 +90,30 @@ class FN121(models.Model):
         return self.slug.upper()
 
     def save(self, *args, **kwargs):
+        """When we save a sample, we need to update the associated management
+        units, and verify the associated season and space.
+
+
+        .. todo:: use coordinates to identify associated management unit
+
+
+        .. todo:: use area_lst and site_lst to verify that space associated with a sample correct.
+
+        """
+
+        if self.effdt0 or self.effdt1:
+            sample_date = self.effdt0 if self.effdt0 else self.effdt1
+            try:
+                self.ssn = self.project.seasons.filter(
+                    ssn_date0__lte=sample_date, ssn_date1__gte=sample_date
+                ).get()
+
+            except FN022.DoesNotExist:
+                msg = "The sample dates for this effort do not fall within a season defined for this project."
+                raise ValueError(msg)
+
         self.slug = slugify(self.fishnet_keys())
+
         super(FN121, self).save(*args, **kwargs)
 
     def fishnet_keys(self):

@@ -363,8 +363,8 @@ def test_fn121_update(api_client, project, net_sets):
     new_data = {
         "gr": "GL11",
         "grtp": "GL",
-        "effdt0": "2019-09-25",
-        "effdt1": "2019-09-26",
+        "effdt0": "2019-10-25",
+        "effdt1": "2019-10-26",
         "efftm0": "09:30:00",
         "efftm1": "13:30:00",
         "effdur": 28.00,
@@ -378,8 +378,6 @@ def test_fn121_update(api_client, project, net_sets):
     data = response.data.copy()
     for k, v in new_data.items():
         data[k] = v
-
-    print("data={}".format(data))
 
     # now resubmit our updated data:
     response = api_client.put(url, data, format="json")

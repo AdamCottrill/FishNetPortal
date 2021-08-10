@@ -16,6 +16,7 @@
 from datetime import datetime, time
 
 import pytest
+from fn_portal.tests.factories.FN0_factories import FN022Factory
 
 from ..factories import (
     FN011Factory,
@@ -66,9 +67,17 @@ def project(users):
     user = users[0]
     user1 = users[1]
 
-    project1 = FN011Factory(prj_ldr=user, prj_cd="LHA_IA19_001", prj_nm="First Project")
+    project1 = FN011Factory(
+        prj_ldr=user,
+        prj_cd="LHA_IA19_001",
+        prj_date0=datetime(2019, 10, 1),
+        prj_date1=datetime(2019, 11, 1),
+        prj_nm="First Project",
+    )
     project1.field_crew.add(user1)
     project1.save()
+
+    FN022Factory(project=project1)
 
     return project1
 

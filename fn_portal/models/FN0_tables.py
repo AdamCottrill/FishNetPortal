@@ -207,8 +207,20 @@ class FN022(models.Model):
     """Class to represent the seasons (temporal strata) used in each project.
 
     .. todo:: Add range constraints to ssn_date0 and ssn_date1 - they cannot
-    overlap each other and must be contained within the project start and end
-    dates (project.prj_date0 and project.prj_date1).
+       overlap each other and must be contained within the project start and end
+       dates (project.prj_date0 and project.prj_date1).
+
+    .. code-block:: sql
+
+        -- from https://dba.stackexchange.com/questions/110582/uniqueness-constraint-with-date-range
+        -- the '[]' is inclusive: [1,2,3],[4,5,6] NOT [1,2,3),[3,4,5,6)
+        CREATE EXTENSION btree_gist;
+        ALTER TABLE fn_portal_fn022
+        ADD CONSTRAINT unique_project_ssn_date0_ssn_date1
+            EXCLUDE  USING gist
+                ( project_id WITH =,
+                daterange(ssn_date0, ssn_date1, '[]') WITH &&
+            );
 
     """
 
@@ -386,7 +398,7 @@ class FN028(models.Model):
     mode_des = models.CharField(
         help_text="Fishing Mode Description", max_length=100, blank=False
     )
-    gr = models.ForeignKey("Gear", related_name="modes", on_delete=models.CASCADE)
+    gear = models.ForeignKey("Gear", related_name="modes", on_delete=models.CASCADE)
 
     GRUSE_CHOICES = (
         ("1", "Bottom"),

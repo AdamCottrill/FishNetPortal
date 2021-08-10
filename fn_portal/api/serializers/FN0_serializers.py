@@ -118,7 +118,7 @@ class FN028Serializer(serializers.ModelSerializer):
             "project",
             "mode",
             "mode_des",
-            "gr",
+            "gear",
             "gruse",
             "orient",
             "effdur_ge",
