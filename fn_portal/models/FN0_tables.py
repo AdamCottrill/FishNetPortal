@@ -387,13 +387,36 @@ class FN028(models.Model):
         help_text="Fishing Mode Description", max_length=100, blank=False
     )
     gr = models.ForeignKey("Gear", related_name="modes", on_delete=models.CASCADE)
-    # gr = models.CharField(
-    #     help_text="Gear Code", max_length=4, blank=False
-    # )
-    gruse = models.CharField(
-        help_text="Code to identify how a gear was used", max_length=2, blank=False
+
+    GRUSE_CHOICES = (
+        ("1", "Bottom"),
+        ("2", "Canned"),
+        ("3", "Kyted"),
+        ("9", "Unknown"),
     )
-    orient = models.CharField(help_text="Gear Orientation", max_length=2, blank=False)
+    gruse = models.CharField(
+        help_text="Code to identify how a gear was used",
+        max_length=2,
+        blank=False,
+        choices=GRUSE_CHOICES,
+        default="1",
+    )
+
+    ORIENT_CHOICES = [
+        ("1", "Perpendicular"),
+        ("2", "Paralell"),
+        ("9", "Unknown"),
+        ("U", "Upstream"),
+        ("D", "Downstream"),
+    ]
+
+    orient = models.CharField(
+        help_text="Gear Orientation",
+        max_length=2,
+        blank=False,
+        choices=ORIENT_CHOICES,
+        default="9",
+    )
     effdur_ge = models.IntegerField(
         blank=True, null=True, help_text="The minimum duration of a fishing effort."
     )
