@@ -43,7 +43,7 @@
     {% block content  %}
 
         <div class="container">
-            
+
 
             <h2>{{ project.prj_nm |title }}({{ project.prj_cd }})</h2>
 
@@ -92,8 +92,8 @@
                                             <td> {{ item.effdt0|date:"N j,Y" }} </td>
                                             <td> {{ item.effdt1|date:"N j,Y" }} </td>
                                             <td> {{ item.effdur|floatformat:2 }} </td>
-                                            <td> {{ item.gr }} </td>
-                                            <td> {{ item.orient }} </td>
+                                            <td> {{ item.mode.gear.gr_code }} </td>
+                                            <td> {{ item.mode.orient }} </td>
                                             <td> {{ item.sidep|floatformat:2 }} </td>
                                             <td> {{ item.total_catch_count|default_if_none:0 }}</td>
                                         </tr>
@@ -276,7 +276,7 @@
 
 
                             <div class="panel panel-default">
-                                <div class="panel-heading"> <strong> <a href="{% url 'fn_portal:gear_detail' gr.gr %}">{{ gr.gr }}</a> - {{ gr.gr_des }}</strong></div>
+                                <div class="panel-heading"> <strong> <a href="{% url 'fn_portal:gear_detail' gr.gr_code %}">{{ gr.gr_code }}</a> - {{ gr.gr_des }}</strong></div>
                                 <div class="panel-body">
                                     {% if gr.gear_effs.values %}
                                         <table class="table">
@@ -702,7 +702,7 @@
                  attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
              }).addTo(map);
 
-             
+
              var netsetMarkers = new L.FeatureGroup();
              // this will get a point for each of the original net sets:
              var netsetPoints = get_net_set_points(data);

@@ -46,9 +46,9 @@
 
 
     <div class="container">
-        
 
-        
+
+
         <h2>Sample Details: {{sample.sam}} from <a href="{{ sample.project.get_absolute_url }}">{{ sample.project.prj_cd }}</a></h2>
 
 
@@ -72,20 +72,20 @@
                         <div class="container">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    
+
                                     <h4>Net Set Attributes</h4>
                                     <table class="table">
                                         <tbody>
                                             <tr>
-                                                <td>Sample</td>                                
+                                                <td>Sample</td>
                                                 <td>{{ sample.sam }}</td>
-                                            </tr>                            
+                                            </tr>
                                             <tr>
                                                 <td>Set Date
                                                     {% if sample.efftm0  %}
                                                         and Time
-                                                    {% endif %}                                                
-                                                </td>                                
+                                                    {% endif %}
+                                                </td>
                                                 <td> {{ sample.effdt0|date:"F j, Y" }}
                                                     {% if sample.efftm0  %}
                                                         at {{ sample.efftm0|time:"H:i" }} </td>
@@ -96,30 +96,30 @@
                                                 <td>Lift Date
                                                     {% if sample.efftm1  %}
                                                         and Time
-                                                    {% endif %}                                                
+                                                    {% endif %}
                                                 </td>
                                                 <td> {{ sample.effdt1|date:"F j, Y" }}
                                                     {% if sample.efftm1  %}
                                                         at {{ sample.efftm1|time:"H:i" }} </td>
-                                                    {% endif %}                                                
+                                                    {% endif %}
                                             </tr>
 
-                                            
+
                                             <tr>
-                                                <td>Effort Duration (hrs)</td>                                
+                                                <td>Effort Duration (hrs)</td>
                                                 <td> {{ sample.effdur|floatformat:2 }} </td>
-                                            </tr>                            
+                                            </tr>
                                             <tr>
-                                                <td>Gear</td>                                
-                                                <td> {{ sample.gr }} </td>
-                                            </tr>                            
+                                                <td>Gear</td>
+                                                <td> {{ sample.mode.gear.gr_code }} </td>
+                                            </tr>
                                             <tr>
-                                                <td>Orient</td>                                
+                                                <td>Orient</td>
                                                 <td> {{ sample.orient|default:"---" }} </td>
-                                            </tr>                            
+                                            </tr>
                                             <tr>
-                                                <td>Site Depth(m)</td>                                
-                                                <td> {{ sample.sidep|floatformat:1 }} </td>                                
+                                                <td>Site Depth(m)</td>
+                                                <td> {{ sample.sidep|floatformat:1 }} </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -136,19 +136,19 @@
                             <thead><tr>
                                 <td>Species</td>
                                 <td>Catch</td>
-                                <td>Bio-Samples</td>                            
+                                <td>Bio-Samples</td>
                             </tr>
                             </thead>
                             <tbody>
 
                                 {% if sample.catch_counts %}
-                                    
+
                                     {% for item in sample.catch_counts %}
                                         {% if item.species %}
                                             <tr>
                                                 <td>{{ item.species|title }} ({{ item.spc }})</td>
                                                 <td> {{ item.catcnts }} </td>
-                                                <td> {{ item.biocnts }} </td>                                
+                                                <td> {{ item.biocnts }} </td>
                                             </tr>
                                         {% endif %}
                                     {% endfor %}
@@ -165,7 +165,7 @@
         </div> <!-- row -->
 
     </div>
-    
+
     {% endblock %}
 
     {% block scripts %}

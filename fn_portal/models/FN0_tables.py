@@ -126,10 +126,12 @@ class FN011(models.Model):
 
         """
         gear_codes = (
-            FN011.objects.filter(prj_cd=self.prj_cd).values("samples__gr").distinct()
+            FN011.objects.filter(prj_cd=self.prj_cd)
+            .values_list("samples__mode__gear__gr_code")
+            .distinct()
         )
         if gear_codes:
-            return [x.get("samples__gr") for x in gear_codes]
+            return [x[0] for x in gear_codes]
         else:
             return None
 
@@ -139,7 +141,8 @@ class FN011(models.Model):
         this project. - eventually these should match the gear tables.
 
         """
-        gear = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
+        # gear = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
+        gear = Gear.objects.filter(modes__project=self)
         return gear
 
 

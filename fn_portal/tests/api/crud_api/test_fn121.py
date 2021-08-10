@@ -21,9 +21,6 @@
    + "efftm0"
    + "efftm1"
    + "effst"
-   + "grtp"
-   + "gr"
-   + "orient"
    + "sidep"
    + "site"
    + "grid5":
@@ -65,9 +62,9 @@ def netset_data(grid):
         "efftm0": "10:40:00",
         "efftm1": "11:40:00",
         "effst": "1",
-        "grtp": "GL",
-        "gr": "GL50",
-        "orient": "1",
+        # "grtp": "GL",
+        # "gr": "GL50",
+        # "orient": "1",
         "sidep": 5.7,
         "site": "44",
         "dd_lat": 45.8595,
@@ -124,9 +121,13 @@ filter_list = [
     ("active", "True", ["sam3"]),
     ("sidep__gte", "25", ["sam1", "sam3"]),
     ("sidep__lte", "25", ["sam2", "sam3"]),
-    ("grtp", "TP", ["sam2"]),
+    ("grtp", "TP", ["sam2"]),  # fail
+    ("grtp", "TP,HP", ["sam2"]),  # fail
+    ("grtp__not", "TP", ["sam1", "sam3"]),
     ("gr", "GL32", ["sam1"]),
-    # ("grid", "714", []),
+    ("gr", "GL10,GL32", ["sam1", "sam3"]),
+    ("gr__not", "GL32", ["sam2", "sam3"]),  # fail
+    # # ("grid", "714", []),
     ("effdur__gte", "22.5", ["sam2"]),
     ("effdur__lte", "22.5", ["sam1"]),
     ("set_date", "2019-10-21", ["sam1"]),
@@ -244,9 +245,7 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.efftm0 == datetime.strptime(netset_data["efftm0"], "%H:%M:%S").time()
     assert fn121.efftm1 == datetime.strptime(netset_data["efftm1"], "%H:%M:%S").time()
     assert fn121.effst == netset_data["effst"]
-    assert fn121.grtp == netset_data["grtp"]
-    assert fn121.gr == netset_data["gr"]
-    # assert fn121.orient == netset_data["orient"]
+
     assert fn121.sidep == netset_data["sidep"]
     assert fn121.site == netset_data["site"]
     assert fn121.dd_lat == netset_data["dd_lat"]
@@ -307,8 +306,6 @@ def test_fn121_detailview(api_client, net_sets):
         "efftm0": net_set.efftm0.strftime("%H:%M:%S"),
         "efftm1": net_set.efftm1.strftime("%H:%M:%S"),
         "effst": net_set.effst,
-        "grtp": net_set.grtp,
-        "gr": net_set.gr,
         "sidep": net_set.sidep,
         "site": net_set.site,
         "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
@@ -359,8 +356,8 @@ def test_fn121_update(api_client, project, net_sets):
     assert login is True
 
     new_data = {
-        "gr": "GL11",
-        "grtp": "GL",
+        # "gr": "GL11",
+        # "grtp": "GL",
         "effdt0": "2019-10-25",
         "effdt1": "2019-10-26",
         "efftm0": "09:30:00",
@@ -384,8 +381,8 @@ def test_fn121_update(api_client, project, net_sets):
     # verify that our new values are reflected on our object:
     fn121 = FN121.objects.get(slug=net_set.slug)
 
-    assert fn121.gr == new_data["gr"]
-    assert fn121.grtp == new_data["grtp"]
+    # assert fn121.gr == new_data["gr"]
+    # assert fn121.grtp == new_data["grtp"]
 
     # check that the times are being converted propery too:
     assert fn121.effdt0 == datetime.strptime(new_data["effdt0"], "%Y-%m-%d").date()

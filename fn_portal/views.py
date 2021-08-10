@@ -146,7 +146,7 @@ def project_detail(request, slug):
     project = get_object_or_404(proj, slug=slug)
     netsets = (
         FN121.objects.filter(project__slug=slug)
-        .select_related("project")
+        .select_related("project", "mode", "mode__gear")
         .order_by("project", "sam")
         .annotate(total_catch_count=Sum("effort__catch__catcnt"))
     )
@@ -188,7 +188,11 @@ def project_catch_counts_json(request, slug):
 
     catcnts = (
         FN123.objects.select_related(
-            "effort", "species", "effort__sample", "effort_sample_project"
+            "effort",
+            "species",
+            "effort__sample",
+            "effort_sample_mode__gear",
+            "effort_sample_project",
         )
         .annotate(prj_cd=F("effort__sample__project__prj_cd"))
         .annotate(sam=F("effort__sample__sam"))
@@ -196,7 +200,7 @@ def project_catch_counts_json(request, slug):
         .annotate(lift_date=F("effort__sample__effdt1"))
         .annotate(dd_lat=F("effort__sample__dd_lat"))
         .annotate(dd_lon=F("effort__sample__dd_lon"))
-        .annotate(gear=F("effort__sample__gr"))
+        .annotate(gear=F("effort__sample__mode__gear__gr_code"))
         .annotate(effst=F("effort__sample__effst"))
         .annotate(sidep=F("effort__sample__sidep"))
         .annotate(effdst=F("effort__effdst"))
@@ -360,6 +364,13 @@ def project_catch_over_time_json(request, slug):
 
     catcnts = (
         FN123.objects.exclude(catcnt__isnull=True)
+        .select_related(
+            "effort__sample__proejct",
+            "effort__sample",
+            "effort__sample__mode__gear",
+            "effort",
+            "species",
+        )
         .annotate(year=F("effort__sample__project__year"))
         .annotate(prj_cd=F("effort__sample__project__prj_cd"))
         .annotate(sam=F("effort__sample__sam"))
@@ -367,7 +378,7 @@ def project_catch_over_time_json(request, slug):
         .annotate(lift_date=F("effort__sample__effdt1"))
         .annotate(dd_lat=F("effort__sample__dd_lat"))
         .annotate(dd_lon=F("effort__sample__dd_lon"))
-        .annotate(gear=F("effort__sample__gr"))
+        .annotate(gear=F("effort__sample__mode__gear__gr_code"))
         .annotate(effst=F("effort__sample__effst"))
         .annotate(sidep=F("effort__sample__sidep"))
         .annotate(effdst=F("effort__effdst"))
@@ -463,7 +474,7 @@ def gear_detail(request, gear_code):
     fn013_gear = FN013.objects.filter(gr=str(gear_code)).all()
 
     projects = (
-        FN011.objects.filter(samples__gr=str(gear_code))
+        FN011.objects.filter(samples__mode__gear__gr_code=str(gear_code))
         .distinct()
         .annotate(N=Count("samples"))
     )

@@ -1,6 +1,7 @@
 from datetime import datetime, time
 
 import pytest
+from _pytest.fixtures import get_direct_param_fixture_func
 
 from ..models import FN123
 from .factories import (
@@ -14,6 +15,7 @@ from .factories import (
     FN122Factory,
     FN123Factory,
     FN125Factory,
+    GearFactory,
     LakeFactory,
     SpeciesFactory,
     UserFactory,
@@ -65,6 +67,7 @@ def project():
         ssn_des=ssn_des,
         ssn_date0=ssn_date0,
         ssn_date1=ssn_date1,
+        __sequence=1,
     )
 
     ssn = "33"
@@ -80,14 +83,24 @@ def project():
     )
 
     FN026Factory(
-        project=project, space="S1", space_des="Space 1", ddlat=45.1, ddlon=-81.1
+        project=project,
+        space="S1",
+        space_des="Space 1",
+        ddlat=45.1,
+        ddlon=-81.1,
+        __sequence=1,
     )
     FN026Factory(
         project=project, space="S2", space_des="Space 2", ddlat=45.2, ddlon=-81.2
     )
 
-    mode1 = FN028Factory(project=project, mode="m1", orient=1, mode_des="Mode 1")
-    FN028Factory(project=project, mode="m2", mode_des="Mode 2")
+    gl00 = GearFactory(gr_code="GL00", grtp="GL")
+    mode1 = FN028Factory(
+        project=project, mode="m1", gear=gl00, orient=1, mode_des="Mode 1", __sequence=1
+    )
+
+    tp99 = GearFactory(gr_code="TP99", grtp="TP")
+    mode2 = FN028Factory(project=project, mode="m2", mode_des="Mode 2", gear=tp99)
 
     setdate = datetime(2019, 9, 15)
     liftdate = datetime(2019, 9, 16)
@@ -98,7 +111,6 @@ def project():
     net1 = FN121Factory(
         sam="1",
         mode=mode1,
-        gr="GL00",
         sidep=25,
         effdur=24.1211,
         project=project,
@@ -116,7 +128,7 @@ def project():
 
     net2 = FN121Factory(
         sam="2",
-        gr="TP99",
+        mode=mode2,
         sidep=5,
         effdur=22.5,
         project=project,

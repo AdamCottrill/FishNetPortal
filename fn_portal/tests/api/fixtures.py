@@ -16,10 +16,16 @@
 from datetime import datetime, time
 
 import pytest
-from fn_portal.tests.factories.FN0_factories import FN022Factory
+from fn_portal.tests.factories.FN0_factories import FN022Factory, FN028Factory
 
-from ..factories import (FN011Factory, FN121Factory, Grid5Factory, LakeFactory,
-                         UserFactory)
+from ..factories import (
+    FN011Factory,
+    FN121Factory,
+    GearFactory,
+    Grid5Factory,
+    LakeFactory,
+    UserFactory,
+)
 
 
 @pytest.fixture
@@ -72,7 +78,7 @@ def project(users):
     project1.field_crew.add(user1)
     project1.save()
 
-    FN022Factory(project=project1)
+    FN022Factory(project=project1, __sequence=1)
 
     return project1
 
@@ -93,8 +99,17 @@ def grid(lake):
 
 @pytest.fixture
 def net_sets(project, grid):
+    gl32 = GearFactory(gr_code="GL32", grtp="GL")
+    mode1 = FN028Factory(project=project, gear=gl32, __sequence=1)
+
+    tp02 = GearFactory(gr_code="TP02", grtp="TP")
+    mode2 = FN028Factory(project=project, gear=tp02)
+
+    gl10 = GearFactory(gr_code="GL10", grtp="GL")
+    mode3 = FN028Factory(project=project, gear=gl10)
 
     sam1 = FN121Factory(
+        mode=mode1,
         project=project,
         sam="sam1",
         effdt0=datetime(2019, 10, 21),
@@ -104,10 +119,9 @@ def net_sets(project, grid):
         effdur=22.0,
         grid5=grid,
         sidep=40,
-        gr="GL32",
-        grtp="GL",
     )
     sam2 = FN121Factory(
+        mode=mode2,
         project=project,
         sam="sam2",
         effdt0=datetime(2019, 10, 20),
@@ -116,19 +130,14 @@ def net_sets(project, grid):
         efftm1=time(13, 30),
         effdur=25.5,
         sidep=10,
-        gr="TP02",
-        grtp="TP",
     )
     sam3 = FN121Factory(
+        mode=mode3,
         project=project,
         sam="sam3",
         effdt0=datetime(2019, 10, 22),
-        # effdt1=datetime(2019, 10, 23),
         efftm0=time(12, 0),
-        # efftmo1=time(12, 30),
         sidep=25,
-        gr="GL10",
-        grtp="GL",
     )
 
     return [sam1, sam2, sam3]

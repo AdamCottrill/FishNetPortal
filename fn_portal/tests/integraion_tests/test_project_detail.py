@@ -35,17 +35,15 @@ This file contains a number of tests to ensure that the project detail
 
 
 import pytest
-
 from django.urls import reverse
-from pytest_django.asserts import assertTemplateUsed, assertContains, assertNotContains
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ..fixtures import project
 
 
 @pytest.mark.django_db
 def test_project_detail_uses_correct_template(client, project):
-    """The project detail page should be rendered using 'fn_portal/project_detail.html'
-    """
+    """The project detail page should be rendered using 'fn_portal/project_detail.html'"""
 
     url = reverse("fn_portal:project_detail", kwargs={"slug": project.slug})
     response = client.get(url)
@@ -84,7 +82,9 @@ def test_project_detail_net_set_summary_table(client, project):
     for sample in project.samples.all():
         expected = sample_link.format(sample.get_absolute_url(), sample.sam)
         assertContains(response, expected, html=True)
-        assertContains(response, "<td>{}</td>".format(sample.gr), html=True)
+        assertContains(
+            response, "<td>{}</td>".format(sample.mode.gear.gr_code), html=True
+        )
         assertContains(response, "<td>{:.2f}</td>".format(sample.effdur), html=True)
         assertContains(response, "<td>{:.2f}</td>".format(sample.sidep), html=True)
         assertContains(

@@ -15,18 +15,19 @@
 
 import pytest
 
-from .factories import FN013Factory
+from .factories import FN028Factory, GearFactory
 from .fixtures import project
 
 
 @pytest.mark.django_db
 def test_fn011_get_gear(project):
-    """ the gears listed should be GL00 and TP00
+    """the gears listed should be GL00 and TP00"""
 
-    """
+    gear1 = GearFactory(gr_code="GL00")
+    gear2 = GearFactory(gr_code="TP99")
 
-    gear1 = FN013Factory(gr="GL00", project=project)
-    gear2 = FN013Factory(gr="TP99", project=project)
+    FN028Factory(gear=gear1, project=project)
+    FN028Factory(gear=gear2, project=project)
 
     gears = project.get_gear()
     assert gear1 in gears

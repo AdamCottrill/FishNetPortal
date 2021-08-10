@@ -27,9 +27,9 @@ class FN121Factory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(FN011Factory)
     sam = factory.Sequence(lambda n: "{:03d}".format(n))
 
-    ssn = factory.SubFactory(FN022Factory)
-    space = factory.SubFactory(FN026Factory)
-    mode = factory.SubFactory(FN028Factory)
+    ssn = factory.SubFactory(FN022Factory, __sequence=1)
+    space = factory.SubFactory(FN026Factory, __sequence=1)
+    mode = factory.SubFactory(FN028Factory, __sequence=1)
 
 
 class FN122Factory(factory.django.DjangoModelFactory):

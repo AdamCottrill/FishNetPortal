@@ -13,11 +13,11 @@ class FN121SubFilter(django_filters.FilterSet):
     sidep__gte = django_filters.NumberFilter(field_name="sidep", lookup_expr="gte")
     sidep__lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
 
-    grtp = ValueInFilter(field_name="grtp")
-    grtp__not = ValueInFilter(field_name="grtp", exclude=True)
+    grtp = ValueInFilter(field_name="mode__gear__grtp")
+    grtp__not = ValueInFilter(field_name="mode__gear__grtp", exclude=True)
 
-    gr = ValueInFilter(field_name="gr")
-    gr__not = ValueInFilter(field_name="gr", exclude=True)
+    gr = ValueInFilter(field_name="mode__gear__gr_code")
+    gr__not = ValueInFilter(field_name="mode__gear__gr_code", exclude=True)
 
     # grid is a little trick - requires us to filter lake too - user beware!
     grid = NumberInFilter(field_name="grid5__grid")

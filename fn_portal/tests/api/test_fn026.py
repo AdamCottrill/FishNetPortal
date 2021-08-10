@@ -26,6 +26,8 @@ from fn_portal.models import FN026
 from fn_portal.tests.fixtures import api_client, project
 from rest_framework import status
 
+from ..factories import FN026Factory
+
 
 @pytest.mark.django_db
 def test_fn026_list(api_client, project):
@@ -54,18 +56,20 @@ def test_fn026_detail(api_client, project):
     prj_cd = project.prj_cd
     space = "S1"
 
-    url = reverse(
-        "fn_portal_api:fn026-detail", kwargs={"prj_cd": prj_cd, "space": space}
-    )
-    response = api_client.get(url)
-    assert response.status_code == status.HTTP_200_OK
-
     expected = {
         "space": "S1",
         "space_des": "Space 1",
         "ddlat": 45.1,
         "ddlon": -81.1,
     }
+
+    FN026Factory(project=project, **expected)
+
+    url = reverse(
+        "fn_portal_api:fn026-detail", kwargs={"prj_cd": prj_cd, "space": space}
+    )
+    response = api_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
 
     for k, v in expected.items():
         assert response.data[k] == expected[k]
@@ -78,8 +82,8 @@ def test_fn026_detail(api_client, project):
         "area_lst",
         "grdep_ge",
         "grdep_lt",
-        "sidep_ge",
         "sidep_lt",
+        "sidep_ge",
         "grid_ge",
         "grid_lt",
         "site_lst",

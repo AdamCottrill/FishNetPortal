@@ -52,7 +52,7 @@ class FN011Factory(factory.django.DjangoModelFactory):
         """
         yr_string = self.prj_cd[6:8]
         year = "19" + yr_string if int(yr_string) > 50 else "20" + yr_string
-        datestring = "December 31, {0}".format(year)
+        datestring = "December 30, {0}".format(year)
         prj_date1 = datetime.datetime.strptime(datestring, "%B %d, %Y")
         return prj_date1
 
@@ -110,7 +110,7 @@ class FN022Factory(factory.django.DjangoModelFactory):
         django_get_or_create = ["project", "ssn"]
 
     project = factory.SubFactory(FN011Factory)
-    ssn = "01"
+    ssn = factory.Sequence(lambda n: "{:02d}".format(n)[-2:])
     ssn_des = "Spring"
 
     @factory.lazy_attribute
@@ -136,7 +136,7 @@ class FN026Factory(factory.django.DjangoModelFactory):
         model = FN026
         django_get_or_create = ["project", "space"]
 
-    space = "01"
+    space = factory.Sequence(lambda n: "{:02d}".format(n)[-2:])
     space_des = "The Lake"
     project = factory.SubFactory(FN011Factory)
 
@@ -148,7 +148,7 @@ class FN028Factory(factory.django.DjangoModelFactory):
         model = FN028
         django_get_or_create = ["project", "mode"]
 
-    mode = "01"
+    mode = factory.Sequence(lambda n: "{:02d}".format(n)[-2:])
     mode_des = "Gillnet 2-6 inch"
     project = factory.SubFactory(FN011Factory)
     gear = factory.SubFactory(GearFactory)

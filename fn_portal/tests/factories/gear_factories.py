@@ -31,6 +31,7 @@ class GearFactory(factory.django.DjangoModelFactory):
     family = factory.SubFactory(GearFamilyFactory)
     gr_label = "Monofilament Gillnet"
     gr_code = "GL10"
+    grtp = "GL"
     gr_des = "This is a fake gear used for testing."
 
 
