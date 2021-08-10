@@ -17,18 +17,15 @@
 
 
 import pytest
-
-
 from django.urls import reverse
-from pytest_django.asserts import assertTemplateUsed, assertContains, assertNotContains
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from ..fixtures import project
 
 
 @pytest.mark.django_db
 def test_sample_detail_uses_correct_template(client, project):
-    """The sample detail page should be rendered using 'fn_portal/sample_detail.html'
-    """
+    """The sample detail page should be rendered using 'fn_portal/sample_detail.html'"""
 
     sample = project.samples.first()
     url = reverse(
@@ -95,7 +92,7 @@ def test_sample_detail_renders_net_attributes(client, project):
         html=True,
     )
     assertContains(response, "<td>{}</td>".format(sample.gr), html=True)
-    assertContains(response, "<td>{}</td>".format(sample.orient), html=True)
+    assertContains(response, "<td>{}</td>".format(sample.mode.orient), html=True)
     assertContains(response, "<td>{:.2f}</td>".format(sample.effdur), html=True)
     assertContains(response, "<td>{:.1f}</td>".format(sample.sidep), html=True)
 

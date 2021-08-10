@@ -35,7 +35,6 @@ class FN121(models.Model):
     # move to gear and fn028
     grtp = models.CharField(max_length=3, blank=True, null=True, db_index=True)
     gr = models.CharField(max_length=5, db_index=True, blank=True, null=True)
-    orient = models.CharField(max_length=2, blank=True, null=True, db_index=True)
 
     sam = models.CharField(max_length=5, db_index=True)
     effdt0 = models.DateField("Effort Start Date", blank=True, null=True, db_index=True)

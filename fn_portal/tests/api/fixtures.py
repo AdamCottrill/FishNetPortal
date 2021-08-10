@@ -18,13 +18,8 @@ from datetime import datetime, time
 import pytest
 from fn_portal.tests.factories.FN0_factories import FN022Factory
 
-from ..factories import (
-    FN011Factory,
-    FN121Factory,
-    Grid5Factory,
-    LakeFactory,
-    UserFactory,
-)
+from ..factories import (FN011Factory, FN121Factory, Grid5Factory, LakeFactory,
+                         UserFactory)
 
 
 @pytest.fixture
@@ -130,7 +125,7 @@ def net_sets(project, grid):
         effdt0=datetime(2019, 10, 22),
         # effdt1=datetime(2019, 10, 23),
         efftm0=time(12, 0),
-        # efftm1=time(12, 30),
+        # efftmo1=time(12, 30),
         sidep=25,
         gr="GL10",
         grtp="GL",

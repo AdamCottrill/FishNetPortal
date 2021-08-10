@@ -41,7 +41,6 @@ class FN121Serializer(serializers.ModelSerializer):
             "effst",
             "grtp",
             "gr",
-            "orient",
             "sidep",
             "site",
             "grid5",
@@ -86,7 +85,7 @@ class FN121Serializer(serializers.ModelSerializer):
         instance.effst = validated_data.get("effst", instance.effst)
         instance.grtp = validated_data.get("grtp", instance.grtp)
         instance.gr = validated_data.get("gr", instance.gr)
-        instance.orient = validated_data.get("orient", instance.orient)
+        # instance.orient = validated_data.get("orient", instance.orient)
         instance.sidep = validated_data.get("sidep", instance.sidep)
         instance.site = validated_data.get("site", instance.site)
         instance.dd_lat = validated_data.get("dd_lat", instance.dd_lat)

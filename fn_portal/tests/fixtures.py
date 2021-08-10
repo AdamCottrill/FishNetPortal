@@ -1,13 +1,9 @@
-import pytest
-
 from datetime import datetime, time
 
-from ..models import FN123
+import pytest
 
+from ..models import FN123
 from .factories import (
-    UserFactory,
-    SpeciesFactory,
-    LakeFactory,
     FN011Factory,
     FN013Factory,
     FN014Factory,
@@ -18,8 +14,10 @@ from .factories import (
     FN122Factory,
     FN123Factory,
     FN125Factory,
+    LakeFactory,
+    SpeciesFactory,
+    UserFactory,
 )
-
 
 SCOPE = "function"
 
@@ -88,7 +86,7 @@ def project():
         project=project, space="S2", space_des="Space 2", ddlat=45.2, ddlon=-81.2
     )
 
-    FN028Factory(project=project, mode="m1", mode_des="Mode 1")
+    mode1 = FN028Factory(project=project, mode="m1", orient=1, mode_des="Mode 1")
     FN028Factory(project=project, mode="m2", mode_des="Mode 2")
 
     setdate = datetime(2019, 9, 15)
@@ -99,11 +97,11 @@ def project():
 
     net1 = FN121Factory(
         sam="1",
+        mode=mode1,
         gr="GL00",
         sidep=25,
         effdur=24.1211,
         project=project,
-        orient=1,
         effdt0=setdate,
         effdt1=liftdate,
         efftm0=settime,

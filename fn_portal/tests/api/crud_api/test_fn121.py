@@ -246,12 +246,11 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.effst == netset_data["effst"]
     assert fn121.grtp == netset_data["grtp"]
     assert fn121.gr == netset_data["gr"]
-    assert fn121.orient == netset_data["orient"]
+    # assert fn121.orient == netset_data["orient"]
     assert fn121.sidep == netset_data["sidep"]
     assert fn121.site == netset_data["site"]
     assert fn121.dd_lat == netset_data["dd_lat"]
     assert fn121.dd_lon == netset_data["dd_lon"]
-    # assert fn121.gear == netset_data["grid"]
 
     assert fn121.sitem == netset_data["sitem"]
     assert fn121.comment1 == netset_data["comment1"]
@@ -310,7 +309,6 @@ def test_fn121_detailview(api_client, net_sets):
         "effst": net_set.effst,
         "grtp": net_set.grtp,
         "gr": net_set.gr,
-        "orient": net_set.orient,
         "sidep": net_set.sidep,
         "site": net_set.site,
         "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
