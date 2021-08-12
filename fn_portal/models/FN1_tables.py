@@ -202,10 +202,13 @@ class FN123(models.Model):
     count_only = models.IntegerField(
         "Fish counted but not sampled", blank=True, null=True
     )
-    catwt = models.FloatField("Total Catch Weight", blank=True, null=True)
+    catwt = models.FloatField("Total Catch Weight (kg)", blank=True, null=True)
     biocnt = models.IntegerField(
         "Number of fish bio-sampled", default=0, blank=True, null=True
     )
+    subcnt = models.IntegerField("Number of Fish in Subsample", blank=True, null=True)
+    subwt = models.FloatField("Subsample Weight (kg)", blank=True, null=True)
+
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -267,6 +270,8 @@ class FN125(models.Model):
     gon = models.CharField(max_length=4, blank=True, null=True, db_index=True)
     noda = models.CharField(max_length=20, blank=True, null=True)
     nodc = models.CharField(max_length=20, blank=True, null=True)
+
+    tissue = models.CharField(max_length=20, blank=True, null=True)
     agest = models.CharField(max_length=20, blank=True, null=True)
     fate = models.CharField(max_length=2, blank=True, null=True)
 
@@ -299,10 +304,46 @@ class FN126(models.Model):
 
     fish = models.ForeignKey(FN125, related_name="diet_data", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
-    food = models.IntegerField()
+    food = models.IntegerField("Food Id")
+    taxon = models.CharField(
+        "A taxonomic code used to identify the type of food item.",
+        max_length=10,
+        db_index=True,
+        blank=True,
+        null=True,
+    )
+    foodcnt = models.IntegerField("Food Count", blank=True, null=True)
+    foodval = models.FloatField("Food Measure Value", blank=True, null=True)
 
-    taxon = models.CharField(max_length=10, db_index=True, blank=True, null=True)
-    foodcnt = models.IntegerField(blank=True, null=True)
+    FDMES_CHOICES = (
+        (None, "No Data"),
+        ("L", "Length"),
+        ("W", "Weight"),
+        ("V", "Volume"),
+    )
+    fdmes = models.CharField(
+        help_text="Food Measure Code",
+        max_length=2,
+        blank=True,
+        choices=FDMES_CHOICES,
+    )
+
+    LIFESTAGE_CHOICES = (
+        (None, "No Data"),
+        ("10", "10"),
+        ("20", "20"),
+        ("30", "30"),
+        ("40", "40"),
+        ("50", "50"),
+        ("60", "60"),
+    )
+    lf = models.CharField(
+        help_text="Life Stage",
+        max_length=2,
+        blank=True,
+        choices=LIFESTAGE_CHOICES,
+    )
+
     comment6 = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -328,15 +369,21 @@ class FN127(models.Model):
         FN125, related_name="age_estimates", on_delete=models.CASCADE
     )
     slug = models.SlugField(max_length=100, unique=True)
-    ageid = models.IntegerField()
-    agea = models.IntegerField(blank=True, null=True, db_index=True)
-    preferred = models.BooleanField(default=False, db_index=True)
-    agest = models.CharField(max_length=5, db_index=True, blank=True, null=True)
-    xagem = models.CharField(max_length=2, blank=True, null=True)
-    agemt = models.CharField(max_length=5)
-    edge = models.CharField(max_length=2, blank=True, null=True)
-    conf = models.IntegerField(blank=True, null=True)
-    nca = models.IntegerField(blank=True, null=True)
+    ageid = models.IntegerField("An identifier for an age estimate record")
+    agea = models.IntegerField(
+        "Age Assessed (yr)", blank=True, null=True, db_index=True
+    )
+    preferred = models.BooleanField(
+        "Preferred age estimate for a fish", default=False, db_index=True
+    )
+    agest = models.CharField(
+        "Age Structure", max_length=5, db_index=True, blank=True, null=True
+    )
+    xagem = models.CharField("Age Assigned Method", max_length=2, blank=True, null=True)
+    agemt = models.CharField("Age Method Data", max_length=5)
+    edge = models.CharField("Edge Code", max_length=2, blank=True, null=True)
+    conf = models.IntegerField("Confidence", blank=True, null=True)
+    nca = models.IntegerField("Number of Complete Annuli", blank=True, null=True)
 
     ageaDate = models.DateTimeField(blank=True, null=True)
 
@@ -414,12 +461,20 @@ class FN125Tag(models.Model):
 
     fish = models.ForeignKey(FN125, related_name="fishtags", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
-    fish_tag_id = models.IntegerField()
+    fish_tag_id = models.IntegerField("Identifier for a Fn125_tag record")
     # tag fields
-    tagstat = models.CharField(max_length=5, db_index=True, blank=True, null=True)
-    tagid = models.CharField(max_length=20, db_index=True, blank=True, null=True)
-    tagdoc = models.CharField(max_length=6, db_index=True, blank=True, null=True)
-    xcwtseq = models.CharField(max_length=5, blank=True, null=True)
+    tagstat = models.CharField(
+        "Tag Status", max_length=5, db_index=True, blank=True, null=True
+    )
+    tagid = models.CharField(
+        "Tag Identification", max_length=20, db_index=True, blank=True, null=True
+    )
+    tagdoc = models.CharField(
+        "Tag Documentation", max_length=6, db_index=True, blank=True, null=True
+    )
+    xcwtseq = models.CharField(
+        "Sequential CWT number", max_length=5, blank=True, null=True
+    )
     xtaginckd = models.CharField(max_length=6, blank=True, null=True)
     xtag_chk = models.CharField(max_length=50, blank=True, null=True)
 
