@@ -8,12 +8,15 @@ DESCRIPTION:
   queries and perform final transformations before creating
   Django objects.
 
+  TODO: consider replacing these fucntions with Pydantic Models.
+
+
 A. Cottrill
 =============================================================
 """
 
 
-def prep_fn011(data, lake_cache, protocol_cache, user_cache):
+def fn011(data, lake_cache, protocol_cache, user_cache):
     for item in data:
         lake = item.pop("lake")
         protocol = item.pop("protocol")
@@ -26,40 +29,43 @@ def prep_fn011(data, lake_cache, protocol_cache, user_cache):
     return data
 
 
-def prep_fn022(data, fn011_cache):
+def fn022(data, fn011_cache):
     """pop off prj_cd and replace it with project_id."""
     for item in data:
         prj_cd = item.pop("prj_cd")
         ssn = item.get("ssn")
-        item["project_id"] = fn011_cache.get(prj_cd)
+        parent_key = f"{prj_cd}".lower()
+        item["project_id"] = fn011_cache.get(parent_key)
         slug = f"{prj_cd}-{ssn}"
         item["slug"] = slug.lower()
     return data
 
 
-def prep_fn026(data, fn011_cache):
+def fn026(data, fn011_cache):
     """pop off prj_cd and replace it with project_id."""
     for item in data:
         prj_cd = item.pop("prj_cd")
         space = item.get("space")
-        item["project_id"] = fn011_cache.get(prj_cd)
+        parent_key = f"{prj_cd}".lower()
+        item["project_id"] = fn011_cache.get(parent_key)
         slug = f"{prj_cd}-{space}"
         item["slug"] = slug.lower()
     return data
 
 
-def prep_fn028(data, fn011_cache, gear_cache):
+def fn028(data, fn011_cache, gear_cache):
     for item in data:
         gr = item.pop("gr")
         prj_cd = item.pop("prj_cd")
-        item["project_id"] = fn011_cache.get(prj_cd)
+        parent_key = f"{prj_cd}".lower()
+        item["project_id"] = fn011_cache.get(parent_key)
         item["gear_id"] = gear_cache.get(gr)
         slug = f"{prj_cd}-{item['mode']}"
         item["slug"] = slug.lower()
     return data
 
 
-def prep_fn121(
+def fn121(
     data,
     fn011_cache,
     fn022_cache,
@@ -71,15 +77,16 @@ def prep_fn121(
     # TODO - lake abbrev and grid slug....
     for item in data:
         prj_cd = item.pop("prj_cd")
-        item["project_id"] = fn011_cache.get(prj_cd)
+        parent_key = f"{prj_cd}".lower()
+        item["project_id"] = fn011_cache.get(parent_key)
         ssn = item.pop("ssn")
         space = item.pop("space")
         mode = item.pop("mode")
         grid5 = item.pop("grid5")
         grid_key = f"{lake_abbrev}-{grid5}".lower()
         sam = item["sam"]
-        slug = f"{prj_cd}-{sam}"
-        item["slug"] = slug.lower()
+        slug = f"{prj_cd}-{sam}".lower()
+        item["slug"] = slug
         item["grid5_id"] = grid5_cache.get(grid_key)
         item["ssn_id"] = fn022_cache.get(f"{prj_cd}-{ssn}")
         item["space_id"] = fn026_cache.get(f"{prj_cd}-{space}")
@@ -87,34 +94,34 @@ def prep_fn121(
     return data
 
 
-def prep_fn122(data, fn121_cache):
+def fn122(data, fn121_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
         eff = item.get("eff")
-        fn121_key = f"{prj_cd}-{sam}"
-        slug = f"{prj_cd}-{sam}-{eff}"
-        item["sample_id"] = fn121_cache.get(fn121_key)
-        item["slug"] = slug.lower()
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}".lower()
+        item["sample_id"] = fn121_cache[fn121_key]
+        item["slug"] = slug
     return data
 
 
-def prep_fn123(data, fn122_cache, species_cache):
+def fn123(data, fn122_cache, species_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
         eff = item.pop("eff")
         spc = item.pop("spc")
         grp = item.get("grp")
-        parent_key = f"{prj_cd}-{sam}-{eff}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}"
+        parent_key = f"{prj_cd}-{sam}-{eff}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}".lower()
         item["effort_id"] = fn122_cache[parent_key]
         item["species_id"] = species_cache[spc]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
 
 
-def prep_fn125(data, fn123_cache):
+def fn125(data, fn123_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
@@ -122,14 +129,14 @@ def prep_fn125(data, fn123_cache):
         spc = item.pop("spc")
         grp = item.pop("grp")
         fish = item.get("fish")
-        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}"
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
         item["catch_id"] = fn123_cache[parent_key]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
 
 
-def prep_fn125_tags(data, fn125_cache):
+def fn125_tags(data, fn125_cache):
 
     for item in data:
         prj_cd = item.pop("prj_cd")
@@ -139,14 +146,14 @@ def prep_fn125_tags(data, fn125_cache):
         grp = item.pop("grp")
         fish = item.pop("fish")
         fish_tag_id = item.get("fish_tag_id")
-        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{fish_tag_id}"
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{fish_tag_id}".lower()
         item["fish_id"] = fn125_cache[parent_key]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
 
 
-def prep_fn125_lamprey(data, fn125_cache):
+def fn125_lamprey(data, fn125_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
@@ -155,14 +162,14 @@ def prep_fn125_lamprey(data, fn125_cache):
         grp = item.pop("grp")
         fish = item.pop("fish")
         fish_lam_id = item.get("fish_lam_id")
-        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{fish_lam_id}"
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{fish_lam_id}".lower()
         item["fish_id"] = fn125_cache[parent_key]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
 
 
-def prep_fn126(data, fn125_cache):
+def fn126(data, fn125_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
@@ -171,14 +178,14 @@ def prep_fn126(data, fn125_cache):
         grp = item.pop("grp")
         fish = item.pop("fish")
         foodid = item.get("foodid")
-        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{foodid}"
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{foodid}".lower()
         item["fish_id"] = fn125_cache[parent_key]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
 
 
-def prep_fn127(data, fn125_cache):
+def fn127(data, fn125_cache):
     for item in data:
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
@@ -187,8 +194,8 @@ def prep_fn127(data, fn125_cache):
         grp = item.pop("grp")
         fish = item.pop("fish")
         ageid = item.get("ageid")
-        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}"
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{ageid}"
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{ageid}".lower()
         item["fish_id"] = fn125_cache[parent_key]
-        item["slug"] = slug.lower()
+        item["slug"] = slug
     return data
