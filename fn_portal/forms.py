@@ -38,3 +38,22 @@ class GearForm(forms.ModelForm):
         self.fields["effdst"].label = "Effort Distance"
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"] = "form-control"
+
+
+# class DataUploadForm(forms.Form):
+#     """A simple little form for uploading our tempalte databases one at a time."""
+
+#     file_path = forms.FileField(label="File", required=False)
+
+#     def __init__(self, *args, **kwargs):
+#         self.project = kwargs.pop("project")
+#         self.user = kwargs.pop("user")
+#         super(DataUploadForm, self).__init__(*args, **kwargs)
+#         self.fields["file_path"].widget.attrs["size"] = "40"
+#         self.fields["file_path"].widget.attrs["class"] = "fileinput"
+
+#     def save(self):
+#         """fill in the project, user, uploaded time and file hash when we save
+#         it."""
+
+#         fname = str(self.cleaned_data["file_path"])

@@ -3,8 +3,9 @@
 
 import json
 from datetime import datetime
+import os
 
-from common.models import Lake, Species
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -18,9 +19,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import ListView
 
+from common.models import Lake, Species
 from .filters import FN011Filter
 from .forms import GearForm
 from .models import FN011, FN013, FN121, FN123, Gear
+
+from .data_upload.project_upload import process_accdb_upload
 
 User = get_user_model()
 
@@ -489,23 +493,18 @@ def gear_detail(request, gear_code):
 
 
 # # move this to someplace more appropriate:
-# def handle_uploaded_file(f):
-#     with open("some/file/name.txt", "wb+") as destination:
-#         for chunk in f.chunks():
-#             destination.write(chunk)
-#     # now connect to the uploaded file and insert the contents in the appropriate tables...
+def handle_uploaded_file(f):
 
+    upload_dir = settings.UPLOAD_DIR
+    fname = os.path.join(upload_dir, f.name)
+    with open(fname, "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+        # now connect to the uploaded file and insert the contents in the appropriate tables...
 
-# # @login_required
-# def project_data_upload(request):
-#     if request.method == "POST":
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             # handle_uploaded_file(request.FILES['file'])
-#             return HttpResponseRedirect("/success/url/")
-#     else:
-#         form = UploadFileForm()
-#     return render(request, "project_data_upload.html", {"form": form})
+    return process_accdb_upload(upload_dir, f.name)
+
+    # delete the file when we are done....
 
 
 # @login_required
@@ -540,23 +539,15 @@ def project_data_upload(request):
             messages.error(request, msg)
             return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
 
-        import pdb
+        process_status = handle_uploaded_file(data_file)
+        if process_status == "99":
+            messages.error(request, "There was a problem uploading " + data_file.name)
+            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
 
-        pdb.set_trace()
-
-        # process validate:...
-        # xls_events = xls2dicts(data_file)
-        # valid, msg = validate_upload(xls_events, request.user)
-        # if not valid:
-        #     messages.error(request, msg)
-        #     return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
-
-        # insert data in a transaction - backout if it fails.  Hurray if it works!
-        # xls_errors = validate_events(xls_events)
-        # request.session["data"] = xls_events
-        # request.session["errors"] = xls_errors
-
-        # return HttpResponseRedirect(reverse("stocking:xls-events-form"))
+        else:
+            msg = f"Data for {','.join(process_status)} was successfully uploaded!"
+            messages.success(request, message=msg)
+            return HttpResponseRedirect(reverse("fn_portal:project_list"))
 
     except Exception as e:
         messages.error(request, "Unable to upload file. " + repr(e))

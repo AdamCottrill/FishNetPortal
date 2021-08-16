@@ -9,304 +9,280 @@ DESCRIPTION:
 =============================================================
 """
 
-import argparse
+#import argparse
 
 import os
+from typing import List, Union
 
 from django.db import transaction, DatabaseError
 
-import django_settings
+#import django_settings
 
 from common.models import Species, Lake, Grid5
 
 import fn_portal.models as Fnp
 
-import data_prep  as prep
+import fn_portal.data_upload.data_prep  as prep
 
-import fetch_utils as fetch
+import fn_portal.data_upload.fetch_utils as fetch
 
-from target_utils import (
+from fn_portal.data_upload.target_utils import (
     get_id_cache,
     get_user_attrs,
     get_user_cache,
 )
 
 
-SRC_DIR = "C:/Users/COTTRILLAD/1work/Python/djcode/apps/fn_portal/utils/data_upload_src/build/"
+## SRC_DIR = "C:/Users/COTTRILLAD/1work/Python/djcode/apps/fn_portal/utils/data_upload_src/build/"
+##
+## parser = argparse.ArgumentParser()
+## parser.add_argument("--src_db", "-SRC", help="Source Database")
+## args = parser.parse_args()
+##
+## SRC_DB = args.src_db
+##
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--src_db", "-SRC", help="Source Database")
-args = parser.parse_args()
+def process_accdb_upload(SRC_DIR:str, SRC_DB:str) -> Union[List, str]:
 
-SRC_DB = args.src_db
-SRC = os.path.join(SRC_DIR, SRC_DB)
+    SRC = os.path.join(SRC_DIR, SRC_DB)
 
-src_con = fetch.get_mdb_connection(SRC)
-print(f"Fetching Data from {SRC_DB}")
-stmt = fetch.get_fn011_stmt()
-fn011 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn011)} fn011 records.")
+    src_con = fetch.get_mdb_connection(SRC)
 
-stmt = fetch.get_fn022_stmt()
-fn022 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn022)} fn022 records.")
+    stmt = fetch.get_fn011_stmt()
+    fn011 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn026_stmt()
-fn026 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn026)} fn026 records.")
+    stmt = fetch.get_fn022_stmt()
+    fn022 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn028_stmt()
-fn028 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn028)} fn028 records.")
+    stmt = fetch.get_fn026_stmt()
+    fn026 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn013_stmt()
-fn013 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn013)} fn013 records.")
+    stmt = fetch.get_fn028_stmt()
+    fn028 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn014_stmt()
-fn014 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn014)} fn014 records.")
+    stmt = fetch.get_fn013_stmt()
+    fn013 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn121_stmt()
-fn121 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn121)} fn121 records.")
+    stmt = fetch.get_fn014_stmt()
+    fn014 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn122_stmt()
-fn122 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn122)} fn122 records.")
+    stmt = fetch.get_fn121_stmt()
+    fn121 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn123_stmt()
-fn123 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn123)} fn123 records.")
+    stmt = fetch.get_fn122_stmt()
+    fn122 = fetch.execute_select(src_con, stmt)
 
-# # stmt = fetch.get_fn124_stmt()
-# # fn124 = fetch.execute_select(src_con, stmt)
-# # print(f"found {len(fn124)} fn124 records.")
+    stmt = fetch.get_fn123_stmt()
+    fn123 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn125_stmt()
-fn125 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn125)} fn125 records.")
+    # # stmt = fetch.get_fn124_stmt()
+    # # fn124 = fetch.execute_select(src_con, stmt)
+    # # print(f"found {len(fn124)} fn124 records.")
 
-stmt = fetch.get_fn125tags_stmt()
-fn125tags = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn125tags)} fn125tag records.")
+    stmt = fetch.get_fn125_stmt()
+    fn125 = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn125lamprey_stmt()
-fn125lamprey = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn125lamprey)} fn125lamprey records.")
+    stmt = fetch.get_fn125tags_stmt()
+    fn125tags = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn126_stmt()
-fn126 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn126)} fn126 records.")
+    stmt = fetch.get_fn125lamprey_stmt()
+    fn125lamprey = fetch.execute_select(src_con, stmt)
 
-stmt = fetch.get_fn127_stmt()
-fn127 = fetch.execute_select(src_con, stmt)
-print(f"found {len(fn127)} fn127 records.")
+    stmt = fetch.get_fn126_stmt()
+    fn126 = fetch.execute_select(src_con, stmt)
 
-src_con.close()
+    stmt = fetch.get_fn127_stmt()
+    fn127 = fetch.execute_select(src_con, stmt)
 
-# =========================================================
-# insert our data
+    src_con.close()
 
 
-spc_cache = get_id_cache(Species, ["spc"])
-lake_cache = get_id_cache(Lake, ["abbrev", "lake_name"])
-protocol_cache = get_id_cache(Fnp.FNProtocol, ["abbrev"])
-grid5_cache = get_id_cache(Grid5)
+    #if there are any error stop and report them here...
 
+    # =========================================================
+    # insert our data
 
-# for each of the FN011 records we need to loop over them, pop off lake and
-# protocol, and replace with their associated id's
+    spc_cache = get_id_cache(Species, ["spc"])
+    lake_cache = get_id_cache(Lake, ["abbrev", "lake_name"])
+    protocol_cache = get_id_cache(Fnp.FNProtocol, ["abbrev"])
+    grid5_cache = get_id_cache(Grid5)
 
-PRJ_LDRs = list(set([x["prj_ldr"] for x in fn011]))
-PRJ_CDs = list(set([x["prj_cd"] for x in fn011]))
 
-# get or create our project leads
-users = {}
-for prj_ldr in PRJ_LDRs:
-    users[prj_ldr] = get_user_attrs(prj_ldr)
-user_cache = get_user_cache(users)
+    # for each of the FN011 records we need to loop over them, pop off lake and
+    # protocol, and replace with their associated id's
 
-try:
-    with transaction.atomic():
+    PRJ_LDRs = list(set([x["prj_ldr"] for x in fn011]))
+    PRJ_CDs = list(set([x["prj_cd"] for x in fn011]))
 
-        # delete our old project data:
-        # need to use django for now - us SA later..add()
-        Fnp.FN011.objects.filter(prj_cd__in=PRJ_CDs).delete()
-
-        # =========================
-        #        FN011
+    # get or create our project leads
+    users = {}
+    for prj_ldr in PRJ_LDRs:
+        users[prj_ldr] = get_user_attrs(prj_ldr)
+    user_cache = get_user_cache(users)
 
-        data = prep.fn011(fn011, lake_cache, protocol_cache, user_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN011(**item)
-            items.append(obj)
-        print("Creating FN011 records...")
-        Fnp.FN011.objects.bulk_create(items)
-
-        filters = {"prj_cd__in": PRJ_CDs}
-        fn011_cache = get_id_cache(Fnp.FN011, filters=filters)
-
+    try:
+        with transaction.atomic():
 
-
-        # =========================
-        #        FN022
-
-        data = prep.fn022(fn022, fn011_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN022(**item)
-            items.append(obj)
-        Fnp.FN022.objects.bulk_create(items)
-        print("Creating FN022 records...")
-
-        filters = {"project__prj_cd__in": PRJ_CDs}
-        fn022_cache = get_id_cache(Fnp.FN022, filters=filters)
-
-
-        # =========================
-        #        FN026
-
-        data = prep.fn026(fn026, fn011_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN026(**item)
-            items.append(obj)
-        print("Creating FN026 records...")
-        Fnp.FN026.objects.bulk_create(items)
-        fn026_cache = get_id_cache(Fnp.FN026, filters=filters)
-
-
-        # =========================
-        #        FN028
-
-        # get a gear cache
-        gear_cache = get_id_cache(Fnp.
-            Gear,
-            [
-                "gr_code",
-            ],
-        )
-
-
-        data = prep.fn028(fn028, fn011_cache, gear_cache)
-
-        items = []
-        for item in data:
-            obj = Fnp.FN028(**item)
-            items.append(obj)
-        print("Creating FN028 records...")
-        Fnp.FN028.objects.bulk_create(items)
-        fn028_cache = get_id_cache(Fnp.FN028, filters=filters)
-
-        # =========================
-        #        FN121
-
-        # our FN121 object have a save method that needs to be called - not
-        # called if we bulk created them.
-
-        print("Creating FN121 records...")
-        data = prep.fn121(
-            fn121, fn011_cache, fn022_cache, fn026_cache, fn028_cache, grid5_cache
-        )
-        items = []
-        for item in data:
-            obj = Fnp.FN121(**item)
-            obj.save()
-        fn121_cache = get_id_cache(Fnp.FN121, filters=filters)
-
-
-        # =========================
-        #        FN122
-
-        data = prep.fn122(fn122, fn121_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN122(**item)
-            items.append(obj)
-        print("Creating FN122 records...")
-        Fnp.FN122.objects.bulk_create(items)
-        filters = {"sample__project__prj_cd__in": PRJ_CDs}
-        fn122_cache = get_id_cache(Fnp.FN122, filters=filters)
-
-
-        # =========================
-        #        FN123
-
-        data = prep.fn123(fn123, fn122_cache, spc_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN123(**item)
-            items.append(obj)
-        Fnp.FN123.objects.bulk_create(items)
-        print("Creating FN123 records...")
-        filters = {"effort__sample__project__prj_cd__in": PRJ_CDs}
-        fn123_cache = get_id_cache(Fnp.FN123, filters=filters)
-
-
-        # =========================
-        #        FN125
-
-        data = prep.fn125(fn125, fn123_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN125(**item)
-            items.append(obj)
-        print("Creating FN125 records...")
-        Fnp.FN125.objects.bulk_create(items)
-        filters = {"catch__effort__sample__project__prj_cd__in": PRJ_CDs}
-        fn125_cache = get_id_cache(Fnp.FN125, filters=filters)
-
-
-        # =========================
-        #        FN125-Tags
-
-        data = prep.fn125_tags(fn125tags, fn125_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN125Tag(**item)
-            items.append(obj)
-        print("Creating FN125_Tag records...")
-        Fnp.FN125Tag.objects.bulk_create(items)
-
-        # =========================
-        #        FN125-Lamprey
-
-        data = prep.fn125_lamprey(fn125lamprey, fn125_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN125_Lamprey(**item)
-            items.append(obj)
-        print("Creating FN125_Lamprey records...")
-        Fnp.FN125_Lamprey.objects.bulk_create(items)
-
-
-        # =========================
-        #        FN126
-
-        data = prep.fn126(fn126, fn125_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN126(**item)
-            items.append(obj)
-        print("Creating FN126 records...")
-        Fnp.FN126.objects.bulk_create(items)
-
-
-        # =========================
-        #        FN127
-
-        data = prep.fn127(fn127, fn125_cache)
-        items = []
-        for item in data:
-            obj = Fnp.FN127(**item)
-            items.append(obj)
-        print("Creating FN127 records...")
-        Fnp.FN127.objects.bulk_create(items)
-
-except DatabaseError:
-    print("something went wrong!!")
-
-
-print("Done!")
+            # delete our old project data:
+            # need to use django for now - us SA later..add()
+            Fnp.FN011.objects.filter(prj_cd__in=PRJ_CDs).delete()
+
+            # =========================
+            #        FN011
+
+            data = prep.fn011(fn011, lake_cache, protocol_cache, user_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN011(**item)
+                items.append(obj)
+            Fnp.FN011.objects.bulk_create(items)
+            filters = {"prj_cd__in": PRJ_CDs}
+            fn011_cache = get_id_cache(Fnp.FN011, filters=filters)
+
+            # =========================
+            #        FN022
+
+            data = prep.fn022(fn022, fn011_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN022(**item)
+                items.append(obj)
+            Fnp.FN022.objects.bulk_create(items)
+            filters = {"project__prj_cd__in": PRJ_CDs}
+            fn022_cache = get_id_cache(Fnp.FN022, filters=filters)
+
+
+            # =========================
+            #        FN026
+
+            data = prep.fn026(fn026, fn011_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN026(**item)
+                items.append(obj)
+            Fnp.FN026.objects.bulk_create(items)
+            fn026_cache = get_id_cache(Fnp.FN026, filters=filters)
+
+            # =========================
+            #        FN028
+
+            # get a gear cache
+            gear_cache = get_id_cache(Fnp.
+                Gear,
+                [
+                    "gr_code",
+                ],
+            )
+
+
+            data = prep.fn028(fn028, fn011_cache, gear_cache)
+
+            items = []
+            for item in data:
+                obj = Fnp.FN028(**item)
+                items.append(obj)
+            Fnp.FN028.objects.bulk_create(items)
+            fn028_cache = get_id_cache(Fnp.FN028, filters=filters)
+
+            # =========================
+            #        FN121
+
+            # our FN121 object have a save method that needs to be called - not
+            # called if we bulk created them.
+
+            print("Creating FN121 records...")
+            data = prep.fn121(
+                fn121, fn011_cache, fn022_cache, fn026_cache, fn028_cache, grid5_cache
+            )
+            items = []
+            for item in data:
+                obj = Fnp.FN121(**item)
+                obj.save()
+            fn121_cache = get_id_cache(Fnp.FN121, filters=filters)
+
+
+            # =========================
+            #        FN122
+
+            data = prep.fn122(fn122, fn121_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN122(**item)
+                items.append(obj)
+            Fnp.FN122.objects.bulk_create(items)
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            fn122_cache = get_id_cache(Fnp.FN122, filters=filters)
+
+
+            # =========================
+            #        FN123
+
+            data = prep.fn123(fn123, fn122_cache, spc_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN123(**item)
+                items.append(obj)
+            Fnp.FN123.objects.bulk_create(items)
+            filters = {"effort__sample__project__prj_cd__in": PRJ_CDs}
+            fn123_cache = get_id_cache(Fnp.FN123, filters=filters)
+
+
+            # =========================
+            #        FN125
+
+            data = prep.fn125(fn125, fn123_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN125(**item)
+                items.append(obj)
+            Fnp.FN125.objects.bulk_create(items)
+            filters = {"catch__effort__sample__project__prj_cd__in": PRJ_CDs}
+            fn125_cache = get_id_cache(Fnp.FN125, filters=filters)
+
+
+            # =========================
+            #        FN125-Tags
+
+            data = prep.fn125_tags(fn125tags, fn125_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN125Tag(**item)
+                items.append(obj)
+            Fnp.FN125Tag.objects.bulk_create(items)
+
+            # =========================
+            #        FN125-Lamprey
+
+            data = prep.fn125_lamprey(fn125lamprey, fn125_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN125_Lamprey(**item)
+                items.append(obj)
+            Fnp.FN125_Lamprey.objects.bulk_create(items)
+
+
+            # =========================
+            #        FN126
+
+            data = prep.fn126(fn126, fn125_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN126(**item)
+                items.append(obj)
+            Fnp.FN126.objects.bulk_create(items)
+
+
+            # =========================
+            #        FN127
+
+            data = prep.fn127(fn127, fn125_cache)
+            items = []
+            for item in data:
+                obj = Fnp.FN127(**item)
+                items.append(obj)
+            Fnp.FN127.objects.bulk_create(items)
+
+            return PRJ_CDs
+
+    except DatabaseError:
+        return "99"

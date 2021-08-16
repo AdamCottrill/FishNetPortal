@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-md-2">
 
-                <h4>Refine By:</h4>                
+                <h4>Refine By:</h4>
 
                 <div class="panel panel-default">
                     <div class="panel-heading">Lake
@@ -128,10 +128,26 @@
             </div>
             <div class="col-md-9">
 
+                <div class="row" >
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert
+                                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% else %} alert-danger {% endif %}
+                                        " role="alert">
+                                <h4 class="alert-heading">Success!</h4>
+                                <p> {{ message }} </p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+
+
                 <div class="row">
                     <div class="col-md-6">
                         <h5>Project Count = {{ project_count  }}</h5>
                     </div>
+
                     <div class="col-md-6">
                         {% if lake %}
                             <a class="btn btn-primary btn-xs"
@@ -146,7 +162,7 @@
                                href="{% strip_parameter param='search' %}" role="button">
                                 contains {{ filters.search }}
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </a>                        
+                            </a>
                         {% endif %}
 
                         {% if filters.year %}
@@ -154,17 +170,17 @@
                                href="{% strip_parameter param='year' %}" role="button">
                                 {{ filters.year }}
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </a>                       
+                            </a>
                         {% endif %}
 
                         {% if filters.first_year %}
-                            
+
                             <a class="btn btn-success btn-xs"
                                href="{% strip_parameter param='first_year' %}" role="button">
                                 After {{ filters.first_year }}
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>
-                            
+
                         {% endif %}
 
                         {% if filters.last_year %}
@@ -192,14 +208,14 @@
                             </a>
                         {% endif %}
 
-                        
+
                         {% if filters.prj_cd__like %}
                             <a class="btn btn-warning btn-xs"
                                href="{% strip_parameter param='prj_cd__like' %}" role="button">
                                 Project Code like: {{ filters.prj_cd__like }}
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a>
-                            
+
                         {% endif %}
 
                         {% if filters %}
@@ -292,11 +308,11 @@
                 {% else %}
                     <br />
                     <h4>Sorry, no projects match that criteria.</h4>
-            {% endif %}
+                {% endif %}
 
+            </div>
         </div>
     </div>
-</div>
 
 {% endblock %}
 

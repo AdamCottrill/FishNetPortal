@@ -121,6 +121,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../static")),)
 
 
+UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "../media/data_upload"))
+
+
 REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PERMISSION_CLASSES": [

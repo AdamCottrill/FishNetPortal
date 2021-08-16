@@ -3,49 +3,69 @@
 
 {% block content  %}
 
+    <div class='container'>
+        <h2>Project Data Upload</h2>
 
-
-<div class='container'>
-<h2>Project Data Upload</h2>
-
-
-            {% if messages %}
+        {% if messages %}
             {% for message in messages %}
-            <div class="ui
-                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} success {% else %} negative {% endif %}
-
-                                    message">
-                <p> {{ message }} </p>
-            </div>
+                <div class="alert
+                            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} alert-success {% else %} alert-danger {% endif %}" role="alert">
+                    <h4 class="alert-heading">
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} Success {% else %} Aw Snap! {% endif %}
+                    </h4>
+                    <p> {{ message }} </p>
+                </div>
             {% endfor %}
-            {% endif %}
+        {% endif %}
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                Some helpful hint here... Only accdb files will be accepted, make sure that you have run process
+                validate against your database and fixed all of the identified errors and critical errors....
+
+                <ul>
+                    <li>Choose project/template type here</li>
+                    <li>Add other views to upload age updates</li>
+                    <li>Options to overwrite, append, update (upsert)</li>
+                </ul>
+            </div>
+        </div>
+
+        <form action="{% url "fn_portal:upload_project_data" %}" method="POST"
+              enctype="multipart/form-data" id="upload-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="data_file">Data Upload</label>
+                <input type="file" name="data_file" id="data_file" required="True" accept=".accdb">
+                <div class="help-block">Select your validated template database.</div>
+
+                <button type="submit" class="btn btn-default" id="form-submit-button">Upload</button>
+                    <button id="processing-button" class="btn btn-primary" disabled style="display: none">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Processing...
+                    </button>
 
 
+        </form>
 
-
- <div class="panel panel-default">
-  <div class="panel-body">
-    Some helpful hint here... Only accdb files will be accepted, make sure that you have run process
-    validate against your database and fixed all of the identified errors and critical errors....
-
-    <ul>
-    <li>Choose project/template type here</li>
-    <li>Add other views to upload age updates</li>
-    <li>Options to overwrite, append, update (upsert)</li>
-    </ul>
-  </div>
-</div>
-
-<form action="{% url "fn_portal:upload_project_data" %}" method="POST"
-                enctype="multipart/form-data" id="upload-form">
-                {% csrf_token %}
-  <div class="form-group">
-    <label for="data_file">Data Upload</label>
-    <input type="file" name="data_file" id="data_file" required="True" accept=".accdb">
-    <div class="help-block">Select your validated template database.</div>
-  <button type="submit" class="btn btn-default">Upload</button>
-</form>
-
-</div>
+            </div>
 
 {% endblock content %}
+
+
+
+{% block scripts %}
+
+    <script>
+
+     $(document).ready(function() {
+         $("#form-submit-button").click(function() {
+                 $("#form-submit-button").hide();
+                 $("#processing-button").show();
+             $("#upload-form").submit();
+         });
+     });
+
+    </script>
+
+{% endblock %}
