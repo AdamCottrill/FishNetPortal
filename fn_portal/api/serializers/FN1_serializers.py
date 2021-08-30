@@ -148,7 +148,7 @@ class FN123Serializer(serializers.ModelSerializer):
             "catcnt",
             "catwt",
             "biocnt",
-            "comment",
+            "comment3",
             "slug",
         )
 

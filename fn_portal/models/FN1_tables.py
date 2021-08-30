@@ -209,7 +209,7 @@ class FN123(models.Model):
     subcnt = models.IntegerField("Number of Fish in Subsample", blank=True, null=True)
     subwt = models.FloatField("Subsample Weight (kg)", blank=True, null=True)
 
-    comment = models.TextField(blank=True, null=True)
+    comment3 = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ("effort", "species", "grp")
