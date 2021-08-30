@@ -1,0 +1,150 @@
+from typing import Optional
+from enum import Enum, IntEnum
+from pydantic import conint, validator
+
+from .FNBase import FNBase, prj_cd_regex
+from .utils import string_to_int
+
+
+class FateEnum(str, Enum):
+    killed = "K"
+    released = "R"
+
+
+class SexEnum(IntEnum):
+    male = 1
+    female = 2
+    hermaphrodite = 3
+    unknown = 9
+
+
+class GonEnum(IntEnum):
+
+    ext_prespawning = 2
+    ext_spawning = 3
+    ext_spent = 4
+    ext_unknown = 9
+    int_undeveloped = 10
+    int_prespawning = 20
+    int_prespawn_dormant = 21
+    int_prespawn_developing = 22
+    int_prespawn_developed = 23
+    int_spawning = 30
+    int_spent = 40
+    int_unknown = 99
+
+
+class MatEnum(IntEnum):
+    immature = 1
+    mature = 2
+    unknown = 9
+
+
+class FN125(FNBase):
+    """Pydanic model for bioligical samples.
+
+    most of the fieds in a biological sample are optional, but if they
+    are provided, they are subject to constraints.
+
+
+
+    """
+
+    slug: str
+    catch_id: int
+    fish: int
+    rwt: Optional[conint(gt=0)] = None
+    flen: Optional[conint(gt=0)] = None
+    tlen: Optional[conint(gt=0)] = None
+    girth: Optional[conint(gt=0)] = None
+    sex: Optional[SexEnum]
+    mat: Optional[MatEnum]
+    gon: Optional[GonEnum]
+    clipc: Optional[str]
+    clipa: Optional[str]
+    nodc: Optional[str]
+    noda: Optional[str]
+    tissue: Optional[str]
+    agest: Optional[str]
+    fate: FateEnum = FateEnum.killed
+
+    age_flag: Optional[bool]
+    lam_flag: Optional[bool]
+    stom_flag: Optional[bool]
+    tag_flag: Optional[bool]
+
+    comment5: Optional[str]
+
+    class Config:
+        validate_assignment = True
+
+    _string_to_int = validator(
+        "tlen", "flen", "rwt", "girth", allow_reuse=True, pre=True
+    )(string_to_int)
+
+    @validator("fate", pre=True)
+    def set_fate(cls, fate):
+        if fate:
+            return fate
+        else:
+            return "K"
+
+    @validator("tlen")
+    @classmethod
+    def check_flen_vs_tlen(cls, v, values):
+        flen = values.get("flen")
+        if flen is not None and v is not None:
+            if flen > v:
+                msg = f"TLEN ({v}) must be greater than or equal to FLEN ({flen})"
+                raise ValueError(msg)
+        return v
+
+    @validator("tlen", "flen")
+    @classmethod
+    def check_condition(cls, v, values, **kwargs):
+        rwt = values.get("rwt")
+        if rwt is not None and v is not None:
+            k = 100000 * rwt / (v ** 3)
+            if k > 3.5:
+                msg = f"FLEN/TLEN ({v}) is too short for the round weight (RWT={rwt}) (K={k:.3f})"
+                raise ValueError(msg)
+            if k < 0.2:
+                msg = f"FLEN/TLEN ({v}) is too large for the round weight (RWT={rwt}) (K={k:.3f})"
+                raise ValueError(msg)
+        return v
+
+    @validator("agest")
+    @classmethod
+    def check_agest(cls, value, values):
+        if value is not None:
+            allowed = "01234567ABCDEFGM"
+            unknown = [c for c in value if c not in allowed]
+            if unknown:
+                msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"
+                raise ValueError(msg)
+        return value
+
+    # ascii-sort clips, node, agest and tissue
+
+    @validator("clipc", "clipa")
+    @classmethod
+    def check_clic_codes(cls, value, values):
+        if value is not None:
+            allowed = "01234567ABCDEFG"
+            unknown = [c for c in value if c not in allowed]
+            if unknown:
+                msg = f"Unknown clip code ({','.join(unknown)}) found in clipa/clipc ({value})"
+                raise ValueError(msg)
+        return value
+
+    @validator("clipc", "clipa", "tissue", "agest")
+    @classmethod
+    def check_ascii_sort(cls, value, values):
+        if value is not None:
+            val = list(value)
+            val.sort()
+            val = "".join(val)
+            if val != value:
+                msg = f"Found non-ascii sorted value ({value}) found in clipa/clipc/agest or tissue (it should be: {val})"
+                raise ValueError(msg)
+        return value

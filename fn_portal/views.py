@@ -502,9 +502,29 @@ def handle_uploaded_file(f):
             destination.write(chunk)
         # now connect to the uploaded file and insert the contents in the appropriate tables...
 
-    return process_accdb_upload(upload_dir, f.name)
-
+    data = process_accdb_upload(upload_dir, f.name)
     # delete the file when we are done....
+
+    return data
+
+
+def get_errors(errors):
+    """A helper function to extract relavant information from each error
+    message so it can be displayed in the template"""
+    error_list = []
+    for err in errors:
+        slug, validation_error = err
+        table = validation_error.model.schema().get("title", "")
+        for error in validation_error.errors():
+            # msg = f"\t{title} => {slug} - {'-'.join(error['loc'])}: {error['msg']}"
+            error_dict = {
+                "table": table,
+                "slug": slug,
+                "fields": "-".join(error["loc"]),
+                "message": error["msg"],
+            }
+            error_list.append(error_dict)
+    return error_list
 
 
 # @login_required
@@ -539,14 +559,40 @@ def project_data_upload(request):
             messages.error(request, msg)
             return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
 
-        process_status = handle_uploaded_file(data_file)
-        if process_status == "99":
-            messages.error(request, "There was a problem uploading " + data_file.name)
-            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+        upload = handle_uploaded_file(data_file)
 
+        if upload["status"] == "insert-error":
+
+            messages.error(
+                request,
+                "There was a problem inserting the data from"
+                + data_file.name
+                + ". "
+                + str(upload["errors"]),
+            )
+            return render(request, "fn_portal/project_data_upload.html")
+
+        if upload["status"] == "error":
+            msg = (
+                "There was a problem validating the data from: "
+                + data_file.name
+                + " Please address the issues identified below and try again."
+            )
+            messages.error(request, msg)
+            # pass errors to redirect so that they are available in the response.
+            # return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+            error_list = get_errors(upload.get("errors"))
+            return render(
+                request,
+                "fn_portal/project_data_upload.html",
+                {"errors": error_list},
+            )
         else:
-            msg = f"Data for {','.join(process_status)} was successfully uploaded!"
+            prj_cds = upload.get("prj_cds")
+
+            msg = f"Data for {','.join(prj_cds)} was successfully uploaded!"
             messages.success(request, message=msg)
+            # TODO - consider passing prjcd as url query parameter to filter to those projects.
             return HttpResponseRedirect(reverse("fn_portal:project_list"))
 
     except Exception as e:
