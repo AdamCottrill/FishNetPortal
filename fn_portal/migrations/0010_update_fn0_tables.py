@@ -29,6 +29,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("fn_portal", "0009_fn013_fn014_unique_slug"),
+        ("fn_portal", "0004_auto_20200606_0911"),
     ]
 
     operations = [
@@ -84,5 +85,151 @@ class Migration(migrations.Migration):
                 related_name="modes",
                 to="fn_portal.Gear",
             ),
+        ),
+        # populate FN022 with seasons based on FN121
+        migrations.RunSQL(
+            """insert INTO fn_portal_fn022
+                 (
+                   slug,
+                   project_id,
+                   ssn,
+                   ssn_des,
+                   ssn_date0,
+                   ssn_date1
+                 )
+              SELECT lower(project.prj_cd) || '-00' as slug,
+                    project.id AS project_id,
+                   '00' AS ssn,
+                   'coming soon' AS ssn_desc,
+                   MIN(effdt0) AS ssn_date0,
+                   MAX(effdt0) AS ssn_date1
+            FROM fn_portal_fn121 AS sample
+              JOIN fn_portal_fn011 AS project ON project.id = sample.project_id
+              left join fn_portal_fn022 as fn022 on fn022.project_id=project.id
+            GROUP BY project.id, fn022.project_id
+              having fn022.project_id is null
+            ;
+                 """
+        ),
+        migrations.RunSQL(
+            """-- FN026
+                   INSERT INTO fn_portal_fn026
+                   (
+                     slug,
+                     project_id,
+                     label,
+                     space,
+                     space_des,
+                     ddlat,
+                     ddlon,
+                     site_lst,
+                     sitp_lst,
+                     area_lst,
+                     sidep_ge,
+                     sidep_lt,
+                     grdep_ge,
+                     grdep_lt
+                   )
+                   SELECT lower(project.prj_cd) || '-00' AS slug,
+                          project.id,
+                          'space is ...' as label,
+                          '00' AS space,
+                          'space is ...' AS space_des,
+                          AVG(sample.dd_lon) AS ddlon,
+                          AVG(sample.dd_lat) AS ddlat,
+                          '' AS site_lst,
+                          '' AS sitp_lst,
+                          '' AS area_lst,
+                          FLOOR(MIN(sidep)) AS sidep_ge,
+                          CEILING(MAX(sidep)) AS sidep_lt,
+                          FLOOR(MIN(sidep)) AS grdep_ge,
+                          CEILING(MAX(sidep)) AS grdep_lt
+                   FROM fn_portal_fn121 AS sample
+                     JOIN fn_portal_fn011 AS project ON project.id = sample.project_id
+                     left join fn_portal_fn026 as fn026 on fn026.project_id=project.id
+                   GROUP BY project.id,
+                            project.prj_cd,
+                            fn026.project_id
+                            having fn026.project_id is null
+                            """
+        ),
+        migrations.RunSQL(
+            """-- update fn121 gear - no nulls!
+                   UPDATE fn_portal_fn121
+                      SET gr = SUBSTR(grtp,1,2)
+                   WHERE gr IS NULL;
+                   """
+        ),
+        # make sure that any unknown gears in fn121 are included in fn_portal_gear table
+        migrations.RunSQL(
+            """
+               INSERT INTO fn_portal_gear
+               (
+                 gr_code,
+                 gr_label,
+                 gr_des,
+                 gr_des_html,
+                 confirmed,
+                 depreciated,
+                 family_id
+               )
+               SELECT DISTINCT gr AS gr_code,
+                      'Undocumented gear' AS gr_label,
+                      'This is an undocumented gear - do you know anything about it?' AS gr_des,
+                      '<p>This is an undocumented gear - do you know anything about it?<\\p>' AS gr_des_html,
+                      FALSE AS confirmed,
+                      TRUE AS depriciated,
+                      CASE
+                        WHEN SUBSTR(gr,1,2) IN ('TW','BT') THEN 19
+                        WHEN SUBSTR(gr,1,2) IN ('GL','LT') THEN 7
+                        WHEN SUBSTR(gr,1,2) IN ('EL','EF') THEN 4
+                        WHEN SUBSTR(gr,1,2) = 'SE' THEN 16
+                      END AS family_id
+               FROM fn_portal_fn121 AS sample
+                 LEFT JOIN fn_portal_gear AS gear ON gear.gr_code = sample.gr
+               WHERE gear.gr_code IS NULL and sample.gr is not null;
+               """
+        ),
+        # populate FN028
+        migrations.RunSQL(
+            """
+               -- create our FN028 entries form fn121 and gear
+               INSERT INTO fn_portal_fn028
+               (
+                 slug,
+                 project_id,
+                 mode,
+                 mode_des,
+                 gr_id,
+                 gruse,
+                 orient,
+                 effdur_ge,
+                 effdur_lt,
+                 efftm0_ge,
+                 efftm0_lt
+               )
+               SELECT lower(project.prj_cd) || '-' || LPAD(ROW_NUMBER() OVER (PARTITION BY project.id)::text,2,'0') AS slug,
+                      project.id AS project_id,
+                      LPAD(ROW_NUMBER() OVER (PARTITION BY project.id)::text,2,'0') AS mode,
+                      'gear: ' || gr || ', orient: ' ||COALESCE(sample.orient,'9') || ', gear use: 1 ' AS mode_des,
+                      gear.id AS gr_id,
+                      '1' AS gruse,
+                      COALESCE(sample.orient,'9') AS orient,
+                      MIN(FLOOR(effdur)) AS effdur_ge,
+                      MAX(CEILING(effdur)) AS effdur_lt,
+                      DATE_TRUNC('hour',MIN(efftm0))::TIME AS efftm0_ge,
+                      DATE_TRUNC('hour',MAX(efftm0))::TIME+interval '1 hour' AS efftm0_lt
+               FROM fn_portal_fn121 AS sample
+                 JOIN fn_portal_fn011 AS project ON project.id = sample.project_id
+                 LEFT JOIN fn_portal_gear AS gear ON gear.gr_code = sample.gr
+                 left join fn_portal_fn028 as fn028 on fn028.project_id=project.id
+               GROUP BY project.id,
+                        sample.gr,
+                        gear.id,
+                        COALESCE(sample.orient,'9'),
+                        fn028.project_id
+                having fn028.project_id is null;
+
+               """
         ),
     ]

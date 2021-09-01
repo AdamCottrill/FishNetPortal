@@ -7,33 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fn_portal', '0003_auto_20200606_0901'),
+        ("fn_portal", "0003_auto_20200606_0901"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='fn123',
-            name='species',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='fn_catch_counts', to='common.Species'),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grcol',
-            field=models.CharField(blank=True, choices=[('6', 'Transparent'), ('7', 'Other'), ('1', 'White'), ('5', 'Discoloured White'), ('8', 'Grey'), ('2', 'Black'), ('3', 'Green'), ('4', 'Blue')], max_length=10, null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grknot',
-            field=models.IntegerField(blank=True, choices=[(2, 'Knots present'), (1, 'Knotless'), (3, 'other')], null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grmat',
-            field=models.CharField(blank=True, choices=[('1', 'Polyamide (e.g. Nylon)'), ('6', 'Other'), ('3', 'Polyethylene'), ('2', 'Polypropylene (e.g. Ulstron)'), ('4', 'Polyester'), ('5', 'Cotton')], max_length=10, null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='gryarn',
-            field=models.IntegerField(blank=True, choices=[(1, 'Monofilament'), (3, 'no data'), (2, 'Multifilament')], null=True),
+            model_name="fn123",
+            name="species",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="fn_catch_counts",
+                to="common.Species",
+            ),
         ),
     ]

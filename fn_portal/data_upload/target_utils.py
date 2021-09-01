@@ -79,34 +79,3 @@ def get_user_cache():
         firstLast = f"{user.first_name} {user.last_name}"
         cache[firstLast.upper()] = user.id
     return cache
-
-
-# def get_user_cache(users):
-#     """"""
-#     user_cache = {}
-#     for key, attrs in users.items():
-#         if attrs:
-#             user, created = User.objects.get_or_create(username=attrs["username"])
-#             if created:
-#                 for attr, value in attrs.items():
-#                     setattr(user, attr, value)
-#                 user.save()
-#             user_cache[key.upper()] = user
-#     return user_cache
-
-
-# def get_user_attrs(prj_ldr):
-#     """take a username from a fishnet project and return the first and
-#     last name, a user address and an ontario email address."""
-#     attrs = {}
-#     names = prj_ldr.title().split()
-#     firstName = names[0]
-#     if len(names) > 1:
-#         lastName = names[1]
-#     else:
-#         lastName = ""
-#     attrs["first_name"] = firstName
-#     attrs["last_name"] = lastName
-#     attrs["email"] = "{}.{}@ontario.ca".format(firstName.lower(), lastName.lower())
-#     attrs["username"] = lastName.lower() + firstName.lower()[:2]
-#     return attrs

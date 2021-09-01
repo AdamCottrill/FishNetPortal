@@ -6,33 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fn_portal', '0001_initial'),
+        ("fn_portal", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='fn125tag',
-            name='tagid',
+            model_name="fn125tag",
+            name="tagid",
             field=models.CharField(blank=True, db_index=True, max_length=20, null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grcol',
-            field=models.CharField(blank=True, choices=[('6', 'Transparent'), ('1', 'White'), ('3', 'Green'), ('7', 'Other'), ('2', 'Black'), ('8', 'Grey'), ('5', 'Discoloured White'), ('4', 'Blue')], max_length=10, null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grknot',
-            field=models.IntegerField(blank=True, choices=[(2, 'Knots present'), (1, 'Knotless'), (3, 'other')], null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='grmat',
-            field=models.CharField(blank=True, choices=[('6', 'Other'), ('4', 'Polyester'), ('3', 'Polyethylene'), ('5', 'Cotton'), ('2', 'Polypropylene (e.g. Ulstron)'), ('1', 'Polyamide (e.g. Nylon)')], max_length=10, null=True),
-        ),
-        migrations.AlterField(
-            model_name='subgear',
-            name='gryarn',
-            field=models.IntegerField(blank=True, choices=[(2, 'Multifilament'), (1, 'Monofilament'), (3, 'no data')], null=True),
         ),
     ]

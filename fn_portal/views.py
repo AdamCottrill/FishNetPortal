@@ -504,7 +504,7 @@ def handle_uploaded_file(f):
 
     data = process_accdb_upload(upload_dir, f.name)
     # delete the file when we are done....
-
+    os.remove(fname)
     return data
 
 

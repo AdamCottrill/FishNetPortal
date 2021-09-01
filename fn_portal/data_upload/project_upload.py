@@ -49,117 +49,117 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
     SRC = os.path.join(SRC_DIR, SRC_DB)
 
-    src_con = fetch.get_mdb_connection(SRC)
+    # src_con = fetch.get_mdb_connection(SRC)
+    with fetch.get_mdb_connection(SRC) as src_con:
 
-    stmt = fetch.get_fn011_stmt()
-    rs = fetch.execute_select(src_con, stmt)
+        stmt = fetch.get_fn011_stmt()
+        rs = fetch.execute_select(src_con, stmt)
 
-    PRJ_CDs = list(set([x["prj_cd"] for x in rs]))
+        PRJ_CDs = list(set([x["prj_cd"] for x in rs]))
 
-    fn011 = prep.fn011(rs, lake_cache, protocol_cache, user_cache)
-    if fn011.get("errors"):
-        return {"status": "error", "errors": fn011.get("errors")}
-    fn011_cache = {x.slug: (i + 1) for i, x in enumerate(fn011["data"])}
-    fn011_inverse = {v: k for k, v in fn011_cache.items()}
+        fn011 = prep.fn011(rs, lake_cache, protocol_cache, user_cache)
+        if fn011.get("errors"):
+            return {"status": "error", "errors": fn011.get("errors")}
+        fn011_cache = {x.slug: (i + 1) for i, x in enumerate(fn011["data"])}
+        fn011_inverse = {v: k for k, v in fn011_cache.items()}
 
-    stmt = fetch.get_fn022_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn022 = prep.fn022(rs, fn011_cache)
-    if fn022.get("errors"):
-        return {"status": "error", "errors": fn022.get("errors")}
-    fn022_cache = {x.slug: (i + 1) for i, x in enumerate(fn022["data"])}
-    fn022_inverse = {v: k for k, v in fn022_cache.items()}
+        stmt = fetch.get_fn022_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn022 = prep.fn022(rs, fn011_cache)
+        if fn022.get("errors"):
+            return {"status": "error", "errors": fn022.get("errors")}
+        fn022_cache = {x.slug: (i + 1) for i, x in enumerate(fn022["data"])}
+        fn022_inverse = {v: k for k, v in fn022_cache.items()}
 
-    stmt = fetch.get_fn026_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn026 = prep.fn026(rs, fn011_cache)
-    if fn026.get("errors"):
-        return {"status": "error", "errors": fn026.get("errors")}
-    fn026_cache = {x.slug: (i + 1) for i, x in enumerate(fn026["data"])}
-    fn026_inverse = {v: k for k, v in fn026_cache.items()}
+        stmt = fetch.get_fn026_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn026 = prep.fn026(rs, fn011_cache)
+        if fn026.get("errors"):
+            return {"status": "error", "errors": fn026.get("errors")}
+        fn026_cache = {x.slug: (i + 1) for i, x in enumerate(fn026["data"])}
+        fn026_inverse = {v: k for k, v in fn026_cache.items()}
 
-    stmt = fetch.get_fn028_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn028 = prep.fn028(rs, fn011_cache, gear_cache)
-    if fn028.get("errors"):
-        return {"status": "error", "errors": fn028.get("errors")}
-    fn028_cache = {x.slug: (i + 1) for i, x in enumerate(fn028["data"])}
-    fn028_inverse = {v: k for k, v in fn028_cache.items()}
+        stmt = fetch.get_fn028_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn028 = prep.fn028(rs, fn011_cache, gear_cache)
+        if fn028.get("errors"):
+            return {"status": "error", "errors": fn028.get("errors")}
+        fn028_cache = {x.slug: (i + 1) for i, x in enumerate(fn028["data"])}
+        fn028_inverse = {v: k for k, v in fn028_cache.items()}
 
-    # stmt = fetch.get_fn013_stmt()
-    # fn013 = fetch.execute_select(src_con, stmt)
+        # stmt = fetch.get_fn013_stmt()
+        # fn013 = fetch.execute_select(src_con, stmt)
 
-    # stmt = fetch.get_fn014_stmt()
-    # fn014 = fetch.execute_select(src_con, stmt)
+        # stmt = fetch.get_fn014_stmt()
+        # fn014 = fetch.execute_select(src_con, stmt)
 
-    stmt = fetch.get_fn121_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn121 = prep.fn121(
-        rs,
-        fn011_cache,
-        fn022_cache,
-        fn026_cache,
-        fn028_cache,
-        grid5_cache,
-        lake_abbrev="HU",
-    )
-    if fn121.get("errors"):
-        return {"status": "error", "errors": fn121.get("errors")}
-    fn121_cache = {x.slug: i for i, x in enumerate(fn121["data"])}
-    fn121_inverse = {v: k for k, v in fn121_cache.items()}
+        stmt = fetch.get_fn121_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn121 = prep.fn121(
+            rs,
+            fn011_cache,
+            fn022_cache,
+            fn026_cache,
+            fn028_cache,
+            grid5_cache,
+            lake_abbrev="HU",
+        )
+        if fn121.get("errors"):
+            return {"status": "error", "errors": fn121.get("errors")}
+        fn121_cache = {x.slug: i for i, x in enumerate(fn121["data"])}
+        fn121_inverse = {v: k for k, v in fn121_cache.items()}
 
-    stmt = fetch.get_fn122_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn122 = prep.fn122(rs, fn121_cache)
-    if fn122.get("errors"):
-        return {"status": "error", "errors": fn122.get("errors")}
-    fn122_cache = {x.slug: (i + 1) for i, x in enumerate(fn122["data"])}
-    fn122_inverse = {v: k for k, v in fn122_cache.items()}
+        stmt = fetch.get_fn122_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn122 = prep.fn122(rs, fn121_cache)
+        if fn122.get("errors"):
+            return {"status": "error", "errors": fn122.get("errors")}
+        fn122_cache = {x.slug: (i + 1) for i, x in enumerate(fn122["data"])}
+        fn122_inverse = {v: k for k, v in fn122_cache.items()}
 
-    stmt = fetch.get_fn123_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn123 = prep.fn123(rs, fn122_cache, spc_cache)
-    if fn123.get("errors"):
-        return {"status": "error", "errors": fn123.get("errors")}
-    fn123_cache = {x.slug: (i + 1) for i, x in enumerate(fn123["data"])}
-    fn123_inverse = {v: k for k, v in fn123_cache.items()}
+        stmt = fetch.get_fn123_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn123 = prep.fn123(rs, fn122_cache, spc_cache)
+        if fn123.get("errors"):
+            return {"status": "error", "errors": fn123.get("errors")}
+        fn123_cache = {x.slug: (i + 1) for i, x in enumerate(fn123["data"])}
+        fn123_inverse = {v: k for k, v in fn123_cache.items()}
 
-    # # stmt = fetch.get_fn124_stmt()
-    # # fn124 = fetch.execute_select(src_con, stmt)
-    # # print(f"found {len(fn124)} fn124 records.")
+        # # stmt = fetch.get_fn124_stmt()
+        # # fn124 = fetch.execute_select(src_con, stmt)
+        # # print(f"found {len(fn124)} fn124 records.")
 
-    stmt = fetch.get_fn125_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn125 = prep.fn125(rs, fn123_cache)
-    if fn125.get("errors"):
-        return {"status": "error", "errors": fn125.get("errors")}
-    fn125_cache = {x.slug: (i + 1) for i, x in enumerate(fn125["data"])}
-    fn125_inverse = {v: k for k, v in fn125_cache.items()}
+        stmt = fetch.get_fn125_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn125 = prep.fn125(rs, fn123_cache)
+        if fn125.get("errors"):
+            return {"status": "error", "errors": fn125.get("errors")}
+        fn125_cache = {x.slug: (i + 1) for i, x in enumerate(fn125["data"])}
+        fn125_inverse = {v: k for k, v in fn125_cache.items()}
 
-    stmt = fetch.get_fn125tags_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn125tags = prep.fn125tags(rs, fn125_cache)
-    if fn125tags.get("errors"):
-        return {"status": "error", "errors": fn125tags.get("errors")}
+        stmt = fetch.get_fn125tags_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn125tags = prep.fn125tags(rs, fn125_cache)
+        if fn125tags.get("errors"):
+            return {"status": "error", "errors": fn125tags.get("errors")}
 
-    stmt = fetch.get_fn125lamprey_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn125lamprey = prep.fn125lamprey(rs, fn125_cache)
-    if fn125lamprey.get("errors"):
-        return {"status": "error", "errors": fn125lamprey.get("errors")}
+        stmt = fetch.get_fn125lamprey_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn125lamprey = prep.fn125lamprey(rs, fn125_cache)
+        if fn125lamprey.get("errors"):
+            return {"status": "error", "errors": fn125lamprey.get("errors")}
 
-    stmt = fetch.get_fn126_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn126 = prep.fn126(rs, fn125_cache)
-    if fn126.get("errors"):
-        return {"status": "error", "errors": fn126.get("errors")}
+        stmt = fetch.get_fn126_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn126 = prep.fn126(rs, fn125_cache)
+        if fn126.get("errors"):
+            return {"status": "error", "errors": fn126.get("errors")}
 
-    stmt = fetch.get_fn127_stmt()
-    rs = fetch.execute_select(src_con, stmt)
-    fn127 = prep.fn127(rs, fn125_cache)
-    if fn127.get("errors"):
-        return {"status": "error", "errors": fn127.get("errors")}
-    src_con.close()
+        stmt = fetch.get_fn127_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn127 = prep.fn127(rs, fn125_cache)
+        if fn127.get("errors"):
+            return {"status": "error", "errors": fn127.get("errors")}
 
     # if there are any error stop and report them here...
 
