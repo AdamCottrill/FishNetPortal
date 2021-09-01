@@ -40,20 +40,16 @@ class GearForm(forms.ModelForm):
             visible.field.widget.attrs["class"] = "form-control"
 
 
-# class DataUploadForm(forms.Form):
-#     """A simple little form for uploading our tempalte databases one at a time."""
+class DataUploadForm(forms.Form):
+    """A simple little form for uploading our tempalte databases one at a time."""
 
-#     file_path = forms.FileField(label="File", required=False)
+    file_upload = forms.FileField(label="Project Data", required=True)
 
-#     def __init__(self, *args, **kwargs):
-#         self.project = kwargs.pop("project")
-#         self.user = kwargs.pop("user")
-#         super(DataUploadForm, self).__init__(*args, **kwargs)
-#         self.fields["file_path"].widget.attrs["size"] = "40"
-#         self.fields["file_path"].widget.attrs["class"] = "fileinput"
+    def __init__(self, *args, **kwargs):
 
-#     def save(self):
-#         """fill in the project, user, uploaded time and file hash when we save
-#         it."""
-
-#         fname = str(self.cleaned_data["file_path"])
+        super(DataUploadForm, self).__init__(*args, **kwargs)
+        self.fields["file_upload"].widget.attrs["size"] = "40"
+        self.fields["file_upload"].widget.attrs["class"] = "fileinput"
+        self.fields["file_upload"].widget.attrs["accept"] = ".accdb"
+        self.fields["file_upload"].widget.attrs["id"] = "data_file"
+        self.fields["file_upload"].widget.attrs["name"] = "data_file"

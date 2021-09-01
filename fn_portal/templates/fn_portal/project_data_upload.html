@@ -35,8 +35,9 @@
               enctype="multipart/form-data" id="upload-form">
             {% csrf_token %}
             <div class="form-group">
-                <label for="data_file">Data Upload</label>
-                <input type="file" name="data_file" id="data_file" required="True" accept=".accdb">
+
+                {{form}}
+
                 <div class="help-block">Select your validated template database.</div>
 
                 <button type="submit" class="btn btn-primary" id="form-submit-button">Upload</button>
@@ -45,8 +46,8 @@
                     Processing...
                 </button>
             </div>
-        </form>
 
+        </form>
 
 
         {% if errors %}
@@ -55,8 +56,8 @@
 
                 <hr/>
 
-                {% with error_count=errors.count %}
-                    <h4>The following {{ error_count }} error{{error_count|pluralize}} where found by the validation process and must be fixed before proceeding:</h4>
+                {% with error_count=errors|length %}
+                    <h4>The following {% if  error_count > 1%} {{ error_count }} errors where {% else %} error was {% endif %} found by the validation process and must be fixed before proceeding:</h4>
                 {% endwith %}
 
                 {% for error in errors %}

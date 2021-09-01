@@ -49,13 +49,16 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
     SRC = os.path.join(SRC_DIR, SRC_DB)
 
-    # src_con = fetch.get_mdb_connection(SRC)
-    with fetch.get_mdb_connection(SRC) as src_con:
+    src_con = fetch.get_mdb_connection(SRC)
+    try:
 
+        logger.debug("Fetching FN011 records")
         stmt = fetch.get_fn011_stmt()
         rs = fetch.execute_select(src_con, stmt)
 
         PRJ_CDs = list(set([x["prj_cd"] for x in rs]))
+
+        # check for Lakes here stop if Lenth>1
 
         fn011 = prep.fn011(rs, lake_cache, protocol_cache, user_cache)
         if fn011.get("errors"):
@@ -63,6 +66,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn011_cache = {x.slug: (i + 1) for i, x in enumerate(fn011["data"])}
         fn011_inverse = {v: k for k, v in fn011_cache.items()}
 
+        logger.debug("Fetching FN022 records")
         stmt = fetch.get_fn022_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn022 = prep.fn022(rs, fn011_cache)
@@ -71,6 +75,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn022_cache = {x.slug: (i + 1) for i, x in enumerate(fn022["data"])}
         fn022_inverse = {v: k for k, v in fn022_cache.items()}
 
+        logger.debug("Fetching FN026 records")
         stmt = fetch.get_fn026_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn026 = prep.fn026(rs, fn011_cache)
@@ -79,6 +84,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn026_cache = {x.slug: (i + 1) for i, x in enumerate(fn026["data"])}
         fn026_inverse = {v: k for k, v in fn026_cache.items()}
 
+        logger.debug("Fetching FN028 records")
         stmt = fetch.get_fn028_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn028 = prep.fn028(rs, fn011_cache, gear_cache)
@@ -93,6 +99,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         # stmt = fetch.get_fn014_stmt()
         # fn014 = fetch.execute_select(src_con, stmt)
 
+        logger.debug("Fetching FN121 records")
         stmt = fetch.get_fn121_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn121 = prep.fn121(
@@ -109,6 +116,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn121_cache = {x.slug: i for i, x in enumerate(fn121["data"])}
         fn121_inverse = {v: k for k, v in fn121_cache.items()}
 
+        logger.debug("Fetching FN122 records")
         stmt = fetch.get_fn122_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn122 = prep.fn122(rs, fn121_cache)
@@ -117,6 +125,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn122_cache = {x.slug: (i + 1) for i, x in enumerate(fn122["data"])}
         fn122_inverse = {v: k for k, v in fn122_cache.items()}
 
+        logger.debug("Fetching FN123 records")
         stmt = fetch.get_fn123_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn123 = prep.fn123(rs, fn122_cache, spc_cache)
@@ -128,7 +137,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         # # stmt = fetch.get_fn124_stmt()
         # # fn124 = fetch.execute_select(src_con, stmt)
         # # print(f"found {len(fn124)} fn124 records.")
-
+        logger.debug("Fetching FN125 records")
         stmt = fetch.get_fn125_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn125 = prep.fn125(rs, fn123_cache)
@@ -137,29 +146,36 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn125_cache = {x.slug: (i + 1) for i, x in enumerate(fn125["data"])}
         fn125_inverse = {v: k for k, v in fn125_cache.items()}
 
+        logger.debug("Fetching FN125tags records")
         stmt = fetch.get_fn125tags_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn125tags = prep.fn125tags(rs, fn125_cache)
         if fn125tags.get("errors"):
             return {"status": "error", "errors": fn125tags.get("errors")}
 
+        logger.debug("Fetching FN125Lamprey records")
         stmt = fetch.get_fn125lamprey_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn125lamprey = prep.fn125lamprey(rs, fn125_cache)
         if fn125lamprey.get("errors"):
             return {"status": "error", "errors": fn125lamprey.get("errors")}
 
+        logger.debug("Fetching FN126 records")
         stmt = fetch.get_fn126_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn126 = prep.fn126(rs, fn125_cache)
         if fn126.get("errors"):
             return {"status": "error", "errors": fn126.get("errors")}
 
+        logger.debug("Fetching FN127 records")
         stmt = fetch.get_fn127_stmt()
         rs = fetch.execute_select(src_con, stmt)
         fn127 = prep.fn127(rs, fn125_cache)
         if fn127.get("errors"):
             return {"status": "error", "errors": fn127.get("errors")}
+
+    finally:
+        src_con.close()
 
     # if there are any error stop and report them here...
 

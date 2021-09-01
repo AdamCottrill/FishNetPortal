@@ -21,7 +21,7 @@ from django.views.generic import ListView
 
 from common.models import Lake, Species
 from .filters import FN011Filter
-from .forms import GearForm
+from .forms import GearForm, DataUploadForm
 from .models import FN011, FN013, FN121, FN123, Gear
 
 from .data_upload.project_upload import process_accdb_upload
@@ -497,14 +497,20 @@ def handle_uploaded_file(f):
 
     upload_dir = settings.UPLOAD_DIR
     fname = os.path.join(upload_dir, f.name)
+    if os.path.isfile(fname):
+        os.remove(fname)
     with open(fname, "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
         # now connect to the uploaded file and insert the contents in the appropriate tables...
 
     data = process_accdb_upload(upload_dir, f.name)
-    # delete the file when we are done....
-    os.remove(fname)
+    # delete the file when we are done. if we can.  Not a problem if
+    # not, we will periodically nuke the upload directory anyway.
+    try:
+        os.remove(fname)
+    except (PermissionError, OSError):
+        pass
     return data
 
 
@@ -543,58 +549,71 @@ def project_data_upload(request):
 
     """
 
-    if request.method == "GET":
-        return render(request, "fn_portal/project_data_upload.html")
+    if request.method == "POST":
 
-    try:
-        data_file = request.FILES["data_file"]
-        if not (data_file.name.endswith(".accdb") or data_file.name.endswith(".db")):
-            msg = "Choosen file is not an Access (*.accdb) file!"
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
-        # if file is too large, return
-        if data_file.multiple_chunks():
-            filesize = data_file.size / (1000 * 1000)
-            msg = "Uploaded file is too big ({.2f} MB).".format(filesize)
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+        form = DataUploadForm(request.POST, request.FILES)
 
-        upload = handle_uploaded_file(data_file)
+        if form.is_valid():
 
-        if upload["status"] == "insert-error":
+            try:
+                data_file = form.cleaned_data["file_upload"]
 
-            messages.error(
-                request,
-                "There was a problem inserting the data from"
-                + data_file.name
-                + ". "
-                + str(upload["errors"]),
-            )
-            return render(request, "fn_portal/project_data_upload.html")
+                if not (
+                    data_file.name.endswith(".accdb") or data_file.name.endswith(".db")
+                ):
+                    msg = "Choosen file is not an Access (*.accdb) file!"
+                    messages.error(request, msg)
+                    return HttpResponseRedirect(
+                        reverse("fn_portal:upload_project_data")
+                    )
+                # if file is too large, return
+                if data_file.multiple_chunks():
+                    filesize = data_file.size / (1000 * 1000)
+                    msg = "Uploaded file is too big ({.2f} MB).".format(filesize)
+                    messages.error(request, msg)
+                    return HttpResponseRedirect(
+                        reverse("fn_portal:upload_project_data")
+                    )
 
-        if upload["status"] == "error":
-            msg = (
-                "There was a problem validating the data from: "
-                + data_file.name
-                + " Please address the issues identified below and try again."
-            )
-            messages.error(request, msg)
-            # pass errors to redirect so that they are available in the response.
-            # return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
-            error_list = get_errors(upload.get("errors"))
-            return render(
-                request,
-                "fn_portal/project_data_upload.html",
-                {"errors": error_list},
-            )
-        else:
-            prj_cds = upload.get("prj_cds")
+                upload = handle_uploaded_file(data_file)
 
-            msg = f"Data for {','.join(prj_cds)} was successfully uploaded!"
-            messages.success(request, message=msg)
-            # TODO - consider passing prjcd as url query parameter to filter to those projects.
-            return HttpResponseRedirect(reverse("fn_portal:project_list"))
+                if upload["status"] == "insert-error":
 
-    except Exception as e:
-        messages.error(request, "Unable to upload file. " + repr(e))
-        return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+                    messages.error(
+                        request,
+                        "There was a problem inserting the data from"
+                        + data_file.name
+                        + ". "
+                        + str(upload["errors"]),
+                    )
+                    return render(request, "fn_portal/project_data_upload.html")
+
+                if upload["status"] == "error":
+                    msg = (
+                        "There was a problem validating the data from: "
+                        + data_file.name
+                        + " Please address the issues identified below and try again."
+                    )
+                    messages.error(request, msg)
+                    # pass errors to redirect so that they are available in the response.
+                    # return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+                    error_list = get_errors(upload.get("errors"))
+                    return render(
+                        request,
+                        "fn_portal/project_data_upload.html",
+                        {"errors": error_list},
+                    )
+                else:
+                    prj_cds = upload.get("prj_cds")
+
+                    msg = f"Data for {','.join(prj_cds)} was successfully uploaded!"
+                    messages.success(request, message=msg)
+                    # TODO - consider passing prjcd as url query parameter to filter to those projects.
+                    return HttpResponseRedirect(reverse("fn_portal:project_list"))
+
+            except Exception as e:
+                messages.error(request, "Unable to upload file. " + repr(e))
+                return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
+    else:
+        form = DataUploadForm()
+    return render(request, "fn_portal/project_data_upload.html", {"form": form})
