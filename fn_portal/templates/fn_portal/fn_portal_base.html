@@ -51,9 +51,11 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'fn_portal:project_list' %}">Projects</a> </li>
+
+                    {% if user.is_authenticated %}
                     <li><a href="{% url "fn_portal:upload_project_data" %}">Upload Data</a></li>
                     <li><a href="#">New Project</a></li>
-
+                    {% endif  %}
                     {% block navbar_other_apps %}
                     {% endblock %}
                 </ul>

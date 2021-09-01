@@ -533,7 +533,7 @@ def get_errors(errors):
     return error_list
 
 
-# @login_required
+@login_required
 def project_data_upload(request):
     """A view to process data uploads.  It will be only available to logged in users.
 
@@ -581,7 +581,7 @@ def project_data_upload(request):
 
                     messages.error(
                         request,
-                        "There was a problem inserting the data from"
+                        "There was a problem inserting the data from: "
                         + data_file.name
                         + ". "
                         + str(upload["errors"]),

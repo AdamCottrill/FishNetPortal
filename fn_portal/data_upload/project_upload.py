@@ -40,7 +40,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
     spc_cache = get_id_cache(Species, ["spc"])
     lake_cache = get_id_cache(Lake, ["abbrev", "lake_name"])
     protocol_cache = get_id_cache(Fnp.FNProtocol, ["abbrev"])
-    grid5_cache = get_id_cache(Grid5)
+
     gear_cache = get_id_cache(Fnp.Gear, ["gr_code"])
     user_cache = get_user_cache()
 
@@ -57,6 +57,21 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         rs = fetch.execute_select(src_con, stmt)
 
         PRJ_CDs = list(set([x["prj_cd"] for x in rs]))
+        LAKES = list(set([x["lake"] for x in rs]))
+        LAKES.sort()
+
+        # verify that only one lake is included in our LAKES array:
+
+        if len(LAKES) == 1 or LAKES == ["ER", "SC"]:
+            # get the grids for our lake:
+            grid5_cache = get_id_cache(Grid5, filters={"lake__abbrev__in": LAKES})
+        else:
+            msg = (
+                "Lake was missing or multiple lakes were found. Lake is required "
+                + "must be *one* of 'SU', 'HU', 'ON', 'ER', 'SC'"
+                + " or ['SC', 'ER']. Please split the upload by lake and try again."
+            )
+            return {"status": "insert-error", "errors": msg}
 
         # check for Lakes here stop if Lenth>1
 
@@ -99,6 +114,8 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         # stmt = fetch.get_fn014_stmt()
         # fn014 = fetch.execute_select(src_con, stmt)
 
+        # this assumes that Lake St. grids start with ER:
+
         logger.debug("Fetching FN121 records")
         stmt = fetch.get_fn121_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -109,7 +126,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             fn026_cache,
             fn028_cache,
             grid5_cache,
-            lake_abbrev="HU",
+            lake_abbrev=LAKES[0],
         )
         if fn121.get("errors"):
             return {"status": "error", "errors": fn121.get("errors")}
