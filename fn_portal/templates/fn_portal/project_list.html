@@ -5,7 +5,23 @@
 
 {% block extrahead  %}
 
-    <link rel="stylesheet" href="{% static "css/theme.bootstrap.css" %}" />
+
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css' rel='stylesheet'/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+     i.fa,
+     i.fas {
+         font-weight: 900;
+     }
+
+     .btn .btn-pill {
+         height: 32px;
+         border-radius: 16px;
+
+     }
+
+    </style>
+
 
 {% endblock %}
 
@@ -14,24 +30,26 @@
 {% block content %}
 
 
-    <div class="container">
+    <div class="container my-3">
         <h2>Welcome to FishNet Portal</h2>
     </div>
 
     <div class="container-fluid" >
 
-        <div class="row">
-            <div class="col-md-2">
+        <div class="row mt-3">
+            <div class="col-md-2 mt-2">
 
-                <h4>Refine By:</h4>
+                <h5>Refine By:</h5>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">Lake
+
+                <div class="card mt-3 mb-2">
+                    <div class="card-header">
+                        Lake
                         {% if 'lake' in filters %}
                             <a class="pull-right" href="{% strip_parameter 'lake' %}">Reset</a>
                         {% endif %}
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <ul>
                             {% for lake in lakes %}
                                 <li> <a href="?{% query_transform lake=lake.lakeAbbrev %}">
@@ -43,74 +61,69 @@
                     </div>
                 </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">Years
+
+                <div class="card my-2">
+                    <div class="card-header">
+                        Years
                         {% if filters.first_year or filters.last_year %}
                             <a class="pull-right" onClick=resetYears()>Reset</a>
                         {% endif %}
-
                     </div>
-                    <div class="panel-body">
-
+                    <div class="card-body">
                         <form id="years" action={{request.get_full_path}} method="get">
 
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="first-year" name="first_year" placeholder =
+                            <div class="mb-3">
+                                <label for="first-year" class="visually-hidden">First Year Filter</label>
+                                <input type="text" class="form-control form-control-sm" id="first-year" name="first_year" placeholder =
                                              "first year">
                             </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="last-year" name="last_year" placeholder =
+                            <div class="mb-3">
+                                <label for="last-year" class="visually-hidden">Last Year Filter</label>
+                                <input type="text" class="form-control form-control-sm" id="last-year" name="last_year" placeholder =
                                              "last year">
                             </div>
-                            <button class="btn btn-default btn-sm" type="button" onClick=handleClick()>
+                            <button class="btn btn-outline-secondary btn-sm" type="button" onClick=handleClick()>
                                 Update years
                             </button>
-
                         </form>
-
                     </div>
                 </div>
 
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">Project Code
+
+                <div class="card my-2">
+                    <div class="card-header">
+                        Project Code
                         {% if 'prj_cd__like' in filters %}
                             <a class="pull-right" href="{% strip_parameter 'prj_cd__like' %}">Reset</a>
                         {% endif %}
                     </div>
-                    <div class="panel-body">
-
+                    <div class="card-body">
                         <form id="prj_cd__like" method="get">
-
-                            <div class="form-group">
-                                <input type="text" class="form-control"  name="prj_cd__like" placeholder =
+                            <div class="mb-2">
+                                <label for="prj_cd__like" class="visually-hidden">Project Code Like</label>
+                                <input type="text" class="form-control form-control-sm"  name="prj_cd__like" placeholder =
                                              "Project Code Contains..." value="{{filters.prj_cd__like}}">
                             </div>
-
                             {% include "fn_portal/_search_hidden_inputs.html" %}
-
                             {% if filters.search %}
                                 <input type="hidden" name="search" value="{{filters.search}}" />
                             {% endif %}
-
-                            <button class="btn btn-default btn-sm" type="submit" >
+                            <button class="btn btn-outline-secondary btn-sm" type="submit" >
                                 Update
                             </button>
-
                         </form>
-
                     </div>
                 </div>
 
-
-                <div class="panel panel-default">
-                    <div class="panel-heading">Project Source
+                <div class="card my-2">
+                    <div class="card-header">
+                        Project Source
                         {% if 'Source' in filters %}
                             <a class="pull-right" href="{% strip_parameter 'Source' %}">Reset</a>
                         {% endif %}
                     </div>
-                    <div class="panel-body">
-
+                    <div class="card-body">
                         <ul>
                             {% for item in project_source %}
                                 <li>
@@ -120,9 +133,9 @@
                                 </li>
                             {% endfor %}
                         </ul>
-
                     </div>
                 </div>
+
 
 
             </div>
@@ -143,77 +156,79 @@
 
 
 
-                <div class="row">
+                <div class="row my-2">
                     <div class="col-md-6">
                         <h5>Project Count = {{ project_count  }}</h5>
                     </div>
 
                     <div class="col-md-6">
                         {% if lake %}
-                            <a class="btn btn-primary btn-xs"
+                            <a class="btn btn-primary btn-sm btn-pill"
                                href="{% strip_parameter param='lake' %}" role="button">
                                 {{lake.lake_name}}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
+
                             </a>
                         {% endif %}
 
                         {% if filters.search %}
-                            <a class="btn btn-info btn-xs"
+                            <a class="btn btn-info btn-sm btn-pill"
                                href="{% strip_parameter param='search' %}" role="button">
                                 contains {{ filters.search }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
                         {% endif %}
 
                         {% if filters.year %}
-                            <a class="btn btn-success btn-xs"
+                            <a class="btn btn-success btn-sm btn-pill"
                                href="{% strip_parameter param='year' %}" role="button">
                                 {{ filters.year }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
                         {% endif %}
 
                         {% if filters.first_year %}
 
-                            <a class="btn btn-success btn-xs"
+                            <a class="btn btn-success btn-sm btn-pill"
                                href="{% strip_parameter param='first_year' %}" role="button">
                                 After {{ filters.first_year }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
+
                             </a>
 
                         {% endif %}
 
                         {% if filters.last_year %}
-                            <a class="btn btn-success btn-xs"
+                            <a class="btn btn-success btn-sm btn-pill"
                                href="{% strip_parameter param="last_year" %}" role="button">
                                 Before {{ filters.last_year }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
 
                         {% endif %}
 
                         {% if filters.prj_ldr %}
-                            <a class="btn btn-default btn-xs"
+                            <a class="btn btn-default btn-sm btn-pill"
                                href="{% strip_parameter param="prj_ldr" %}" role="button">
                                 Run By {{ filters.prj_ldr }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
                         {% endif %}
 
                         {% if filters.source %}
-                            <a class="btn btn-danger btn-xs"
+                            <a class="btn btn-danger btn-sm btn-pill"
                                href="{% strip_parameter param='source' %}" role="button">
                                 Source: {{ filters.source|title }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
                         {% endif %}
 
 
                         {% if filters.prj_cd__like %}
-                            <a class="btn btn-warning btn-xs"
+                            <a class="btn btn-warning btn-sm btn-pill"
                                href="{% strip_parameter param='prj_cd__like' %}" role="button">
                                 Project Code like: {{ filters.prj_cd__like }}
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                <i class="fa fa-times-circle"></i>
                             </a>
 
                         {% endif %}
@@ -233,7 +248,7 @@
 
                 {% if object_list %}
 
-                    <table id="projectTable" cellspacing="0" class="table tablesorter">
+                    <table id="projectTable" cellspacing="0" class="table table-striped tablesorter">
                         <thead>
                             <tr>
                                 <th>Year</th>
@@ -254,7 +269,7 @@
                                     <td>
                                         <a href="{{ project.get_absolute_url }}"> {{ project.prj_cd }}</a>
                                     </td>
-                                    <td>
+                                    <td tabindex="0">
                                         {{ project.prj_nm  }}
                                     </td>
 
@@ -281,25 +296,54 @@
 
 
                     {% if is_paginated %}
-                        <ul class="pagination">
-                            {% if page_obj.has_previous %}
-                                <li><a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo;</a></li>
-    {% else %}
-                                <li class="disabled"><span>&laquo;</span></li>
-                            {% endif %}
-                            {% for i in paginator.page_range %}
-                                {% if page_obj.number == i %}
-                                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                                {% else %}
-                                    <li><a href="?page={{ i }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">{{ i }}</a></li>
+                        <nav aria-label="page navigation">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}"
+                                           aria-label="Previous"
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                            {% else %}
+
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                            <span>&laquo;</span>
+                                        </a>
+                                    </li>
                                 {% endif %}
-                            {% endfor %}
-                            {% if page_obj.has_next %}
-                                <li><a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&raquo;</a></li>
-    {% else %}
-                                <li class="disabled"><span>&raquo;</span></li>
-                            {% endif %}
-                        </ul>
+                                {% for i in paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="#">{{i}}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?page={{ i }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">{{ i }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}"
+                                           aria-label="Next">
+                                            <span>&raquo;</span>
+                                        </a>
+                                    </li>
+                            {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                                            <span>&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     {% endif %}
 
 
@@ -317,7 +361,7 @@
 {% endblock %}
 
 
-{% block scripts  %}
+{% block extra_scripts  %}
 
 
     <!-- tablesorter plugin -->

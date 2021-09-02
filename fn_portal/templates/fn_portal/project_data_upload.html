@@ -3,8 +3,10 @@
 
 {% block content  %}
 
-    <div class='container'>
+    <div class="container mt-5">
+
         <h2>Project Data Upload</h2>
+
 
         {% if messages %}
             {% for message in messages %}
@@ -18,8 +20,14 @@
             {% endfor %}
         {% endif %}
 
-        <div class="panel panel-default">
-            <div class="panel-body">
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Upload validated template database to Fishnet Portal:</h5>
+            </div>
+
+            <div class="card-body">
+
                 Some helpful hint here... Only accdb files will be accepted, make sure that you have run process
                 validate against your database and fixed all of the identified errors and critical errors....
 
@@ -28,75 +36,92 @@
                     <li>Add other views to upload age updates</li>
                     <li>Options to overwrite, append, update (upsert)</li>
                 </ul>
+
+                <hr />
+
+
+                <form action="{% url "fn_portal:upload_project_data" %}" method="POST"
+                      enctype="multipart/form-data" id="upload-form">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+
+                        {{ form.file_upload.label_tag }}
+                        {% if form.file_upload.errors %}
+                            {% for error in form.file_upload.errors %}
+                                <div class="has-error help-block text-danger">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-group{% if form.file_upload.errors %} has-error {% endif %}">
+
+                            {{ form.file_upload }}
+                            <div id="upload-file-help" class="form-text mb-2">
+                                Select your validated template database.
+                            </div>
+                        </div>
+
+                        <button  type="submit" class="btn btn-primary" id="form-submit-button">Upload</button>
+
+                        <button id="processing-button" class="btn btn-primary" disabled style="display: none">
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            Processing...
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <form action="{% url "fn_portal:upload_project_data" %}" method="POST"
-              enctype="multipart/form-data" id="upload-form">
-            {% csrf_token %}
-            <div class="form-group">
-
-                {{form}}
-
-                <div class="help-block">Select your validated template database.</div>
-
-                <button type="submit" class="btn btn-primary" id="form-submit-button">Upload</button>
-                <button id="processing-button" class="btn btn-primary" disabled style="display: none">
-                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                    Processing...
-                </button>
-            </div>
-
-        </form>
+    </div>
 
 
-        {% if errors %}
+    {% if errors %}
 
-            <div class="container">
+        <div class="container">
 
-                <hr/>
+            <hr/>
 
-                {% with error_count=errors|length %}
-                    <h4>The following {% if  error_count > 1%} {{ error_count }} errors where {% else %} error was {% endif %} found by the validation process and must be fixed before proceeding:</h4>
-                {% endwith %}
+            {% with error_count=errors|length %}
+                <h5>The following {% if  error_count > 1%} {{ error_count }} errors where {% else %} error was {% endif %} found by the validation process and must be fixed before proceeding:</h5>
+            {% endwith %}
 
-                {% for error in errors %}
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Table: {{error.table}}</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <td>Slug</td>
-                                        <td>Field(s)</td>
-                                        <td>Error Message</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{error.slug}}</td>
-                                        <td>{{error.fields}}</td>
-                                        <td>{{error.message}}</td>
-                                    </tr>
-                                </tbody>
+            {% for error in errors %}
 
-                            </table>
-                        </div>
+                <div class="card my-3">
+                    <div class="card-header">
+                        Table: {{error.table}}
                     </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Slug</th>
+                                    <th>Field(s)</th>
+                                    <th>Error Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{error.slug}}</td>
+                                    <td>{{error.fields}}</td>
+                                    <td>{{error.message}}</td>
+                                </tr>
+                            </tbody>
 
-                {% endfor %}
+                        </table>
+                    </div>
+                </div>
 
-            </div>
-        {% endif  %}
+            {% endfor %}
+
+        </div>
+    {% endif  %}
 
 
 {% endblock content %}
 
 
 
-{% block scripts %}
+{% block extra_scripts %}
+
 
     <script>
 
@@ -109,5 +134,8 @@
      });
 
     </script>
+
+
+
 
 {% endblock %}
