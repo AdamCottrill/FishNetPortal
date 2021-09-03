@@ -3,69 +3,129 @@
 {% load humanize %}
 {% load fn_portal_tags %}
 
+{% block extrahead %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-{% block sidebar %}
+    <style>
 
-{% sidebar_projects %}
+     td th {
+         text-align:center;
+     }
+
+    </style>
 
 {% endblock %}
 
-    {% block content  %}
 
-        <div class="container">
-            
+{% block content  %}
+
+    <div class="container">
+
+        <div class="row justify-content-between mt-3">
+            <div class="col-8">
+                <h3>Gears{% if user %} assigned to {{ user.first_name }} {{ user.last_name }}{% endif %}:</h3>
+            </div>
+            <div class="col-2">
+                <div class="input-group my-3">
+                    <input id="gear-filter-input" type="text" class="form-control form-control-sm" placeholder="Filter gears by..." aria-label="Filter gear by string" aria-describedby="button-addon1">
+                </div>
+            </div>
+        </div>
 
 
-<h3>Gears{% if user %} assigned to {{ user.first_name }} {{ user.last_name }}{% endif %}:</h3>
+        <table id="gear-table" class="table tablesorter">
+            <thead>
+                <tr>
+                    <th>Gear Code </th>
+                    <th>Description </th>
+                    <th>Lakes</th>
+                    <th>Projects </th>
+                    <th>Net Sets </th>
+                    <th>Active</th>
+                    <th>Confirmed</th>
+                    <th>Assigned To</th>
+                </tr>
+            </thead>
 
-<table class="table">
-    <thead>
-        <tr>
-            <td>Gear Code </td>
-            <td>Description </td>
-            <td>Net Sets </td>
-            <td>Active</td>
-            <td>Confirmed</td>
-            <td>Assigned To</td>
-        </tr>
-    </thead>
+            <tbody>
 
-    {% for gr in gear_list %}
-    <tr>
-        <td><a href="{% url 'fn_portal:gear_detail' gear_code=gr.gr_code %}">{{ gr.gr_code }}</a></td>
-        <td>{{ gr.gr_label }}</td>
-        <td>{{ gr.get_samcount }}</td>
+            {% for gr in gear_list %}
+                <tr>
+                    <td><a href="{% url 'fn_portal:gear_detail' gear_code=gr.gr_code %}">{{ gr.gr_code }}</a></td>
+                    <td style="text-align:left">{{ gr.gr_label }}</td>
+                    <td>{{ gr.lakes }}</td>
+                    <td>{{ gr.projects }}</td>
+                    <td>{{ gr.samples }}</td>
 
-        {% if gr.depreciated %}
-        <td><span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:blue"></span></td>
-        {% else %}
-        <td><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span></td>
-        {% endif %}
+                    {% if gr.depreciated %}
+                        <td><i class="fa fa-times" aria-label="gear is depreciated" style="color:blue"></i></td>
+                    {% else %}
+                        <td><i class="fa fa-check" aria-label="gear is active" style="color:green"></i></td>
+                    {% endif %}
 
-        {% if gr.confirmed %}
-        <td><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true" style="color:blue"></span></td>
-        {% else %}
-        <td><span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="color:red"></span></td>
-        {% endif %}
+                    {% if gr.confirmed %}
+                        <td><i class="fa fa-thumbs-up" aria-label="gear is confirmed" style="color:blue"></i></td>
+                    {% else %}
+                        <td><i class="fa fa-question" aria-label="gear yet to be confirmed" style="color:red"></i></td>
+                    {% endif %}
 
-        {% if gr.assigned_to.username %}
-        <td>
-            <a href="{% url 'fn_portal:gears_assigned_to' username=gr.assigned_to.username %}">
-                {{ gr.assigned_to.username }}
-            </a>
-        </td>
-        {% else %}
-        <td> --- </td>
-        {% endif %}
+                    {% if gr.assigned_to.username %}
+                        <td>
+                            <a href="{% url 'fn_portal:gears_assigned_to' username=gr.assigned_to.username %}">
+                                {{ gr.assigned_to.username }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td> --- </td>
+                    {% endif %}
 
-    </tr>
-    {% endfor %}
-</table>
-
-{% if user %}
-    <a class="btn btn-primary pull-right" href="{% url 'fn_portal:gear_list' %}" role="button">Gear List</a>
-{% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
         </div>
+
+{% endblock %}
+
+
+{% block extra_scripts  %}
+
+    <!-- tablesorter plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.6/js/jquery.tablesorter.js" integrity="sha256-/zMRoPUv1Wfxf3urIyUFn8m1Ot0QmGwXAFHshnwubaE=" crossorigin="anonymous"></script>
+
+    <!-- tablesorter widget file - loaded after the plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.30.6/js/jquery.tablesorter.widgets.js" integrity="sha256-UIl6E2cmeTSpfPbrMkitLrbyAYUqlOz+zwC+Dc7bglI=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+
+     $(".tablesorter").tablesorter({
+         theme: 'bootstrap',
+         widthFixed: true,
+         showProcessing: true,
+         headerTemplate: '{content} {icon}',
+         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgetOptions: {
+             scroller_height: 300,
+             scroller_barWidth: 17,
+             scroller_jumpToHeader: true,
+             scroller_idPrefix: 's_'
+         }
+     });
+
+     $("#gear-filter-input").on("keyup", function() {
+         let target = "gear-table";
+         let value = $(this).val().toLowerCase();
+         $("#" + target +" tbody tr").filter(function() {
+             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+         });
+     });
+
+
+    </script>
+
+
+
+
 
 {% endblock %}

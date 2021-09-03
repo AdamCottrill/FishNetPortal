@@ -6,13 +6,9 @@
 {% block extrahead  %}
 
 
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css' rel='stylesheet'/>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-     i.fa,
-     i.fas {
-         font-weight: 900;
-     }
 
      .btn .btn-pill {
          height: 32px;
@@ -234,7 +230,7 @@
                         {% endif %}
 
                         {% if filters %}
-                            <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear All</a>
+                            <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear Filters</a>
                         {% endif %}
 
 

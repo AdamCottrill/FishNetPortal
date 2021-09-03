@@ -35,11 +35,14 @@
                                 <a class="nav-link" href="{% url 'fn_portal:project_list' %}">Projects</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{% url 'fn_portal:gear_list' %}">Gears</a>
+                            </li>
+
+                            {% if user.is_authenticated  %}
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url "fn_portal:upload_project_data" %}">Upload Data</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">New Project</a>
-                            </li>
+                            {% endif %}
 
                             {% block navbar_other_apps %}
                             {% endblock %}

@@ -432,12 +432,20 @@ def gear_list(request, username=None):
     except User.DoesNotExist:
         user = None
 
+    gear_list = (
+        Gear.objects.all()
+        .order_by("gr_code")
+        .select_related("assigned_to")
+        .annotate(samples=Count("modes__samples", distinct=True))
+        .annotate(projects=Count("modes__samples__project", distinct=True))
+        .annotate(lakes=Count("modes__samples__project__lake", distinct=True))
+    )
     if user:
-        gear_list = Gear.objects.filter(assigned_to=user).order_by("gr_code")
-    else:
-        gear_list = Gear.objects.all().order_by("gr_code")
+        gear_list = gear_list.filter(assigned_to=user)
 
-    context = {"gear_list": gear_list, "user": user}
+    # FN121.objects.filter(gr=self.gr_code).count()
+
+    context = {"gear_list": gear_list.distinct(), "user": user}
 
     return render(request, "fn_portal/gear_list.html", context)
 
