@@ -28,13 +28,15 @@ for lib in geolibs:
     if not os.path.exists(lib[1]):
         print("Unable to find {} at {}".format(*lib))
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
 
 INTERNAL_IPS = ("127.0.0.1",)
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
 INSTALLED_APPS += ["debug_toolbar", "django_extensions"]
+
 
 SECRET_KEY = get_env_variable("SECRET_KEY")
 
