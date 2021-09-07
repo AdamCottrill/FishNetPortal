@@ -222,11 +222,11 @@ def test_project_list_no_projects(client, project_list):
 
 
 html = [
-    ("<h4>Refine By:</h4>"),
-    ('<div class="panel-heading">Lake</div>'),
-    ('<div class="panel-heading">Years</div>'),
-    ('<div class="panel-heading">Project Code</div>'),
-    ('<div class="panel-heading">Project Source</div>'),
+    ("<h5>Refine By:</h5>"),
+    ('<div class="card-header">Lake</div>'),
+    ('<div class="card-header">Years</div>'),
+    ('<div class="card-header">Project Code</div>'),
+    ('<div class="card-header">Project Source</div>'),
 ]
 
 
@@ -251,73 +251,73 @@ filter_buttons = [
     (
         "source",
         "smallfish",
-        """<a class='btn btn-danger btn-xs'
+        """<a class='btn btn-danger btn-sm btn-pill'
      href='/fn_portal/' role='button'>
      Source: Smallfish
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "year",
         "2015",
-        """<a class='btn btn-success btn-xs'
+        """<a class='btn btn-success btn-sm btn-pill'
      href='/fn_portal/' role='button'>
      2015
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "first_year",
         "2015",
-        """<a class='btn btn-success btn-xs'
+        """<a class='btn btn-success btn-sm btn-pill'
      href='/fn_portal/' role='button'>
      After 2015
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "last_year",
         "2015",
-        """<a class='btn btn-success btn-xs'
+        """<a class='btn btn-success btn-sm btn-pill'
      href='/fn_portal/' role='button'>
      Before 2015
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "lake",
         "HU",
-        """<a class='btn btn-primary btn-xs'
+        """<a class='btn btn-primary btn-sm btn-pill'
      href='/fn_portal/' role='button'>
      Huron
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "prj_ldr",
         "simpsonho",
-        """<a class='btn btn-default btn-xs'
+        """<a class='btn btn-secondary btn-sm btn-pill'
      href='/fn_portal/' role='button'>
         Run By simpsonho
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "search",
         "findme",
-        """<a class='btn btn-info btn-xs'
+        """<a class='btn btn-info btn-sm btn-pill'
      href='/fn_portal/' role='button'>
         contains findme
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
     (
         "prj_cd__like",
         "_123",
-        """<a class='btn btn-warning btn-xs'
+        """<a class='btn btn-warning btn-sm btn-pill'
      href='/fn_portal/' role='button'>
         Project Code like: _123
-     <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>
+     <i class="fa fa-times-circle"></i>
      </a>""",
     ),
 ]
@@ -337,5 +337,6 @@ def test_project_list_remove_filter_buttons(client, project_list, filter, value,
     assertContains(response, html, html=True)
 
     # reset link should always appear if a filter is actve:
-    reset_html = '<a class="pull-right" href="/fn_portal/">Clear All</a>'
+    reset_html = '<a class="pull-right" href="/fn_portal/">Clear Filters</a>'
+
     assertContains(response, reset_html, html=True)

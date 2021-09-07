@@ -134,7 +134,7 @@ def test_project_detail_gear_list(client, project):
     response = client.get(url)
     assert response.status_code == 200
 
-    gear_link = '<li><a href="{}">{}</a></li>'
+    gear_link = '<a href="{}">{}</a>'
 
     for gear_code in project.get_121_gear_codes():
         url = reverse("fn_portal:gear_detail", kwargs={"gear_code": gear_code})

@@ -145,6 +145,10 @@ def project_detail(request, slug):
         "samples__effort",
         "samples__effort__catch",
         "samples__effort__catch__species",
+        "protocol",
+        "seasons",
+        "modes",
+        "spatial_strata",
     )
 
     project = get_object_or_404(proj, slug=slug)

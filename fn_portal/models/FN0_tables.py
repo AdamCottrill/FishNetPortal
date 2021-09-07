@@ -142,7 +142,7 @@ class FN011(models.Model):
 
         """
         # gear = FN013.objects.filter(project__prj_cd=self.prj_cd).all()
-        gear = Gear.objects.filter(modes__project=self)
+        gear = Gear.objects.filter(modes__project=self).distinct()
         return gear
 
 

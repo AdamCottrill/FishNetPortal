@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
 
-     .btn .btn-pill {
-         height: 32px;
-         border-radius: 16px;
-
+     .btn.btn-pill {
+         height: 24px;
+         padding: 1px 6px;
+         border-radius: 12px;
+         text-align: center;
+         font-size: 12px;
+         vertical-align: middle;
      }
 
     </style>
@@ -204,7 +207,7 @@
                         {% endif %}
 
                         {% if filters.prj_ldr %}
-                            <a class="btn btn-default btn-sm btn-pill"
+                            <a class="btn btn-secondary btn-sm btn-pill"
                                href="{% strip_parameter param="prj_ldr" %}" role="button">
                                 Run By {{ filters.prj_ldr }}
                                 <i class="fa fa-times-circle"></i>
