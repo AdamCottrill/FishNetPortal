@@ -17,6 +17,10 @@ from .models import Gear
 
 
 class GearForm(forms.ModelForm):
+
+    error_css_class = "is-invalid"
+    required_css_class = "required"
+
     class Meta:
         model = Gear
         fields = (
@@ -38,6 +42,11 @@ class GearForm(forms.ModelForm):
         self.fields["effdst"].label = "Effort Distance"
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"] = "form-control"
+
+        self.fields["confirmed"].widget.attrs["class"] = "form-check-input"
+        self.fields["depreciated"].widget.attrs["class"] = "form-check-input"
+        self.fields["family"].widget.attrs["class"] = "form-select"
+        self.fields["assigned_to"].widget.attrs["class"] = "form-select"
 
 
 class DataUploadForm(forms.Form):

@@ -50,14 +50,14 @@ def test_sample_detail_renders_headings(client, project):
     response = client.get(url)
     assert response.status_code == 200
 
-    expected = '<h2>Sample Details: {} from <a href="{}">{}</a></h2>'
+    expected = '<h2  class="my-3">Sample Details: {} from <a href="{}">{}</a></h2>'
     assertContains(
         response,
         expected.format(sample.sam, project.get_absolute_url(), project.prj_cd),
         html=True,
     )
 
-    expected = "<h3>Catch Composition ({} fish in total)</h3>"
+    expected = '<h3 class="my-3">Catch Composition ({} fish in total)</h3>'
     assertContains(response, expected.format(sample.total_catch()["total"]), html=True)
 
 
