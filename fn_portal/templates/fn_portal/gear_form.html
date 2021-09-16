@@ -9,11 +9,6 @@
 {% block extra_head %}
 
     <style>
-     /* .required::after {
-        content: "*";
-        color: red;
-        }
-      */
      .required:before {
          content:"*\00a0";
          color:red;
@@ -48,7 +43,7 @@
                                     {% if field.help_text %}
                                         <div id="{{field.help}}help" class="form-text">{{field.help_text}}</div>
                                     {% endif %}
-                                    {% if not field.errors %}
+                                    {% if field.errors %}
                                         <div id="validation{{field.name}}" class="invalid-feedback">
                                             foo
                                             {% for error in  field.errors %}{{ error }}{% endfor %}
