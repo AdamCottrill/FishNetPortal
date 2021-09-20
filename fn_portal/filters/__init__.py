@@ -1,4 +1,5 @@
 from .common_filters import SpeciesFilter
+from .common_filters import UserFilter
 from .FN121_filters import FN121Filter
 from .FN122_filters import FN122Filter
 from .FN123_filters import FN123Filter
