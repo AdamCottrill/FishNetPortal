@@ -20,7 +20,7 @@ Quick start
    to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
-        ...,        
+        ...,
         "rest_framework",
         "rest_framework_swagger",
         "django_filters",
@@ -29,15 +29,15 @@ Quick start
         "drf_yasg"
     ]
 
-1.1. Install associated dependancies that are not stricly django apps: 
-    
+1.1. Install associated dependancies that are not stricly django apps:
+
 2. Include the fn_portal URLconf in your project urls.py like this::
 
      path("fn_portal/", include(fn_portal_urls, namespace="fn_portal")),
-     
+
 3. Run `python manage.py migrate` to create the fn_portal models.
 
-4. Visit http://127.0.0.1:8000/fn_portal 
+4. Visit http://127.0.0.1:8000/fn_portal
 
 
 Updating the Application
@@ -67,8 +67,34 @@ To update an existing application issue the command:
 > pip install --upgrade fn_portal.zip
 
 
-Running the tests
+Update the Documentation
 ------------------------
+
+The documentation for FN_portal has been created using sphinx. The
+source code for the documentation can be found in the ~/docs directory.
+
+sphinx-autobuild is included in the local requirements file.  To
+automatically rebuild the documentation during development follow
+these steps in a command window:
+
+1. navigate to the root fn_portal directory
+2. activate the fn_portal virtual environment
+3. run:
+
+.. code:: bash
+
+   > sphinx-autobuild docs/sphinx/source  docs/sphinx/build/html
+
+The documentation should be available in you browser at 127.0.0.1:8000
+(which can be changed by passing addition command line arguments).
+The documentation will be updated dynamically as the source files are
+changed.
+
+
+
+
+Running the tests
+-----------------
 
 fn_portal contains a number of unit tests that verify that the
 application works as expected and that any regregressions are caught

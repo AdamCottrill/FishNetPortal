@@ -7,4 +7,4 @@ drf-yasg==1.20.0
 psycopg2==2.8.6
 pydantic==1.8.2
 fwsb-common @ file:///C:/Users/COTTRILLAD/1work/Python/djcode/apps/uglmu_common/dist/fwsb-common-0.2.2.tar.gz
-GDAL @ file:///C:/Users/COTTRILLAD/Downloads/GDAL-3.2.3-cp37-cp37m-win32.whl
+#GDAL @ file:///C:/Users/COTTRILLAD/Downloads/GDAL-3.2.3-cp37-cp37m-win32.whl

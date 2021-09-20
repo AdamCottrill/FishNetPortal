@@ -1,6 +1,7 @@
 .dir-locals.el
 *.pyc
 .coverage
+.#*
 sandbox.js
 utils/sandbox.py
 utils/mdbs/*
@@ -14,3 +15,4 @@ db/*
 .vscode/
 static/*
 dist/*
+docs/sphinx/_build/*
