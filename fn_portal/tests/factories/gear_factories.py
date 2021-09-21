@@ -1,3 +1,4 @@
+from _pytest.recwarn import deprecated_call
 import factory
 
 from ...models import Gear, Gear2SubGear, GearFamily, SubGear
@@ -33,6 +34,8 @@ class GearFactory(factory.django.DjangoModelFactory):
     gr_code = "GL10"
     grtp = "GL"
     gr_des = "This is a fake gear used for testing."
+    depreciated = False
+    confirmed = True
 
 
 class SubGearFactory(factory.django.DjangoModelFactory):

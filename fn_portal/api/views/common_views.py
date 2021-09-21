@@ -32,7 +32,6 @@ class ProjectLeadListView(generics.ListAPIView):
     our database.  Accepts filters for status = active or all.
     Returns username, first name and lastname."""
 
-    queryset = User.objects.all()
     serializer_class = UserSerializer
     # pagination_class = StandardResultsSetPagination
     permission_classes = [ReadOnly]

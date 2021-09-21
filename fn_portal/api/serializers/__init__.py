@@ -5,6 +5,9 @@ from .common_serializers import (
     UserSerializer,
 )
 
+from .gear_serializers import GearSerializer
+
+
 from .FN0_serializers import (
     FN011SimpleSerializer,
     FN011Serializer,

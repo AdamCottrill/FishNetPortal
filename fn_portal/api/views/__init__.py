@@ -1,4 +1,7 @@
 from .common_views import SpeciesListView, ProjectLeadListView
+
+from .gear_views import GearListView
+
 from .FN0_views import (
     FN011ListView,
     FN011DetailView,

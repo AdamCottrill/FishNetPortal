@@ -1,5 +1,5 @@
 """=============================================================
- c:/Users/COTTRILLAD/1work/Python/djcode/apps/fn_portal/fn_portal/tests/api/test_prj_ldr_readonly.py
+ ~/fn_portal/tests/api/test_prj_ldr_readonly.py
  Created: 20 Sep 2021 15:11:27
 
  DESCRIPTION:
