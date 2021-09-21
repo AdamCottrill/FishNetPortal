@@ -1,9 +1,19 @@
 """Serializers for models in fn_portal"""
 
-from fn_portal.models import FN011, FN013, FN014, FN022, FN026, FN028
+from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
 from rest_framework import serializers
 
 from .common_serializers import LakeSerializer, UserSerializer
+
+
+class FNProtocolSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FNProtocol
+        lookup_field = "abbrev"
+        fields = (
+            "abbrev",
+            "label",
+        )
 
 
 class FN011SimpleSerializer(serializers.ModelSerializer):

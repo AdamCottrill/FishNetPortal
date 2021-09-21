@@ -9,6 +9,7 @@ from .gear_serializers import GearSerializer
 
 
 from .FN0_serializers import (
+    FNProtocolSerializer,
     FN011SimpleSerializer,
     FN011Serializer,
     FN013Serializer,

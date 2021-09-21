@@ -15,8 +15,13 @@ class FNProtocolFactory(factory.django.DjangoModelFactory):
         model = FNProtocol
         django_get_or_create = ("abbrev",)
 
-    label = "Fake Assessment Protocol"
+    label = factory.Sequence(
+        lambda n: "Fake Assessment Protocol - {:02d}".format(n)[-2:]
+    )
     abbrev = "FAP"
+    description = "This is a fake protocol used for testing."
+    active = True
+    confirmed = True
 
 
 class FN011Factory(factory.django.DjangoModelFactory):

@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Sum
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from markdown import markdown
 
 User = get_user_model()
 
@@ -15,9 +16,20 @@ class FNProtocol(models.Model):
 
     label = models.CharField(max_length=100, unique=True)
     abbrev = models.CharField(max_length=10, unique=True)
+    description = models.TextField(
+        "Protocol Description in markdown", blank=True, null=True
+    )
+    description_html = models.TextField("Protocol Description", blank=True, null=True)
+    # has this gear been confirmed - accurate and correct.
+    confirmed = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return "{} ({})".format(self.label, self.abbrev)
+
+    def save(self, *args, **kwargs):
+        self.description_html = markdown(self.description)
+        super(FNProtocol, self).save(*args, **kwargs)
 
 
 class FN011(models.Model):

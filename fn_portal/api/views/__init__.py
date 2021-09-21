@@ -3,6 +3,7 @@ from .common_views import SpeciesListView, ProjectLeadListView
 from .gear_views import GearListView
 
 from .FN0_views import (
+    FNProtocolListView,
     FN011ListView,
     FN011DetailView,
     FN013ListView,

@@ -54,7 +54,4 @@ class GearListView(generics.ListAPIView):
                 depreciated = depreciated.lower() in ("yes", "true", "t", "1")
                 queryset = queryset.filter(depreciated=depreciated)
 
-        print("confirmed={}".format(bool(confirmed)))
-        print("depreciated={}".format(bool(depreciated)))
-
         return queryset

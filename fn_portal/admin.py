@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from fn_portal.models import Gear, GearFamily, SubGear, Gear2SubGear
+from fn_portal.models import FNProtocol, Gear, GearFamily, SubGear, Gear2SubGear
+
+
+class Admin_FNProtocol(admin.ModelAdmin):
+    """Admin class for FN Assessment Protcols"""
+
+    search_fields = ["abbrev", "label"]
+    list_display = ("abbrev", "label", "confirmed", "active")
+    list_filter = ("confirmed", "active")
+    exclude = ("description_html",)
 
 
 class Admin_Gear(admin.ModelAdmin):
@@ -15,6 +24,7 @@ class Admin_Gear(admin.ModelAdmin):
         "assigned_to",
     )
     list_filter = ("family", "confirmed", "depreciated", "assigned_to")
+    exclude = ("gr_des_html",)
 
 
 class Admin_GearFamily(admin.ModelAdmin):
@@ -52,26 +62,23 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
     )
 
     def depreciated(self, obj):
-        """
-        """
+        """ """
         return obj.gear.depreciated
 
     def mesh_mm(self, obj):
-        """
-        """
+        """ """
         return obj.subgear.mesh
 
     def family(self, obj):
-        """
-        """
+        """ """
         return obj.gear.family
 
     def gryarn(self, obj):
-        """
-        """
+        """ """
         return obj.subgear.gryarn
 
 
+admin.site.register(FNProtocol, Admin_FNProtocol)
 admin.site.register(Gear, Admin_Gear)
 admin.site.register(SubGear, Admin_SubGear)
 admin.site.register(Gear2SubGear, Admin_Gear2SubGear)

@@ -91,8 +91,8 @@ class Gear(models.Model):
     gr_code = models.CharField("Gear Code", max_length=4, db_index=True, unique=True)
     effcnt = models.IntegerField("Effort Count", blank=True, null=True)
     effdst = models.FloatField("Effort Distance(m)", blank=True, null=True)
-    gr_des = models.TextField("Gear Description", blank=True, null=True)
-    gr_des_html = models.TextField(blank=True, null=True)
+    gr_des = models.TextField("Gear Description in markdown", blank=True, null=True)
+    gr_des_html = models.TextField("Gear Description", blank=True, null=True)
     # has this gear been confirmed - accurate and correct.
     confirmed = models.BooleanField(default=False)
     depreciated = models.BooleanField(default=False)

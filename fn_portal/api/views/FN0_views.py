@@ -3,7 +3,7 @@
 
 from rest_framework import generics
 
-from fn_portal.models import FN011, FN013, FN014, FN022, FN026, FN028
+from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
 
 from ...filters import FN011Filter
 
@@ -11,6 +11,7 @@ from ..utils import StandardResultsSetPagination
 
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from ..serializers import (
+    FNProtocolSerializer,
     FN011Serializer,
     FN013Serializer,
     FN014Serializer,
@@ -18,6 +19,46 @@ from ..serializers import (
     FN026Serializer,
     FN028Serializer,
 )
+
+
+class FNProtocolListView(generics.ListAPIView):
+    """A read-only endpoint to return currently available protocols."""
+
+    serializer_class = FNProtocolSerializer
+    permission_classes = [ReadOnly]
+
+    def get_queryset(self):
+        """by default, we only want to return active protocols
+        that has been documented. If 'all' is specified, we return
+        everything.
+
+        Boolean confirmed arguments for active and confirmed allow us
+        to refine which subsets are returned.
+
+        """
+
+        all = self.request.query_params.get("all", False)
+        confirmed = self.request.query_params.get("confirmed")
+        active = self.request.query_params.get("active")
+
+        queryset = FNProtocol.objects.order_by("abbrev").all()
+
+        if bool(all):
+            return queryset
+        else:
+            if confirmed is None:
+                queryset = queryset.filter(confirmed=True)
+            else:
+                confirmed = confirmed.lower() in ("yes", "true", "t", "1")
+                queryset = queryset.filter(confirmed=confirmed)
+
+            if active is None:
+                queryset = queryset.filter(active=True)
+            else:
+                active = active.lower() in ("yes", "true", "t", "1")
+                queryset = queryset.filter(active=active)
+
+        return queryset
 
 
 class FN011ListView(generics.ListAPIView):
