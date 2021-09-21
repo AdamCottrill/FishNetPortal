@@ -1,7 +1,16 @@
 import factory
-
+from django.contrib.gis.geos import GEOSGeometry
 
 from common.models import Species, Lake, Grid5
+
+
+wkt = (
+    "MULTIPOLYGON(((-82.000 43.999,"
+    + "-82.083 43.999,"
+    + "-82.083 44.083,"
+    + "-82.000 44.083,"
+    + "-82.000 43.999)))"
+)
 
 
 class LakeFactory(factory.django.DjangoModelFactory):
@@ -11,6 +20,7 @@ class LakeFactory(factory.django.DjangoModelFactory):
 
     lake_name = "Lake Huron"
     abbrev = "HU"
+    geom_ontario = GEOSGeometry(wkt.replace("\n", ""), srid=4326)
 
 
 class Grid5Factory(factory.django.DjangoModelFactory):

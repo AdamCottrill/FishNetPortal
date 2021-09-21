@@ -1,14 +1,15 @@
 """Views for common api endpoints - species, lakes, grids and management units."""
 
+from fn_portal.api.serializers.common_serializers import LakeExtentSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 
-from common.models import Species
+from common.models import Species, Lake
 
 from ...filters import SpeciesFilter, UserFilter
 
 from ..permissions import ReadOnly
-from ..serializers import SpeciesSerializer, UserSerializer
+from ..serializers import SpeciesSerializer, UserSerializer, LakeExtentSerializer
 from ..utils import StandardResultsSetPagination
 
 
@@ -16,9 +17,11 @@ User = get_user_model()
 
 
 class SpeciesListView(generics.ListAPIView):
-    """A read only end point to return lists of species - accepts case
+    """
+    A read only end point to return lists of species - accepts case
     insensitve partial match filters for species code, scientific name,
-    and common name."""
+    and common name.
+    """
 
     queryset = Species.objects.all()
     serializer_class = SpeciesSerializer
@@ -27,10 +30,29 @@ class SpeciesListView(generics.ListAPIView):
     filterset_class = SpeciesFilter
 
 
+class LakeExtentListView(generics.ListAPIView):
+    """
+    A read only end point to return lists our lakes - lake name,
+    abbreviation, and the extents of the ontario waters.  Used by the
+    Project Setup wizard to ensure spatial strata are withing the
+    bounds of the lake.
+
+    This view does not currently accept any filters or parameters.
+    All of the lakes are always returned.
+
+    """
+
+    queryset = Lake.objects.all()
+    serializer_class = LakeExtentSerializer
+    permission_classes = [ReadOnly]
+
+
 class ProjectLeadListView(generics.ListAPIView):
-    """a simple, read only list view to return all of project leads from
+    """
+    A simple, read only list view to return all of project leads from
     our database.  Accepts filters for status = active or all.
-    Returns username, first name and lastname."""
+    Returns username, first name and lastname.
+    """
 
     serializer_class = UserSerializer
     # pagination_class = StandardResultsSetPagination

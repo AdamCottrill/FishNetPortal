@@ -8,12 +8,13 @@ User = get_user_model()
 
 
 class GearFamily(models.Model):
-    """A model to associate sub-gears with the appropriate gears.  Gears
+    """
+    A model to associate sub-gears with the appropriate gears.  Gears
     are comprised of subgears, but only subgears in the same family
     should be allowed.  For example:
 
     + GL10, GL21, GL22 and GL32 are all derived from offshore
-    monofilament (OSIA-mono) panels (and GL18 might be too)
+      monofilament (OSIA-mono) panels (and GL18 might be too)
 
     + GL01 is offshore multifilament (OSIA-multi)
 
@@ -30,13 +31,13 @@ class GearFamily(models.Model):
     + Smallfish short
 
     + North American Standard (not sure if small and large standards
-    are same family or not)
+      are same family or not)
 
     + TP* is trapnet family
     + HP* is hoopnet family
 
     + Unknown - this should never be used, but will be included here
-    to get things working.  Delete before moving into production.
+      to get things working.  Delete before moving into production.
 
     Generally, the subgears within a family have similar
     characteristics and are only used in particular gear types. the
@@ -57,7 +58,8 @@ class GearFamily(models.Model):
 
 
 class Gear(models.Model):
-    """A master table of gears.
+    """
+    A master table of gears.
 
     This will replaces the FN013 table which descibibed the gears used in each
     project. Each gear will only be defined once and will be associated to each
@@ -131,10 +133,13 @@ class Gear(models.Model):
 
 
 class SubGear(models.Model):
-    """A master table of gear panel attributes - each sub-gear will only
-    be defined once and asscoaited with the appropriate gear through a
-    many-to-many relationship.  51mm offshore panel is used in
-    multiple gears, and each gear has multple panels/subgears.
+    """
+    A master table of gear panel attributes.
+
+    Each sub-gear will only be defined once and asscoaited with the
+    appropriate gear through a many-to-many relationship.  51mm
+    offshore panel is used in multiple gears, and each gear has
+    multple panels/subgears.
 
     NOTE: gear colour, yarn, material and knot should be choice fields
     using Fishnet code tables.
@@ -200,8 +205,10 @@ class SubGear(models.Model):
 
 
 class Gear2SubGear(models.Model):
-    """An association table between gears and their sub-gears.  An
-    explicit association table allows us to use a many-to-many through
+    """
+    An association table between gears and their sub-gears.
+
+    An explicit association table allows us to use a many-to-many through
     relationship which can include information on panel order
     (defaults to 1 for gear withough sub-efforts or arranged in
     sequential order).

@@ -12,7 +12,21 @@ from .Gear import Gear
 
 
 class FNProtocol(models.Model):
-    """A table to hold information on fishing events/efforts"""
+    """
+    A table to capture the assessment protocols available for
+    projects.
+
+    The description field provides more detailed information in
+    markdown that is converted to html when the object is saved.
+
+    active and confirmed boolean fields capture if the protocol is
+    active being used (and will be presented as an option in the
+    project setup forms), and whether or not it has been documented
+    (confirmed).
+
+    An admin interface has been created for this model.
+
+    """
 
     label = models.CharField(max_length=100, unique=True)
     abbrev = models.CharField(max_length=10, unique=True)
@@ -21,8 +35,8 @@ class FNProtocol(models.Model):
     )
     description_html = models.TextField("Protocol Description", blank=True, null=True)
     # has this gear been confirmed - accurate and correct.
-    confirmed = models.BooleanField(default=False)
-    active = models.BooleanField(default=False)
+    confirmed = models.BooleanField("Has this protocol been documented?", default=False)
+    active = models.BooleanField("Is this protocol currently in use?", default=False)
 
     def __str__(self):
         return "{} ({})".format(self.label, self.abbrev)
@@ -33,7 +47,8 @@ class FNProtocol(models.Model):
 
 
 class FN011(models.Model):
-    """Project meta data.
+    """
+    Project meta data.
 
     .. note:: field_crew is currently used in permissions - only dba, project
        lead or field crew members are currently allowed to edit records.  This
@@ -159,7 +174,9 @@ class FN011(models.Model):
 
 
 class FN013(models.Model):
-    """FN-II table for Project Gear"""
+    """
+    FN-II table for Project Gear
+    """
 
     # sample = models.ForeignKey(FN121, related_name="gear",
     # on_delete=models.CASCADE)
@@ -187,7 +204,9 @@ class FN013(models.Model):
 
 
 class FN014(models.Model):
-    """FN-II table for Gear Panel Attributes by project-gear"""
+    """
+    FN-II table for Gear Panel Attributes by project-gear
+    """
 
     gear = models.ForeignKey(FN013, related_name="gear_effs", on_delete=models.CASCADE)
     eff = models.CharField(max_length=4, blank=True, null=True)
@@ -219,7 +238,8 @@ class FN014(models.Model):
 
 
 class FN022(models.Model):
-    """Class to represent the seasons (temporal strata) used in each project.
+    """
+    Class to represent the seasons (temporal strata) used in each project.
 
     .. todo:: Add range constraints to ssn_date0 and ssn_date1 - they cannot
        overlap each other and must be contained within the project start and end
@@ -291,7 +311,8 @@ class FN022(models.Model):
 
 
 class FN026(models.Model):
-    """Class to represent the spatial strat used in a project.
+    """
+    Class to represent the spatial strat used in a project.
 
     .. note:: We need to revisit how area_lst, site_lst, and sitp_lst work.
        These were original fishnet files. If we keep them, they should be
@@ -404,7 +425,9 @@ class FN026(models.Model):
 
 
 class FN028(models.Model):
-    """Class to represent the fishing modes used in a project."""
+    """
+    Class to represent the fishing modes used in a project.
+    """
 
     project = models.ForeignKey("FN011", related_name="modes", on_delete=models.CASCADE)
     mode = models.CharField(

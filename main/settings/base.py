@@ -34,6 +34,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 DJANGO_APPS = [
     "django.contrib.admin",
+    "django.contrib.admindocs",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -118,6 +119,8 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = "/static/"
 
+
+STATIC_ROOT = os.path.join(BASE_DIR, "../static_root/")
 STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../static")),)
 
 

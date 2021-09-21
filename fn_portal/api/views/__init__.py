@@ -1,4 +1,4 @@
-from .common_views import SpeciesListView, ProjectLeadListView
+from .common_views import SpeciesListView, ProjectLeadListView, LakeExtentListView
 
 from .gear_views import GearListView
 

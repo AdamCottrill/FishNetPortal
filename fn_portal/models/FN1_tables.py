@@ -11,7 +11,9 @@ User = get_user_model()
 
 
 class FN121(models.Model):
-    """A table to hold information on fishing events/efforts"""
+    """
+    A table to hold information on fishing events/efforts
+    """
 
     project = models.ForeignKey(FN011, related_name="samples", on_delete=models.CASCADE)
 
@@ -157,7 +159,8 @@ class FN121(models.Model):
 
 
 class FN122(models.Model):
-    """A table to hold information about individual fishing
+    """
+    A table to hold information about individual fishing
     efforts(mesh/panel attributes)
 
     """
@@ -190,7 +193,9 @@ class FN122(models.Model):
 
 
 class FN123(models.Model):
-    """a table for catch counts."""
+    """
+    a table for catch counts.
+    """
 
     effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
     species = models.ForeignKey(
@@ -228,7 +233,9 @@ class FN123(models.Model):
 
 
 class FN124(models.Model):
-    """a table for catch tallies."""
+    """
+    a table for catch tallies.
+    """
 
     catch = models.ForeignKey(
         FN123, related_name="length_tallies", on_delete=models.CASCADE
@@ -254,7 +261,9 @@ class FN124(models.Model):
 
 
 class FN125(models.Model):
-    """A table for biological data collected from fish"""
+    """
+    A table for biological data collected from fish
+    """
 
     catch = models.ForeignKey(FN123, related_name="fish", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
@@ -300,7 +309,9 @@ class FN125(models.Model):
 
 
 class FN126(models.Model):
-    """a table for diet data collected in the field."""
+    """
+    a table for diet data collected in the field.
+    """
 
     fish = models.ForeignKey(FN125, related_name="diet_data", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
@@ -363,7 +374,9 @@ class FN126(models.Model):
 
 
 class FN127(models.Model):
-    """A table for age interpretations collected from fish"""
+    """
+    A table for age interpretations collected from fish
+    """
 
     fish = models.ForeignKey(
         FN125, related_name="age_estimates", on_delete=models.CASCADE
@@ -406,7 +419,9 @@ class FN127(models.Model):
 
 
 class FN125_Lamprey(models.Model):
-    """a table for lamprey data."""
+    """
+    a table for lamprey data.
+    """
 
     fish = models.ForeignKey(
         FN125, related_name="lamprey_marks", on_delete=models.CASCADE
@@ -457,7 +472,9 @@ class FN125_Lamprey(models.Model):
 
 # NOTE - this should be named FN125_Tag
 class FN125Tag(models.Model):
-    """a table for the tag(s) assoicated with a fish."""
+    """
+    A table for the tag(s) assoicated with a fish.
+    """
 
     fish = models.ForeignKey(FN125, related_name="fishtags", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)

@@ -8,6 +8,7 @@ from fn_portal.views import ProjectList
 
 urlpatterns = [
     path("", view=ProjectList.as_view(), name="home"),
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("fn_portal/", include("fn_portal.urls")),

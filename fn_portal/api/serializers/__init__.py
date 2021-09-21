@@ -1,6 +1,7 @@
 from .common_serializers import (
     SpeciesSerializer,
     LakeSerializer,
+    LakeExtentSerializer,
     GridSerializer,
     UserSerializer,
 )
