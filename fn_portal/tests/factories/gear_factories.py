@@ -1,7 +1,7 @@
 from _pytest.recwarn import deprecated_call
 import factory
 
-from ...models import Gear, Gear2SubGear, GearFamily, SubGear
+from ...models import Gear, Gear2SubGear, GearFamily, SubGear, GearEffortProcessType
 
 
 class GearFamilyFactory(factory.django.DjangoModelFactory):
@@ -65,3 +65,16 @@ class Gear2SubGearFactory(factory.django.DjangoModelFactory):
 
     gear = factory.SubFactory(GearFactory)
     subgear = factory.SubFactory(SubGearFactory)
+
+
+class GearEffortProcessTypeFactory(factory.django.DjangoModelFactory):
+    """A factory for GearEffortProcessType objects."""
+
+    class Meta:
+        model = GearEffortProcessType
+        django_get_or_create = ("gear", "eff", "process_type")
+
+    gear = factory.SubFactory(GearFactory)
+    eff = "001"
+    process_type = "1"
+    effdst = None

@@ -230,3 +230,104 @@ class Gear2SubGear(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.gear, self.subgear)
+
+
+class GearEffortProcessType(models.Model):
+    """
+    A table to capture the known process types and associated effort for each gear.
+
+    Process type describes how the catch in sample is handled - either
+    by net, by mesh size, by groups of panels, or individual panels.
+    This table constrains the process types available to each gear to
+    those that are known and documented, and ensures that the data
+    below the 121 table can be validated.
+
+    1. - By Net
+    -----------
+
+    This process type is for programs that do not split the catch into
+    distinct efforts. This is the default process type and is most
+    generally associated with trap nets, trawls, and some gill netting
+    programs. By convention a default value of '001' is used for EFF
+    in these programs.
+
+    One net set, one effort.
+
+    2. - By Mesh Size
+    -----------------
+
+    This process type is use for gill net programs that capture catch
+    information by mesh size.  This process type is used in most Great
+    Lakes Index programs, and FWIN surveys.  By convention, EFF is
+    used to capture the mesh size of the panel or panel(s) of each
+    effort (e.g. '051' = 51 mm mesh).
+
+    One net set, one effort for each mesh.
+
+
+    3. - By Panel Group
+    -------------------
+
+    This process type captures situations where efforts are identified
+    as groups of panels (regardless of their mesh size). The
+    prototypical example of this process type is the Spring Littoral
+    Index Netting protocol where the gear consist of 6 identical
+    panels set perpendicular to shore.  The 3-inshore panel are
+    identified as EFF='001' and the three offshore panels are
+    identified as EFF='002'.
+
+    one net set -> one effort for each group of panels
+
+    4. - By Panel
+    -------------
+
+    This process type is appropriate if the gear has multiple panel of
+    the same mesh and the catch in each panel is reported separately.
+    This process type is rarely used, but is specified in some
+    protocols.  If your gear does not have duplicate panels of the
+    same size, or you are not interested in reported by individual
+    panel, Process Type 2 is more appropriate.
+
+    In process type 4, because meshes are repeated, and catch is to be
+    reported by panel, the panel mesh size can no longer be used to
+    identify the effort (eg = '051' could now refer to more than one
+    panel).  As a result panels must be uniquely numbered with values
+    that no longer correspond to their mesh size.  Gear descriptions
+    and associated efforts must be carefully verified if this process
+    type is selected.
+
+    one net set -> one effort per panel
+
+    """
+
+    PROCESS_TYPE_CHOICES = [
+        ("1", "By Net"),
+        ("2", "By Mesh Size"),
+        ("3", "By Panel Group"),
+        ("4", "By Panel"),
+        ("5", "Other (TBD)"),
+    ]
+
+    gear = models.ForeignKey(
+        Gear, related_name="process_types", on_delete=models.CASCADE
+    )
+    process_type = models.CharField(
+        "Process type choice associated with this gear and effort.",
+        default="1",
+        choices=PROCESS_TYPE_CHOICES,
+        max_length=2,
+    )
+    eff = models.CharField("Effort (EFF) value", default="001", max_length=3)
+    effdst = models.FloatField(
+        "Effort Distance (m) associated with this gear and effort (optional)",
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        verbose_name = "Gear Process Type"
+        ordering = ["gear_id", "process_type", "eff"]
+        unique_together = ["gear", "process_type", "eff"]
+
+    def __str__(self):
+        return f"{self.gear.gr_code} - {self.process_type} - {self.eff}"

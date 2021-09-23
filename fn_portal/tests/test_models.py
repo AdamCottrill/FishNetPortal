@@ -21,6 +21,7 @@ from .factories import (
     GearFactory,
     SubGearFactory,
     Gear2SubGearFactory,
+    GearEffortProcessTypeFactory,
 )
 
 
@@ -500,3 +501,25 @@ def test_Gear2SubGear_str():
     subgear_part = "{} ({} ({}))".format(eff, family_label, abbrev)
 
     assert str(gear2subgear) == gear_part + " - " + subgear_part
+
+
+@pytest.mark.django_db
+def test_GearEffortProcessType_str():
+    """Verify that the string representation of a Gear Effort process type
+    object is the gear code, folloed by the effored, followed by the
+    process type, each separated by a dash.
+
+    """
+
+    gear_code = "GL50"
+    eff = "002"
+    process_type = "3"
+
+    gear = GearFactory(gr_code=gear_code)
+    gear_process_type = GearEffortProcessTypeFactory.build(
+        gear=gear, eff=eff, process_type=process_type
+    )
+
+    expected = f"{gear_code} - {process_type} - {eff}"
+
+    assert str(gear_process_type) == expected

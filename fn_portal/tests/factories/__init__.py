@@ -28,4 +28,5 @@ from .gear_factories import (
     SubGearFactory,
     GearFamilyFactory,
     Gear2SubGearFactory,
+    GearEffortProcessTypeFactory,
 )

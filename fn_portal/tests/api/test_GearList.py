@@ -20,7 +20,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from ..factories import GearFactory
+from ..factories import GearFactory, GearEffortProcessTypeFactory
 from .fixtures import api_client
 
 
@@ -92,3 +92,30 @@ def test_gear_list_filters(api_client, gear_list, filter, expected):
     assert len(data) == len(expected)
     for x in expected:
         assert x in data
+
+
+@pytest.mark.django_db
+def test_gear_process_type_in_response(api_client):
+    """The known process types for each gear are returned as children of
+    the gear in the response. This test ensure that there is a key called 'process type'
+    and that it has the expected data.
+
+    """
+
+    process_types = [
+        {"eff": "001", "process_type": "1"},
+        {"eff": "001", "process_type": "3"},
+        {"eff": "002", "process_type": "3"},
+    ]
+
+    gear = GearFactory()
+    for ptype in process_types:
+        GearEffortProcessTypeFactory(gear=gear, **ptype)
+
+    url = reverse("fn_portal_api:gear_list")
+    response = api_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+
+    observed = response.data[0]["process_types"]
+
+    assert observed == process_types

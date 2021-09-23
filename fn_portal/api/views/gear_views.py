@@ -37,7 +37,7 @@ class GearListView(generics.ListAPIView):
         confirmed = self.request.query_params.get("confirmed")
         depreciated = self.request.query_params.get("depreciated")
 
-        queryset = Gear.objects.all()
+        queryset = Gear.objects.prefetch_related("process_types").all()
 
         if bool(all):
             return queryset

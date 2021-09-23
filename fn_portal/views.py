@@ -581,7 +581,10 @@ def project_data_upload(request):
                 # if file is too large, return
                 if data_file.multiple_chunks():
                     filesize = data_file.size / (1000 * 1000)
-                    msg = "Uploaded file is too big ({.2f} MB).".format(filesize)
+                    msg = (
+                        f"The uploaded file is too big ({filesize:.2f} MB). "
+                        + "Compact the database before uploading it or considering splitting it into smaller packets."
+                    )
                     messages.error(request, msg)
                     return HttpResponseRedirect(
                         reverse("fn_portal:upload_project_data")

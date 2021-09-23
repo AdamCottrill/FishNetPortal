@@ -33,7 +33,7 @@ class SpeciesListView(generics.ListAPIView):
 class LakeExtentListView(generics.ListAPIView):
     """
     A read only end point to return lists our lakes - lake name,
-    abbreviation, and the extents of the ontario waters.  Used by the
+    abbreviation, and the extents of the *Ontario* waters.  Used by the
     Project Setup wizard to ensure spatial strata are withing the
     bounds of the lake.
 

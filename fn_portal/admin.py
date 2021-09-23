@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from fn_portal.models import FNProtocol, Gear, GearFamily, SubGear, Gear2SubGear
+from fn_portal.models import (
+    FNProtocol,
+    Gear,
+    GearFamily,
+    SubGear,
+    Gear2SubGear,
+    GearEffortProcessType,
+)
 
 
 class Admin_FNProtocol(admin.ModelAdmin):
@@ -25,6 +32,18 @@ class Admin_Gear(admin.ModelAdmin):
     )
     list_filter = ("family", "confirmed", "depreciated", "assigned_to")
     exclude = ("gr_des_html",)
+
+
+class Admin_GearProcessType(admin.ModelAdmin):
+    """Admin class for known process types associated with each gear"""
+
+    list_display = ("gear", "gear_code", "eff", "process_type", "effdst")
+    list_filter = ("process_type", "eff", "gear")
+    search_fields = ["gear__gr_code", "gear__gr_label"]
+
+    def gear_code(self, obj):
+        """ """
+        return obj.gear.gr_code
 
 
 class Admin_GearFamily(admin.ModelAdmin):
@@ -80,6 +99,7 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
 
 admin.site.register(FNProtocol, Admin_FNProtocol)
 admin.site.register(Gear, Admin_Gear)
+admin.site.register(GearEffortProcessType, Admin_GearProcessType)
 admin.site.register(SubGear, Admin_SubGear)
 admin.site.register(Gear2SubGear, Admin_Gear2SubGear)
 admin.site.register(GearFamily, Admin_GearFamily)
