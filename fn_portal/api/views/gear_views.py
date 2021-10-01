@@ -16,6 +16,7 @@ class GearListView(generics.ListAPIView):
 
     """
 
+    pagination_class = None
     serializer_class = GearSerializer
     permission_classes = [ReadOnly]
     filterset_class = GearFilter

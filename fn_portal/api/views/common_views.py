@@ -42,6 +42,7 @@ class LakeExtentListView(generics.ListAPIView):
 
     """
 
+    pagination_class = None
     queryset = Lake.objects.all()
     serializer_class = LakeExtentSerializer
     permission_classes = [ReadOnly]
@@ -55,9 +56,9 @@ class ProjectLeadListView(generics.ListAPIView):
     """
 
     serializer_class = UserSerializer
-    # pagination_class = StandardResultsSetPagination
     permission_classes = [ReadOnly]
     filterset_class = UserFilter
+    pagination_class = None
 
     def get_queryset(self):
         """by default, we only want to return active users unless the request

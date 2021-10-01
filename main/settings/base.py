@@ -121,7 +121,7 @@ STATIC_URL = "/static/"
 
 
 STATIC_ROOT = os.path.join(BASE_DIR, "../static_root/")
-STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../static")),)
+STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../fn_portal/static")),)
 
 
 UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "../media/data_upload"))

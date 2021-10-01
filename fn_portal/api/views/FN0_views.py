@@ -26,6 +26,7 @@ class FNProtocolListView(generics.ListAPIView):
 
     serializer_class = FNProtocolSerializer
     permission_classes = [ReadOnly]
+    pagination_class = None
 
     def get_queryset(self):
         """by default, we only want to return active protocols
