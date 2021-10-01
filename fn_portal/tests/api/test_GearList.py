@@ -118,4 +118,15 @@ def test_gear_process_type_in_response(api_client):
 
     observed = response.data[0]["process_types"]
 
+    # the response includes the label for each process type - we need
+    # to add them to our expected values:
+    labels = ["By Net", "By Panel Group", "By Panel Group"]
+    for item, label in zip(process_types, labels):
+        item["label"] = label
+
+    from pprint import pprint
+
+    pprint(observed)
+    pprint(process_types)
+
     assert observed == process_types

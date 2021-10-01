@@ -7,9 +7,14 @@ from fn_portal.models import Gear, GearEffortProcessType
 
 
 class ProcessTypeSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
     class Meta:
         model = GearEffortProcessType
-        fields = ("process_type", "eff")
+        fields = ("process_type", "label", "eff")
+
+    def get_label(self, obj):
+        return obj.get_process_type_display()
 
 
 class GearSerializer(serializers.ModelSerializer):

@@ -19,6 +19,7 @@ from .views import (
     project_spc_biodata_json,
     sample_catch_counts_json,
     sample_detail,
+    ProjectWizardView,
 )
 
 # from rest_framework.schemas import get_schema_view
@@ -102,6 +103,7 @@ urlpatterns = [
         view=project_catch_over_time_json,
         name="project_catch_over_time_json",
     ),
+    path("project_wizard/", view=ProjectWizardView.as_view(), name="project_wizard"),
 ]
 
 

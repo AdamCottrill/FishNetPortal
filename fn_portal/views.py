@@ -17,7 +17,8 @@ from django.db.models import Count, F, Q, Sum
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import ListView
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, TemplateView
 
 from common.models import Lake, Species
 from .filters import FN011Filter
@@ -632,3 +633,16 @@ def project_data_upload(request):
     else:
         form = DataUploadForm()
     return render(request, "fn_portal/project_data_upload.html", {"form": form})
+
+
+@method_decorator(login_required, name="dispatch")
+class ProjectWizardView(TemplateView):
+    """
+    A template view that renders a template that load the react
+    proejct wizard.
+
+
+
+    """
+
+    template_name = "fn_portal/project_wizard.html"
