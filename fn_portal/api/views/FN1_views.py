@@ -14,10 +14,11 @@ from fn_portal.models import (
     FN125_Lamprey,
     FN125Tag,
 )
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+
 
 from ...filters import (
     FN121Filter,
@@ -46,10 +47,9 @@ from ..serializers import (
     FN127Serializer,
     ProjectGearProcessTypeSerializer,
 )
-from ..utils import StandardResultsSetPagination
+from ..utils import StandardResultsSetPagination, flatten_gear
 
 
-@transaction.atomic
 @api_view(["POST"])
 def project_wizard(request):
     """
@@ -84,30 +84,8 @@ def project_wizard(request):
         for item in items:
             item["project"] = project.slug
             serialized_item = serializer(data=item)
-            if serialized_item.is_valid():
+            if serialized_item.is_valid(raise_exception=True):
                 serialized_item.save()
-            else:
-                transaction.rollback()
-                return Response(
-                    serialized_item.errors, status=status.HTTP_400_BAD_REQUEST
-                )
-
-    def flatten_gear(gear_array):
-        """the shape of the request data corresponding to the gears and
-        process types are too deeply nested and need to be flattened to
-        correspond to the elements.  this function takes the deeply nested
-        dict and flattens each one into a dictionary with just two elemnts:
-        gear and proccess type.
-        """
-        gears = []
-        for item in gear_array:
-            for ptype in item.get("process_types"):
-                tmp = {
-                    "gear": item["gear"],
-                    "process_type": ptype["process_type"],
-                }
-                gears.append(tmp)
-        return gears
 
     if request.method == "POST":
 
@@ -118,49 +96,42 @@ def project_wizard(request):
         fn026 = data.get("fn026", [])
         fn028 = data.get("fn028", [])
 
-        # TO DO: Flatten gear-process-type array
         gears = flatten_gear(data.get("gear_array", []))
 
-        if fn011.is_valid():
-            project = fn011.save()
-        else:
-            transaction.rollback()
-            return Response(fn011.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
 
-        if len(fn022):
-            serializeAndSave(fn022, FN022Serializer, project)
-        else:
-            transaction.rollback()
-            return Response(
-                {"message": "At least one season must be specified"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if fn011.is_valid(raise_exception=True):
+                    project = fn011.save()
 
-        if len(fn026):
-            serializeAndSave(fn026, FN026SimpleSerializer, project)
-        else:
-            transaction.rollback()
-            return Response(
-                {"message": "At least one spatial strata must be specified"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if len(fn022):
+                    serializeAndSave(fn022, FN022Serializer, project)
+                else:
+                    msg = {"fn022": "At least one season must be specified"}
+                    raise serializers.ValidationError(msg)
 
-        if len(fn028):
-            serializeAndSave(fn028, FN028SimpleSerializer, project)
-        else:
-            transaction.rollback()
-            return Response(
-                {"message": "At least one mode must be specified"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if len(gears):
-            serializeAndSave(gears, ProjectGearProcessTypeSerializer, project)
-        else:
-            transaction.rollback()
-            return Response(
-                {"message": "At least one gear and process type must be specified"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                if len(fn026):
+                    serializeAndSave(fn026, FN026SimpleSerializer, project)
+                else:
+                    msg = {"fn026": "At least one spatial strata must be specified"}
+                    raise serializers.ValidationError(msg)
+
+                if len(fn028):
+                    serializeAndSave(fn028, FN028SimpleSerializer, project)
+                else:
+                    msg = {"fn028": "At least one mode must be specified"}
+                    raise serializers.ValidationError(msg)
+                if len(gears):
+                    serializeAndSave(gears, ProjectGearProcessTypeSerializer, project)
+                else:
+                    msg = {
+                        "gear_array": "At least one gear and process type must be specified"
+                    }
+                    raise serializers.ValidationError(msg)
+
+        except serializers.ValidationError as error:
+
+            return Response(error.args, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
             {"message": "Success!", "data": request.data},

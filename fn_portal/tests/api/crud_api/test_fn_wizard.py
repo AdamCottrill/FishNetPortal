@@ -20,12 +20,14 @@ def fixtures():
     GearFactory(gr_code="GL64")
 
 
-@pytest.mark.django_db
-def test_wizard_good_data(api_client, fixtures, users):
-    """This is an integration test that ensure the api endpoint that
-    consumes the json data from the form wizard successfully create
-    the project and all of the associated design tables and returns an
-    appropriate 201 Created response.
+@pytest.fixture
+def data():
+    """
+    A complete dicationary with valid, known, data elements that can
+    be used in our tests. If it is submitted as is, it should create
+    all of the elements of the design tables, it can be compromised in
+    known ways to ensure that the validation captures errors and returns appropriated
+    error messages.
 
     """
 
@@ -106,6 +108,17 @@ def test_wizard_good_data(api_client, fixtures, users):
             },
         ],
     }
+    return data
+
+
+@pytest.mark.django_db
+def test_wizard_good_data(api_client, data, fixtures, users):
+    """This is an integration test that ensure the api endpoint that
+    consumes the json data from the form wizard successfully create
+    the project and all of the associated design tables and returns an
+    appropriate 201 Created response.
+
+    """
 
     login = api_client.login(username="hsimpson", password="Abcd1234")
     assert login is True
@@ -156,3 +169,105 @@ def test_wizard_good_data(api_client, fixtures, users):
     }
 
     assert {str(x) for x in gear_process_types} == expected
+
+
+# test empty arrays for FN022, FN026, FN028, Gear_array
+# test duplicate values and descriptions, prj_cd
+# unknown lake, protocol, or project lead.
+# inconsistent lake and project code
+# inconsistent lake and year
+# inonsisten start and end dates for project and seasons.
+# test overlapping seasons
+# test missing elements
+
+
+table_list = [
+    ("fn022", "At least one season must be specified"),
+    ("fn026", "At least one spatial strata must be specified"),
+    ("fn028", "At least one mode must be specified"),
+    ("gear_array", "At least one gear and process type must be specified"),
+]
+
+
+@pytest.mark.parametrize("table,message", table_list)
+@pytest.mark.django_db()
+def test_empty_child_array(api_client, data, fixtures, users, table, message):
+    """If any of the arrays associated with the design tables are empty,
+    the response should be a 400, with a meaningful error message."""
+
+    data[table] = []
+
+    login = api_client.login(username="hsimpson", password="Abcd1234")
+    assert login is True
+
+    url = reverse("fn_portal_api:project_wizard")
+    response = api_client.post(url, data, format="json")
+    assert response.status_code == 400
+
+    messages = [x.get(table) for x in response.data]
+    assert message in messages
+
+    # make sure nothing was committed to the database:
+    prj_cd = data["fn011"]["prj_cd"]
+    project = FN011.objects.filter(prj_cd=prj_cd).first()
+
+    assert project is None
+
+
+fn011_field_list = [
+    ("fn011", "prj_cd"),
+    ("fn011", "prj_nm"),
+    ("fn011", "prj_date0"),
+    ("fn011", "prj_date1"),
+    ("fn011", "lake"),
+    ("fn011", "protocol"),
+    # ("fn011", "comment0"),
+    ("fn022", "ssn"),
+    ("fn022", "ssn_des"),
+    ("fn022", "ssn_date0"),
+    ("fn022", "ssn_date1"),
+    ("fn026", "space"),
+    ("fn026", "space_des"),
+    # ("fn026", "dd_lat"),
+    # ("fn026", "dd_lon"),
+    ("fn028", "mode"),
+    ("fn028", "mode_des"),
+    ("fn028", "gear"),
+    ("fn028", "orient"),
+    ("fn028", "gruse"),
+]
+
+
+@pytest.mark.parametrize("table,field", fn011_field_list)
+@pytest.mark.django_db()
+def test_empty_field(api_client, data, fixtures, users, table, field):
+    """All of the fields in the FN011 object are required. If any of them
+    happen to be empty, the response should be a 400, and include a
+    meaningful message.
+
+    """
+
+    prj_cd = data["fn011"]["prj_cd"]
+
+    if table == "fn011":
+        data[table][field] = None
+    else:
+        data[table][0][field] = None
+
+    message = "This field may not be null."
+
+    login = api_client.login(username="hsimpson", password="Abcd1234")
+    assert login is True
+
+    url = reverse("fn_portal_api:project_wizard")
+    response = api_client.post(url, data, format="json")
+    assert response.status_code == 400
+
+    # the actual error messages are buried deep in the response object:
+    messages = [x.get(field) for x in response.data]
+    assert message in [x[0] for x in messages]
+
+    # make sure nothing was committed to the database:
+    project = FN011.objects.filter(prj_cd=prj_cd).first()
+
+    assert project is None
