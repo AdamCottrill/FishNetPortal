@@ -1,5 +1,5 @@
 """Serializers for models in fn_portal"""
-
+import re
 from common.models import Lake
 from django.contrib.auth import get_user_model
 from fn_portal.models import (
@@ -100,6 +100,69 @@ class FN011WizardSerializer(serializers.ModelSerializer):
             "lake",
         )
 
+    def validate_prj_cd(self, value):
+        """ensure that the project code is a valid FN-II project code"""
+
+        pattern = "^[A-Z]{3}_[A-Z]{2}[0-9]{2}_[A-Z0-9]{3}$"
+
+        if re.fullmatch(pattern, value) is None:
+            raise serializers.ValidationError("That is not a valid FN-II project code.")
+        return value
+
+    def validate(self, data):
+        """Make sure that:
+
+        + start date occurs on or before end date,
+        + start date and end date are in the same calendar year, and
+        + that year in both dates agree with the year in prj_cd
+        + project code siffux matches lake
+
+        """
+
+        if data["prj_date0"] > data["prj_date1"]:
+            raise serializers.ValidationError(
+                {"prj_date1": "project end date must occur on or after start date"}
+            )
+
+        if data["prj_date0"].year != data["prj_date1"].year:
+            raise serializers.ValidationError(
+                {"prj_date1": "project start and end occur in different years."}
+            )
+
+        prj_cd = data["prj_cd"]
+        if str(data["prj_date0"].year)[2:] != prj_cd[6:8]:
+            raise serializers.ValidationError(
+                {
+                    "prj_date0": "year of project start is not consistent with year in project code."
+                }
+            )
+
+        if str(data["prj_date1"].year)[2:] != prj_cd[6:8]:
+            raise serializers.ValidationError(
+                {
+                    "prj_date1": "year of project end is not consistent with year in project code."
+                }
+            )
+
+        lake_project_prefixes = {
+            "HU": ["LHA", "LHR"],
+            "SU": ["LSA", "LSR"],
+            "ON": ["LOA", "LOM"],
+            "ER": ["LEA", "LEM"],
+            "SC": ["LEA", "LEM"],
+        }
+
+        lake = data["lake"]
+        suffix = data["prj_cd"][:3]
+        if suffix not in lake_project_prefixes.get(lake.abbrev):
+            raise serializers.ValidationError(
+                {
+                    "prj_cd": f"project code suffix ({suffix}) is not consistent with selected lake ({lake.abbrev})."
+                }
+            )
+
+        return data
+
 
 class ProjectGearProcessTypeSerializer(serializers.ModelSerializer):
     """
@@ -168,6 +231,40 @@ class FN022Serializer(serializers.ModelSerializer):
     class Meta:
         model = FN022
         fields = ("project", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug")
+
+    def validate(self, data):
+        """Make sure that:
+
+        + season start date occurs on or before end date,
+        + season start date and end date are in the same calendar year, and
+        + that year in both dates agree with the year in prj_cd
+
+        """
+
+        if data["ssn_date0"] > data["ssn_date1"]:
+            raise serializers.ValidationError(
+                {"ssn_date1": "season end date must occur on or after start date"}
+            )
+
+        if data["ssn_date0"].year != data["ssn_date1"].year:
+            raise serializers.ValidationError(
+                {"ssn_date1": "season start and end occur in different years."}
+            )
+
+        yr = data["project"].prj_cd[6:8]
+        project_year = f"19{yr}" if int(yr) > 50 else f"20{yr}"
+
+        if str(data["ssn_date0"].year) != project_year:
+            raise serializers.ValidationError(
+                {"ssn_date0": "season start year is not constistent with project year."}
+            )
+
+        if str(data["ssn_date1"].year) != project_year:
+            raise serializers.ValidationError(
+                {"ssn_date1": "season end year is not constistent with project year."}
+            )
+
+        return data
 
 
 class FN026SimpleSerializer(serializers.ModelSerializer):

@@ -97,6 +97,9 @@ class FN011(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.prj_cd)
+        if self.year is None:
+            yr = self.prj_cd[6:8]
+            self.year = f"19{yr}" if int(yr) > 50 else f"20{yr}"
         super(FN011, self).save(*args, **kwargs)
 
     def __str__(self):

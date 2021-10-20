@@ -36,22 +36,22 @@ def data():
             "comment0": "This is a test project. It is going to be awesome.",
             "protocol": "FLIN",
             "lake": "HU",
-            "prj_date1": "2021-10-31",
             "prj_date0": "2021-09-01",
+            "prj_date1": "2021-10-31",
             "prj_ldr": "hsimpson",
             "prj_nm": "This is a test project.",
             "prj_cd": "LHA_IA21_123",
         },
         "fn022": [
             {
-                "ssn_date1": "2021-09-30",
                 "ssn_date0": "2021-09-01",
+                "ssn_date1": "2021-09-30",
                 "ssn_des": "Early season - september",
                 "ssn": "10",
             },
             {
-                "ssn_date1": "2021-10-31",
                 "ssn_date0": "2021-10-01",
+                "ssn_date1": "2021-10-31",
                 "ssn_des": "Late season - october",
                 "ssn": "20",
             },
@@ -125,6 +125,11 @@ def test_wizard_good_data(api_client, data, fixtures, users):
 
     url = reverse("fn_portal_api:project_wizard")
     response = api_client.post(url, data, format="json")
+
+    from pprint import pprint
+
+    pprint(response.data)
+
     assert response.status_code == 201
 
     prj_cd = data["fn011"]["prj_cd"]
@@ -171,14 +176,12 @@ def test_wizard_good_data(api_client, data, fixtures, users):
     assert {str(x) for x in gear_process_types} == expected
 
 
-# test empty arrays for FN022, FN026, FN028, Gear_array
 # test duplicate values and descriptions, prj_cd
 # unknown lake, protocol, or project lead.
 # inconsistent lake and project code
 # inconsistent lake and year
 # inonsisten start and end dates for project and seasons.
 # test overlapping seasons
-# test missing elements
 
 
 table_list = [
