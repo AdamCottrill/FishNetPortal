@@ -69,62 +69,98 @@ def project_wizard(request):
 
     """
 
+    def serializeAndSave(items, serializer, project):
+        """A helper function to serialize, validate and save each of our child
+        elements. If there is a issued validateding any of the elements, the
+        trasaction is rollback and an error response is returned.
+
+        Arguments:
+        - `items`:
+        - `serializer`:
+        - `project`:
+
+        """
+
+        for item in items:
+            item["project"] = project.slug
+            serialized_item = serializer(data=item)
+            if serialized_item.is_valid():
+                serialized_item.save()
+            else:
+                transaction.rollback()
+                return Response(
+                    serialized_item.errors, status=status.HTTP_400_BAD_REQUEST
+                )
+
+    def flatten_gear(gear_array):
+        """the shape of the request data corresponding to the gears and
+        process types are too deeply nested and need to be flattened to
+        correspond to the elements.  this function takes the deeply nested
+        dict and flattens each one into a dictionary with just two elemnts:
+        gear and proccess type.
+        """
+        gears = []
+        for item in gear_array:
+            for ptype in item.get("process_types"):
+                tmp = {
+                    "gear": item["gear"],
+                    "process_type": ptype["process_type"],
+                }
+                gears.append(tmp)
+        return gears
+
     if request.method == "POST":
 
         data = request.data
 
         fn011 = FN011WizardSerializer(data=data["fn011"])
+        fn022 = data.get("fn022", [])
+        fn026 = data.get("fn026", [])
+        fn028 = data.get("fn028", [])
+
+        # TO DO: Flatten gear-process-type array
+        gears = flatten_gear(data.get("gear_array", []))
+
         if fn011.is_valid():
             project = fn011.save()
         else:
             transaction.rollback()
             return Response(fn011.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        fn022 = data["fn022"]
-        for item in fn022:
-            item["project"] = project.slug
-            ssn = FN022Serializer(data=item)
-            if ssn.is_valid():
-                ssn.save()
-            else:
-                transaction.rollback()
-                return Response(ssn.errors, status=status.HTTP_400_BAD_REQUEST)
+        if len(fn022):
+            serializeAndSave(fn022, FN022Serializer, project)
+        else:
+            transaction.rollback()
+            return Response(
+                {"message": "At least one season must be specified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        fn026 = data["fn026"]
-        for item in fn026:
-            item["project"] = project.slug
-            space = FN026SimpleSerializer(data=item)
-            if space.is_valid():
-                space.save()
-            else:
-                transaction.rollback()
-                return Response(space.errors, status=status.HTTP_400_BAD_REQUEST)
+        if len(fn026):
+            serializeAndSave(fn026, FN026SimpleSerializer, project)
+        else:
+            transaction.rollback()
+            return Response(
+                {"message": "At least one spatial strata must be specified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        fn028 = data["fn028"]
-        for item in fn028:
-            item["project"] = project.slug
-            mode = FN028SimpleSerializer(data=item)
-            if mode.is_valid():
-                mode.save()
-            else:
-                transaction.rollback()
-                return Response(mode.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # TO DO: Flatten gear-process-type array
-        gears = data["gear_array"]
-        for item in gears:
-            for ptype in item.get("process_types"):
-                tmp = {
-                    "project": project.slug,
-                    "gear": item["gear"],
-                    "process_type": ptype["process_type"],
-                }
-                obj = ProjectGearProcessTypeSerializer(data=tmp)
-                if obj.is_valid():
-                    obj.save()
-                else:
-                    transaction.rollback()
-                    return Response(obj.errors, status=status.HTTP_400_BAD_REQUEST)
+        if len(fn028):
+            serializeAndSave(fn028, FN028SimpleSerializer, project)
+        else:
+            transaction.rollback()
+            return Response(
+                {"message": "At least one mode must be specified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(gears):
+            serializeAndSave(gears, ProjectGearProcessTypeSerializer, project)
+        else:
+            transaction.rollback()
+            return Response(
+                {"message": "At least one gear and process type must be specified"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         return Response(
             {"message": "Success!", "data": request.data},
