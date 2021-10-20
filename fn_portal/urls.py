@@ -103,7 +103,9 @@ urlpatterns = [
         view=project_catch_over_time_json,
         name="project_catch_over_time_json",
     ),
-    path("project_wizard/", view=ProjectWizardView.as_view(), name="project_wizard"),
+    re_path(
+        r"^project_wizard/.*$", view=ProjectWizardView.as_view(), name="project_wizard"
+    ),
 ]
 
 

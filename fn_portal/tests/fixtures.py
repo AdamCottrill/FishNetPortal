@@ -86,12 +86,12 @@ def project():
         project=project,
         space="S1",
         space_des="Space 1",
-        ddlat=45.1,
-        ddlon=-81.1,
+        dd_lat=45.1,
+        dd_lon=-81.1,
         __sequence=1,
     )
     FN026Factory(
-        project=project, space="S2", space_des="Space 2", ddlat=45.2, ddlon=-81.2
+        project=project, space="S2", space_des="Space 2", dd_lat=45.2, dd_lon=-81.2
     )
 
     gl00 = GearFactory(gr_code="GL00", grtp="GL")

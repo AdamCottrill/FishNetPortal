@@ -24,6 +24,7 @@ from .views import (
     FNProtocolListView,
     # readonly endpoints:
     # FN011ViewSet,
+    project_wizard,
     FN011ListView,
     FN011DetailView,
     FN013ListView,
@@ -76,6 +77,7 @@ urlpatterns = [
     path("gear/", GearListView.as_view(), name="gear_list"),
     path("lakes/", LakeExtentListView.as_view(), name="lake_extent_list"),
     path("protocols/", FNProtocolListView.as_view(), name="protocol_list"),
+    path("project_wizard/", project_wizard, name="project_wizard"),
     path("fn011/", FN011ListView.as_view(), name="project_list"),
     path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="project_detail"),
     path("fn121/", NetSetList.as_view(), name="netset_list"),

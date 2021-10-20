@@ -1,6 +1,6 @@
 """Views for api endpoints."""
 
-
+from django.db import transaction
 from django.http import Http404
 from fn_portal.models import (
     FN011,
@@ -14,8 +14,10 @@ from fn_portal.models import (
     FN125_Lamprey,
     FN125Tag,
 )
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from ...filters import (
     FN121Filter,
@@ -29,6 +31,10 @@ from ...filters import (
 )
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly
 from ..serializers import (
+    FN011WizardSerializer,
+    FN022Serializer,
+    FN026SimpleSerializer,
+    FN028SimpleSerializer,
     FN121Serializer,
     FN122Serializer,
     FN123Serializer,
@@ -38,8 +44,92 @@ from ..serializers import (
     FN125TagSerializer,
     FN126Serializer,
     FN127Serializer,
+    ProjectGearProcessTypeSerializer,
 )
 from ..utils import StandardResultsSetPagination
+
+
+@transaction.atomic
+@api_view(["POST"])
+def project_wizard(request):
+    """
+
+    This api_view endpoint only accepts post requests generated from
+    the FN project wizard. the response is a structured json object
+    that contain elements for FN011, FN022, FN026, FN028, gear, and
+    associated process types.  The entire function is wrapped in a
+    transaction and only commits the data to the data base is the
+    entire objects can be successfully parsed and converted into
+    django objects.
+
+    If the data is valid and all of the entities can be created, it
+    returns a 200 response.  If there is an error anywhere in the
+    parsing/validation process, a bad request response is retruned
+    along with the associated errros object.
+
+    """
+
+    if request.method == "POST":
+
+        data = request.data
+
+        fn011 = FN011WizardSerializer(data=data["fn011"])
+        if fn011.is_valid():
+            project = fn011.save()
+        else:
+            transaction.rollback()
+            return Response(fn011.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        fn022 = data["fn022"]
+        for item in fn022:
+            item["project"] = project.slug
+            ssn = FN022Serializer(data=item)
+            if ssn.is_valid():
+                ssn.save()
+            else:
+                transaction.rollback()
+                return Response(ssn.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        fn026 = data["fn026"]
+        for item in fn026:
+            item["project"] = project.slug
+            space = FN026SimpleSerializer(data=item)
+            if space.is_valid():
+                space.save()
+            else:
+                transaction.rollback()
+                return Response(space.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        fn028 = data["fn028"]
+        for item in fn028:
+            item["project"] = project.slug
+            mode = FN028SimpleSerializer(data=item)
+            if mode.is_valid():
+                mode.save()
+            else:
+                transaction.rollback()
+                return Response(mode.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # TO DO: Flatten gear-process-type array
+        gears = data["gear_array"]
+        for item in gears:
+            for ptype in item.get("process_types"):
+                tmp = {
+                    "project": project.slug,
+                    "gear": item["gear"],
+                    "process_type": ptype["process_type"],
+                }
+                obj = ProjectGearProcessTypeSerializer(data=tmp)
+                if obj.is_valid():
+                    obj.save()
+                else:
+                    transaction.rollback()
+                    return Response(obj.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "Success!", "data": request.data},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class NetSetList(generics.ListAPIView):

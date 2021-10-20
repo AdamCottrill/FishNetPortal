@@ -11,7 +11,7 @@
   specific project
 
   + the mode detail endpoint will return the mode code, mode
-  description, ddlat, ddlon.
+  description, dd_lat, dd_lon.
 
 =============================================================
 

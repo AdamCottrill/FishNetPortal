@@ -242,7 +242,7 @@ class GearEffortProcessType(models.Model):
     those that are known and documented, and ensures that the data
     below the 121 table can be validated.
 
-    1. - By Net
+    1. - By Sample
     -----------
 
     This process type is for programs that do not split the catch into
@@ -285,7 +285,7 @@ class GearEffortProcessType(models.Model):
     the same mesh and the catch in each panel is reported separately.
     This process type is rarely used, but is specified in some
     protocols.  If your gear does not have duplicate panels of the
-    same size, or you are not interested in reported by individual
+    same size, or you are not interested in reporting by individual
     panel, Process Type 2 is more appropriate.
 
     In process type 4, because meshes are repeated, and catch is to be
@@ -301,7 +301,7 @@ class GearEffortProcessType(models.Model):
     """
 
     PROCESS_TYPE_CHOICES = [
-        ("1", "By Net"),
+        ("1", "By Sample"),
         ("2", "By Mesh Size"),
         ("3", "By Panel Group"),
         ("4", "By Panel"),

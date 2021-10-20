@@ -64,6 +64,8 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -73,7 +75,6 @@ MIDDLEWARE = [
     # "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
 ]
 
 ROOT_URLCONF = "main.urls"
@@ -123,6 +124,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "../static_root/")
 STATICFILES_DIRS = (os.path.abspath(os.path.join(BASE_DIR, "../fn_portal/static")),)
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "../media/data_upload"))
 
@@ -138,3 +140,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
+
+
+# REACT_CSS_PATH = manifest["main.css"].replace("static/", "")
+# REACT_JS_PATH = manifest["main.js"].replace("static/", "")

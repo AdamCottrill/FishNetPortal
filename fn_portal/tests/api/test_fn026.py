@@ -11,7 +11,7 @@
   associated with a specific project
 
   + the space detail endpoint will return the space code, space
-  description, ddlat, ddlon.
+  description, dd_lat, dd_lon.
 
 
 =============================================================
@@ -40,7 +40,7 @@ def test_fn026_list(api_client, project):
     assert response.status_code == status.HTTP_200_OK
 
     data = [
-        (x.get("space"), x.get("space_des"), x.get("ddlat"), x.get("ddlon"))
+        (x.get("space"), x.get("space_des"), x.get("dd_lat"), x.get("dd_lon"))
         for x in response.data
     ]
     assert len(data) == 2
@@ -59,8 +59,8 @@ def test_fn026_detail(api_client, project):
     expected = {
         "space": "S1",
         "space_des": "Space 1",
-        "ddlat": 45.1,
-        "ddlon": -81.1,
+        "dd_lat": 45.1,
+        "dd_lon": -81.1,
     }
 
     FN026Factory(project=project, **expected)
@@ -88,8 +88,8 @@ def test_fn026_detail(api_client, project):
         "grid_lt",
         "site_lst",
         "sitp_lst",
-        "ddlat",
-        "ddlon",
+        "dd_lat",
+        "dd_lon",
     }
 
     assert set(response.data.keys()) == expected_fields

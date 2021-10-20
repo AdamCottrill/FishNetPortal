@@ -173,6 +173,45 @@ class FN011(models.Model):
         return gear
 
 
+class ProjectGearProcessType(models.Model):
+    """
+    ProjectGearProcessType holds the process types for each gear as
+    specified in the design of the project.  The processtype captures
+    how the catch in each net is recorded and directly influences the
+    number of FN122 records associated with each net set.
+    """
+
+    PROCESS_TYPE_CHOICES = [
+        ("1", "By Sample"),
+        ("2", "By Mesh Size"),
+        ("3", "By Panel Group"),
+        ("4", "By Panel"),
+        ("5", "Other (TBD)"),
+    ]
+
+    project = models.ForeignKey(
+        FN011, related_name="gear_process_types", on_delete=models.CASCADE
+    )
+    gear = models.ForeignKey(
+        Gear, related_name="project_process_types", on_delete=models.CASCADE
+    )
+
+    process_type = models.CharField(
+        "Process type choice associated with this gear.",
+        default="1",
+        choices=PROCESS_TYPE_CHOICES,
+        max_length=2,
+    )
+
+    class Meta:
+        unique_together = ["project", "gear", "process_type"]
+
+    def __str__(self):
+        return "{}-{}-{}".format(
+            self.project.prj_cd, self.gear.gr_code, self.process_type
+        )
+
+
 class FN013(models.Model):
     """
     FN-II table for Project Gear
@@ -389,8 +428,8 @@ class FN026(models.Model):
 
     slug = models.SlugField(blank=True, unique=True, editable=False)
 
-    ddlat = models.FloatField(blank=True, null=True)
-    ddlon = models.FloatField(blank=True, null=True)
+    dd_lat = models.FloatField(blank=True, null=True)
+    dd_lon = models.FloatField(blank=True, null=True)
 
     class Meta:
         verbose_name = "FN026 - Spatial Strata"

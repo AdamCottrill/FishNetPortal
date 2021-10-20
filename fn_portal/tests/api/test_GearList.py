@@ -120,7 +120,7 @@ def test_gear_process_type_in_response(api_client):
 
     # the response includes the label for each process type - we need
     # to add them to our expected values:
-    labels = ["By Net", "By Panel Group", "By Panel Group"]
+    labels = ["By Sample", "By Panel Group", "By Panel Group"]
     for item, label in zip(process_types, labels):
         item["label"] = label
 

@@ -8,7 +8,6 @@ from .common_serializers import (
 
 from .gear_serializers import GearSerializer
 
-
 from .FN0_serializers import (
     FNProtocolSerializer,
     FN011SimpleSerializer,
@@ -17,7 +16,11 @@ from .FN0_serializers import (
     FN014Serializer,
     FN022Serializer,
     FN026Serializer,
+    FN026SimpleSerializer,
     FN028Serializer,
+    FN028SimpleSerializer,
+    FN011WizardSerializer,
+    ProjectGearProcessTypeSerializer,
 )
 
 from .FN1_serializers import (

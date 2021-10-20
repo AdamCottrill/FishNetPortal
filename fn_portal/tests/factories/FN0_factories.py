@@ -2,7 +2,16 @@ import datetime
 
 import factory
 
-from ...models import FN011, FN013, FN014, FN022, FN026, FN028, FNProtocol
+from ...models import (
+    FN011,
+    FN013,
+    FN014,
+    FN022,
+    FN026,
+    FN028,
+    FNProtocol,
+    ProjectGearProcessType,
+)
 from .common_factories import LakeFactory
 from .gear_factories import GearFactory
 from .user_factory import UserFactory
@@ -70,6 +79,21 @@ class FN011Factory(factory.django.DjangoModelFactory):
         yr_string = self.prj_cd[6:8]
         year = "19" + yr_string if int(yr_string) > 50 else "20" + yr_string
         return year
+
+
+class ProjectGearProcessTypeFactory(factory.django.DjangoModelFactory):
+    """A factory for FN013 objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = ProjectGearProcessType
+        django_get_or_create = ("project", "gear", "process_type")
+
+    project = factory.SubFactory(FN011Factory)
+    gear = factory.SubFactory(GearFactory)
+    process_type = 1
 
 
 class FN013Factory(factory.django.DjangoModelFactory):

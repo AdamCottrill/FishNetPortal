@@ -9,6 +9,7 @@ from .FN0_factories import (
     FN022Factory,
     FN026Factory,
     FN028Factory,
+    ProjectGearProcessTypeFactory,
 )
 
 from .FN1_factories import (
