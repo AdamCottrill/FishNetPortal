@@ -274,3 +274,113 @@ def test_empty_field(api_client, data, fixtures, users, table, field):
     project = FN011.objects.filter(prj_cd=prj_cd).first()
 
     assert project is None
+
+
+unique_field_list = [
+    ("fn022", "ssn"),
+    ("fn022", "ssn_des"),
+    ("fn022", "ssn_date0"),
+    ("fn022", "ssn_date1"),
+    ("fn026", "space"),
+    ("fn026", "space_des"),
+    ("fn028", "mode"),
+    ("fn028", "mode_des"),
+]
+
+
+@pytest.mark.parametrize("table,field", unique_field_list)
+@pytest.mark.django_db()
+def test_duplicate_child_attributes(api_client, data, fixtures, users, table, field):
+    """most of the child arrays have unique, or unique-together constrains
+    for at least some of their fields. For example, FN022 objects must
+    be labelled uniquiely within a project. If two seasons are
+    submitted with the same ssn value, an error should be raised.
+
+    """
+
+    prj_cd = data["fn011"]["prj_cd"]
+
+    # create a duplicate value
+    value = data[table][0][field]
+    data[table][1][field] = value
+
+    message = f"Duplicate values found for {field}."
+
+    login = api_client.login(username="hsimpson", password="Abcd1234")
+    assert login is True
+
+    url = reverse("fn_portal_api:project_wizard")
+    response = api_client.post(url, data, format="json")
+    assert response.status_code == 400
+
+    messages = [x.get(table) for x in response.data]
+    assert message in messages
+
+    # make sure nothing was committed to the database:
+    project = FN011.objects.filter(prj_cd=prj_cd).first()
+
+    assert project is None
+
+
+@pytest.mark.django_db()
+def test_check_overlapping_seasons(api_client, data, fixtures, users):
+    """The seasons provided in the FN022 array cannot overlap. If they do, a validation error should be raised."""
+
+    table = "fn022"
+
+    prj_cd = data["fn011"]["prj_cd"]
+
+    # first date of second season is the same as last date of first season
+    value = data[table][0]["ssn_date1"]
+    data[table][1]["ssn_date0"] = value
+
+    message = "Seasons must be distinct and cannot overlap."
+
+    login = api_client.login(username="hsimpson", password="Abcd1234")
+    assert login is True
+
+    url = reverse("fn_portal_api:project_wizard")
+    response = api_client.post(url, data, format="json")
+    assert response.status_code == 400
+
+    messages = [x.get(table) for x in response.data]
+    assert message in messages
+
+    # make sure nothing was committed to the database:
+    project = FN011.objects.filter(prj_cd=prj_cd).first()
+
+    assert project is None
+
+
+@pytest.mark.django_db()
+def test_duplicate_mode_attributes(api_client, data, fixtures, users):
+    """The mode table must have distinct gear-orient-gruse values. If two
+    modes have the same combination of attributes, a validation error will be thrown.
+
+    """
+
+    table = "fn028"
+
+    prj_cd = data["fn011"]["prj_cd"]
+
+    # first date of second season is the same as last date of first season
+
+    data[table][1]["gear"] = data[table][0]["gear"]
+    data[table][1]["set_type"] = data[table][0]["set_type"]
+    data[table][1]["orient"] = data[table][0]["orient"]
+
+    message = "Combinations of gear, orient, and set_type must be unique."
+    login = api_client.login(username="hsimpson", password="Abcd1234")
+    assert login is True
+
+    url = reverse("fn_portal_api:project_wizard")
+    response = api_client.post(url, data, format="json")
+    assert response.status_code == 400
+
+    messages = [x.get(table) for x in response.data]
+    assert message in messages
+
+    # make sure nothing was committed to the database:
+    project = FN011.objects.filter(prj_cd=prj_cd).first()
+
+    assert project is None

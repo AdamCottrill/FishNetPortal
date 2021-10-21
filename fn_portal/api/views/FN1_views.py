@@ -47,7 +47,7 @@ from ..serializers import (
     FN127Serializer,
     ProjectGearProcessTypeSerializer,
 )
-from ..utils import StandardResultsSetPagination, flatten_gear
+from ..utils import StandardResultsSetPagination, flatten_gear, check_distinct_seasons
 
 
 @api_view(["POST"])
@@ -87,6 +87,23 @@ def project_wizard(request):
             if serialized_item.is_valid(raise_exception=True):
                 serialized_item.save()
 
+    def duplicateCheck(label, data, fields):
+        "raise an error if any of the values in fields are duplicated."
+        for field in fields:
+            values = [x.get(field) for x in data]
+            if len(values) != len(list(set(values))):
+                msg = {label: f"Duplicate values found for {field}."}
+                raise serializers.ValidationError(msg)
+
+    def duplicateModeAttributes(data):
+        "raise an error if any of the values in fields are duplicated."
+        values = [f"{x['gear']}-{x['set_type']}-{x['orient']}" for x in data]
+        if len(values) != len(list(set(values))):
+            msg = {
+                "fn028": "Combinations of gear, orient, and set_type must be unique."
+            }
+            raise serializers.ValidationError(msg)
+
     if request.method == "POST":
 
         data = request.data
@@ -105,18 +122,28 @@ def project_wizard(request):
                     project = fn011.save()
 
                 if len(fn022):
+                    duplicateCheck(
+                        "fn022", fn022, ["ssn", "ssn_des", "ssn_date0", "ssn_date1"]
+                    )
+                    if check_distinct_seasons(fn022) is False:
+                        msg = {"fn022": "Seasons must be distinct and cannot overlap."}
+                        raise serializers.ValidationError(msg)
+
                     serializeAndSave(fn022, FN022Serializer, project)
                 else:
                     msg = {"fn022": "At least one season must be specified"}
                     raise serializers.ValidationError(msg)
 
                 if len(fn026):
+                    duplicateCheck("fn026", fn026, ["space", "space_des"])
                     serializeAndSave(fn026, FN026SimpleSerializer, project)
                 else:
                     msg = {"fn026": "At least one spatial strata must be specified"}
                     raise serializers.ValidationError(msg)
 
                 if len(fn028):
+                    duplicateCheck("fn028", fn028, ["mode", "mode_des"])
+                    duplicateModeAttributes(fn028)
                     serializeAndSave(fn028, FN028SimpleSerializer, project)
                 else:
                     msg = {"fn028": "At least one mode must be specified"}

@@ -38,3 +38,27 @@ def flatten_gear(gear_array):
             }
             gears.append(tmp)
     return gears
+
+
+def check_distinct_seasons(data):
+    """A little helper function to check that seasons do not overlap -
+    return true if the values are disticnt(valid) and do not
+    overlap. returns false if the season are not distict and share
+    some dates.
+    """
+
+    if len(data) <= 1:
+        return True
+
+    # pull out the dates, but only look a records with both start and end date
+    dates = [
+        (x.get("ssn_date0"), x.get("ssn_date1"))
+        for x in data
+        if x.get("ssn_date0") and x.get("ssn_date1")
+    ]
+    dates.sort()
+
+    for i, x in enumerate(dates[:-1]):
+        if x[1] >= dates[i + 1][0]:
+            return False
+    return True
