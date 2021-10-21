@@ -35,6 +35,30 @@ def data():
 #        + that year in both dates agree with the year in prj_cd
 #        + project code siffux matches lake
 
+fk_field_list = [
+    ("lake", "abbrev"),
+    ("protocol", "abbrev"),
+    ("prj_ldr", "username"),
+]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("field,slug", fk_field_list)
+def test_unknown_related_object(fixtures, data, field, slug):
+    """The fn011 serializer has slug realted field for lake, protocol, and
+    project lead.  If a value is provied that is not know to exists,
+    it will not be valid and should raise an error.
+
+    """
+
+    data[field] = "fake-slug"
+    item = FN011WizardSerializer(data=data)
+    assert item.is_valid() is False
+
+    message = f"Object with {slug}=fake-slug does not exist."
+
+    assert message in item.errors.get(field)
+
 
 field_values = [
     ("prj_date1", "2021-05-31", "project end date must occur on or after start date"),
@@ -120,9 +144,5 @@ def test_invalid_prj_cds(fixtures, data, prj_cd):
     data["prj_cd"] = prj_cd
     item = FN011WizardSerializer(data=data)
     assert item.is_valid() is False
-
     message = "That is not a valid FN-II project code."
-    from pprint import pprint
-
-    pprint(item.errors)
     assert message in item.errors["prj_cd"][0]
