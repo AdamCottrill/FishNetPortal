@@ -93,7 +93,7 @@ class FN011(models.Model):
     comment0 = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ["-year", "-prj_date1"]
+        ordering = ["-year", "prj_cd"]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.prj_cd)

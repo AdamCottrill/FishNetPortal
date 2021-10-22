@@ -29,6 +29,7 @@ from .FN1_serializers import (
     FN123Serializer,
     FN124Serializer,
     FN125Serializer,
+    FN125ReadOnlySerializer,
     FN125TagSerializer,
     FN125LampreySerializer,
     FN126Serializer,

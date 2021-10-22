@@ -42,12 +42,19 @@ from ..serializers import (
     FN124Serializer,
     FN125LampreySerializer,
     FN125Serializer,
+    FN125ReadOnlySerializer,
     FN125TagSerializer,
     FN126Serializer,
     FN127Serializer,
     ProjectGearProcessTypeSerializer,
 )
-from ..utils import StandardResultsSetPagination, flatten_gear, check_distinct_seasons
+from ..utils import (
+    StandardResultsSetPagination,
+    LargeResultsSetPagination,
+    XLargeResultsSetPagination,
+    flatten_gear,
+    check_distinct_seasons,
+)
 
 
 @api_view(["POST"])
@@ -175,12 +182,12 @@ class NetSetList(generics.ListAPIView):
     """
 
     serializer_class = FN121Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = LargeResultsSetPagination
     filterset_class = FN121Filter
 
     queryset = (
         (
-            FN121.objects.select_related("grid5", "grid5__lake").defer(
+            FN121.objects.select_related("project", "grid5", "grid5__lake").defer(
                 "grid5__geom",
                 "grid5__envelope",
                 "grid5__centroid",
@@ -192,6 +199,7 @@ class NetSetList(generics.ListAPIView):
                 "grid5__lake__centroid_ontario",
             )
         )
+        .order_by("slug")
         .all()
         .distinct()
     )
@@ -206,9 +214,23 @@ class EffortList(generics.ListAPIView):
     """
 
     serializer_class = FN122Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = LargeResultsSetPagination
     filterset_class = FN122Filter
-    queryset = FN122.objects.select_related("sample", "sample__project").distinct()
+    queryset = (
+        FN122.objects.select_related("sample", "sample__project")
+        .order_by("slug")
+        .values(
+            "id",
+            "sample__project__prj_cd",
+            "sample__sam",
+            "eff",
+            "effdst",
+            "grdep",
+            "grtem0",
+            "grtem1",
+            "slug",
+        )
+    )
 
 
 class CatchCountList(generics.ListAPIView):
@@ -219,7 +241,7 @@ class CatchCountList(generics.ListAPIView):
     """
 
     serializer_class = FN123Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = LargeResultsSetPagination
     filterset_class = FN123Filter
 
     queryset = (
@@ -227,7 +249,20 @@ class CatchCountList(generics.ListAPIView):
             "species", "effort", "effort__sample", "effort__sample__project"
         )
         .exclude(species__spc="000")
-        .distinct()
+        .order_by("slug")
+        .values(
+            "id",
+            "effort__sample__project__prj_cd",
+            "effort__sample__sam",
+            "effort__eff",
+            "species__spc",
+            "grp",
+            "catcnt",
+            "catwt",
+            "biocnt",
+            "comment3",
+            "slug",
+        )
     )
 
 
@@ -239,7 +274,7 @@ class LengthTallyList(generics.ListAPIView):
     """
 
     serializer_class = FN124Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = LargeResultsSetPagination
     # filterset_class = FN124Filter
 
     queryset = (
@@ -250,7 +285,7 @@ class LengthTallyList(generics.ListAPIView):
             "catch__effort__sample__project",
         )
         .exclude(catch__species__spc="000")
-        .distinct()
+        .order_by("slug")
     )
 
 
@@ -261,15 +296,45 @@ class BioSampleList(generics.ListAPIView):
 
     """
 
-    serializer_class = FN125Serializer
-    pagination_class = StandardResultsSetPagination
+    serializer_class = FN125ReadOnlySerializer
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN125Filter
-    queryset = FN125.objects.select_related(
-        "catch",
-        "catch__species",
-        "catch__effort__sample",
-        "catch__effort__sample__project",
-    ).prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
+    queryset = (
+        FN125.objects.select_related(
+            "catch",
+            "catch__species",
+            "catch__effort__sample",
+            "catch__effort__sample__project",
+        ).order_by("slug")
+        # .prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
+        .values(
+            "id",
+            "catch__effort__sample__project__prj_cd",
+            "catch__effort__sample__sam",
+            "catch__effort__eff",
+            "catch__species",
+            "catch__grp",
+            "fish",
+            "flen",
+            "tlen",
+            "rwt",
+            "girth",
+            "clipc",
+            "sex",
+            "mat",
+            "gon",
+            "noda",
+            "nodc",
+            "agest",
+            "fate",
+            # "fishtags",
+            # "lamprey_marks",
+            # "age_estimates",
+            # "diet_data",
+            "comment5",
+            "slug",
+        )
+    )
 
 
 class FN125LampreyReadOnlyList(generics.ListAPIView):
@@ -280,14 +345,32 @@ class FN125LampreyReadOnlyList(generics.ListAPIView):
     """
 
     serializer_class = FN125LampreySerializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN125LampreyFilter
-    queryset = FN125_Lamprey.objects.select_related(
-        "fish",
-        "fish__catch",
-        "fish__catch__species",
-        "fish__catch__effort__sample",
-        "fish__catch__effort__sample__project",
+    queryset = (
+        FN125_Lamprey.objects.select_related(
+            "fish",
+            "fish__catch",
+            "fish__catch__species",
+            "fish__catch__effort__sample",
+            "fish__catch__effort__sample__project",
+        )
+        .order_by("slug")
+        .values(
+            "id",
+            "fish__catch__effort__sample__project__prj_cd",
+            "fish__catch__effort__sample__sam",
+            "fish__catch__effort__eff",
+            "fish__catch__species",
+            "fish__catch__grp",
+            "lamid",
+            "xlam",
+            "lamijc",
+            "lamijc_type",
+            "lamijc_size",
+            "comment_lam",
+            "slug",
+        )
     )
 
 
@@ -296,7 +379,7 @@ class FN125TagReadOnlyList(generics.ListAPIView):
     applied or recoved."""
 
     serializer_class = FN125TagSerializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN125TagFilter
     queryset = FN125Tag.objects.select_related(
         "fish",
@@ -304,14 +387,14 @@ class FN125TagReadOnlyList(generics.ListAPIView):
         "fish__catch__species",
         "fish__catch__effort__sample",
         "fish__catch__effort__sample__project",
-    )
+    ).order_by("slug")
 
 
 class FN126ReadOnlyList(generics.ListAPIView):
     """A read-only endpoint to return diet objects."""
 
     serializer_class = FN126Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN126Filter
     queryset = FN126.objects.select_related(
         "fish",
@@ -319,7 +402,7 @@ class FN126ReadOnlyList(generics.ListAPIView):
         "fish__catch__species",
         "fish__catch__effort__sample",
         "fish__catch__effort__sample__project",
-    )
+    ).order_by("slug")
 
 
 class FN127ReadOnlyList(generics.ListAPIView):
@@ -330,7 +413,7 @@ class FN127ReadOnlyList(generics.ListAPIView):
     """
 
     serializer_class = FN127Serializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN127Filter
     queryset = FN127.objects.select_related(
         "fish",
@@ -338,7 +421,7 @@ class FN127ReadOnlyList(generics.ListAPIView):
         "fish__catch__species",
         "fish__catch__effort__sample",
         "fish__catch__effort__sample__project",
-    )
+    ).order_by("slug")
 
 
 # ========================================================
