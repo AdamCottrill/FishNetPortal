@@ -15,8 +15,8 @@ from fn_portal.models import (
     FN125Tag,
 )
 from rest_framework import generics, status, serializers
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 
@@ -51,6 +51,7 @@ from ..utils import StandardResultsSetPagination, flatten_gear, check_distinct_s
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def project_wizard(request):
     """
 

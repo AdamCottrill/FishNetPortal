@@ -7,7 +7,9 @@
 {% block extrahead  %}
 
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css"
+          integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM="
+          crossorigin="anonymous" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css">
 
@@ -42,29 +44,73 @@
 
         <ul class="nav nav-tabs" id="project-detail-tabl" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Design Details</button>
+                <button class="nav-link active"
+                        id="details-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#details"
+                        type="button" role="tab"
+                        aria-controls="details"
+                        aria-selected="true">
+                    Design Details
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="net-sets-tab" data-bs-toggle="tab" data-bs-target="#net-sets" type="button" role="tab" aria-controls="net-sets" aria-selected="false">Net Sets</button>
+                <button class="nav-link"
+                        id="net-sets-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#net-sets"
+                        type="button"
+                        role="tab"
+                        aria-controls="net-sets"
+                        aria-selected="false">
+                    Net Sets
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="catch-counts-tab" data-bs-toggle="tab" data-bs-target="#catch-counts" type="button" role="tab" aria-controls="catch-counts" aria-selected="false">Catch Counts</button>
+                <button class="nav-link"
+                        id="catch-counts-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#catch-counts"
+                        type="button"
+                        role="tab"
+                        aria-controls="catch-counts"
+                        aria-selected="false">
+                    Catch Counts
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="graphs-tab" data-bs-toggle="tab" data-bs-target="#graphs" type="button" role="tab" aria-controls="graphs" aria-selected="false">Graphs</button>
+                <button class="nav-link"
+                        id="graphs-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#graphs"
+                        type="button"
+                        role="tab"
+                        aria-controls="graphs"
+                        aria-selected="false">
+                    Graphs
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="gear-tab-link" data-bs-toggle="tab" data-bs-target="#gear-tab" type="button" role="tab" aria-controls="gear" aria-selected="false">Gear</button>
+                <button class="nav-link"
+                        id="gear-tab-link"
+                        data-bs-toggle="tab"
+                        data-bs-target="#gear-tab"
+                        type="button"
+                        role="tab"
+                        aria-controls="gear"
+                        aria-selected="false">
+                    Gear
+                </button>
             </li>
         </ul>
         <div class="tab-content" id="project-detail-tab-content">
             <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
 
                 <div class="card mt-4 mb-2">
-                            <div class="card-header">
-                                <h5>Project Details</h5>
-                            </div>
-                            <div class="card-body">
+                    <div class="card-header">
+                        <h5>Project Details</h5>
+                    </div>
+                    <div class="card-body">
                         <p><strong>Project Lead:</strong>{{project.prj_ldr.first_name}} {{project.prj_ldr.last_name}}</p>
                         <p><strong>Start Date:</strong>{{project.prj_date0}}</p>
                         <p><strong>End Date:</strong>{{project.prj_date1}}</p>
@@ -203,115 +249,142 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <h4>Not Applicable</h4>
+
+                    <div class="card text-center my-2" style="min-height: 200px;" >
+                        <div class="card-title my-5">
+                            <h4>No net sets are currently available</h4>
+                        </div>
+                    </div>
+
                 {% endif %}
             </div>
 
             <div class="tab-pane fade" id="catch-counts" role="tabpanel" aria-labelledby="catch-counts-tab">
 
-                <div class="row my-3">
-                    <h4>Catch By Species</h4>
-                </div>
-                <div class="row">
-                    <table class="table tablesorter" id="data-table1">
-                        <thead>
-                            <tr>
-                                <th>Species (Species Code)</th>
-                                <th>Catch Counts</th>
-                                <th>Bio-Counts</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            {% for species in project.catch_counts %}
+                {% if project.catch_counts|length %}
+                    <div class="row my-3">
+                        <h4>Catch By Species</h4>
+                    </div>
+                    <div class="row">
+                        <table class="table tablesorter" id="data-table1">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        {% if species.biocnts == 0 %}
-                                            {{ species.species }} ({{ species.spc }})
-                                        {% else %}
-                                            <a href="{% url 'fn_portal:project_spc_biodata' project.slug species.spc %}">{{ species.species }} ({{ species.spc }})</a>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {{ species.catcnts }}
-                                    </td>
-                                    <td>
-                                        {{ species.biocnts }}
-                                    </td>
+                                    <th>Species (Species Code)</th>
+                                    <th>Catch Counts</th>
+                                    <th>Bio-Counts</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+
+                            <tbody>
+
+                                {% for species in project.catch_counts %}
+                                    <tr>
+                                        <td>
+                                            {% if species.biocnts == 0 %}
+                                                {{ species.species }} ({{ species.spc }})
+                                            {% else %}
+                                                <a href="{% url 'fn_portal:project_spc_biodata' project.slug species.spc %}">{{ species.species }} ({{ species.spc }})</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ species.catcnts }}
+                                        </td>
+                                        <td>
+                                            {{ species.biocnts }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else  %}
+
+                    <div class="card text-center my-2" style="min-height: 200px;" >
+                        <div class="card-title my-5">
+                            <h4>No catch counts are currently available.</h4>
+                        </div>
+                    </div>
+                {% endif  %}
+
+
 
             </div>
             <div class="tab-pane fade" id="graphs" role="tabpanel" aria-labelledby="graphs-tab">
-                <div class="row my-3">
-                    <div class="col-6 mb-3 hm-100">
-                        <div class="card">
-                            <div class="card-header">
-                                Counts
-                            </div>
-                            <div class="card-body">
-                                <table>
-                                    <tr>
-                                        <td>Nets:</td>
-                                        <td id="net-count"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Species:</td>
-                                        <td id="species-count"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Total Catch:</td>
-                                        <td id="total-catch"></td>
-                                    </tr>
-                                </table>
+
+                <div class="card text-center my-2" style="min-height: 200px;" id="catch-count-card" style="display:block">
+                    <div class="card-title my-5">
+                        <h4>No catch counts graphs currently available.</h4>
+                    </div>
+                </div>
+
+
+                <div class="row my-3" id="catch-count-plots" style="display:block">
+                    <div class="row">
+                        <div class="col-6 mb-3 hm-100">
+                            <div class="card">
+                                <div class="card-header">
+                                    Counts
+                                </div>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td>Nets:</td>
+                                            <td id="net-count"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Species:</td>
+                                            <td id="species-count"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Catch:</td>
+                                            <td id="total-catch"></td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-6">
+                        <div class="col-6">
 
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <div class="row justify-content-between">
-                                    <div class="col-4">
-                                        Filters
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <div class="row justify-content-between">
+                                        <div class="col-4">
+                                            Filters
+                                        </div>
+                                        <div class="col-4">
+                                            <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
+                                        </div>
                                     </div>
-                                    <div class="col-4">
-                                        <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-sm" role="button">Reset All</a>
-                                    </div>
+
                                 </div>
-
-                            </div>
-                            <div class="card-body">
-                                <table>
-                                    <tr>
-                                        <td>Species Filter(s):</td>
-                                        <td id="species-filter">None</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mesh Filter(s):</td>
-                                        <td id="mesh-filter">None</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Index Meshes:</td>
-                                        <td id="index-mesh-filter">All Meshes</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Depth Filter:</td>
-                                        <td id="sidep-filter">None</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lift Date Filter:</td>
-                                        <td id="effdt1-filter">None</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gear Filter:</td>
-                                        <td id="gear-filter">None</td>
-                                    </tr>
-                                </table>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td>Species Filter(s):</td>
+                                            <td id="species-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mesh Filter(s):</td>
+                                            <td id="mesh-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Index Meshes:</td>
+                                            <td id="index-mesh-filter">All Meshes</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Depth Filter:</td>
+                                            <td id="sidep-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lift Date Filter:</td>
+                                            <td id="effdt1-filter">None</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gear Filter:</td>
+                                            <td id="gear-filter">None</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -369,6 +442,8 @@
                         </div>
                     </div>
                 </div>
+
+
             </div>
             <div class="tab-pane fade" id="gear-tab" role="tabpanel" aria-labelledby="gear-tab">
 
@@ -445,7 +520,7 @@
                 {% endfor %}
 
 
-        </div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -466,6 +541,7 @@
     <script src="{% static 'leaflet-bubble.js' %}"></script>
 
 
+
     <script type="text/javascript">
      $( document ).ready(function() {
          // prepare the sidebar by expanding just the current year
@@ -474,6 +550,14 @@
          $(div_name).show();
 
      });
+
+     $('.nav-tabs li a').click(function(e){
+         e.preventDefault();
+         e.stopImmediatePropagation();
+         $(this).tab('show');
+     });
+
+
     </script>
 
     <script type="text/javascript">
@@ -505,6 +589,15 @@
 
 
      d3.json("{% url 'fn_portal:project_catch_counts_json' slug=project.slug %}", function (error, data) {
+
+         data = data ? data : [];
+
+         if (data.length) {
+             document.getElementById("catch-count-card").style.display = "none";
+         } else {
+             document.getElementById("catch-count-plots").style.display = "none";
+         }
+
 
          var lat = 45
          var lon = -82
@@ -686,8 +779,8 @@
          });
 
 
-         var minDate = effdt1Dim.bottom(1)[0].lift_date;
-         var maxDate = effdt1Dim.top(1)[0].lift_date;
+         var minDate = data.length? effdt1Dim.bottom(1)[0].lift_date : null;
+         var maxDate = data.length? effdt1Dim.top(1)[0].lift_date : null ;
 
          function prettyDateFilter(filter){
              myformat = d3.time.format('%b %d');
@@ -874,7 +967,11 @@
              map.addLayer(bubbles);
 
              map.addLayer(netsetMarkers);
-             map.fitBounds(netsetMarkers.getBounds());
+
+             if (data.length) {
+                 map.fitBounds(netsetMarkers.getBounds());
+             }
+
 
          }
 
