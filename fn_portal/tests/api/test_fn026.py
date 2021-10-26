@@ -41,7 +41,7 @@ def test_fn026_list(api_client, project):
 
     data = [
         (x.get("space"), x.get("space_des"), x.get("dd_lat"), x.get("dd_lon"))
-        for x in response.data
+        for x in response.data["results"]
     ]
     assert len(data) == 2
 

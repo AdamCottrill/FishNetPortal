@@ -5,7 +5,7 @@ from rest_framework import generics
 
 from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
 
-from ...filters import FN011Filter
+from ...filters import FN011Filter, FN022Filter, FN026Filter, FN028Filter
 
 from ..utils import StandardResultsSetPagination
 
@@ -16,8 +16,11 @@ from ..serializers import (
     FN013Serializer,
     FN014Serializer,
     FN022Serializer,
+    FN022ListSerializer,
     FN026Serializer,
+    FN026ListSerializer,
     FN028Serializer,
+    FN028ListSerializer,
 )
 
 
@@ -83,7 +86,6 @@ class FN011ListView(generics.ListAPIView):
             "lake__centroid_ontario",
         )
         .all()
-        .distinct()
     )
 
 
@@ -178,15 +180,18 @@ class FN022ListView(generics.ListAPIView):
     """an api end point to list all of the seasons (FN022) associated with a
     project."""
 
-    serializer_class = FN022Serializer
+    serializer_class = FN022ListSerializer
+    filterset_class = FN022Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
 
     def get_queryset(self):
         """"""
-
         prj_cd = self.kwargs.get("prj_cd")
-        return FN022.objects.filter(project__slug=prj_cd.lower()).select_related(
-            "project"
-        )
+        qs = FN022.objects.all().select_related("project")
+        if prj_cd:
+            qs = qs.filter(project__slug=prj_cd.lower())
+        return qs
 
 
 class FN022DetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -210,13 +215,19 @@ class FN026ListView(generics.ListAPIView):
     """an api end point to list all of the spaces (FN026) associated with a
     project."""
 
-    serializer_class = FN026Serializer
+    serializer_class = FN026ListSerializer
+    filterset_class = FN026Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
 
     def get_queryset(self):
         """"""
 
+        qs = FN026.objects.all().select_related("project")
         prj_cd = self.kwargs.get("prj_cd")
-        return FN026.objects.filter(project__slug=prj_cd.lower())
+        if prj_cd:
+            qs = qs.filter(project__slug=prj_cd.lower())
+        return qs
 
 
 class FN026DetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -239,13 +250,15 @@ class FN028ListView(generics.ListAPIView):
     """an api end point to list all of the fishing modes (FN022) associated with a
     project."""
 
-    serializer_class = FN028Serializer
+    serializer_class = FN028ListSerializer
+    filterset_class = FN028Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
 
     def get_queryset(self):
         """"""
 
-        prj_cd = self.kwargs.get("prj_cd")
-        return FN028.objects.filter(project__slug=prj_cd.lower())
+        return FN028.objects.all().select_related("project", "gear")
 
 
 class FN028DetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -260,5 +273,9 @@ class FN028DetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         """"""
+
+        qs = FN028.objects.all().select_related("project", "gear")
         prj_cd = self.kwargs.get("prj_cd")
-        return FN028.objects.filter(project__slug=prj_cd.lower())
+        if prj_cd:
+            qs = qs.filter(project__slug=prj_cd.lower())
+        return qs

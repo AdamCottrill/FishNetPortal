@@ -34,9 +34,12 @@ from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly
 from ..serializers import (
     FN011WizardSerializer,
     FN022Serializer,
+    FN022ListSerializer,
     FN026SimpleSerializer,
+    FN028Serializer,
     FN028SimpleSerializer,
     FN121Serializer,
+    FN121PostSerializer,
     FN122Serializer,
     FN123Serializer,
     FN124Serializer,
@@ -187,7 +190,9 @@ class NetSetList(generics.ListAPIView):
 
     queryset = (
         (
-            FN121.objects.select_related("project", "grid5", "grid5__lake").defer(
+            FN121.objects.select_related(
+                "project", "grid5", "grid5__lake", "ssn", "space", "mode"
+            ).defer(
                 "grid5__geom",
                 "grid5__envelope",
                 "grid5__centroid",
@@ -443,10 +448,16 @@ class FN121ListView(generics.ListCreateAPIView):
 
     """
 
-    serializer_class = FN121Serializer
     permission_classes = [IsAdminUser | IsPrjLeadCrewOrAdminOrReadOnly]
     filterset_class = FN121Filter
     pagination_class = StandardResultsSetPagination
+
+    def get_serializer_class(self):
+        """our get and post serializiers have different fields for ssn, space
+        and mode - get has object labels, post expects slugs."""
+        if self.request.method == "GET":
+            return FN121Serializer
+        return FN121PostSerializer
 
     def get_project(self):
         """
@@ -516,10 +527,17 @@ class FN121DetailView(generics.RetrieveUpdateDestroyAPIView):
     """
 
     permission_classes = [IsAdminUser | IsPrjLeadCrewOrAdminOrReadOnly]
-    serializer_class = FN121Serializer
+    # serializer_class = FN121PostSerializer
     lookup_url_kwarg = "slug"
     lookup_field = "slug"
     queryset = FN121.objects.all()
+
+    def get_serializer_class(self):
+        """our get and post serializiers have different fields for ssn, space
+        and mode - get has object labels, post expects slugs."""
+        if self.request.method == "GET":
+            return FN121Serializer
+        return FN121PostSerializer
 
 
 class FN122ListView(generics.ListCreateAPIView):

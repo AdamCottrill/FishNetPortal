@@ -48,7 +48,7 @@ def test_fn022_list(api_client, project):
     response = api_client.get(url)
     assert response.status_code == status.HTTP_200_OK
 
-    data = [(x.get("ssn"), x.get("ssn_des")) for x in response.data]
+    data = [(x.get("ssn"), x.get("ssn_des")) for x in response.data["results"]]
     assert len(data) == 2
 
     expected = [("32", "August"), ("33", "September")]

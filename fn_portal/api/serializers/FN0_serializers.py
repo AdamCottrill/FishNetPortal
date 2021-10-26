@@ -221,6 +221,18 @@ class FN014Serializer(serializers.ModelSerializer):
         )
 
 
+class FN022ListSerializer(serializers.ModelSerializer):
+    """A class to list serializers. This is a readonly seralizer that return the data
+    as expected from FN-II. Project is replaced by prj_cd.
+    """
+
+    prj_cd = serializers.CharField(read_only=True, source="project.prj_cd")
+
+    class Meta:
+        model = FN022
+        fields = ("prj_cd", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug")
+
+
 class FN022Serializer(serializers.ModelSerializer):
     """Class to serialize the seasons (temporal strata) used in each project."""
 
@@ -267,10 +279,36 @@ class FN022Serializer(serializers.ModelSerializer):
         return data
 
 
-class FN026SimpleSerializer(serializers.ModelSerializer):
+class FN026ListSerializer(serializers.ModelSerializer):
     """This is a super minimal serializer for spatial strata associated
-    with a project. It is used by the FN Project wizard to created named
-    strata with a lat-lon, but nothing more.
+    with a project. It is used by api endpoint to return read-only
+    data in FN-II format. Fast and flat. The same as
+    FN026SimpleSerializer but project is repalced with prj_cd.
+
+    """
+
+    prj_cd = serializers.CharField(read_only=True, source="project.prj_cd")
+
+    class Meta:
+        model = FN026
+        fields = (
+            "prj_cd",
+            "space",
+            "space_des",
+            "dd_lat",
+            "dd_lon",
+        )
+
+
+class FN026SimpleSerializer(serializers.ModelSerializer):
+    """This is a super minimal serializer for creating spatial strata associated with
+    a project. It is used by the project wizard convert the project
+    code and and spatial strata information to database entries.
+
+    This serializer is identical to the FN026ListSerializer except
+    that the read-only field prj_cd has been replaced with a slug related field
+    'project'
+
     """
 
     project = serializers.SlugRelatedField(
@@ -310,7 +348,40 @@ class FN026Serializer(serializers.ModelSerializer):
         )
 
 
+class FN028ListSerializer(serializers.ModelSerializer):
+    """This is a super minimal serializer for fishing mode associated with
+    a project. It is used by api endpoint to return read-only data in
+    FN-II format. Fast and flat. The same as FN028SimpleSerializer but
+    project is repalced with prj_cd.
+
+    """
+
+    prj_cd = serializers.CharField(read_only=True, source="project.prj_cd")
+    gear = serializers.CharField(read_only=True, source="gear.gr_code")
+
+    class Meta:
+        model = FN028
+        fields = (
+            "prj_cd",
+            "mode",
+            "mode_des",
+            "gear",
+            "gruse",
+            "orient",
+        )
+
+
 class FN028SimpleSerializer(serializers.ModelSerializer):
+    """This is a super minimal serializer for fishing mode associated with
+    a project. It is used by the project wizard convert the project
+    code and mode information to database entries.
+
+    This serializer is identical to the FN028List Serializer except
+    that the read-only field prj_cd has been replaced with a slug related field
+    'project'
+
+    """
+
     project = serializers.SlugRelatedField(
         many=False, queryset=FN011.objects.all(), slug_field="slug"
     )

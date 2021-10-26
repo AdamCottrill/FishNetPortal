@@ -16,7 +16,11 @@
 from datetime import datetime, time
 
 import pytest
-from fn_portal.tests.factories.FN0_factories import FN022Factory, FN028Factory
+from fn_portal.tests.factories.FN0_factories import (
+    FN022Factory,
+    FN026Factory,
+    FN028Factory,
+)
 
 from ..factories import (
     FN011Factory,
@@ -78,7 +82,12 @@ def project(users):
     project1.field_crew.add(user1)
     project1.save()
 
-    FN022Factory(project=project1, __sequence=1)
+    FN022Factory(ssn="00", project=project1, __sequence=1)
+
+    FN026Factory(project=project1, space="11", space_des="a test space", __sequence=1)
+
+    gl32 = GearFactory(gr_code="GL32", grtp="GL")
+    FN028Factory(mode="AA", project=project1, gear=gl32, __sequence=1)
 
     return project1
 
@@ -98,6 +107,29 @@ def grid(lake):
 
 
 @pytest.fixture
+def ssn(project):
+    """"""
+    ssn = FN022Factory(project=project, ssn="00", ssn_des="a test ssn", __sequence=1)
+    return ssn
+
+
+@pytest.fixture
+def space(project):
+    """"""
+    space = FN026Factory(
+        project=project, space="11", space_des="a test space", __sequence=1
+    )
+    return space
+
+
+@pytest.fixture
+def mode(project, gear):
+    """"""
+    mode = FN028Factory(project=project, gear=gear, __sequence=1)
+    return mode
+
+
+@pytest.fixture
 def net_sets(project, grid):
     gl32 = GearFactory(gr_code="GL32", grtp="GL")
     mode1 = FN028Factory(project=project, gear=gl32, __sequence=1)
@@ -108,10 +140,17 @@ def net_sets(project, grid):
     gl10 = GearFactory(gr_code="GL10", grtp="GL")
     mode3 = FN028Factory(project=project, gear=gl10)
 
+    ssn = FN022Factory(ssn="00", project=project, __sequence=1)
+    space = FN026Factory(
+        project=project, space="11", space_des="a test space", __sequence=1
+    )
+
     sam1 = FN121Factory(
         mode=mode1,
         project=project,
         sam="sam1",
+        ssn=ssn,
+        space=space,
         effdt0=datetime(2019, 10, 21),
         effdt1=datetime(2019, 10, 22),
         efftm0=time(10, 30),
@@ -124,6 +163,9 @@ def net_sets(project, grid):
         mode=mode2,
         project=project,
         sam="sam2",
+        ssn=ssn,
+        space=space,
+        grid5=grid,
         effdt0=datetime(2019, 10, 20),
         effdt1=datetime(2019, 10, 21),
         efftm0=time(12, 0),
@@ -135,6 +177,9 @@ def net_sets(project, grid):
         mode=mode3,
         project=project,
         sam="sam3",
+        ssn=ssn,
+        space=space,
+        grid5=grid,
         effdt0=datetime(2019, 10, 22),
         efftm0=time(12, 0),
         sidep=25,

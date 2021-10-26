@@ -56,6 +56,9 @@ def netset_data(grid):
 
     netset_data = {
         "sam": "16",
+        "ssn": "00",
+        "space": "11",
+        "mode": "AA",
         "effdt0": "2019-10-03",
         "effdt1": "2019-10-04",
         "effdur": 25.00,
@@ -69,7 +72,8 @@ def netset_data(grid):
         "site": "44",
         "dd_lat": 45.8595,
         "dd_lon": -80.8095,
-        "grid5": {"grid": str(grid.grid), "slug": grid.slug},
+        # "grid5": {"grid": str(grid.grid), "slug": grid.slug},
+        "grid5": str(grid.grid),
         "sitem": 23,
         "comment1": "Some sample data",
         "secchi": 10,
@@ -199,8 +203,8 @@ username_list = [
 
 @pytest.mark.parametrize("username,expected", username_list)
 @pytest.mark.django_db
-def test_fn121_listview_permissions(
-    api_client, project, grid, netset_data, username, expected
+def test_fn121_listview_create_permissions(
+    api_client, project, grid, netset_data, users, username, expected
 ):
     """a get request should be available for any user, a post request
     should only be available to authorized users.
@@ -211,10 +215,25 @@ def test_fn121_listview_permissions(
         login = api_client.login(username=username, password="Abcd1234")
         assert login is True
 
-    netset_data["prj_cd"] = project.prj_cd
+    netset_data["project"] = project.prj_cd
+
+    # ssn, space, and mode are slug related fields - repalce the
+    # labels with the slugs so the serializer can create the relationships
+    ssn = netset_data["ssn"]
+    netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
+
+    space = netset_data["space"]
+    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+
+    mode = netset_data["mode"]
+    netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
+
+    grid = netset_data["grid5"]
+    netset_data["grid5"] = "hu_" + grid
 
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
+
     assert response.status_code == expected
 
 
@@ -229,10 +248,28 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     login = api_client.login(username="hsimpson", password="Abcd1234")
     assert login is True
 
-    netset_data["prj_cd"] = project.prj_cd
+    netset_data["project"] = project.prj_cd
+
+    # ssn, space, and mode are slug related fields - repalce the
+    # labels with the slugs so the serializer can create the relationships
+    ssn = netset_data["ssn"]
+    netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
+
+    space = netset_data["space"]
+    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+
+    mode = netset_data["mode"]
+    netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
+
+    grid = netset_data["grid5"]
+    netset_data["grid5"] = "hu_" + grid
 
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
+
+    fname = "c:/1work/scrapbook/wtf.html"
+    with open(fname, "wb") as f:
+        f.write(response.content)
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -256,8 +293,7 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.secchi == netset_data["secchi"]
 
     grid = fn121.grid5
-    assert str(grid.grid) == netset_data["grid5"]["grid"]
-    assert grid.slug == netset_data["grid5"]["slug"]
+    assert grid.slug == netset_data["grid5"]
 
 
 usernames = [None, "gcostanza", "hsimpson", "bgumble", "mburns"]
@@ -300,6 +336,9 @@ def test_fn121_detailview(api_client, net_sets):
         "id": net_set.id,
         "slug": net_set.slug,
         "sam": net_set.sam,
+        "ssn": net_set.ssn.ssn,
+        "space": net_set.space.space,
+        "mode": net_set.mode.mode,
         "effdt0": net_set.effdt0.strftime("%Y-%m-%d"),
         "effdt1": net_set.effdt1.strftime("%Y-%m-%d"),
         "effdur": net_set.effdur,
@@ -308,7 +347,8 @@ def test_fn121_detailview(api_client, net_sets):
         "effst": net_set.effst,
         "sidep": net_set.sidep,
         "site": net_set.site,
-        "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
+        # "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
+        "grid5": str(net_set.grid5.grid),
         "dd_lat": net_set.dd_lat,
         "dd_lon": net_set.dd_lon,
         "sitem": net_set.sitem,
@@ -333,7 +373,20 @@ def test_fn121_detailview_put_permissions(
         login = api_client.login(username=username, password="Abcd1234")
         assert login is True
 
-    netset_data["prj_cd"] = project.prj_cd
+    netset_data["project"] = project.prj_cd
+    # ssn, space, and mode are slug related fields - repalce the
+    # labels with the slugs so the serializer can create the relationships
+    ssn = netset_data["ssn"]
+    netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
+
+    space = netset_data["space"]
+    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+
+    mode = netset_data["mode"]
+    netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
+
+    grid = netset_data["grid5"]
+    netset_data["grid5"] = "hu_" + grid
 
     url = reverse("fn_portal_api:FN121_detailview", kwargs={"slug": net_set.slug})
     response = api_client.put(url, netset_data, format="json")
@@ -374,15 +427,28 @@ def test_fn121_update(api_client, project, net_sets):
     for k, v in new_data.items():
         data[k] = v
 
+    # we need to supply slugs for fk fields:
+    prj_cd = project.prj_cd
+
+    data["project"] = prj_cd
+    # ssn, space, and mode are slug related fields - repalce the
+    # labels with the slugs so the serializer can create the relationships
+    ssn = data["ssn"]
+    data["ssn"] = f"{prj_cd}-{ssn}".lower()
+    space = data["space"]
+    data["space"] = f"{prj_cd}-{space}".lower()
+    mode = data["mode"]
+    data["mode"] = f"{prj_cd}-{mode}".lower()
+
+    grid5 = data["grid5"]
+    data["grid5"] = f"hu_{grid5}".lower()
+
     # now resubmit our updated data:
     response = api_client.put(url, data, format="json")
     assert response.status_code == status.HTTP_200_OK
 
     # verify that our new values are reflected on our object:
     fn121 = FN121.objects.get(slug=net_set.slug)
-
-    # assert fn121.gr == new_data["gr"]
-    # assert fn121.grtp == new_data["grtp"]
 
     # check that the times are being converted propery too:
     assert fn121.effdt0 == datetime.strptime(new_data["effdt0"], "%Y-%m-%d").date()

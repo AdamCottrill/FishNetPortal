@@ -43,7 +43,7 @@ def test_fn028_list(api_client, project):
     response = api_client.get(url)
     assert response.status_code == status.HTTP_200_OK
 
-    data = [(x.get("mode"), x.get("mode_des")) for x in response.data]
+    data = [(x.get("mode"), x.get("mode_des")) for x in response.data["results"]]
     assert len(data) == 2
 
     expected = [("m1", "Mode 1"), ("m2", "Mode 2")]

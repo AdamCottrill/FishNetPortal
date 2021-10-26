@@ -2,6 +2,10 @@
 
 from common.models import Grid5
 from fn_portal.models import (
+    FN011,
+    FN022,
+    FN026,
+    FN028,
     FN121,
     FN122,
     FN123,
@@ -15,14 +19,20 @@ from fn_portal.models import (
 from rest_framework import serializers
 
 from .common_serializers import GridSerializer
+from .FN0_serializers import FN022Serializer, FN026Serializer, FN028Serializer
 
 
 class FN121Serializer(serializers.ModelSerializer):
+    """a serializer for returning FN121 objects"""
 
     prj_cd = serializers.CharField(source="project.prj_cd")
+    ssn = serializers.CharField(source="ssn.ssn")
+    space = serializers.CharField(source="space.space")
+    mode = serializers.CharField(source="mode.mode")
+    grid5 = serializers.CharField(source="grid5.grid")
+
     effdt0 = serializers.DateField(format="%Y-%m-%d")
     effdt1 = serializers.DateField(format="%Y-%m-%d")
-    grid5 = GridSerializer(many=False)
 
     class Meta:
         model = FN121
@@ -33,6 +43,9 @@ class FN121Serializer(serializers.ModelSerializer):
             "id",
             "prj_cd",
             "sam",
+            "ssn",
+            "space",
+            "mode",
             "effdt0",
             "effdt1",
             "effdur",
@@ -44,6 +57,8 @@ class FN121Serializer(serializers.ModelSerializer):
             "grid5",
             "dd_lat",
             "dd_lon",
+            "dd_lat1",
+            "dd_lon1",
             "sitem",
             "comment1",
             "secchi",
@@ -52,46 +67,59 @@ class FN121Serializer(serializers.ModelSerializer):
 
         read_only_fields = ("slug", "id")
 
-    def create(self, validated_data):
-        """Custom create method to handle grid - nested serializer."""
-        project = self.context["project"]
-        validated_data["project"] = project
 
-        grid_data = validated_data.pop("grid5")
-        validated_data["grid5"] = Grid5.objects.get(
-            lake=project.lake, grid=grid_data["grid"]
+class FN121PostSerializer(FN121Serializer):
+
+    project = serializers.SlugRelatedField(
+        many=False, read_only=False, slug_field="prj_cd", queryset=FN011.objects.all()
+    )
+
+    ssn = serializers.SlugRelatedField(
+        many=False, read_only=False, slug_field="slug", queryset=FN022.objects.all()
+    )
+
+    space = serializers.SlugRelatedField(
+        many=False, read_only=False, slug_field="slug", queryset=FN026.objects.all()
+    )
+
+    mode = serializers.SlugRelatedField(
+        many=False, read_only=False, slug_field="slug", queryset=FN028.objects.all()
+    )
+    grid5 = serializers.SlugRelatedField(
+        many=False, read_only=False, slug_field="slug", queryset=Grid5.objects.all()
+    )
+
+    class Meta:
+        model = FN121
+        lookup_field = "slug"
+
+        fields = (
+            "id",
+            "project",
+            "sam",
+            "ssn",
+            "space",
+            "mode",
+            "effdt0",
+            "effdt1",
+            "effdur",
+            "efftm0",
+            "efftm1",
+            "effst",
+            "sidep",
+            "site",
+            "grid5",
+            "dd_lat",
+            "dd_lon",
+            "dd_lat1",
+            "dd_lon1",
+            "sitem",
+            "comment1",
+            "secchi",
+            "slug",
         )
 
-        instance = FN121.objects.create(**validated_data)
-
-        return instance
-
-    def update(self, instance, validated_data):
-        """We need a custom update method to handle grid"""
-
-        grid_no = validated_data["grid5"].get("grid")
-        if grid_no != instance.grid5.grid:
-            grid = Grid5.objects.get(lake=instance.grid5.lake, grid=grid_no)
-            instance.grid5 = grid
-
-        instance.sam = validated_data.get("sam", instance.sam)
-        instance.effdt0 = validated_data.get("effdt0", instance.effdt0)
-        instance.effdt1 = validated_data.get("effdt1", instance.effdt1)
-        instance.effdur = validated_data.get("effdur", instance.effdur)
-        instance.efftm0 = validated_data.get("efftm0", instance.efftm0)
-        instance.efftm1 = validated_data.get("efftm1", instance.efftm1)
-        instance.effst = validated_data.get("effst", instance.effst)
-        instance.sidep = validated_data.get("sidep", instance.sidep)
-        instance.site = validated_data.get("site", instance.site)
-        instance.dd_lat = validated_data.get("dd_lat", instance.dd_lat)
-        instance.dd_lon = validated_data.get("dd_lon", instance.dd_lon)
-        instance.sitem = validated_data.get("sitem", instance.sitem)
-        instance.comment = validated_data.get("comment1", instance.comment1)
-        instance.secchi = validated_data.get("secchi", instance.secchi)
-
-        instance.save()
-
-        return instance
+        read_only_fields = ("slug", "id")
 
 
 class FN122Serializer(serializers.ModelSerializer):

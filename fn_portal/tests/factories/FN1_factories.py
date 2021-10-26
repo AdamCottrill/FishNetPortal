@@ -12,6 +12,7 @@ from ...models import (
     FN125Tag,
 )
 from .FN0_factories import FN011Factory, FN022Factory, FN026Factory, FN028Factory
+from .common_factories import Grid5Factory
 
 
 class FN121Factory(factory.django.DjangoModelFactory):
@@ -30,6 +31,7 @@ class FN121Factory(factory.django.DjangoModelFactory):
     ssn = factory.SubFactory(FN022Factory, __sequence=1)
     space = factory.SubFactory(FN026Factory, __sequence=1)
     mode = factory.SubFactory(FN028Factory, __sequence=1)
+    grid5 = factory.SubFactory(Grid5Factory, __sequence=1)
 
 
 class FN122Factory(factory.django.DjangoModelFactory):
