@@ -1,6 +1,7 @@
 """Views for api endpoints."""
 
 from django.db import transaction
+from django.db.models import F
 from django.http import Http404
 from fn_portal.models import (
     FN011,
@@ -224,10 +225,11 @@ class EffortList(generics.ListAPIView):
     queryset = (
         FN122.objects.select_related("sample", "sample__project")
         .order_by("slug")
+        .annotate(prj_cd=F("sample__project__prj_cd"), sam=F("sample__sam"))
         .values(
             "id",
-            "sample__project__prj_cd",
-            "sample__sam",
+            "prj_cd",
+            "sam",
             "eff",
             "effdst",
             "grdep",
@@ -255,12 +257,18 @@ class CatchCountList(generics.ListAPIView):
         )
         .exclude(species__spc="000")
         .order_by("slug")
+        .annotate(
+            prj_cd=F("effort__sample__project__prj_cd"),
+            sam=F("effort__sample__sam"),
+            eff=F("effort__eff"),
+            spc=F("species__spc"),
+        )
         .values(
             "id",
-            "effort__sample__project__prj_cd",
-            "effort__sample__sam",
-            "effort__eff",
-            "species__spc",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
             "grp",
             "catcnt",
             "catwt",
@@ -290,6 +298,13 @@ class LengthTallyList(generics.ListAPIView):
             "catch__effort__sample__project",
         )
         .exclude(catch__species__spc="000")
+        .annotate(
+            prj_cd=F("catch__effort__sample__project__prj_cd"),
+            sam=F("catch__effort__sample__sam"),
+            eff=F("catch__effort__eff"),
+            spc=F("catch__species__spc"),
+            grp=F("catch__grp"),
+        )
         .order_by("slug")
     )
 
@@ -310,15 +325,23 @@ class BioSampleList(generics.ListAPIView):
             "catch__species",
             "catch__effort__sample",
             "catch__effort__sample__project",
-        ).order_by("slug")
+        )
+        .order_by("slug")
         # .prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
+        .annotate(
+            prj_cd=F("catch__effort__sample__project__prj_cd"),
+            sam=F("catch__effort__sample__sam"),
+            eff=F("catch__effort__eff"),
+            spc=F("catch__species__spc"),
+            grp=F("catch__grp"),
+        )
         .values(
             "id",
-            "catch__effort__sample__project__prj_cd",
-            "catch__effort__sample__sam",
-            "catch__effort__eff",
-            "catch__species",
-            "catch__grp",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
+            "grp",
             "fish",
             "flen",
             "tlen",
@@ -361,13 +384,22 @@ class FN125LampreyReadOnlyList(generics.ListAPIView):
             "fish__catch__effort__sample__project",
         )
         .order_by("slug")
+        .annotate(
+            prj_cd=F("fish__catch__effort__sample__project__prj_cd"),
+            sam=F("fish__catch__effort__sample__sam"),
+            eff=F("fish__catch__effort__eff"),
+            spc=F("fish__catch__species__spc"),
+            grp=F("fish__catch__grp"),
+            fishn=F("fish__fish"),
+        )
         .values(
             "id",
-            "fish__catch__effort__sample__project__prj_cd",
-            "fish__catch__effort__sample__sam",
-            "fish__catch__effort__eff",
-            "fish__catch__species",
-            "fish__catch__grp",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
+            "grp",
+            "fishn",
             "lamid",
             "xlam",
             "lamijc",
@@ -386,13 +418,42 @@ class FN125TagReadOnlyList(generics.ListAPIView):
     serializer_class = FN125TagSerializer
     pagination_class = XLargeResultsSetPagination
     filterset_class = FN125TagFilter
-    queryset = FN125Tag.objects.select_related(
-        "fish",
-        "fish__catch",
-        "fish__catch__species",
-        "fish__catch__effort__sample",
-        "fish__catch__effort__sample__project",
-    ).order_by("slug")
+    queryset = (
+        FN125Tag.objects.select_related(
+            "fish",
+            "fish__catch",
+            "fish__catch__species",
+            "fish__catch__effort__sample",
+            "fish__catch__effort__sample__project",
+        )
+        .order_by("slug")
+        .annotate(
+            prj_cd=F("fish__catch__effort__sample__project__prj_cd"),
+            sam=F("fish__catch__effort__sample__sam"),
+            eff=F("fish__catch__effort__eff"),
+            spc=F("fish__catch__species__spc"),
+            grp=F("fish__catch__grp"),
+            fishn=F("fish__fish"),
+        )
+        .values(
+            "id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
+            "grp",
+            "fishn",
+            "fish_tag_id",
+            "tagstat",
+            "tagid",
+            "tagdoc",
+            "xcwtseq",
+            "xtaginckd",
+            "xtag_chk",
+            "comment_tag",
+            "slug",
+        )
+    )
 
 
 class FN126ReadOnlyList(generics.ListAPIView):
@@ -401,13 +462,38 @@ class FN126ReadOnlyList(generics.ListAPIView):
     serializer_class = FN126Serializer
     pagination_class = XLargeResultsSetPagination
     filterset_class = FN126Filter
-    queryset = FN126.objects.select_related(
-        "fish",
-        "fish__catch",
-        "fish__catch__species",
-        "fish__catch__effort__sample",
-        "fish__catch__effort__sample__project",
-    ).order_by("slug")
+    queryset = (
+        FN126.objects.select_related(
+            "fish",
+            "fish__catch",
+            "fish__catch__species",
+            "fish__catch__effort__sample",
+            "fish__catch__effort__sample__project",
+        )
+        .order_by("slug")
+        .annotate(
+            prj_cd=F("fish__catch__effort__sample__project__prj_cd"),
+            sam=F("fish__catch__effort__sample__sam"),
+            eff=F("fish__catch__effort__eff"),
+            spc=F("fish__catch__species__spc"),
+            grp=F("fish__catch__grp"),
+            fishn=F("fish__fish"),
+        )
+        .values(
+            "id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
+            "grp",
+            "fishn",
+            "food",
+            "taxon",
+            "foodcnt",
+            "comment6",
+            "slug",
+        )
+    )
 
 
 class FN127ReadOnlyList(generics.ListAPIView):
@@ -420,13 +506,44 @@ class FN127ReadOnlyList(generics.ListAPIView):
     serializer_class = FN127Serializer
     pagination_class = XLargeResultsSetPagination
     filterset_class = FN127Filter
-    queryset = FN127.objects.select_related(
-        "fish",
-        "fish__catch",
-        "fish__catch__species",
-        "fish__catch__effort__sample",
-        "fish__catch__effort__sample__project",
-    ).order_by("slug")
+    queryset = (
+        FN127.objects.select_related(
+            "fish",
+            "fish__catch",
+            "fish__catch__species",
+            "fish__catch__effort__sample",
+            "fish__catch__effort__sample__project",
+        )
+        .order_by("slug")
+        .annotate(
+            prj_cd=F("fish__catch__effort__sample__project__prj_cd"),
+            sam=F("fish__catch__effort__sample__sam"),
+            eff=F("fish__catch__effort__eff"),
+            spc=F("fish__catch__species__spc"),
+            grp=F("fish__catch__grp"),
+            fishn=F("fish__fish"),
+        )
+        .values(
+            "id",
+            "prj_cd",
+            "sam",
+            "eff",
+            "spc",
+            "grp",
+            "fishn",
+            "ageid",
+            "agemt",
+            "xagem",
+            "agea",
+            "preferred",
+            "conf",
+            "nca",
+            "edge",
+            "agest",
+            "comment7",
+            "slug",
+        )
+    )
 
 
 # ========================================================

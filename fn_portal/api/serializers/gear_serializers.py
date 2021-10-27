@@ -35,3 +35,17 @@ class GearSerializer(serializers.ModelSerializer):
             "depreciated",
             "process_types",
         )
+
+
+class GearEffortProcessTypeSerializer(serializers.ModelSerializer):
+    """A readonly serializer that returns the gear, effort, process type,
+    and grlen avaialble for each gear.  This serializer and associated
+    end point will be used to populate template databases by some of
+    our data adapter tools.
+    """
+
+    gear = serializers.CharField(source="gear.gr_code")
+
+    class Meta:
+        model = GearEffortProcessType
+        fields = ("gear", "process_type", "eff", "effdst")

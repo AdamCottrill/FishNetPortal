@@ -1,5 +1,5 @@
 from .common_filters import SpeciesFilter, UserFilter
-from .gear_filters import GearFilter
+from .gear_filters import GearFilter, GearEffortProcessTypeFilter
 
 from .FN022_filters import FN022Filter
 from .FN026_filters import FN026Filter

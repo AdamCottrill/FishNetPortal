@@ -1,6 +1,6 @@
 from .common_views import SpeciesListView, ProjectLeadListView, LakeExtentListView
 
-from .gear_views import GearListView
+from .gear_views import GearListView, GearEffortProcessTypeListView
 
 from .FN0_views import (
     FNProtocolListView,

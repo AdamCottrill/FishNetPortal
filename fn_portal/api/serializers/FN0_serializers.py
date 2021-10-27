@@ -230,7 +230,7 @@ class FN022ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN022
-        fields = ("prj_cd", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug")
+        fields = ("prj_cd", "ssn", "ssn_des", "ssn_date0", "ssn_date1", "slug", "id")
 
 
 class FN022Serializer(serializers.ModelSerializer):
@@ -291,13 +291,7 @@ class FN026ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN026
-        fields = (
-            "prj_cd",
-            "space",
-            "space_des",
-            "dd_lat",
-            "dd_lon",
-        )
+        fields = ("prj_cd", "space", "space_des", "dd_lat", "dd_lon", "slug", "id")
 
 
 class FN026SimpleSerializer(serializers.ModelSerializer):
@@ -361,14 +355,7 @@ class FN028ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN028
-        fields = (
-            "prj_cd",
-            "mode",
-            "mode_des",
-            "gear",
-            "gruse",
-            "orient",
-        )
+        fields = ("prj_cd", "mode", "mode_des", "gear", "gruse", "orient", "slug", "id")
 
 
 class FN028SimpleSerializer(serializers.ModelSerializer):

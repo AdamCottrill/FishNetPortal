@@ -1,11 +1,25 @@
 """Views for gear api endpoints - gear, sub-gearsm, and process types,."""
 
 from rest_framework import generics
-from fn_portal.models import Gear
+from fn_portal.models import Gear, GearEffortProcessType
 
-from ...filters import GearFilter
+from ...filters import GearFilter, GearEffortProcessTypeFilter
 from ..permissions import ReadOnly
-from ..serializers import GearSerializer
+from ..serializers import GearSerializer, GearEffortProcessTypeSerializer
+
+
+class GearEffortProcessTypeListView(generics.ListAPIView):
+    """a simple, read only list view to return all of gear-effort-process types from our
+    database.  Accepts filters for gear type, gear code 'like', gear code, and process type
+    in.
+
+    """
+
+    pagination_class = None
+    serializer_class = GearEffortProcessTypeSerializer
+    permission_classes = [ReadOnly]
+    filterset_class = GearEffortProcessTypeFilter
+    queryset = GearEffortProcessType.objects.all().select_related("gear")
 
 
 class GearListView(generics.ListAPIView):

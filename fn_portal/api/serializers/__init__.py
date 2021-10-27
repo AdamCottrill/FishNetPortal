@@ -6,7 +6,7 @@ from .common_serializers import (
     UserSerializer,
 )
 
-from .gear_serializers import GearSerializer
+from .gear_serializers import GearSerializer, GearEffortProcessTypeSerializer
 
 from .FN0_serializers import (
     FNProtocolSerializer,

@@ -89,6 +89,30 @@ class FN011ListView(generics.ListAPIView):
     )
 
 
+class FN011ListView(generics.ListAPIView):
+    """A read-only endpoint to return project objects.  Accepts query
+    parameter filters for year, project codes, protocol, lake, gear types, and grid(s).
+    """
+
+    serializer_class = FN011Serializer
+    filterset_class = FN011Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
+
+    queryset = (
+        FN011.objects.select_related("protocol", "lake", "prj_ldr")
+        .defer(
+            "lake__geom",
+            "lake__geom_ontario",
+            "lake__envelope",
+            "lake__envelope_ontario",
+            "lake__centroid",
+            "lake__centroid_ontario",
+        )
+        .all()
+    )
+
+
 class FN011DetailView(generics.RetrieveAPIView):
     """A read-only endpoint to return a single project object."""
 

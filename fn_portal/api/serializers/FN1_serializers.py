@@ -125,8 +125,8 @@ class FN121PostSerializer(FN121Serializer):
 class FN122Serializer(serializers.ModelSerializer):
     """"""
 
-    prj_cd = serializers.CharField(read_only=True, source="sample.project.prj_cd")
-    sam = serializers.CharField(read_only=True, source="sample.sam")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
 
     class Meta:
         model = FN122
@@ -153,18 +153,10 @@ class FN122Serializer(serializers.ModelSerializer):
 
 class FN123Serializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="effort.sample.sam")
-    eff = serializers.CharField(read_only=True, source="effort.eff")
-
-    spc = serializers.CharField(read_only=True, source="species.spc")
-    # species = serializers.SlugRelatedField(
-    #     queryset=Species.objects.all(), slug_field="spc"
-    # )
-
-    # spc = SpeciesSerializer(many=False)
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
 
     class Meta:
         model = FN123
@@ -192,11 +184,11 @@ class FN123Serializer(serializers.ModelSerializer):
 
 class FN124Serializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(source="catch.effort.sample.project.prj_cd")
-    sam = serializers.CharField(read_only=True, source="catch.effort.sample.sam")
-    eff = serializers.CharField(read_only=True, source="catch.effort.eff")
-    spc = serializers.CharField(source="catch.species.spc")
-    grp = serializers.CharField(source="catch.species.spc")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
 
     class Meta:
         model = FN124
@@ -276,13 +268,11 @@ class FN127NestedSerializer(serializers.ModelSerializer):
 
 class FN125ReadOnlySerializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="catch.effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="catch.species.spc")
-    eff = serializers.CharField(read_only=True, source="catch.effort.eff")
-    grp = serializers.CharField(read_only=True, source="catch.grp")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
 
     # # child tables
     # lamprey_marks = FN125LampreyNestedSerializer(
@@ -299,7 +289,7 @@ class FN125ReadOnlySerializer(serializers.ModelSerializer):
             "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "fish",
             "flen",
@@ -490,14 +480,12 @@ class FN125Serializer(serializers.ModelSerializer):
 
 class FN125TagSerializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
-    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
-    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.fish")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
+    fish = serializers.CharField(read_only=True, source="fishn")
 
     class Meta:
         model = FN125Tag
@@ -506,7 +494,7 @@ class FN125TagSerializer(serializers.ModelSerializer):
             "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "fish",
             "fish_tag_id",
@@ -523,14 +511,12 @@ class FN125TagSerializer(serializers.ModelSerializer):
 
 class FN125LampreySerializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
-    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
-    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.fish")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
+    fish = serializers.CharField(read_only=True, source="fishn")
 
     class Meta:
         model = FN125_Lamprey
@@ -538,7 +524,7 @@ class FN125LampreySerializer(serializers.ModelSerializer):
             "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "fish",
             "id",
@@ -554,14 +540,12 @@ class FN125LampreySerializer(serializers.ModelSerializer):
 
 class FN126Serializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
-    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
-    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.fish")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
+    fish = serializers.CharField(read_only=True, source="fishn")
 
     class Meta:
         model = FN126
@@ -570,7 +554,7 @@ class FN126Serializer(serializers.ModelSerializer):
             "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "fish",
             "food",
@@ -583,14 +567,12 @@ class FN126Serializer(serializers.ModelSerializer):
 
 class FN127Serializer(serializers.ModelSerializer):
 
-    prj_cd = serializers.CharField(
-        read_only=True, source="fish.catch.effort.sample.project.prj_cd"
-    )
-    sam = serializers.CharField(read_only=True, source="fish.catch.effort.sample.sam")
-    species = serializers.CharField(read_only=True, source="fish.catch.species.spc")
-    eff = serializers.CharField(read_only=True, source="fish.catch.effort.eff")
-    grp = serializers.CharField(read_only=True, source="fish.catch.grp")
-    fish = serializers.CharField(read_only=True, source="fish.fish")
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    spc = serializers.CharField(read_only=True)
+    grp = serializers.CharField(read_only=True)
+    fish = serializers.CharField(read_only=True, source="fishn")
 
     class Meta:
         model = FN127
@@ -599,7 +581,7 @@ class FN127Serializer(serializers.ModelSerializer):
             "prj_cd",
             "sam",
             "eff",
-            "species",
+            "spc",
             "grp",
             "fish",
             "ageid",
