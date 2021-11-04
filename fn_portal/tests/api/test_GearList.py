@@ -36,6 +36,14 @@ def gear_list():
     tp01 = GearFactory(gr_code="TP01", grtp="TP", confirmed=False, depreciated=True)
     tp08 = GearFactory(gr_code="TP08", grtp="TP", confirmed=True, depreciated=False)
 
+    GearEffortProcessTypeFactory(gear=gl00)
+    GearEffortProcessTypeFactory(gear=gl01)
+    GearEffortProcessTypeFactory(gear=gl21)
+    GearEffortProcessTypeFactory(gear=gl32)
+    GearEffortProcessTypeFactory(gear=gl50)
+    GearEffortProcessTypeFactory(gear=tp01)
+    GearEffortProcessTypeFactory(gear=tp08)
+
     return [gl00, gl01, gl21, gl32, gl50, tp01, tp08]
 
 
@@ -124,9 +132,29 @@ def test_gear_process_type_in_response(api_client):
     for item, label in zip(process_types, labels):
         item["label"] = label
 
-    from pprint import pprint
-
-    pprint(observed)
-    pprint(process_types)
-
     assert observed == process_types
+
+
+@pytest.mark.parametrize("filter,expected", filter_list)
+@pytest.mark.django_db
+def test_gear_process_type_in_response_filters(api_client, gear_list, filter, expected):
+    """This is a parameterized test that accepts a list of two element
+    tuples. The first element of each tuple is a dictionary that
+    specifies the filter that should be applied, while the second
+    element contain the gear code of the gear that should be selected
+    by the filter.  This test uses the same filters as the gear code
+    list, but applies them to the gear-effort-process-type endpoint to
+    ensure that the same filters apply there.
+
+
+
+    """
+
+    url = reverse("fn_portal_api:gear_eff_process_types_list")
+    response = api_client.get(url, filter)
+    assert response.status_code == status.HTTP_200_OK
+
+    data = {x.get("gear") for x in response.data}
+    assert len(data) == len(expected)
+    for x in expected:
+        assert x in data

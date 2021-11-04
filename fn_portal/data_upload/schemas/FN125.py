@@ -1,6 +1,6 @@
 from typing import Optional
 from enum import Enum, IntEnum
-from pydantic import conint, validator
+from pydantic import conint, confloat, validator
 
 from .FNBase import FNBase, prj_cd_regex
 from .utils import string_to_int
@@ -54,7 +54,7 @@ class FN125(FNBase):
     slug: str
     catch_id: int
     fish: int
-    rwt: Optional[conint(gt=0)] = None
+    rwt: Optional[confloat(gt=0)] = None
     flen: Optional[conint(gt=0)] = None
     tlen: Optional[conint(gt=0)] = None
     girth: Optional[conint(gt=0)] = None

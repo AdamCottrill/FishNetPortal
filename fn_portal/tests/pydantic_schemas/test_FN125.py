@@ -221,22 +221,22 @@ error_list = [
     (
         "rwt",
         "120",
-        "FLEN/TLEN (440) is too large for the round weight (RWT=120)",
+        "FLEN/TLEN (440) is too large for the round weight (RWT=120.0)",
     ),
     (
         "rwt",
         "120",
-        "FLEN/TLEN (450) is too large for the round weight (RWT=120)",
+        "FLEN/TLEN (450) is too large for the round weight (RWT=120.0)",
     ),
     (
         "rwt",
         "4000",
-        "FLEN/TLEN (440) is too short for the round weight (RWT=4000)",
+        "FLEN/TLEN (440) is too short for the round weight (RWT=4000.0)",
     ),
     (
         "rwt",
         "4000",
-        "FLEN/TLEN (450) is too short for the round weight (RWT=4000)",
+        "FLEN/TLEN (450) is too short for the round weight (RWT=4000.0)",
     ),
     # ascii-sorting:
     (

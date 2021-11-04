@@ -270,7 +270,7 @@ class FN125(models.Model):
     fish = models.CharField(max_length=6)
     flen = models.IntegerField(blank=True, null=True)
     tlen = models.IntegerField(blank=True, null=True)
-    rwt = models.IntegerField(blank=True, null=True)
+    rwt = models.FloatField(blank=True, null=True)
     girth = models.IntegerField(blank=True, null=True)
     clipa = models.CharField(max_length=20, blank=True, null=True)
     clipc = models.CharField(max_length=20, blank=True, null=True)
