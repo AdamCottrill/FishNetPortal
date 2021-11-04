@@ -28,11 +28,14 @@ class FN125LampreyFilter(FishAttrFilters):
 
     xlam = ValueInFilter(field_name="xlam")
     xlam__not = ValueInFilter(field_name="xlam", exclude=True)
-    lamijc = ValueInFilter(field_name="lamijc")
-    lamijc__not = ValueInFilter(field_name="lamijc", exclude=True)
+    xlam__null = django_filters.BooleanFilter(field_name="xlam", lookup_expr="isnull")
+
     lamijc_type = ValueInFilter(field_name="lamijc_type")
     lamijc_type__not = ValueInFilter(field_name="lamijc_type", exclude=True)
+    lamijc_type__null = django_filters.BooleanFilter(
+        field_name="lamijc_type", lookup_expr="isnull"
+    )
 
     class Meta:
         model = FN125_Lamprey
-        fields = ["xlam", "lamijc", "lamijc_type", "lamijc_size"]
+        fields = ["xlam", "lamijc_type", "lamijc_size"]

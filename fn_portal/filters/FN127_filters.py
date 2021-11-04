@@ -3,6 +3,7 @@ import django_filters
 from .common_filters import ValueInFilter, NumberInFilter
 
 from ..models import FN127
+
 from .FishAttr_filters import FishAttrFilters
 
 

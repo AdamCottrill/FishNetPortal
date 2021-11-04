@@ -408,17 +408,20 @@ def test_FN125Lamprey_lamijc_str():
     grp = "55"
     fish_number = 9
     lamid = 11
-    lamijc = "A125"
+    lamijc_type = "A1"
+    lamijc_size = "25"
 
     project = FN011Factory(prj_cd=project_code)
     fn121 = FN121Factory(project=project, sam=sam)
     fn122 = FN122Factory(sample=fn121, eff=eff)
     fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
     fn125 = FN125Factory(catch=fn123, fish=fish_number)
-    lamprey = FN125LampreyFactory(fish=fn125, lamid=lamid, lamijc=lamijc)
+    lamprey = FN125LampreyFactory(
+        fish=fn125, lamid=lamid, lamijc_size=lamijc_size, lamijc_type=lamijc_type
+    )
 
-    shouldbe = "{}-{}-{}-{}-{}-{}-{} (lamijc: {})".format(
-        project_code, sam, eff, spc, grp, fish_number, lamid, lamijc
+    shouldbe = "{}-{}-{}-{}-{}-{}-{} (lamijc: {}{})".format(
+        project_code, sam, eff, spc, grp, fish_number, lamid, lamijc_type, lamijc_size
     )
 
     assert str(lamprey) == shouldbe

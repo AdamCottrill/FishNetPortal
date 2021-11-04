@@ -26,14 +26,12 @@ class FN125Lamprey(FNBase):
 
     """
 
-    lamijc_regex = r"^0|([A|B][1-4]([1-9][0-5])?)$"
     xlam_regex = r"^0|\d{4}$"
 
     slug: str
     fish_id: int
-    fish_lam_id: str
+    lamid: str
     xlam: Optional[constr(regex=xlam_regex)]
-    lamijc: Optional[constr(regex=lamijc_regex)]
     lamijc_type: Optional[LamIjcEnum]
     lamijc_size: Optional[conint(ge=10)]
     comment_lam: Optional[str]
@@ -42,7 +40,6 @@ class FN125Lamprey(FNBase):
 
     _empty_to_none = validator(
         "xlam",
-        "lamijc",
         "lamijc_type",
         "lamijc_size",
         "comment_lam",

@@ -58,7 +58,7 @@ class FN127(FNBase):
     @classmethod
     def check_agemt_structure(cls, value, values):
         if value is not None:
-            allowed = "01234567ABCDEFGMK"
+            allowed = "01234567ABCDEFGMKT"
             structure = value[0]
             if structure not in allowed:
                 msg = f"Unknown aging structure ({','.join(structure)}) found in agemt ({value})"
@@ -69,7 +69,7 @@ class FN127(FNBase):
     @classmethod
     def check_agemt_prep1(cls, value, values):
         if value is not None:
-            allowed = "01234567K9"
+            allowed = "012345679KT"
             prep = value[1]
             if prep not in allowed:
                 msg = f"Unknown aging prep1 method ({','.join(prep)}) found in agemt ({value})"

@@ -120,7 +120,6 @@ class FN125LampreyFactory(factory.django.DjangoModelFactory):
 
     fish = factory.SubFactory(FN125Factory)
     lamid = factory.Sequence(lambda n: n)
-    lamijc = "A235"
     lamijc_type = "A2"
     lamijc_size = 35
 

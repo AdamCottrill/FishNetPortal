@@ -429,7 +429,6 @@ class FN125_Lamprey(models.Model):
     slug = models.SlugField(max_length=100, unique=True)
     lamid = models.IntegerField()
     xlam = models.CharField(max_length=6, blank=True, null=True)
-    lamijc = models.CharField(max_length=50, blank=True, null=True)
 
     LAMIJC_TYPE_CHOICES = (
         ["0", "0"],
@@ -452,14 +451,14 @@ class FN125_Lamprey(models.Model):
     class Meta:
         ordering = ["slug", "lamid"]
 
-    # unique_together = ('fish', 'tagnum', 'grp')
-
     def __str__(self):
 
         if self.xlam:
             return "{} (xlam: {})".format(self.slug.upper(), self.xlam)
         else:
-            return "{} (lamijc: {})".format(self.slug.upper(), self.lamijc)
+            return "{} (lamijc: {}{})".format(
+                self.slug.upper(), self.lamijc_type, self.lamijc_size
+            )
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.fishnet_keys())

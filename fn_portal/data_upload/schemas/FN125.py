@@ -31,6 +31,7 @@ class GonEnum(IntEnum):
     int_prespawn_developed = 23
     int_spawning = 30
     int_spent = 40
+    int_abnormal = 50
     int_unknown = 99
 
 

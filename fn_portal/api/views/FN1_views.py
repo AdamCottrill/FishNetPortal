@@ -402,7 +402,6 @@ class FN125LampreyReadOnlyList(generics.ListAPIView):
             "fishn",
             "lamid",
             "xlam",
-            "lamijc",
             "lamijc_type",
             "lamijc_size",
             "comment_lam",

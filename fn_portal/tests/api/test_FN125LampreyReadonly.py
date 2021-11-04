@@ -49,12 +49,8 @@ def fn125lamprey_records():
     catch = FN123Factory(effort=eff1, species=spc, grp="55")
 
     fish = FN125Factory(catch=catch, flen=350, gon=10)
-    lamprey1 = FN125LampreyFactory(
-        fish=fish, lamijc="A130", lamijc_type="A1", lamijc_size=30
-    )
-    lamprey2 = FN125LampreyFactory(
-        fish=fish, lamijc="B225", lamijc_type="B2", lamijc_size=25
-    )
+    lamprey1 = FN125LampreyFactory(fish=fish, lamijc_type="A1", lamijc_size=30)
+    lamprey2 = FN125LampreyFactory(fish=fish, lamijc_type="B2", lamijc_size=25)
     return [lamprey1, lamprey2]
 
 

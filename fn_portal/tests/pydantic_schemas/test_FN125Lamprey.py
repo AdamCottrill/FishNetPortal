@@ -38,9 +38,8 @@ def data():
     data = {
         "slug": "lha_ia19_002-1-001-091-00-1-2",
         "fish_id": 1,
-        "fish_lam_id": 1,
+        "lamid": 1,
         "xlam": None,
-        "lamijc": "A125",
         "lamijc_type": "A1",
         "lamijc_size": 25,
         "comment_lam": "a single test wound",
@@ -64,7 +63,7 @@ def test_valid_data(data):
 required_fields = [
     "slug",
     "fish_id",
-    "fish_lam_id",
+    "lamid",
 ]
 
 
@@ -89,8 +88,6 @@ def test_required_fields(data, fld):
 
 optional_fields = [
     "xlam",
-    "lamijc",
-    # "lamijc_type",
     "lamijc_size",
     "comment_lam",
 ]
@@ -98,7 +95,8 @@ optional_fields = [
 
 @pytest.mark.parametrize("fld", optional_fields)
 def test_optional_fields(data, fld):
-    """Verify that the FN125Lamprey item is created without error if an optional field is omitted
+    """Verify that the FN125Lamprey item is created without error if an
+    optional field is omitted
 
     Arguments:
     - `data`:
@@ -114,10 +112,6 @@ mode_list = [
     ("xlam", "", None),
     ("xlam", "0", "0"),
     ("xlam", "2011", "2011"),
-    ("lamijc", "0", "0"),
-    ("lamijc", "A1", "A1"),
-    ("lamijc", "A125", "A125"),
-    ("lamijc", "", None),
     ("lamijc_size", "", None),
     ("comment_lam", "", None),
 ]
@@ -127,7 +121,7 @@ mode_list = [
 def test_valid_alternatives(data, fld, value_in, value_out):
     """When the pydanic model is created, it should transform some of the
     fields.  If the field is xlam, make sure we delete the lamijc_type
-    so we don't trip the two-types error.
+    in the test so we don't trip the two-types error.
 
     Arguments:
     - `data`:
@@ -151,11 +145,6 @@ error_list = [
         "lamijc_type",
         4,
         "value is not a valid enumeration member;",
-    ),
-    (
-        "lamijc",
-        "B535",
-        'string does not match regex "^0|([A|B][1-4]([1-9][0-5])?)$"',
     ),
     (
         "xlam",
