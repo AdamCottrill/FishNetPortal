@@ -295,6 +295,16 @@ error_list = [
         "value is not a valid enumeration member;",
     ),
     (
+        "xslime",
+        9,
+        "value is not a valid enumeration member;",
+    ),
+    (
+        "xslime",
+        6,
+        "value is not a valid enumeration member;",
+    ),
+    (
         "effst",
         99,
         "value is not a valid enumeration member;",

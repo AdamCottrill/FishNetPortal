@@ -72,7 +72,7 @@ class FN121(FNBase):
     grdepmax: Optional[PositiveFloat] = None
 
     secchi: Optional[PositiveFloat] = None
-    xslime: Optional[EffstEnum]
+    xslime: Optional[XslimeEnum]
 
     crew: Optional[str]
     comment1: Optional[str]

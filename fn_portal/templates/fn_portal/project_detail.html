@@ -290,7 +290,7 @@
                                             {{ species.catcnts }}
                                         </td>
                                         <td>
-                                            {{ species.biocnts }}
+                                            {{ species.biocnts|default_if_none:"0" }}
                                         </td>
                                     </tr>
                                 {% endfor %}
