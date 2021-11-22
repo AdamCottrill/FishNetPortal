@@ -16,6 +16,7 @@ import os
 import logging
 
 from django.db import transaction, DatabaseError
+from django.db.models import OuterRef, Subquery, Count
 
 from common.models import Species, Lake, Grid5
 
@@ -338,6 +339,19 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             Fnp.FN125.objects.bulk_create(items)
             filters = {"catch__effort__sample__project__prj_cd__in": PRJ_CDs}
             fn125_map = get_id_cache(Fnp.FN125, filters=filters)
+
+            # Update FN123.biocnt once all of our FN125 objects have been created
+            # using update and a subquery
+            biocnts = (
+                Fnp.FN125.objects.filter(catch=OuterRef("pk"))
+                .order_by()
+                .values("catch_id")
+                .annotate(biocnt=Count("*"))
+                .values("biocnt")
+            )
+            Fnp.FN123.objects.filter(
+                effort__sample__project__prj_cd__in=PRJ_CDs
+            ).update(biocnt=Subquery(biocnts))
 
             # =========================
             #        FN125-Tags
