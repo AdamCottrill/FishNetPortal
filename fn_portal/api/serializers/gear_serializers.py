@@ -44,8 +44,8 @@ class GearEffortProcessTypeSerializer(serializers.ModelSerializer):
     our data adapter tools.
     """
 
-    gear = serializers.CharField(source="gear.gr_code")
+    gr = serializers.CharField(source="gear.gr_code")
 
     class Meta:
         model = GearEffortProcessType
-        fields = ("gear", "process_type", "eff", "effdst")
+        fields = ("gr", "process_type", "eff", "effdst")

@@ -122,9 +122,18 @@ def project():
     eff1 = FN122Factory(sample=net1)
 
     FN123Factory(effort=eff1, species=perch, catcnt=3, biocnt=0)
-    FN123Factory(effort=eff1, species=pike, catcnt=6, biocnt=2)
-    FN123Factory(effort=eff1, species=walleye, catcnt=9, biocnt=3)
+    eff1_pike = FN123Factory(effort=eff1, species=pike, catcnt=6, biocnt=2)
+    eff1_walleye = FN123Factory(effort=eff1, species=walleye, catcnt=9, biocnt=3)
     FN123Factory(effort=eff1, species=anyspc, catcnt=None)
+
+    # add our biosamples, 2 pike, 3 walleye
+    FN125Factory(catch=eff1_pike)
+    FN125Factory(catch=eff1_pike)
+    eff1_pike.save()
+    FN125Factory(catch=eff1_walleye)
+    FN125Factory(catch=eff1_walleye)
+    FN125Factory(catch=eff1_walleye)
+    eff1_walleye.save()
 
     net2 = FN121Factory(
         sam="2",
@@ -138,25 +147,21 @@ def project():
     eff2 = FN122Factory(sample=net2)
 
     FN123Factory(effort=eff2, species=perch, catcnt=1, biocnt=0)
-    FN123Factory(effort=eff2, species=pike, catcnt=2, biocnt=2)
-    FN123Factory(effort=eff2, species=walleye, catcnt=3, biocnt=3)
+    eff2_pike = FN123Factory(effort=eff2, species=pike, catcnt=2)
+    eff2_walleye = FN123Factory(effort=eff2, species=walleye, catcnt=3, biocnt=3)
     FN123Factory(effort=eff2, species=anyspc, catcnt=None)
 
+    # add our fish, 2 pike, 3 walleye
+    FN125Factory(catch=eff2_pike)
+    FN125Factory(catch=eff2_pike)
+    eff2_pike.save()
+
+    FN125Factory(catch=eff2_walleye)
+    FN125Factory(catch=eff2_walleye)
+    FN125Factory(catch=eff2_walleye)
+    eff2_walleye.save()
+
     return project
-
-
-@pytest.fixture
-def somefish(project):
-    """Add some fish to our project fixture - for those test that need it."""
-
-    fn123 = FN123.objects.get(
-        effort__sample__project=project, effort__sample__sam=1, species__spc="334"
-    )
-
-    fish1 = FN125Factory(catch=fn123)
-    fish2 = FN125Factory(catch=fn123)
-
-    return [fish1, fish2]
 
 
 @pytest.fixture

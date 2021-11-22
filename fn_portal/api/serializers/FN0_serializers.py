@@ -198,6 +198,22 @@ class FN013Serializer(serializers.ModelSerializer):
         fields = ("project", "gr", "effcnt", "effdst", "gr_des", "slug")
 
 
+class FN013ListSerializer(serializers.ModelSerializer):
+    """A class to list gears. This is a readonly seralizer that return the
+    data as expected from FN-II. This serializer returns Gear objects
+    in a format that emulates the FN013 records.  It does not include
+    id or slug values as FN013 records do not actually exist.
+
+    """
+
+    prj_cd = serializers.CharField(read_only=True)
+    gr = serializers.CharField(read_only=True, source="gr_code")
+
+    class Meta:
+        model = Gear
+        fields = ("prj_cd", "gr", "effcnt", "effdst", "gr_des")
+
+
 class FN014Serializer(serializers.ModelSerializer):
     """Class to serialize the FN014 (gear/panel detail) used in each project."""
 

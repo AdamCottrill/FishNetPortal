@@ -191,6 +191,31 @@ def test_FN123_str():
 
 
 @pytest.mark.django_db
+def test_FN123_biocnt_on_save():
+    """The FN123 object has a custom save method that update biocnt to
+    reflect the current number of associated records in the
+    FN125. This test verifies that it works as expected.
+
+    """
+
+    spc = 334
+    species = SpeciesFactory(spc=spc)
+    fn123 = FN123Factory(species=species)
+    fn123.save()
+    assert fn123.biocnt == 0
+
+    fish = FN125Factory(catch=fn123)
+    fish.save()
+    fn123.save()
+
+    assert fn123.biocnt == 1
+
+    fish.delete()
+    fn123.save()
+    assert fn123.biocnt == 0
+
+
+@pytest.mark.django_db
 def test_FN124_str():
     """
     Verify that the string representation of a FN124 object is the
@@ -506,10 +531,16 @@ def test_SubGear_str():
     family_label = "Offshore Index"
     abbrev = "osi"
     eff = "089"
-    family = GearFamilyFactory(family=family_label, abbrev=abbrev)
-    subgear = SubGearFactory(family=family, eff=eff)
+    mesh = 51
+    grlen = 50
+    grht = 1.8
 
-    assert str(subgear) == "{} ({} ({}))".format(eff, family_label, abbrev)
+    family = GearFamilyFactory(family=family_label, abbrev=abbrev)
+    subgear = SubGearFactory(family=family, eff=eff, mesh=mesh, grlen=grlen, grht=grht)
+
+    assert str(subgear) == "{}-{}-{}-{} ({} ({}))".format(
+        eff, mesh, grlen, grht, family_label, abbrev
+    )
 
 
 @pytest.mark.django_db
@@ -522,6 +553,9 @@ def test_Gear2SubGear_str():
     family_label = "Offshore Index"
     abbrev = "osi"
     eff = "089"
+    mesh = 51
+    grlen = 50
+    grht = 1.8
 
     gr_label = "6' Trapnet"
     gr_code = "TP06"
@@ -529,12 +563,14 @@ def test_Gear2SubGear_str():
     gear = GearFactory(gr_label=gr_label, gr_code=gr_code)
 
     family = GearFamilyFactory(family=family_label, abbrev=abbrev)
-    subgear = SubGearFactory(family=family, eff=eff)
 
+    subgear = SubGearFactory(family=family, eff=eff, mesh=mesh, grlen=grlen, grht=grht)
     gear2subgear = Gear2SubGearFactory(gear=gear, subgear=subgear)
 
     gear_part = "{} ({})".format(gr_label, gr_code)
-    subgear_part = "{} ({} ({}))".format(eff, family_label, abbrev)
+    subgear_part = "{}-{}-{}-{} ({} ({}))".format(
+        eff, mesh, grlen, grht, family_label, abbrev
+    )
 
     assert str(gear2subgear) == gear_part + " - " + subgear_part
 

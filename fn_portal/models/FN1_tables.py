@@ -1,7 +1,7 @@
 from common.models import Grid5, Species
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Count
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
@@ -132,6 +132,7 @@ class FN121(models.Model):
         """
 
         catch_counts = self.catch_counts()
+
         return {
             "total": sum([x["catcnts"] for x in catch_counts]),
             "spc_cnt": len(catch_counts),
@@ -145,13 +146,12 @@ class FN121(models.Model):
         """
 
         catcnts = (
-            FN122.objects.filter(sample=self)
-            .annotate(species=F("catch__species__spc_nmco"))
-            .annotate(spc=F("catch__species__spc"))
+            FN122.objects.filter(sample=self, catch__catcnt__isnull=False)
+            .annotate(
+                species=F("catch__species__spc_nmco"), spc=F("catch__species__spc")
+            )
             .values("species", "spc")
-            .annotate(catcnts=Sum("catch__catcnt"))
-            .annotate(biocnts=Sum("catch__biocnt"))
-            .exclude(catcnts__isnull=True)
+            .annotate(biocnts=Sum("catch__biocnt"), catcnts=Sum("catch__catcnt"))
             .order_by("species")
         )
 
@@ -225,6 +225,7 @@ class FN123(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.fishnet_keys())
+        self.biocnt = self.fish.count()
         super(FN123, self).save(*args, **kwargs)
 
     def fishnet_keys(self):

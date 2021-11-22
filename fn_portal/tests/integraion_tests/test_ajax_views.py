@@ -21,7 +21,7 @@ import json
 
 from django.urls import reverse
 from fn_portal.models import FN123
-from ..fixtures import project, somefish
+from ..fixtures import project
 
 
 @pytest.mark.django_db
@@ -108,7 +108,7 @@ def test_sample_catch_counts_json(client, project):
 
 
 @pytest.mark.django_db
-def test_project_spc_biodata_json(client, project, somefish):
+def test_project_spc_biodata_json(client, project):
     """The project_species_biodata_json endpoint should return a json
     string that contains one item for each fish of the given speices
     caught in the given project. Each fish has both biological
@@ -126,9 +126,9 @@ def test_project_spc_biodata_json(client, project, somefish):
     assert response.status_code == 200
     data = json.loads(response.content)
 
-    # as long as our somefish fixture contains one species and one
+    # as our project has 6 walleye - three in eff1, 3 in effort 2:
     # project this will be true:
-    assert len(data) == len(somefish)
+    assert len(data) == 6
 
     # the keys of the resposne should be:
     expected_keys = set(

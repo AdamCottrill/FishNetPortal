@@ -61,6 +61,7 @@ def test_fn011_catch_counts(project):
     assert len(returned) == len(expected)
 
     for item in expected:
+
         assert item in returned
 
 
@@ -99,6 +100,11 @@ def test_fn121_catch_counts(project):
     returned = list(netset.catch_counts())
 
     assert len(returned) == len(expected)
+
+    from pprint import pprint
+
+    pprint(returned)
+    pprint(expected)
 
     for item in expected:
         assert item in returned

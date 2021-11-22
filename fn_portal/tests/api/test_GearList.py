@@ -154,7 +154,7 @@ def test_gear_process_type_in_response_filters(api_client, gear_list, filter, ex
     response = api_client.get(url, filter)
     assert response.status_code == status.HTTP_200_OK
 
-    data = {x.get("gear") for x in response.data}
+    data = {x.get("gr") for x in response.data}
     assert len(data) == len(expected)
     for x in expected:
         assert x in data
