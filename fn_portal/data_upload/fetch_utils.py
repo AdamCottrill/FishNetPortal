@@ -290,9 +290,8 @@ def get_fn125lamprey_stmt():
                 SPC,
                 GRP,
                 FISH,
-                FISH_LAM_ID,
+                LAMID,
                 XLAM,
-                LAMIJC,
                 LAMIJC_TYPE,
                 LAMIJC_SIZE,
                 COMMENT_LAM

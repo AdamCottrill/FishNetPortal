@@ -86,6 +86,7 @@ urlpatterns = [
     path("project_wizard/", project_wizard, name="project_wizard"),
     path("fn011/", FN011ListView.as_view(), name="project_list"),
     path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="project_detail"),
+    path("fn013/", FN013ListView.as_view(), name="fn013_list"),
     path("fn022/", FN022ListView.as_view(), name="season_list"),
     path("fn026/", FN026ListView.as_view(), name="space_list"),
     path("fn028/", FN028ListView.as_view(), name="mode_list"),

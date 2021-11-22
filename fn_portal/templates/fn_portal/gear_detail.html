@@ -11,7 +11,7 @@
 {% endblock %}
 
 
-<title>  {% block title  %} Gear Detail - {gear.gr_code}  {% endblock %}  </title>
+<title>  {% block title  %} Gear Detail - {{gear.gr_code}}  {% endblock %}  </title>
 
 {% block content  %}
 
@@ -38,6 +38,30 @@
 
                     {{ gear.gr_des_html|safe}}
 
+                    <div class="card mb-2">
+                        <div class="card-header">
+                            Gear Attributes:
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>GR</td>
+                                        <td>GRTP</td>
+                                        <td>EFFDST</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{gear.gr_code}}</td>
+                                        <td>{{gear.grtp}}</td>
+                                        <td>{{gear.effdst}}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                     {% if gear.grtp == "GL" %}
 
@@ -93,8 +117,6 @@
                 </div>
             </div>
 
-
-
         {% else %}
             <div class="alert alert-danger" role="alert">
                 "{{ gear_code }}" does not appear to be documented. Do you know anything about it?
@@ -119,10 +141,6 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="project-tab" data-bs-toggle="tab" data-bs-target="#project" type="button" role="tab" aria-controls="project" aria-selected="true">Projects</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="fn013-fn014-tab" data-bs-toggle="tab" data-bs-target="#fn013-fn014" type="button" role="tab" aria-controls="fn013-fn014" aria-selected="false">FN013/FN014</button>
-                </li>
-
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="process-type-tab" data-bs-toggle="tab" data-bs-target="#process-type" type="button" role="tab" aria-controls="process-type" aria-selected="false">Process Types</button>
                 </li>
@@ -156,68 +174,49 @@
                         {% endfor %}
                     </table>
                 </div>
-                <div class="tab-pane fade" id="fn013-fn014" role="tabpanel" aria-labelledby="fn013-fn014-tab">
 
-                    <div class="row my-4">
-                        <h4>Gear information from the FN013/FN014 tables:</h4>
-                    </div>
-
-                    {% if fn013_gear %}
-                        <ul>
-                            {% for gr in fn013_gear %}
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">     <strong> {{ gr.gr }} - {{ gr.gr_des }} (
-                                        <a href="{% url 'fn_portal:project_detail' gr.project.slug %}">{{ gr.project.prj_cd }})</a></strong></div>
-                                    <div class="panel-body">
-                                        {% if gr.gear_effs.values %}
-                                            <table class="table">
-
-                                                <thead>
-                                                    <tr>
-                                                        <td> eff </td>
-                                                        <td> mesh </td>
-                                                        <td> grlen </td>
-                                                        <td> grht  </td>
-                                                        <td> grwid </td>
-                                                        <td> grcol </td>
-                                                        <td> grmat </td>
-                                                        <td> gryarn </td>
-                                                        <td> grknot </td>
-                                                        <td> eff_des </td>
-                                                    </tr>
-                                                </thead>
-
-                                                {% for eff in gr.gear_effs.values %}
-                                                    <tr>
-                                                        <td> {{eff.eff |default_if_none:"" }} </td>
-                                                        <td> {{eff.mesh |default_if_none:"" }} </td>
-                                                        <td> {{eff.grlen |default_if_none:"" }} </td>
-                                                        <td> {{eff.grht  |default_if_none:"" }} </td>
-                                                        <td> {{eff.grwid |default_if_none:"" }} </td>
-                                                        <td> {{eff.get_grcol_display |default_if_none:"" }} </td>
-                                                        <td> {{eff.get_grmat_display |default_if_none:"" }} </td>
-                                                        <td> {{eff.get_gryarn_display |default_if_none:"" }} </td>
-                                                        <td> {{eff.get_grknot_display |default_if_none:"" }} </td>
-                                                        <td> {{eff.eff_des |default_if_none:"" }} </td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </table>
-                                        {% else %}
-                                            <p>No detailed effort information currently available.</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endfor %}
-
-                        </ul>
-                    {% else %}
-                        <p> '{{ gear_code }}' is missing from the FN013 table! </p>
-                    {% endif %}
-                </div>
                 <div class="tab-pane fade" id="process-type" role="tabpanel" aria-labelledby="process-type-tab">
                     <div class="row my-4">
-                        <h4>This tab will present the known process types associated with this gear.</h4>
+
+                        {% regroup gear.process_types.all by get_process_type_display as process_types %}
+                        <h4>There {{ process_types|pluralize:"is,are" }} {{ process_types|length }}  known process type{{ process_types|pluralize }} associated with this gear:</h4>
+                        <ul>
+                            {% for ptype in process_types %}
+
+                                <div class="card my-3">
+                                    <div class="card-header">
+                                        Process Type: {{ ptype.grouper }}
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <td>PROCESS_TYPE</td>
+                                                    <td>EFF</td>
+                                                    <td>EFFDST</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in ptype.list %}
+                                                    <tr>
+                                                        <td>{{item.process_type}}</td>
+                                                        <td>{{item.eff}}</td>
+                                                        <td>{{item.effdst}}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            {% endfor %}
+                        </ul>
+
+
+
+
+
                     </div>
                 </div>
             </div>

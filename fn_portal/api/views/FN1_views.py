@@ -1,7 +1,10 @@
 """Views for api endpoints."""
 
+from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
-from django.db.models import F
+from django.db.models import CharField, FilteredRelation, Q, F
+from django.db.models.functions import Concat
+
 from django.http import Http404
 from fn_portal.models import (
     FN011,
@@ -327,13 +330,27 @@ class BioSampleList(generics.ListAPIView):
             "catch__effort__sample__project",
         )
         .order_by("slug")
-        # .prefetch_related("fishtags", "lamprey_marks", "diet_data", "age_estimates")
+        .prefetch_related("age_estimates")
+        .annotate(
+            preferred_age=FilteredRelation(
+                "age_estimates", condition=Q(age_estimates__preferred=True)
+            )
+        )
         .annotate(
             prj_cd=F("catch__effort__sample__project__prj_cd"),
             sam=F("catch__effort__sample__sam"),
             eff=F("catch__effort__eff"),
             spc=F("catch__species__spc"),
             grp=F("catch__grp"),
+            age=F("preferred_age__agea"),
+            # lamijc=StringAgg(
+            #     Concat(
+            #         "lamprey_marks__lamijc_type",
+            #         "lamprey_marks__lamijc_size",
+            #         output_field=CharField(),
+            #     ),
+            #     "",
+            # ),
         )
         .values(
             "id",
@@ -355,10 +372,8 @@ class BioSampleList(generics.ListAPIView):
             "nodc",
             "agest",
             "fate",
-            # "fishtags",
-            # "lamprey_marks",
-            # "age_estimates",
-            # "diet_data",
+            "age",
+            # "lamijc",
             "comment5",
             "slug",
         )

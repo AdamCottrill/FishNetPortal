@@ -90,7 +90,7 @@ class Gear(models.Model):
     )
     gr_label = models.CharField("Gear Label", max_length=100)
     grtp = models.CharField("Gear Type", max_length=2, db_index=True)
-    gr_code = models.CharField("Gear Code", max_length=4, db_index=True, unique=True)
+    gr_code = models.CharField("Gear Code", max_length=5, db_index=True, unique=True)
     effcnt = models.IntegerField("Effort Count", blank=True, null=True)
     effdst = models.FloatField("Effort Distance(m)", blank=True, null=True)
     gr_des = models.TextField("Gear Description in markdown", blank=True, null=True)
@@ -201,7 +201,9 @@ class SubGear(models.Model):
         # ordering = ['eff',]
 
     def __str__(self):
-        return "{} ({})".format(self.eff, self.family)
+        return "{}-{}-{}-{} ({})".format(
+            self.eff, self.mesh, self.grlen, self.grht, self.family
+        )
 
 
 class Gear2SubGear(models.Model):

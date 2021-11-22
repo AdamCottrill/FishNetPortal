@@ -26,12 +26,10 @@ class FN125Lamprey(FNBase):
 
     """
 
-    xlam_regex = r"^0|\d{4}$"
-
     slug: str
     fish_id: int
     lamid: str
-    xlam: Optional[constr(regex=xlam_regex)]
+    xlam: Optional[constr(regex=r"^0|\d{4}$")]
     lamijc_type: Optional[LamIjcEnum]
     lamijc_size: Optional[conint(ge=10)]
     comment_lam: Optional[str]

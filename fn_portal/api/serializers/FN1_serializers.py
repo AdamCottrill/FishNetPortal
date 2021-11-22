@@ -272,6 +272,8 @@ class FN125ReadOnlySerializer(serializers.ModelSerializer):
     eff = serializers.CharField(read_only=True)
     spc = serializers.CharField(read_only=True)
     grp = serializers.CharField(read_only=True)
+    age = serializers.IntegerField(read_only=True)
+    # lamijc = serializers.CharField(read_only=True)
 
     # # child tables
     # lamprey_marks = FN125LampreyNestedSerializer(
@@ -303,6 +305,8 @@ class FN125ReadOnlySerializer(serializers.ModelSerializer):
             "nodc",
             "agest",
             "fate",
+            "age",
+            # "lamijc",
             # "fishtags",
             # "lamprey_marks",
             # "age_estimates",

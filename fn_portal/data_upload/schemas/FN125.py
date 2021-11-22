@@ -118,7 +118,7 @@ class FN125(FNBase):
     @classmethod
     def check_agest(cls, value, values):
         if value is not None:
-            allowed = "01234567ABCDEFGM"
+            allowed = "01234567ABCDEFGMT"
             unknown = [c for c in value if c not in allowed]
             if unknown:
                 msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"

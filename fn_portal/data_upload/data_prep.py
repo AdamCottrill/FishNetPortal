@@ -263,9 +263,9 @@ def fn125lamprey(data, fn125_cache):
         spc = item.pop("spc")
         grp = item.pop("grp")
         fish = item.pop("fish")
-        fish_lam_id = item.get("fish_lam_id")
+        lamid = item.get("lamid")
         parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{fish_lam_id}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{lamid}".lower()
         item["fish_id"] = fn125_cache.get(parent_key)
         item["slug"] = slug
         try:

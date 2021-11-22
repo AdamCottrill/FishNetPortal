@@ -51,6 +51,9 @@ class SubGearFactory(factory.django.DjangoModelFactory):
     family = factory.SubFactory(GearFamilyFactory)
     # gear = factory.SubFactory(GearFactory)
     eff = "051"
+    mesh = 51
+    grlen = 50
+    grht = 1.8
 
 
 class Gear2SubGearFactory(factory.django.DjangoModelFactory):

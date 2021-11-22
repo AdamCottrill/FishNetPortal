@@ -13,6 +13,7 @@ from .FN0_serializers import (
     FN011SimpleSerializer,
     FN011Serializer,
     FN013Serializer,
+    FN013ListSerializer,
     FN014Serializer,
     FN022Serializer,
     FN022ListSerializer,

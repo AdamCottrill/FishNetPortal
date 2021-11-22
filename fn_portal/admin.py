@@ -22,6 +22,7 @@ class Admin_FNProtocol(admin.ModelAdmin):
 class Admin_Gear(admin.ModelAdmin):
     """Admin class for Gears"""
 
+    search_fields = ["gr_code", "gr_label"]
     list_display = (
         "gr_label",
         "gr_code",
@@ -56,6 +57,8 @@ class Admin_GearFamily(admin.ModelAdmin):
 class Admin_SubGear(admin.ModelAdmin):
     """Admin class for SubGear"""
 
+    search_fields = ["mesh"]
+
     list_display = ("eff", "grlen", "grht", "gryarn", "family")
     list_filter = ("eff", "gryarn", "family")
 
@@ -64,8 +67,11 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
     """Admin class for Gear2SubGear table - allow us to edit the order
     of subgears"""
 
+    search_fields = ["gear__gr_code", "gear__gr_label", "subgear__mesh"]
+
     list_display = (
         "__str__",
+        "eff",
         "panel_sequence",
         "panel_count",
         "mesh_mm",
@@ -80,9 +86,20 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
         "gear__gr_code",
     )
 
+    def get_queryset(self, request):
+        return (
+            super(Admin_Gear2SubGear, self)
+            .get_queryset(request)
+            .select_related("gear", "subgear", "subgear__family", "gear__family")
+        )
+
     def depreciated(self, obj):
         """ """
         return obj.gear.depreciated
+
+    def eff(self, obj):
+        """ """
+        return obj.subgear.eff
 
     def mesh_mm(self, obj):
         """ """

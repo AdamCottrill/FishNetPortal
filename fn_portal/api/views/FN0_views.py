@@ -2,8 +2,9 @@
 
 
 from rest_framework import generics
+from django.db.models import F
 
-from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028
+from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028, Gear
 
 from ...filters import FN011Filter, FN022Filter, FN026Filter, FN028Filter
 
@@ -14,6 +15,7 @@ from ..serializers import (
     FNProtocolSerializer,
     FN011Serializer,
     FN013Serializer,
+    FN013ListSerializer,
     FN014Serializer,
     FN022Serializer,
     FN022ListSerializer,
@@ -135,18 +137,36 @@ class FN011DetailView(generics.RetrieveAPIView):
 
 
 class FN013ListView(generics.ListAPIView):
-    """an api end point to list all of the gears  (FN013) associated with a
-    project."""
+    """an api end point to list all of the gears (FN013) associated with a
+    project. - this is actually a list of FN028 objects annotated with
+    the associated project code and gear attributes to emulate the
+    FN013 data.  the filters wouldn't work when the Gear objects where
+    used.
 
-    serializer_class = FN013Serializer
+    """
 
-    def get_queryset(self):
-        """"""
+    serializer_class = FN013ListSerializer
+    filterset_class = FN028Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
 
-        prj_cd = self.kwargs.get("prj_cd")
-        return FN013.objects.filter(project__slug=prj_cd.lower()).select_related(
-            "project"
+    queryset = (
+        FN028.objects.all()
+        .select_related(
+            "project",
+            "gear",
         )
+        .annotate(
+            prj_cd=F("project__prj_cd"),
+            gr_code=F("gear__gr_code"),
+            effcnt=F("gear__effcnt"),
+            effdst=F("gear__effdst"),
+            gr_des=F("gear__gr_des"),
+        )
+        .values("prj_cd", "gr_code", "effcnt", "effdst", "gr_des")
+        .order_by("prj_cd", "gr_code")
+        .distinct("prj_cd", "gr_code")
+    )
 
 
 class FN013DetailView(generics.RetrieveUpdateDestroyAPIView):
