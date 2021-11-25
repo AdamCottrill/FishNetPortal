@@ -25,6 +25,7 @@ from .schemas import (
     FN121,
     FN122,
     FN123,
+    FN124,
     FN125,
     FN125Tags,
     FN125Lamprey,
@@ -196,6 +197,30 @@ def fn123(data, fn122_cache, species_cache):
 
         try:
             tmp = FN123(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+def fn124(data, fn123_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        eff = item.pop("eff")
+        spc = item.pop("spc")
+        grp = item.pop("grp")
+        siz = item.get("siz")
+        parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{siz}".lower()
+        item["catch_id"] = fn123_cache.get(parent_key)
+        item["slug"] = slug
+        try:
+            tmp = FN124(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])

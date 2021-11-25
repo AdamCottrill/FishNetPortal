@@ -623,10 +623,19 @@ def project_data_upload(request):
                 else:
                     prj_cds = upload.get("prj_cds")
 
-                    msg = f"Data for {','.join(prj_cds)} was successfully uploaded!"
+                    msg = f"Data for {', '.join(prj_cds)} was successfully uploaded!"
                     messages.success(request, message=msg)
-                    # TODO - consider passing prjcd as url query parameter to filter to those projects.
-                    return HttpResponseRedirect(reverse("fn_portal:project_list"))
+
+                    if len(prj_cds) == 1:
+                        slug = prj_cds[0].lower()
+                        return HttpResponseRedirect(
+                            reverse("fn_portal:project_detail", kwargs={"slug": slug})
+                        )
+                    else:
+                        return redirect(
+                            reverse("fn_portal:project_list")
+                            + f"?prj_cd={','.join(prj_cds)}"
+                        )
 
             except Exception as e:
                 messages.error(request, "Unable to upload file. " + repr(e))

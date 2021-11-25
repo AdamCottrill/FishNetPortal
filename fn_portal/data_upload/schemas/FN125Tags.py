@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Optional
 
 from pydantic import constr, validator, PositiveInt
@@ -9,6 +9,23 @@ from .utils import string_to_int
 class TagStatEnum(str, Enum):
     on_capture = "C"
     tag_applied = "A"
+
+
+class XTaginckdEnum(IntEnum):
+
+    no_tag = 0
+    decoded = 1
+    tag_lost = 2
+    tag_unreadable = 3
+    unknown = 9
+
+
+# tag id must be populated unless tagdoc is like 6*
+
+# if tagdoc is like 6*
+# then xtaginckd must be one of 0, 1, 2, 3, or 9
+# if tagdoc is like 6* and tagid is null  xtaginchk must be one of 0,  2, 3, or 9
+# if tagdoc is like 6* and tagid is no null  xtaginchk must be  1
 
 
 class FN125Tags(FNBase):

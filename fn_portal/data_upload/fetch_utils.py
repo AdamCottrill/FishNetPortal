@@ -223,8 +223,8 @@ def get_fn124_stmt():
                 EFF,
                 SPC,
                 GRP,
-                SIZE,
-                SIZECNT
+                SIZ,
+                SIZCNT
          from FN124"""
     return stmt
 

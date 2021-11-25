@@ -152,9 +152,13 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn123_cache = {x.slug: (i + 1) for i, x in enumerate(fn123["data"])}
         fn123_inverse = {v: k for k, v in fn123_cache.items()}
 
-        # # stmt = fetch.get_fn124_stmt()
-        # # fn124 = fetch.execute_select(src_con, stmt)
-        # # print(f"found {len(fn124)} fn124 records.")
+        logger.debug("Fetching FN124 records")
+        stmt = fetch.get_fn124_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn124 = prep.fn124(rs, fn123_cache)
+        if fn124.get("errors"):
+            return {"status": "error", "errors": fn124.get("errors")}
+
         logger.debug("Fetching FN125 records")
         stmt = fetch.get_fn125_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -324,6 +328,19 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             Fnp.FN123.objects.bulk_create(items)
             filters = {"effort__sample__project__prj_cd__in": PRJ_CDs}
             fn123_map = get_id_cache(Fnp.FN123, filters=filters)
+
+            # =========================
+            #        FN124
+
+            logger.debug("Inserting FN124 records")
+            items = []
+            for item in fn124["data"]:
+                tmp = item.dict()
+                catch_id = tmp["catch_id"]
+                tmp["catch_id"] = fn123_map[fn123_inverse[catch_id]]
+                obj = Fnp.FN124(**tmp)
+                items.append(obj)
+            Fnp.FN124.objects.bulk_create(items)
 
             # =========================
             #        FN125
