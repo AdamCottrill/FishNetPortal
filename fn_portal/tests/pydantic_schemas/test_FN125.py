@@ -275,3 +275,23 @@ def test_invalid_data(data, fld, value, msg):
         FN125(**data)
 
     assert msg in str(excinfo.value)
+
+
+def test_rwt_between_0_and_1(data):
+    """The original validator required rwt to be a constrained integer, >
+    0, which meant that very small larval fish could not be captured. 0.25
+    grams was converted to 0 (invalid) or 1 valid but wrong.
+
+    This test set flen and tlen to null so that they don't tip the condition factor errors.
+
+    Arguments:
+    - `data`:
+
+    """
+    rwt = 0.25
+    data["rwt"] = rwt
+    data["flen"] = None
+    data["tlen"] = None
+    item = FN125(**data)
+
+    assert item.rwt == rwt

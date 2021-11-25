@@ -68,7 +68,7 @@ class FN121(FNBase):
 
     sidep: Optional[PositiveFloat] = None
     # grdep: Union[None, PositiveFloat, EmptyStrToNone]
-    grdepmin: Optional[PositiveFloat] = None
+    grdepmin: Optional[confloat(ge=0)] = None
     grdepmax: Optional[PositiveFloat] = None
 
     secchi: Optional[PositiveFloat] = None
@@ -127,5 +127,15 @@ class FN121(FNBase):
             if effdt0 > v:
                 raise ValueError(
                     f"Lift date (effdt1={v}) occurs before set date(effdt0={effdt0})."
+                )
+        return v
+
+    @validator("grdepmax")
+    def grdepmin_lte_grdepmax(cls, v, values):
+        grdepmin = values.get("grdepmin")
+        if v and grdepmin:
+            if v < grdepmin:
+                raise ValueError(
+                    f"grdepmax ({v} m) must be greater than or equal to grdepmin ({grdepmin} m)."
                 )
         return v

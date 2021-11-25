@@ -152,6 +152,29 @@ def test_optional_fields(data, fld):
     assert item.project_id == data["project_id"]
 
 
+valid_fields = [
+    # gear depth can be 0, or some small number 0.1
+    ("grdepmin", 0),
+    ("grdepmin", 0.1),
+]
+
+
+@pytest.mark.parametrize("fld,value", valid_fields)
+def test_valid_data(data, fld, value):
+    """THis test verifies that alternive values can be provide that will
+    still be valid.  This test will be used to capture values taht have
+    been submitted in real datasets.
+
+    Arguments:
+    - `data`:
+
+    """
+    data[fld] = value
+    item = FN121(**data)
+    item_dict = item.dict()
+    assert item_dict[fld] == value
+
+
 mode_list = [
     # field, input, output
     ("effdur", "", None),
@@ -247,7 +270,12 @@ error_list = [
     (
         "grdepmin",
         -1.0,
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0",
+    ),
+    (
+        "grdepmax",
+        1.0,
+        "grdepmax (1.0 m) must be greater than or equal to grdepmin (8.2 m).",
     ),
     (
         "grdepmax",
