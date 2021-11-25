@@ -9,6 +9,7 @@ from .FN028_filters import FN028Filter
 from .FN121_filters import FN121Filter
 from .FN122_filters import FN122Filter
 from .FN123_filters import FN123Filter
+from .FN124_filters import FN124Filter
 from .FN125_filters import FN125Filter
 from .FN125Lamprey_filters import FN125LampreyFilter
 from .FN125Tag_filters import FN125TagFilter

@@ -10,6 +10,9 @@ class FN121SubFilter(django_filters.FilterSet):
 
     active = django_filters.BooleanFilter(field_name="effdt1", lookup_expr="isnull")
 
+    sam = ValueInFilter(field_name="sam")
+    sam__not = ValueInFilter(field_name="sam", exclude=True)
+
     sidep__gte = django_filters.NumberFilter(field_name="sidep", lookup_expr="gte")
     sidep__lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
 

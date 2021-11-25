@@ -28,6 +28,7 @@ from ...filters import (
     FN121Filter,
     FN122Filter,
     FN123Filter,
+    FN124Filter,
     FN125Filter,
     FN125LampreyFilter,
     FN125TagFilter,
@@ -291,7 +292,7 @@ class LengthTallyList(generics.ListAPIView):
 
     serializer_class = FN124Serializer
     pagination_class = LargeResultsSetPagination
-    # filterset_class = FN124Filter
+    filterset_class = FN124Filter
 
     queryset = (
         FN124.objects.select_related(

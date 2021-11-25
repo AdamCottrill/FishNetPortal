@@ -136,6 +136,9 @@ class FN122Filter(FN122InProjectFilter):
 
     # FN121 Attributes
 
+    sam = ValueInFilter(field_name="sample__sam")
+    sam__not = ValueInFilter(field_name="sample__sam", exclude=True)
+
     sidep__gte = django_filters.NumberFilter(
         field_name="sample__sidep", lookup_expr="gte"
     )

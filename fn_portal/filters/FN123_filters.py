@@ -135,6 +135,9 @@ class FN123Filter(FN123SubFilter):
 
     # FN121 ATTRIBUTES
 
+    sam = ValueInFilter(field_name="effort__sample__sam")
+    sam__not = ValueInFilter(field_name="effort__sample__sam", exclude=True)
+
     sidep__gte = django_filters.NumberFilter(
         field_name="effort__sample__sidep", lookup_expr="gte"
     )

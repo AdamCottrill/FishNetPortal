@@ -121,6 +121,11 @@ class FishAttrFilters(django_filters.FilterSet):
 
     # FN121 (NET SET) ATTRIBUTES:
 
+    sam = ValueInFilter(field_name="fish__catch__effort__sample__sam")
+    sam__not = ValueInFilter(
+        field_name="fish__catch__effort__sample__sam", exclude=True
+    )
+
     sidep__gte = django_filters.NumberFilter(
         field_name="fish__catch__effort__sample__sidep", lookup_expr="gte"
     )

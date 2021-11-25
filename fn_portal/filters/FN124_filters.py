@@ -1,96 +1,34 @@
 import django_filters
 
-from ..models import FN125, FN125_Lamprey, FN125Tag
+from ..models import FN124
 from .common_filters import NumberInFilter, ValueInFilter
 
 
-class FN125SubFilter(django_filters.FilterSet):
-    """A fitlerset that allows us to select subsets of bio-sample objects by
-    by attributes of the biological samples (fn125 data only)"""
+class FN124SubFilter(django_filters.FilterSet):
+    """A fitlerset that allows us to select subsets of length tally data
+    based on attributes of the lenght tally table"""
 
-    tlen = django_filters.NumberFilter(field_name="tlen")  # , lookup_expr="exact")
-    tlen__gte = django_filters.NumberFilter(field_name="tlen", lookup_expr="gte")
-    tlen__lte = django_filters.NumberFilter(field_name="tlen", lookup_expr="lte")
-    tlen__gt = django_filters.NumberFilter(field_name="tlen", lookup_expr="gt")
-    tlen__lt = django_filters.NumberFilter(field_name="tlen", lookup_expr="lt")
+    siz = django_filters.NumberFilter(field_name="siz")  # , lookup_expr="exact")
+    siz__gte = django_filters.NumberFilter(field_name="siz", lookup_expr="gte")
+    siz__lte = django_filters.NumberFilter(field_name="siz", lookup_expr="lte")
+    siz__gt = django_filters.NumberFilter(field_name="siz", lookup_expr="gt")
+    siz__lt = django_filters.NumberFilter(field_name="siz", lookup_expr="lt")
 
-    flen = django_filters.NumberFilter(field_name="flen")
-    flen__gte = django_filters.NumberFilter(field_name="flen", lookup_expr="gte")
-    flen__lte = django_filters.NumberFilter(field_name="flen", lookup_expr="lte")
-    flen__gt = django_filters.NumberFilter(field_name="flen", lookup_expr="gt")
-    flen__lt = django_filters.NumberFilter(field_name="flen", lookup_expr="lt")
-
-    rwt = django_filters.NumberFilter(field_name="rwt")
-    rwt__null = django_filters.BooleanFilter(field_name="rwt", lookup_expr="isnull")
-    rwt__gte = django_filters.NumberFilter(field_name="rwt", lookup_expr="gte")
-    rwt__lte = django_filters.NumberFilter(field_name="rwt", lookup_expr="lte")
-    rwt__gt = django_filters.NumberFilter(field_name="rwt", lookup_expr="gt")
-    rwt__lt = django_filters.NumberFilter(field_name="rwt", lookup_expr="lt")
-
-    mat = ValueInFilter(field_name="mat")
-    mat__not = ValueInFilter(field_name="mat", exclude=True)
-    mat__null = django_filters.BooleanFilter(field_name="mat", lookup_expr="isnull")
-
-    gon = ValueInFilter(field_name="gon")
-    gon__not = ValueInFilter(field_name="gon", exclude=True)
-    gon__null = django_filters.BooleanFilter(field_name="gon", lookup_expr="isnull")
-
-    sex = ValueInFilter(field_name="sex")
-    sex__not = ValueInFilter(field_name="sex", exclude=True)
-    sex__null = django_filters.BooleanFilter(field_name="sex", lookup_expr="isnull")
-
-    clipc = ValueInFilter(field_name="clipc")
-    clipc__not = ValueInFilter(field_name="clipc", exclude=True)
-    clipc__null = django_filters.BooleanFilter(field_name="clipc", lookup_expr="isnull")
-    clipc__like = django_filters.CharFilter(field_name="clipc", lookup_expr="icontains")
-    clipc__not_like = django_filters.CharFilter(
-        field_name="clipc", lookup_expr="icontains", exclude=True
-    )
-
-    clipa = ValueInFilter(field_name="clipa")
-    clipa__not = ValueInFilter(field_name="clipa", exclude=True)
-    clipa__null = django_filters.BooleanFilter(field_name="clipa", lookup_expr="isnull")
-    clipa__like = django_filters.CharFilter(field_name="clipa", lookup_expr="icontains")
-    clipa__not_like = django_filters.CharFilter(
-        field_name="clipa", lookup_expr="icontains", exclude=True
-    )
-
-    nodc = ValueInFilter(field_name="nodc")
-    nodc__not = ValueInFilter(field_name="nodc", exclude=True)
-    nodc__null = django_filters.BooleanFilter(field_name="nodc", lookup_expr="isnull")
-    nodc__like = django_filters.CharFilter(field_name="nodc", lookup_expr="icontains")
-    nodc__not_like = django_filters.CharFilter(
-        field_name="nodc", lookup_expr="icontains", exclude=True
-    )
-
-    noda = ValueInFilter(field_name="noda")
-    noda__not = ValueInFilter(field_name="noda", exclude=True)
-    noda__null = django_filters.BooleanFilter(field_name="noda", lookup_expr="isnull")
-    noda__like = django_filters.CharFilter(field_name="noda", lookup_expr="icontains")
-    noda__not_like = django_filters.CharFilter(
-        field_name="noda", lookup_expr="icontains", exclude=True
-    )
-
-    # girth, agest, fate,
-    # these are child tables and might be harder to filter on: age_estimates, lamprey, tags, diet_data
+    sizcnt = django_filters.NumberFilter(field_name="sizcnt")
+    sizcnt__gte = django_filters.NumberFilter(field_name="sizcnt", lookup_expr="gte")
+    sizcnt__lte = django_filters.NumberFilter(field_name="sizcnt", lookup_expr="lte")
+    sizcnt__gt = django_filters.NumberFilter(field_name="sizcnt", lookup_expr="gt")
+    sizcnt__lt = django_filters.NumberFilter(field_name="sizcnt", lookup_expr="lt")
 
     class Meta:
-        model = FN125
+        model = FN124
         fields = [
-            "sex",
-            "mat",
-            "gon",
-            "tlen",
-            "flen",
-            "rwt",
-            "clipc",
-            "clipa",
-            "nodc",
-            "noda",
+            "siz",
+            "sizcnt",
         ]
 
 
-class FN125Filter(FN125SubFilter):
+class FN124Filter(FN124SubFilter):
     """A fitlerset that allows us to select subsets of bio-sample objects
     by attributes of the biological data as well as the parent tables:
     net set, effort, and catch attributes.
