@@ -1,9 +1,9 @@
 import django_filters
 
-from .common_filters import NumberInFilter, ValueInFilter
+from .common_filters import NumberInFilter, ValueInFilter, GeomFilter, GeoFilterSet
 
 
-class FishAttrFilters(django_filters.FilterSet):
+class FishAttrFilters(GeoFilterSet):
     """A filter set that contains filters that are common to all the FN125 child
     tables - FN125Lamprey, FN125Tag, Fn126, and FN127.  Filtersets for those class
     inherit from this one, and add their own models and model specific filters.
@@ -11,6 +11,14 @@ class FishAttrFilters(django_filters.FilterSet):
     Filters in this class include filters from FN011 to FN125 Tables.
 
     """
+
+    roi = GeomFilter(
+        field_name="fish__catch__effort__sample__geom__within", method="filter_roi"
+    )
+
+    buffered_point = GeomFilter(
+        field_name="fish__catch__effort__sample__geom__within", method="filter_point"
+    )
 
     # FN011 (PROJECT) ATTRIBUTES
 

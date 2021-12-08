@@ -1,13 +1,19 @@
 import django_filters
 
-from .common_filters import ValueInFilter, NumberInFilter
+from .common_filters import ValueInFilter, NumberInFilter, GeoFilterSet, GeomFilter
 
 from ..models import FN123
 
 
-class FN123SubFilter(django_filters.FilterSet):
+class FN123SubFilter(GeoFilterSet):
     """A fitlerset that allows us to select subsets of catch count objects by
     by attributes of the catch counts (fn123 data only)"""
+
+    roi = GeomFilter(field_name="effort__sample__geom__within", method="filter_roi")
+
+    buffered_point = GeomFilter(
+        field_name="effort__sample__geom__within", method="filter_point"
+    )
 
     grp = ValueInFilter(field_name="grp")
     grp__not = ValueInFilter(field_name="grp", exclude=True)

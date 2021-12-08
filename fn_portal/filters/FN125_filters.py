@@ -1,12 +1,20 @@
 import django_filters
 
 from ..models import FN125, FN125_Lamprey, FN125Tag
-from .common_filters import NumberInFilter, ValueInFilter
+from .common_filters import NumberInFilter, ValueInFilter, GeomFilter, GeoFilterSet
 
 
-class FN125SubFilter(django_filters.FilterSet):
+class FN125SubFilter(GeoFilterSet):
     """A fitlerset that allows us to select subsets of bio-sample objects by
     by attributes of the biological samples (fn125 data only)"""
+
+    roi = GeomFilter(
+        field_name="catch__effort__sample__geom__within", method="filter_roi"
+    )
+
+    buffered_point = GeomFilter(
+        field_name="catch__effort__sample__geom__within", method="filter_point"
+    )
 
     tlen = django_filters.NumberFilter(field_name="tlen")  # , lookup_expr="exact")
     tlen__gte = django_filters.NumberFilter(field_name="tlen", lookup_expr="gte")

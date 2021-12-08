@@ -1,13 +1,19 @@
 import django_filters
 
-from .common_filters import ValueInFilter, NumberInFilter
+from .common_filters import ValueInFilter, NumberInFilter, GeoFilterSet, GeomFilter
 
 from ..models import FN122
 
 
-class FN122InProjectFilter(django_filters.FilterSet):
+class FN122InProjectFilter(GeoFilterSet):
     """A fitlerset that allows us to select subsets of catch count objects by
     by attributes of the catch counts (fn122 data only)"""
+
+    roi = GeomFilter(field_name="sample__geom__within", method="filter_roi")
+
+    buffered_point = GeomFilter(
+        field_name="sample__geom__within", method="filter_point"
+    )
 
     # Effort Attributes
     # we could add gear depth here if it was populated more regularly.

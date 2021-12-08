@@ -1,7 +1,9 @@
 from common.models import Grid5, Species
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.db.models import F, Sum, Count
+
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
@@ -74,9 +76,12 @@ class FN121(models.Model):
     dd_lat1 = models.FloatField("End Latitude (dd)", blank=True, null=True)
     dd_lon1 = models.FloatField("End Longitude (dd)", blank=True, null=True)
 
-    # TODO:
-    # geom = models.PointField(srid=4326,
-    #                         help_text='Represented as (longitude, latitude)')
+    geom = models.PointField(
+        srid=4326,
+        help_text="Represented as (longitude, latitude)",
+        spatial_index=True,
+        default=Point(-81, 45),
+    )
 
     crew = models.CharField(max_length=100, blank=True, null=True)
     comment1 = models.CharField(max_length=500, blank=True, null=True)
@@ -110,6 +115,9 @@ class FN121(models.Model):
             except FN022.DoesNotExist:
                 msg = "The sample dates for this effort do not fall within a season defined for this project."
                 raise ValueError(msg)
+
+        if self.dd_lat and self.dd_lon:
+            self.geom = Point(self.dd_lon, self.dd_lat)
 
         self.slug = slugify(self.fishnet_keys())
 

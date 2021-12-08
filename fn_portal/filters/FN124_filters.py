@@ -1,12 +1,20 @@
 import django_filters
 
 from ..models import FN124
-from .common_filters import NumberInFilter, ValueInFilter
+from .common_filters import NumberInFilter, ValueInFilter, GeomFilter, GeoFilterSet
 
 
-class FN124SubFilter(django_filters.FilterSet):
+class FN124SubFilter(GeoFilterSet):
     """A fitlerset that allows us to select subsets of length tally data
     based on attributes of the lenght tally table"""
+
+    roi = GeomFilter(
+        field_name="catch__effort__sample__geom__within", method="filter_roi"
+    )
+
+    buffered_point = GeomFilter(
+        field_name="catch__effort__sample__geom__within", method="filter_point"
+    )
 
     siz = django_filters.NumberFilter(field_name="siz")  # , lookup_expr="exact")
     siz__gte = django_filters.NumberFilter(field_name="siz", lookup_expr="gte")

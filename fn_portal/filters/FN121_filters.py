@@ -1,12 +1,16 @@
 import django_filters
 
 from ..models import FN121
-from .common_filters import NumberInFilter, ValueInFilter
+from .common_filters import NumberInFilter, ValueInFilter, GeoFilterSet, GeomFilter
 
 
-class FN121SubFilter(django_filters.FilterSet):
+class FN121SubFilter(GeoFilterSet):
     """A fitlerset that allows us to select subsets of net set objects by
     net set attributes."""
+
+    roi = GeomFilter(field_name="geom__within", method="filter_roi")
+
+    buffered_point = GeomFilter(field_name="geom__within", method="filter_point")
 
     active = django_filters.BooleanFilter(field_name="effdt1", lookup_expr="isnull")
 
