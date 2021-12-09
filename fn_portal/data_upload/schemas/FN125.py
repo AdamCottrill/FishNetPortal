@@ -1,6 +1,6 @@
 from typing import Optional
 from enum import Enum, IntEnum
-from pydantic import conint, confloat, validator
+from pydantic import conint, confloat, validator, constr
 
 from .FNBase import FNBase, prj_cd_regex
 from .utils import string_to_int, string_to_float
@@ -18,27 +18,14 @@ class SexEnum(IntEnum):
     unknown = 9
 
 
-class GonEnum(IntEnum):
-
-    ext_prespawning = 2
-    ext_spawning = 3
-    ext_spent = 4
-    ext_unknown = 9
-    int_undeveloped = 10
-    int_prespawning = 20
-    int_prespawn_dormant = 21
-    int_prespawn_developing = 22
-    int_prespawn_developed = 23
-    int_spawning = 30
-    int_spent = 40
-    int_abnormal = 50
-    int_unknown = 99
-
-
 class MatEnum(IntEnum):
     immature = 1
     mature = 2
     unknown = 9
+
+
+# see the data dictionary for valid goncodes
+gon_regex = r"(^[1-4|9]$)|(^([1-5]0)|(2[1-3])|(99))[2-8A-E]?$"
 
 
 class FN125(FNBase):
@@ -46,8 +33,6 @@ class FN125(FNBase):
 
     most of the fieds in a biological sample are optional, but if they
     are provided, they are subject to constraints.
-
-
 
     """
 
@@ -60,7 +45,7 @@ class FN125(FNBase):
     girth: Optional[conint(gt=0)] = None
     sex: Optional[SexEnum]
     mat: Optional[MatEnum]
-    gon: Optional[GonEnum]
+    gon: Optional[constr(regex=gon_regex)]
     clipc: Optional[str]
     clipa: Optional[str]
     nodc: Optional[str]

@@ -295,3 +295,128 @@ def test_rwt_between_0_and_1(data):
     item = FN125(**data)
 
     assert item.rwt == rwt
+
+
+valid_gon_codes = [
+    "1",
+    "10",
+    "2",
+    "20",
+    "202",
+    "203",
+    "204",
+    "205",
+    "208",
+    "20A",
+    "20B",
+    "21",
+    "212",
+    "213",
+    "214",
+    "215",
+    "216",
+    "217",
+    "218",
+    "21A",
+    "21B",
+    "21D",
+    "21E",
+    "22",
+    "222",
+    "223",
+    "224",
+    "225",
+    "226",
+    "227",
+    "228",
+    "22A",
+    "22B",
+    "22C",
+    "22E",
+    "23",
+    "233",
+    "235",
+    "236",
+    "23A",
+    "23B",
+    "3",
+    "30",
+    "305",
+    "4",
+    "40",
+    "402",
+    "403",
+    "405",
+    "406",
+    "407",
+    "40A",
+    "40B",
+    "40C",
+    "40E",
+    "9",
+    "99",
+    "99C",
+]
+
+
+@pytest.mark.parametrize("value", valid_gon_codes)
+def test_valid_gonad_codes(data, value):
+    """This test verified that valid gonad codes from real samples are
+    recognized as valid by our gonad code regex.
+
+    Arguments:
+    - `data`:
+
+    """
+
+    data["gon"] = value
+    item = FN125(**data)
+    item_dict = item.dict()
+    assert item_dict["gon"] == value
+
+
+invalid_gon_codes = [
+    "91",
+    "100",
+    "191",
+    "2 0",
+    "200",
+    "219",
+    "21X",
+    "20F",
+    "21F",
+    "22.",
+    "220",
+    "221",
+    "22F",
+    "22X",
+    "244",
+    "30F",
+    "40F",
+    "40G",
+    "99F",
+    "A",
+    "B",
+    "C",
+    "E",
+    "F",
+]
+
+
+@pytest.mark.parametrize("code", invalid_gon_codes)
+def test_invalid_data(data, code):
+    """This test verifies that actual invalid gonad codes from our
+    database are trapped by the gonad code regular expression.
+
+    Arguments:
+    - `data`:
+
+    """
+
+    data["gon"] = code
+    with pytest.raises(ValidationError) as excinfo:
+        FN125(**data)
+
+    msg = "string does not match regex"
+
+    assert msg in str(excinfo.value)
