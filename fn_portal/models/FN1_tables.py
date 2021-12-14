@@ -117,7 +117,7 @@ class FN121(models.Model):
                 raise ValueError(msg)
 
         if self.dd_lat and self.dd_lon:
-            self.geom = Point(self.dd_lon, self.dd_lat)
+            self.geom = Point(self.dd_lon, self.dd_lat, srid="4326")
 
         self.slug = slugify(self.fishnet_keys())
 

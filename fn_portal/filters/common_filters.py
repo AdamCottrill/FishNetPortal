@@ -1,10 +1,28 @@
 from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import GEOSGeometry
+from django.db import connection
 import django_filters
 
 from common.models import Species
 
 User = get_user_model()
+
+
+def point_to_polygon(pt, radius_m):
+    """a helper function to connect directly to postgis trasform, buffer
+    and transform back our point.  The build in django functions do
+    not currenly return a correctly transormed polygon (way too tall).
+
+    """
+    with connection.cursor() as cursor:
+        sql = (
+            """select st_transform(st_buffer(st_transform(
+        st_geomfromtext(%s, 4326), 26916),%s), 4326) as poly;"""
+            ""
+        )
+        cursor.execute(sql, [pt, radius_m])
+        row = cursor.fetchone()
+    return row
 
 
 class ValueInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
@@ -51,8 +69,6 @@ class GeoFilterSet(django_filters.FilterSet):
 
         """
 
-        utm_srid = 26917
-
         if not value:
             return queryset
         try:
@@ -62,13 +78,12 @@ class GeoFilterSet(django_filters.FilterSet):
             else:
                 geom = value
                 radius = 5000
+            # get the buffered point (now a polygon from postgis) NOTE
+            # - this a work-around for transform-buffer-backtransform
+            # bug in django library
+            polygon = point_to_polygon(geom, radius)
+            roi = GEOSGeometry(polygon[0], srid=4326)
 
-            print("radius={}".format(radius))
-
-            pt = GEOSGeometry(geom, srid=4326)
-            pt.transform(utm_srid)
-            roi = pt.buffer(radius)
-            roi.transform(4326)
             geofilter = {}
             geofilter[name] = roi
 
