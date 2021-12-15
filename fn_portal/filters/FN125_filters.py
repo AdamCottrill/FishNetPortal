@@ -16,6 +16,13 @@ class FN125SubFilter(GeoFilterSet):
         field_name="catch__effort__sample__geom__within", method="filter_point"
     )
 
+    management_unit__in = ValueInFilter(
+        field_name="catch__effort__sample__management_units__slug"
+    )
+    management_unit__not__in = ValueInFilter(
+        field_name="catch__effort__sample__management_units__slug", exclude=True
+    )
+
     tlen = django_filters.NumberFilter(field_name="tlen")  # , lookup_expr="exact")
     tlen__gte = django_filters.NumberFilter(field_name="tlen", lookup_expr="gte")
     tlen__lte = django_filters.NumberFilter(field_name="tlen", lookup_expr="lte")

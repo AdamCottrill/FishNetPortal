@@ -2,10 +2,11 @@
 
 from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
-from django.db.models import CharField, FilteredRelation, Q, F
+from django.db.models import CharField, FilteredRelation, Q, F, Prefetch
 from django.db.models.functions import Concat
 
 from django.http import Http404
+from common.models import ManagementUnit
 from fn_portal.models import (
     FN011,
     FN121,
@@ -44,6 +45,7 @@ from ..serializers import (
     FN028Serializer,
     FN028SimpleSerializer,
     FN121Serializer,
+    FN121ReadOnlySerializer,
     FN121PostSerializer,
     FN122Serializer,
     FN123Serializer,
@@ -189,30 +191,45 @@ class NetSetList(generics.ListAPIView):
 
     """
 
-    serializer_class = FN121Serializer
+    serializer_class = FN121ReadOnlySerializer
     pagination_class = LargeResultsSetPagination
     filterset_class = FN121Filter
 
-    queryset = (
-        (
-            FN121.objects.select_related(
-                "project", "grid5", "grid5__lake", "ssn", "space", "mode"
-            ).defer(
-                "grid5__geom",
-                "grid5__envelope",
-                "grid5__centroid",
-                "grid5__lake__geom",
-                "grid5__lake__geom_ontario",
-                "grid5__lake__envelope",
-                "grid5__lake__envelope_ontario",
-                "grid5__lake__centroid",
-                "grid5__lake__centroid_ontario",
+    def get_queryset(self):
+
+        mu_type = self.request.query_params.get("mu_type")
+
+        if mu_type:
+            mus = ManagementUnit.objects.filter(mu_type=mu_type).defer("geom")
+        else:
+            mus = ManagementUnit.objects.filter(primary=True).defer("geom")
+
+        prefetched = Prefetch("management_units", queryset=mus, to_attr="mu")
+
+        queryset = (
+            (
+                FN121.objects.select_related(
+                    "project", "grid5", "grid5__lake", "ssn", "space", "mode"
+                )
+                .prefetch_related(prefetched)
+                .defer(
+                    "grid5__geom",
+                    "grid5__envelope",
+                    "grid5__centroid",
+                    "grid5__lake__geom",
+                    "grid5__lake__geom_ontario",
+                    "grid5__lake__envelope",
+                    "grid5__lake__envelope_ontario",
+                    "grid5__lake__centroid",
+                    "grid5__lake__centroid_ontario",
+                )
             )
+            .order_by("slug")
+            .all()
+            .distinct()
         )
-        .order_by("slug")
-        .all()
-        .distinct()
-    )
+
+        return queryset
 
 
 class EffortList(generics.ListAPIView):

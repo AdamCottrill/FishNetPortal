@@ -15,6 +15,11 @@ class FN122InProjectFilter(GeoFilterSet):
         field_name="sample__geom__within", method="filter_point"
     )
 
+    management_unit__in = ValueInFilter(field_name="sample__management_units__slug")
+    management_unit__not__in = ValueInFilter(
+        field_name="sample__management_units__slug", exclude=True
+    )
+
     # Effort Attributes
     # we could add gear depth here if it was populated more regularly.
     eff = ValueInFilter(field_name="eff")

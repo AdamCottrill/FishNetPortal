@@ -16,6 +16,13 @@ class FN124SubFilter(GeoFilterSet):
         field_name="catch__effort__sample__geom__within", method="filter_point"
     )
 
+    management_unit__in = ValueInFilter(
+        field_name="catch__effort__sample__management_units__slug"
+    )
+    management_unit__not__in = ValueInFilter(
+        field_name="catch__effort__sample__management_units__slug", exclude=True
+    )
+
     siz = django_filters.NumberFilter(field_name="siz")  # , lookup_expr="exact")
     siz__gte = django_filters.NumberFilter(field_name="siz", lookup_expr="gte")
     siz__lte = django_filters.NumberFilter(field_name="siz", lookup_expr="lte")

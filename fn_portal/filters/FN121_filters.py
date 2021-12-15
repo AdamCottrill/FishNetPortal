@@ -12,6 +12,11 @@ class FN121SubFilter(GeoFilterSet):
 
     buffered_point = GeomFilter(field_name="geom__within", method="filter_point")
 
+    management_unit__in = ValueInFilter(field_name="management_units__slug")
+    management_unit__not__in = ValueInFilter(
+        field_name="management_units__slug", exclude=True
+    )
+
     active = django_filters.BooleanFilter(field_name="effdt1", lookup_expr="isnull")
 
     sam = ValueInFilter(field_name="sam")

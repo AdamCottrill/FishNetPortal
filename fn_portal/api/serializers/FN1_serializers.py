@@ -68,6 +68,24 @@ class FN121Serializer(serializers.ModelSerializer):
         read_only_fields = ("slug", "id")
 
 
+class FN121ReadOnlySerializer(FN121Serializer):
+    """a serializer for returning FN121 objects"""
+
+    management_unit = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FN121
+
+        fields = FN121Serializer.Meta.fields + ("management_unit",)
+
+    def get_management_unit(self, obj):
+
+        if obj.mu:
+            return obj.mu[0].slug
+        else:
+            return None
+
+
 class FN121PostSerializer(FN121Serializer):
 
     project = serializers.SlugRelatedField(

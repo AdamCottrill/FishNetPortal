@@ -20,6 +20,13 @@ class FishAttrFilters(GeoFilterSet):
         field_name="fish__catch__effort__sample__geom__within", method="filter_point"
     )
 
+    management_unit__in = ValueInFilter(
+        field_name="fish__catch__effort__sample__management_units__slug"
+    )
+    management_unit__not__in = ValueInFilter(
+        field_name="fish__catch__effort__sample__management_units__slug", exclude=True
+    )
+
     # FN011 (PROJECT) ATTRIBUTES
 
     year = django_filters.CharFilter(

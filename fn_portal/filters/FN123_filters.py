@@ -15,6 +15,13 @@ class FN123SubFilter(GeoFilterSet):
         field_name="effort__sample__geom__within", method="filter_point"
     )
 
+    management_unit__in = ValueInFilter(
+        field_name="effort__sample__management_units__slug"
+    )
+    management_unit__not__in = ValueInFilter(
+        field_name="effort__sample__management_units__slug", exclude=True
+    )
+
     grp = ValueInFilter(field_name="grp")
     grp__not = ValueInFilter(field_name="grp", exclude=True)
 

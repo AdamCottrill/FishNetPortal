@@ -9,6 +9,8 @@ from django.urls import reverse
 
 from .FN0_tables import FN011, FN022, FN026, FN028
 
+from common.models import ManagementUnit
+
 User = get_user_model()
 
 
@@ -16,6 +18,10 @@ class FN121(models.Model):
     """
     A table to hold information on fishing events/efforts
     """
+
+    management_units = models.ManyToManyField(
+        ManagementUnit, related_name="fn121_samples", blank=True
+    )
 
     project = models.ForeignKey(FN011, related_name="samples", on_delete=models.CASCADE)
 
@@ -122,6 +128,11 @@ class FN121(models.Model):
         self.slug = slugify(self.fishnet_keys())
 
         super(FN121, self).save(*args, **kwargs)
+
+        if self.geom:
+            mus = ManagementUnit.objects.filter(geom__contains=self.geom)
+            self.management_units.set(mus)
+        return self
 
     def fishnet_keys(self):
         """return the fish-net II key fields for this record"""
