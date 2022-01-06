@@ -521,7 +521,7 @@ class FN126ReadOnlyList(generics.ListAPIView):
             "fishn",
             "food",
             "taxon",
-            "foodcnt",
+            "fdcnt",
             "comment6",
             "slug",
         )

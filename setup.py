@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="fn_portal",
-    version="2021.12.14",
+    version="2022.01.06",
     packages=find_packages(),
     include_package_data=True,
     license="MIT License",  # example license

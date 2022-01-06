@@ -262,7 +262,7 @@ class FN125LampreyNestedSerializer(serializers.ModelSerializer):
 class FN126NestedSerializer(serializers.ModelSerializer):
     class Meta:
         model = FN126
-        fields = ("id", "food", "taxon", "foodcnt", "comment6")
+        fields = ("id", "food", "taxon", "fdcnt", "comment6")
 
 
 class FN127NestedSerializer(serializers.ModelSerializer):
@@ -579,7 +579,7 @@ class FN126Serializer(serializers.ModelSerializer):
             "fish",
             "food",
             "taxon",
-            "foodcnt",
+            "fdcnt",
             "comment6",
             "slug",
         )

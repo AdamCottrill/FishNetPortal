@@ -292,17 +292,17 @@ def test_FN126_str():
     fish_number = 9
     food = 1
     taxon = "F121"
-    foodcnt = 8
+    fdcnt = 8
 
     project = FN011Factory(prj_cd=project_code)
     fn121 = FN121Factory(project=project, sam=sam)
     fn122 = FN122Factory(sample=fn121, eff=eff)
     fn123 = FN123Factory(effort=fn122, species=species, grp=grp)
     fn125 = FN125Factory(catch=fn123, fish=fish_number)
-    fn126 = FN126Factory(fish=fn125, food=food, taxon=taxon, foodcnt=foodcnt)
+    fn126 = FN126Factory(fish=fn125, food=food, taxon=taxon, fdcnt=fdcnt)
 
     shouldbe = "{}-{}-{}-{}-{}-{}-{} ({}: {})".format(
-        project_code, sam, eff, spc, grp, fish_number, food, taxon, foodcnt
+        project_code, sam, eff, spc, grp, fish_number, food, taxon, fdcnt
     )
 
     assert str(fn126) == shouldbe

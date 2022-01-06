@@ -313,9 +313,9 @@ def fn126(data, fn125_cache):
         spc = item.pop("spc")
         grp = item.pop("grp")
         fish = item.pop("fish")
-        foodid = item.get("foodid")
+        food = item.get("food")
         parent_key = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}".lower()
-        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{foodid}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{spc}-{grp}-{fish}-{food}".lower()
         item["fish_id"] = fn125_cache.get(parent_key)
         item["slug"] = slug
         try:

@@ -343,8 +343,8 @@ class FN126(models.Model):
         blank=True,
         null=True,
     )
-    foodcnt = models.IntegerField("Food Count", blank=True, null=True)
-    foodval = models.FloatField("Food Measure Value", blank=True, null=True)
+    fdcnt = models.IntegerField("Food Count", blank=True, null=True)
+    fdval = models.FloatField("Food Measure Value", blank=True, null=True)
 
     FDMES_CHOICES = (
         (None, "No Data"),
@@ -356,6 +356,7 @@ class FN126(models.Model):
         help_text="Food Measure Code",
         max_length=2,
         blank=True,
+        null=True,
         choices=FDMES_CHOICES,
     )
 
@@ -372,6 +373,7 @@ class FN126(models.Model):
         help_text="Life Stage",
         max_length=2,
         blank=True,
+        null=True,
         choices=LIFESTAGE_CHOICES,
     )
 
@@ -382,7 +384,7 @@ class FN126(models.Model):
         unique_together = ("fish", "food")
 
     def __str__(self):
-        return "{} ({}: {})".format(self.slug.upper(), self.taxon, self.foodcnt)
+        return "{} ({}: {})".format(self.slug.upper(), self.taxon, self.fdcnt)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.fishnet_keys())

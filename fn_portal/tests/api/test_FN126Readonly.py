@@ -48,8 +48,8 @@ def fn126_records():
     catch = FN123Factory(effort=eff1, species=spc, grp="55")
 
     fish = FN125Factory(catch=catch, flen=350, gon=10)
-    food1 = FN126Factory(fish=fish, taxon="F061", foodcnt=10)
-    food2 = FN126Factory(fish=fish, taxon="F121", foodcnt=20)
+    food1 = FN126Factory(fish=fish, taxon="F061", fdcnt=10)
+    food2 = FN126Factory(fish=fish, taxon="F121", fdcnt=20)
     return [food1, food2]
 
 

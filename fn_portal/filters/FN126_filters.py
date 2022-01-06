@@ -14,12 +14,12 @@ class FN126Filter(FishAttrFilters):
     taxon = ValueInFilter(field_name="taxon")
     taxon__not = ValueInFilter(field_name="taxon", exclude=True)
 
-    foodcnt = django_filters.NumberFilter(field_name="foodcnt")
-    foodcnt__gte = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="gte")
-    foodcnt__lte = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="lte")
-    foodcnt__gt = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="gt")
-    foodcnt__lt = django_filters.NumberFilter(field_name="foodcnt", lookup_expr="lt")
+    fdcnt = django_filters.NumberFilter(field_name="fdcnt")
+    fdcnt__gte = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="gte")
+    fdcnt__lte = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="lte")
+    fdcnt__gt = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="gt")
+    fdcnt__lt = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="lt")
 
     class Meta:
         model = FN126
-        fields = ["taxon", "foodcnt"]
+        fields = ["taxon", "fdcnt"]

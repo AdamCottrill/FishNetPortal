@@ -129,7 +129,7 @@ error_list = [
     (
         "fdcnt",
         -4,
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0",
     ),
     (
         "lf",

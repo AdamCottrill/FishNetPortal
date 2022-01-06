@@ -137,7 +137,7 @@ class FN126Factory(factory.django.DjangoModelFactory):
     fish = factory.SubFactory(FN125Factory)
     food = factory.Sequence(lambda n: n)
     taxon = "F061"
-    foodcnt = 6
+    fdcnt = 6
 
 
 class FN127Factory(factory.django.DjangoModelFactory):

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import PositiveInt, PositiveFloat, validator
+from pydantic import PositiveInt, PositiveFloat, confloat, validator
 from .FNBase import FNBase
 from .utils import string_to_float, string_to_int
 
@@ -20,7 +20,7 @@ class FN126(FNBase):
     slug: str
     food: int
     taxon: str
-    fdcnt: PositiveInt
+    fdcnt: confloat(ge=0) = 0
     fdmes: Optional[FdMesEnum]
     fdval: Optional[PositiveFloat]
     lf: Optional[PositiveInt]
