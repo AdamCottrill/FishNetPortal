@@ -105,10 +105,21 @@ class FN125(FNBase):
     @classmethod
     def check_agest(cls, value, values):
         if value is not None:
-            allowed = "01234567ABCDEFGMT"
+            allowed = "01234567ABCDEFMTV"
             unknown = [c for c in value if c not in allowed]
             if unknown:
                 msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"
+                raise ValueError(msg)
+        return value
+
+    @validator("tissue")
+    @classmethod
+    def check_tissue(cls, value, values):
+        if value is not None:
+            allowed = "123456789ABCDEHKNV"
+            unknown = [c for c in value if c not in allowed]
+            if unknown:
+                msg = f"Unknown aging structures ({','.join(unknown)}) found in TISSUE ({value})"
                 raise ValueError(msg)
         return value
 

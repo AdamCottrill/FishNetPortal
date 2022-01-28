@@ -226,10 +226,15 @@ class FN125Filter(FN125SubFilter):
         field_name="catch__effort__sample__sidep", lookup_expr="lte"
     )
 
-    grtp = ValueInFilter(field_name="catch__effort__sample__grtp")
-    grtp__not = ValueInFilter(field_name="catch__effort__sample__grtp", exclude=True)
-    gr = ValueInFilter(field_name="catch__effort__sample__gr")
-    gr__not = ValueInFilter(field_name="catch__effort__sample__gr", exclude=True)
+    grtp = ValueInFilter(field_name="catch__effort__sample__mode__gear__grtp")
+    grtp__not = ValueInFilter(
+        field_name="catch__effort__sample__mode__gear__grtp", exclude=True
+    )
+
+    gr = ValueInFilter(field_name="catch__effort__sample__mode__gear__gr_code")
+    gr__not = ValueInFilter(
+        field_name="catch__effort__sample__mode__gear__gr_code", exclude=True
+    )
 
     # grid is a little trick - requires us to filter lake too - user beware!
     grid = NumberInFilter(field_name="catch__effort__sample__grid__grid")
