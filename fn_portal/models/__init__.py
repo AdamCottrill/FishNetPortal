@@ -6,16 +6,14 @@ from .FN022 import FN022
 from .FN026 import FN026
 from .FN028 import FN028
 from .ProjectGearProcessType import ProjectGearProcessType
-
 from .Gear import GearFamily, Gear, SubGear, Gear2SubGear, GearEffortProcessType
-from .FN1_tables import (
-    FN121,
-    FN122,
-    FN123,
-    FN124,
-    FN125,
-    FN125_Lamprey,
-    FN125Tag,
-    FN126,
-    FN127,
-)
+
+from .FN121 import FN121
+from .FN122 import FN122
+from .FN123 import FN123
+from .FN124 import FN124
+from .FN125 import FN125
+from .FN126 import FN126
+from .FN127 import FN127
+from .FN125_Lamprey import FN125_Lamprey
+from .FN125_Tag import FN125Tag

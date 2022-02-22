@@ -98,7 +98,7 @@ class FN011(models.Model):
         - `self`:
         """
 
-        from .FN1_tables import FN121
+        from .FN121 import FN121
 
         catcnts = (
             FN121.objects.filter(project=self)

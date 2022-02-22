@@ -2,8 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from markdown import markdown
 
-# from .FN1_tables import FN121
-
 User = get_user_model()
 
 
