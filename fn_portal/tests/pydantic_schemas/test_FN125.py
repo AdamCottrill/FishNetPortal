@@ -139,6 +139,8 @@ mode_list = [
     ("flen", "", None),
     ("rwt", "", None),
     ("girth", "", None),
+    ("agest", "24AMV", "24AMV"),
+    ("tissue", "18D", "18D"),
 ]
 
 
@@ -189,7 +191,7 @@ error_list = [
     (
         "gon",
         88,
-        "value is not a valid enumeration member;",
+        "string does not match regex",
     ),
     (
         "mat",
@@ -200,6 +202,11 @@ error_list = [
         "agest",
         "14Q",
         "Unknown aging structures (Q) found in AGEST (14Q)",
+    ),
+    (
+        "tissue",
+        "14Q",
+        "Unknown tissue code (Q) found in TISSUE (14Q)",
     ),
     (
         "clipc",
@@ -404,7 +411,7 @@ invalid_gon_codes = [
 
 
 @pytest.mark.parametrize("code", invalid_gon_codes)
-def test_invalid_data(data, code):
+def test_invalid_gon_data(data, code):
     """This test verifies that actual invalid gonad codes from our
     database are trapped by the gonad code regular expression.
 
@@ -412,7 +419,6 @@ def test_invalid_data(data, code):
     - `data`:
 
     """
-
     data["gon"] = code
     with pytest.raises(ValidationError) as excinfo:
         FN125(**data)

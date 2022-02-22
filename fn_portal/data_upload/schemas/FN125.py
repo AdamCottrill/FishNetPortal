@@ -119,7 +119,7 @@ class FN125(FNBase):
             allowed = "123456789ABCDEHKNV"
             unknown = [c for c in value if c not in allowed]
             if unknown:
-                msg = f"Unknown aging structures ({','.join(unknown)}) found in TISSUE ({value})"
+                msg = f"Unknown tissue code ({','.join(unknown)}) found in TISSUE ({value})"
                 raise ValueError(msg)
         return value
 
