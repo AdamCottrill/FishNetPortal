@@ -7,7 +7,10 @@ from django.db.models import F, Sum, Count
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
-from .FN0_tables import FN011, FN022, FN026, FN028
+from .FN011 import FN011
+from .FN022 import FN022
+from .FN026 import FN026
+from .FN028 import FN028
 
 from common.models import ManagementUnit
 

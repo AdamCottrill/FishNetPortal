@@ -1,13 +1,12 @@
-from .FN0_tables import (
-    FNProtocol,
-    FN011,
-    FN013,
-    FN014,
-    FN022,
-    FN026,
-    FN028,
-    ProjectGearProcessType,
-)
+from .FNProtocol import FNProtocol
+from .FN011 import FN011
+from .FN013 import FN013
+from .FN014 import FN014
+from .FN022 import FN022
+from .FN026 import FN026
+from .FN028 import FN028
+from .ProjectGearProcessType import ProjectGearProcessType
+
 from .Gear import GearFamily, Gear, SubGear, Gear2SubGear, GearEffortProcessType
 from .FN1_tables import (
     FN121,
