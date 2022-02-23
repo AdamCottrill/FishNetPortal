@@ -256,13 +256,23 @@ class FN012Base(models.Model):
         abstract = True
 
     def get_slug(self):
-        return "not implemented yet"
+        pass
+
+    def save(self, *args, **kwargs):
+        slug = self.get_slug()
+        if slug:
+            self.slug = slugify(slug)
+        else:
+            pass
+        # should we populated default values for size constrains here if none are provided?
+        self.full_clean()
+        super(FN012Base, self).save(*args, **kwargs)
+
+        return self
 
     def __str__(self):
-        if self.slug:
-            return self.slug
-        else:
-            return self.get_slug()
+
+        return self.slug
 
     def clean(self):
         """the agedec, fdsam, and spc mark values are actually composite
@@ -281,14 +291,6 @@ class FN012Base(models.Model):
             self.spcmrk1 != "0" and self.spcmrk2 is None
         ):
             raise ValidationError(_("Invalid SPCMRK code."))
-
-    def save(self, *args, **kwargs):
-        slug = self.get_slug()
-        self.slug = slugify(slug)
-
-        # should we populated default values for size constrains here if none are provided?
-
-        super(FN012, self).save(*args, **kwargs)
 
     @property
     def fdsam(self):
@@ -360,6 +362,6 @@ class FN012Default(FN012Base):
 
     def get_slug(self):
         return (
-            f"fn012defatult-{self.lake.abbrev}-{self.protocol.abbrev}"
+            f"fn012default-{self.lake.abbrev}-{self.protocol.abbrev}"
             + f"-{self.species.spc}-{self.grp}"
         )

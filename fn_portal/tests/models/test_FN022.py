@@ -69,7 +69,7 @@ def test_switched_dates():
 
 @pytest.mark.xfail
 def test_dates_of_bounds():
-    """The start and end date of each season must be withing teh bounds of
+    """The start and end date of each season must be withing the bounds of
     the associated project.  If either is outside of the project start or
     end date, an error should be raised.
 
