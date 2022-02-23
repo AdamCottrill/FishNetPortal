@@ -59,6 +59,7 @@ class FN011(models.Model):
     comment0 = models.TextField(blank=True, null=True)
 
     class Meta:
+        verbose_name_plural = "FN011 - Projects"
         ordering = ["-year", "prj_cd"]
 
     def save(self, *args, **kwargs):

@@ -1,6 +1,9 @@
 from django.contrib import admin
 
 from fn_portal.models import (
+    FN011,
+    FN012,
+    FN012Default,
     FNProtocol,
     Gear,
     GearFamily,
@@ -8,6 +11,127 @@ from fn_portal.models import (
     Gear2SubGear,
     GearEffortProcessType,
 )
+
+
+class Admin_FN011(admin.ModelAdmin):
+    """Admin class for Projects (FN011)"""
+
+    search_fields = ["prj_nm", "prj_cd"]
+    list_display = ("prj_cd", "prj_nm", "prj_ldr", "prj_date0", "prj_date1")
+    list_filter = ("lake", "protocol", "year")
+    date_hierarchy = "prj_date0"
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("prj_cd",)
+        return self.readonly_field
+
+
+class Admin_FN012(admin.ModelAdmin):
+    """Admin class for Species Sampling Specs (FN012)"""
+
+    search_fields = ["project__prj_cd", "species__spc", "species__spc_nmco"]
+    list_display = ("get_prj_cd", "species", "grp", "grp_des", "biosam")
+    list_filter = ("species__spc", "grp")
+    exclude = ("slug",)
+
+    fields = [
+        "project",
+        "species",
+        "grp",
+        "grp_des",
+        "biosam",
+        "sizsam",
+        "sizatt",
+        "sizint",
+        "fdsam1",
+        "fdsam2",
+        "spcmrk1",
+        "spcmrk2",
+        "agedec1",
+        "agedec2",
+        "flen_min",
+        "flen_max",
+        "tlen_min",
+        "tlen_max",
+        "rwt_min",
+        "rwt_max",
+        "k_min_error",
+        "k_min_warn",
+        "k_max_error",
+        "k_max_warn",
+        "flen2tlen_alpha",
+        "flen2tlen_beta",
+    ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("project", "species", "grp")
+        return self.readonly_fields
+
+    def get_prj_cd(self, obj):
+        return obj.project.prj_cd
+
+
+class Admin_FN012Default(admin.ModelAdmin):
+    """Admin class for Protocol Species Sampling Specs (FN012)"""
+
+    search_fields = [
+        "lake__abbrev",
+        "protocol__label",
+        "species__spc",
+        "species__spc_nmco",
+    ]
+    list_display = (
+        "species",
+        "grp",
+        "grp_des",
+        # "lake__abbrev",
+        ##"protocol__abbrev",
+        "biosam",
+    )
+    list_filter = (
+        "lake__abbrev",
+        "species__spc",
+        "grp",
+        # "protocol__abbrev"
+    )
+    exclude = ("slug",)
+
+    fields = [
+        "protocol",
+        "lake",
+        "species",
+        "grp",
+        "grp_des",
+        "biosam",
+        "sizsam",
+        "sizatt",
+        "sizint",
+        "fdsam1",
+        "fdsam2",
+        "spcmrk1",
+        "spcmrk2",
+        "agedec1",
+        "agedec2",
+        "flen_min",
+        "flen_max",
+        "tlen_min",
+        "tlen_max",
+        "rwt_min",
+        "rwt_max",
+        "k_min_error",
+        "k_min_warn",
+        "k_max_error",
+        "k_max_warn",
+        "flen2tlen_alpha",
+        "flen2tlen_beta",
+    ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ("protocol", "lake", "species", "grp")
+        return self.readonly_fields
 
 
 class Admin_FNProtocol(admin.ModelAdmin):
@@ -114,6 +238,9 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
         return obj.subgear.gryarn
 
 
+admin.site.register(FN011, Admin_FN011)
+admin.site.register(FN012, Admin_FN012)
+admin.site.register(FN012Default, Admin_FN012Default)
 admin.site.register(FNProtocol, Admin_FNProtocol)
 admin.site.register(Gear, Admin_Gear)
 admin.site.register(GearEffortProcessType, Admin_GearProcessType)

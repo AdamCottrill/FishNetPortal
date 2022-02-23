@@ -1,7 +1,8 @@
 # from django.db import models
 from django.contrib.gis.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 
@@ -31,7 +32,7 @@ class FN012Base(models.Model):
     grp = models.CharField(max_length=3, default="00", db_index=True)
 
     grp_des = models.CharField(
-        "The meaning of a GRP code or more general information about SPC+GRP.",
+        help_text="The meaning of a GRP code or more general information about SPC+GRP.",
         max_length=300,
         default="Default Group",
     )
@@ -104,7 +105,8 @@ class FN012Base(models.Model):
     fdsam2 = models.CharField(
         help_text="FDSAM Taxon Coding Scheme",
         max_length=1,
-        default="2",
+        blank=True,
+        null=True,
         choices=FDSAM2_CHOICES,
     )
 
@@ -134,6 +136,8 @@ class FN012Base(models.Model):
         choices=SPCMRK2_CHOICES,
     )
 
+    # from agest entry of data dictionary
+    # TODO: move to common lookup table
     AGEDEC1_CHOICES = (
         ("0", "No structures sampled"),
         ("1", "Scales (any side)"),
@@ -149,7 +153,7 @@ class FN012Base(models.Model):
         ("D", "Cleithrum"),
         ("E", "Centrum"),
         ("F", "Branchiostegal"),
-        ("G", "Other  (NO LONGER SUPPORTED)"),
+        ("G", "Other (NO LONGER SUPPORTED)"),
         ("M", "Maxilla"),
         ("T", "Tag"),
         ("V", "Vertebrate"),
@@ -170,7 +174,8 @@ class FN012Base(models.Model):
     agedec2 = models.CharField(
         help_text="Age Method",
         max_length=1,
-        default="0",
+        blank=True,
+        null=True,
         choices=AGEDEC2_CHOICES,
     )
 
@@ -250,26 +255,70 @@ class FN012Base(models.Model):
     class Meta:
         abstract = True
 
+    def get_slug(self):
+        return "not implemented yet"
+
+    def __str__(self):
+        if self.slug:
+            return self.slug
+        else:
+            return self.get_slug()
+
+    def clean(self):
+        """the agedec, fdsam, and spc mark values are actually composite
+        fields. The first value indictates if the data was collected or not,
+        the second indicates how. the second should only be populated if the
+        first character is something other than 0."""
+        if (self.agedec1 == "0" and self.agedec2 is not None) or (
+            self.agedec1 != "0" and self.agedec2 is None
+        ):
+            raise ValidationError(_("Invalid AGEDEC code."))
+        if (self.fdsam1 == "0" and self.fdsam2 is not None) or (
+            self.fdsam1 != "0" and self.fdsam2 is None
+        ):
+            raise ValidationError(_("Invalid FDSAM code."))
+        if (self.spcmrk1 == "0" and self.spcmrk2 is not None) or (
+            self.spcmrk1 != "0" and self.spcmrk2 is None
+        ):
+            raise ValidationError(_("Invalid SPCMRK code."))
+
+    def save(self, *args, **kwargs):
+        slug = self.get_slug()
+        self.slug = slugify(slug)
+
+        # should we populated default values for size constrains here if none are provided?
+
+        super(FN012, self).save(*args, **kwargs)
+
     @property
     def fdsam(self):
         """the original fn-II field fdsam is made of two sub fields.  This
         property returns fdsam by concatenating fdsam1 and fdsam2."""
 
-        return f"{self.fdsam1}{self.fdsam2}"
+        if self.fdsam1 == "0":
+            return self.fdsam1
+        else:
+            return f"{self.fdsam1}{self.fdsam2}"
 
     @property
     def spcmrk(self):
         """the original fn-II field spcmrk is made of two sub fields.  This
         property returns spcmrk by concatenating spcmrk1 and spcmrk2."""
 
-        return f"{self.spcmrk1}{self.spcmrk2}"
+        if self.spcmrk1 == "0":
+            return self.spcmrk1
+        else:
+            return f"{self.spcmrk1}{self.spcmrk2}"
 
     @property
     def agedec(self):
         """the original fn-II field agedec is made of two sub fields.  This
         property returns agedec by concatenating agedec1 and agedec2."""
 
-        return f"{self.agedec1}{self.agedec2}"
+        if self.agedec1 == "0":
+            return self.agedec1
+        else:
+            return f"{self.agedec1}{self.agedec2}"
 
 
 class FN012(FN012Base):
@@ -280,9 +329,13 @@ class FN012(FN012Base):
     )
 
     class Meta:
+        verbose_name_plural = "FN012 - Project Sampling Specs"
         models.UniqueConstraint(
             fields=["project", "species", "grp"], name="unique_project_species_grp"
         )
+
+    def get_slug(self):
+        return f"fn012-{self.project.prj_cd}-{self.species.spc}-{self.grp}"
 
 
 class FN012Default(FN012Base):
@@ -299,7 +352,14 @@ class FN012Default(FN012Base):
     )
 
     class Meta:
+        verbose_name_plural = "FN012Defaults - Protocol Sampling Specs"
         models.UniqueConstraint(
             fields=["lake", "protocol", "species" "grp"],
             name="unique_lake_protocol_species_grp",
+        )
+
+    def get_slug(self):
+        return (
+            f"fn012defatult-{self.lake.abbrev}-{self.protocol.abbrev}"
+            + f"-{self.species.spc}-{self.grp}"
         )
