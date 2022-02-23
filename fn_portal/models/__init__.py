@@ -1,5 +1,6 @@
 from .FNProtocol import FNProtocol
 from .FN011 import FN011
+from .FN012 import FN012, FN012Default
 from .FN013 import FN013
 from .FN014 import FN014
 from .FN022 import FN022
