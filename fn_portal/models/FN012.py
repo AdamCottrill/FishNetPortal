@@ -183,37 +183,37 @@ class FN012Base(models.Model):
         "Minimum Fork Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(700)],
+        validators=[MinValueValidator(1), MaxValueValidator(700)],
     )
     flen_max = models.FloatField(
         "Maximim Fork Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(2000)],
+        validators=[MinValueValidator(1), MaxValueValidator(2000)],
     )
     tlen_min = models.FloatField(
         "Minimum Total Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(700)],
+        validators=[MinValueValidator(1), MaxValueValidator(700)],
     )
     tlen_max = models.FloatField(
         "Maximum Total Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(2000)],
+        validators=[MinValueValidator(1), MaxValueValidator(2000)],
     )
     rwt_min = models.FloatField(
         "Minimum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(5000)],
+        validators=[MinValueValidator(1), MaxValueValidator(5000)],
     )
     rwt_max = models.FloatField(
         "Maximum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(5000)],
+        validators=[MinValueValidator(1), MaxValueValidator(5000)],
     )
     k_min_error = models.FloatField(
         "Minimum K (TLEN) - error",
