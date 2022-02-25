@@ -173,6 +173,106 @@ error_list = [
         "ZZ",
         "string does not match regex",
     ),
+    (
+        "flen_min",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "flen_min",
+        "1000",
+        "ensure this value is less than 700",
+    ),
+    (
+        "flen_max",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "flen_max",
+        "3000",
+        "ensure this value is less than 2000",
+    ),
+    (
+        "tlen_min",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "tlen_min",
+        "1000",
+        "ensure this value is less than 700",
+    ),
+    (
+        "tlen_max",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "tlen_max",
+        "3000",
+        "ensure this value is less than 2000",
+    ),
+    (
+        "rwt_min",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "rwt_min",
+        "6000",
+        "ensure this value is less than 5000",
+    ),
+    (
+        "rwt_max",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "rwt_max",
+        "6000",
+        "ensure this value is less than 5000",
+    ),
+    (
+        "k_min_error",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "k_min_error",
+        "2.5",
+        "ensure this value is less than 2.0",
+    ),
+    (
+        "k_min_warn",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "k_min_warn",
+        "2.5",
+        "ensure this value is less than 1.5",
+    ),
+    (
+        "k_max_error",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "k_max_error",
+        "5.5",
+        "ensure this value is less than 5.0",
+    ),
+    (
+        "k_max_warn",
+        "0",
+        "ensure this value is greater than 0",
+    ),
+    (
+        "k_max_warn",
+        "4.5",
+        "ensure this value is less than 4.0",
+    ),
 ]
 
 
