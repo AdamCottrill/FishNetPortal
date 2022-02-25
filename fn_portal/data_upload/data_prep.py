@@ -19,6 +19,7 @@ from pydantic.error_wrappers import ValidationError
 
 from .schemas import (
     FN011,
+    FN012,
     FN022,
     FN026,
     FN028,
@@ -49,6 +50,31 @@ def fn011(data, lake_cache, protocol_cache, user_cache):
         item["protocol_id"] = protocol_cache.get(protocol)
         try:
             tmp = FN011(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+def fn012(data, fn011_cache, species_cache):
+    """pop off prj_cd and replace it with project_id, and pop off spc and
+    use it to get the species_id"""
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        spc = item.pop("spc")
+        grp = item.get("grp")
+
+        parent_key = f"{prj_cd}".lower()
+        item["project_id"] = fn011_cache.get(parent_key)
+        item["species_id"] = species_cache.get(spc)
+        slug = f"{prj_cd}-{spc}-{grp}"
+        item["slug"] = slug.lower()
+        try:
+            tmp = FN012(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])

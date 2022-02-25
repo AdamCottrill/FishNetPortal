@@ -64,15 +64,15 @@ class FN012Base(models.Model):
     )
 
     SIZATT_CHOICES = (
-        ("flen", "Fork Length"),
-        ("tlen", "Total Length"),
+        ("FLEN", "Fork Length"),
+        ("TLEN", "Total Length"),
     )
     sizatt = models.CharField(
         help_text="Size Sample Code",
         max_length=4,
         blank=True,
         null=True,
-        default="flen",
+        default="FLEN",
         choices=SIZATT_CHOICES,
     )
 

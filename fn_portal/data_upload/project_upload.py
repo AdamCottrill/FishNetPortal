@@ -82,6 +82,15 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn011_cache = {x.slug: (i + 1) for i, x in enumerate(fn011["data"])}
         fn011_inverse = {v: k for k, v in fn011_cache.items()}
 
+        logger.debug("Fetching FN012 records")
+        stmt = fetch.get_fn012_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn012 = prep.fn012(rs, fn011_cache, spc_cache)
+        if fn012.get("errors"):
+            return {"status": "error", "errors": fn012.get("errors")}
+        fn012_cache = {x.slug: (i + 1) for i, x in enumerate(fn012["data"])}
+        fn012_inverse = {v: k for k, v in fn012_cache.items()}
+
         logger.debug("Fetching FN022 records")
         stmt = fetch.get_fn022_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -146,6 +155,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         logger.debug("Fetching FN123 records")
         stmt = fetch.get_fn123_stmt()
         rs = fetch.execute_select(src_con, stmt)
+        # TODO: - replace spc_cache with FN012 cache
         fn123 = prep.fn123(rs, fn122_cache, spc_cache)
         if fn123.get("errors"):
             return {"status": "error", "errors": fn123.get("errors")}
@@ -223,6 +233,33 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             Fnp.FN011.objects.bulk_create(items)
             filters = {"prj_cd__in": PRJ_CDs}
             fn011_map = get_id_cache(Fnp.FN011, filters=filters)
+
+            # =========================
+            #        FN012
+            logger.debug("Creating FN012 records...")
+            # data = prep.fn012(fn012, fn011_cache)
+            for item in fn012["data"]:
+                tmp = item.dict()
+                # split compound fields
+                agedec = tmp.pop("agedec")
+                tmp["agedec1"] = agedec[0]
+                tmp["agedec2"] = None if len(agedec) == 1 else agedec[1]
+
+                spcmrk = tmp.pop("spcmrk")
+                tmp["spcmrk1"] = spcmrk[0]
+                tmp["spcmrk2"] = None if len(spcmrk) == 1 else spcmrk[1]
+
+                fdsam = tmp.pop("fdsam")
+                tmp["fdsam1"] = fdsam[0]
+                tmp["fdsam2"] = None if len(fdsam) == 1 else fdsam[1]
+
+                project_id = tmp["project_id"]
+                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
+
+                obj = Fnp.FN012(**tmp)
+                obj.save()
+            filters = {"project__prj_cd__in": PRJ_CDs}
+            fn012_map = get_id_cache(Fnp.FN012, filters=filters)
 
             # =========================
             #        FN022

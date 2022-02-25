@@ -642,7 +642,14 @@ def project_data_upload(request):
                 return HttpResponseRedirect(reverse("fn_portal:upload_project_data"))
     else:
         form = DataUploadForm()
-    return render(request, "fn_portal/project_data_upload.html", {"form": form})
+    return render(
+        request,
+        "fn_portal/project_data_upload.html",
+        {
+            "form": form,
+            "upload_template_version": settings.FN_PORTAL_UPLOAD_TEMPLATE_VERSION,
+        },
+    )
 
 
 @method_decorator(login_required, name="dispatch")

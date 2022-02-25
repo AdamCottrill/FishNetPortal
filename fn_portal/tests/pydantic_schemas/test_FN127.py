@@ -41,7 +41,6 @@ def data():
         "ageid": 1,
         "preferred": True,
         "agea": 8,
-        "xagem": "Y3",
         "agemt": "A2345",
         "edge": "++",
         "conf": 7,
@@ -68,7 +67,6 @@ required_fields = [
     "slug",
     "fish_id",
     "ageid",
-    "xagem",
     "agemt",
     "preferred",
 ]
@@ -155,22 +153,6 @@ error_list = [
         "foo",
         "value is not a valid enumeration member;",
     ),
-    (
-        "xagem",
-        "foo",
-        "ensure this value has at most 2 characters",
-    ),
-    (
-        "xagem",
-        "A",
-        'string does not match regex "^([A-Z0-9]{2})$"',
-    ),
-    (
-        "xagem",
-        "A*",
-        'string does not match regex "^([A-Z0-9]{2})$"',
-    ),
-    ("xagem", "AZ", "Unknown aging structure (Z) found in xagem (AZ)"),
     (
         "agemt",
         "foobar",

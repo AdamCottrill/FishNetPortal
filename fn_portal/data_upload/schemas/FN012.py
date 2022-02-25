@@ -1,5 +1,5 @@
 from datetime import date
-from enum import Enum
+from enum import Enum, IntEnum
 from pydantic import validator, constr, confloat, conint
 
 from .utils import not_specified, to_uppercase, yr_to_year
@@ -18,18 +18,18 @@ class BioSamEnum(str, Enum):
     SizeStratifiedSampling = "3"
 
 
-class SizSamEnum(str, Enum):
+class SizSamEnum(IntEnum):
 
-    NotSampled = "0"
-    FN125 = "1"
-    FN124 = "2"
-    BothFN124andFN125 = "3"
+    NotSampled = 0
+    FN125 = 1
+    FN124 = 2
+    BothFN124andFN125 = 3
 
 
 class SizAttEnum(str, Enum):
 
-    FLEN = "flen"
-    TLEN = "tlen"
+    flen = "FLEN"
+    tlen = "TLEN"
 
 
 class FN012(FNBase):
@@ -56,6 +56,7 @@ class FN012(FNBase):
     flen_max: confloat(gt=0, lt=2000)
     tlen_min: confloat(gt=0, lt=700)
     tlen_max: confloat(gt=0, lt=2000)
+
     rwt_min: confloat(gt=0, lt=5000)
     rwt_max: confloat(gt=0, lt=5000)
     k_min_error: confloat(gt=0, lt=2.0)

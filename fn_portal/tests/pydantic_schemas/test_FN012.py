@@ -35,8 +35,8 @@ def data():
         "grp": "00",
         "grp_des": "default group",
         "biosam": "1",
-        "sizsam": "1",
-        "sizatt": "flen",
+        "sizsam": 1,
+        "sizatt": "FLEN",
         "sizint": 1,
         "fdsam": "0",
         "spcmrk": "0",
@@ -136,7 +136,7 @@ error_list = [
     (
         "sizsam",
         "AA1",
-        "value is not a valid enumeration member",
+        "value is not a valid integer",
     ),
     (
         "sizatt",

@@ -67,6 +67,35 @@ def get_fn011_stmt():
     return stmt
 
 
+def get_fn012_stmt():
+
+    stmt = """select
+                PRJ_CD,
+                SPC,
+                GRP,
+                GRP_DES,
+                SIZSAM,
+                SIZATT,
+                SIZINT,
+                BIOSAM,
+                FDSAM,
+                SPCMRK,
+                AGEDEC,
+                FLEN_MIN,
+                FLEN_MAX,
+                TLEN_MIN,
+                TLEN_MAX,
+                RWT_MIN,
+                RWT_MAX,
+                K_MIN_ERROR,
+                K_MIN_WARN,
+                K_MAX_ERROR,
+                K_MAX_WARN
+           from FN012"""
+
+    return stmt
+
+
 def get_fn022_stmt():
 
     stmt = """select
@@ -331,7 +360,6 @@ def get_fn127_stmt():
                 AGEID,
                 PREFERRED,
                 AGEA,
-                XAGEM,
                 AGEMT,
                 EDGE,
                 CONF,
