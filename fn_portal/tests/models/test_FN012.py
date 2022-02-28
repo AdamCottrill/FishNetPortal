@@ -1,6 +1,6 @@
 import pytest
 from django.core.exceptions import ValidationError
-from fn_portal.models import FN012, FN012Default
+from fn_portal.models import FN012, FN012Protocol
 
 from ..factories import FN011Factory, SpeciesFactory, LakeFactory, FNProtocolFactory
 
@@ -56,7 +56,7 @@ def test_FN012_default_str(lake, protocol, species):
     spc = species.spc
     grp = "55"
 
-    fn012 = FN012Default(lake=lake, protocol=protocol, species=species, grp=grp)
+    fn012 = FN012Protocol(lake=lake, protocol=protocol, species=species, grp=grp)
     fn012.save()
 
     expected = f"fn012default-{lake_abbrev}-{protocol_abbrev}-{spc}-{grp}"
@@ -98,10 +98,10 @@ def test_FN012_default_duplicate(protocol, lake, species):
     spc = species.spc
     grp = "55"
 
-    fn012a = FN012Default(lake=lake, protocol=protocol, species=species, grp=grp)
+    fn012a = FN012Protocol(lake=lake, protocol=protocol, species=species, grp=grp)
     fn012a.save()
 
-    fn012b = FN012Default(lake=lake, protocol=protocol, species=species, grp=grp)
+    fn012b = FN012Protocol(lake=lake, protocol=protocol, species=species, grp=grp)
 
     with pytest.raises(ValidationError) as excinfo:
         fn012b.save()
@@ -137,7 +137,7 @@ def test_FN012_default_fdsam(lake, protocol, species, fdsam1, fdsam2, expected):
     as a concatentation of fdsam1 and fdsam2.  fsdsam2 should only be
     returned if it is not empty."""
 
-    fn012 = FN012Default(
+    fn012 = FN012Protocol(
         lake=lake,
         protocol=protocol,
         species=species,
@@ -173,7 +173,7 @@ def test_FN012_default_spcmrk(lake, protocol, species, spcmrk1, spcmrk2, expecte
     as a concatentation of spcmrk1 and spcmrk2.  fsdsam2 should only be
     returned if it is not empty."""
 
-    fn012 = FN012Default(
+    fn012 = FN012Protocol(
         lake=lake,
         protocol=protocol,
         species=species,
@@ -209,7 +209,7 @@ def test_FN012_default_agedec(lake, protocol, species, agedec1, agedec2, expecte
     as a concatentation of agedec1 and agedec2.  fsdsam2 should only be
     returned if it is not empty."""
 
-    fn012 = FN012Default(
+    fn012 = FN012Protocol(
         lake=lake,
         protocol=protocol,
         species=species,
@@ -271,7 +271,7 @@ def test_FN012_default_invalid(lake, protocol, species, field, args):
 
     """
 
-    fn012 = FN012Default(
+    fn012 = FN012Protocol(
         lake=lake, protocol=protocol, species=species, grp="00", **args
     )
 

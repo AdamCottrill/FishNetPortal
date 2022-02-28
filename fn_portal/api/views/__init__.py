@@ -6,6 +6,8 @@ from .FN0_views import (
     FNProtocolListView,
     FN011ListView,
     FN011DetailView,
+    FN012ListView,
+    FN012ProtocolListView,
     FN013ListView,
     FN013DetailView,
     FN014ListView,

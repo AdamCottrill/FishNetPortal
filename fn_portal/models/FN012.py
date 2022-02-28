@@ -13,15 +13,15 @@ from .FNProtocol import FNProtocol
 
 
 class FN012Base(models.Model):
-    """
-    The FN012 table functions as a contrainted table to ensure that
-    catch counts (entries in the FN123 table and lower) are
-    documented. It also provides a mechanism to capture how the catch
-    was processed, sampled and aged, and finally provides max and min
-    values for several attributes of teh sampled fish.  This abstract
-    base model is used to provide fields that are common the the
-    lake-protocol default values as well as the project specific
-    values that may have been customized by the project lead.
+    """The FN012 table functions as a constraint table to ensure that
+    catch counts (entries in the FN123 table and lower) are associated
+    with a documented species and group. The FN012 also provides a
+    mechanism to capture how the catch was processed, sampled, and
+    aged, and finally, provides max and min values for several
+    attributes of the sampled fish.  This abstract base model is used
+    to provide fields that are common the the lake-protocol default
+    values as well as the project specific values that may have been
+    customized by the project lead.
 
     """
 
@@ -340,7 +340,7 @@ class FN012(FN012Base):
         return f"fn012-{self.project.prj_cd}-{self.species.spc}-{self.grp}"
 
 
-class FN012Default(FN012Base):
+class FN012Protocol(FN012Base):
     """Default FN012 values for a each lake and protocol."""
 
     lake = models.ForeignKey(
@@ -354,7 +354,7 @@ class FN012Default(FN012Base):
     )
 
     class Meta:
-        verbose_name_plural = "FN012Defaults - Protocol Sampling Specs"
+        verbose_name_plural = "FN012Protocols - Protocol Sampling Specs"
         models.UniqueConstraint(
             fields=["lake", "protocol", "species" "grp"],
             name="unique_lake_protocol_species_grp",

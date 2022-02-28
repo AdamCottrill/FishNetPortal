@@ -4,9 +4,27 @@
 from rest_framework import generics
 from django.db.models import F
 
-from fn_portal.models import FNProtocol, FN011, FN013, FN014, FN022, FN026, FN028, Gear
+from fn_portal.models import (
+    FNProtocol,
+    FN011,
+    FN012,
+    FN012Protocol,
+    FN013,
+    FN014,
+    FN022,
+    FN026,
+    FN028,
+    Gear,
+)
 
-from ...filters import FN011Filter, FN022Filter, FN026Filter, FN028Filter
+from ...filters import (
+    FN011Filter,
+    FN012Filter,
+    FN012ProtocolFilter,
+    FN022Filter,
+    FN026Filter,
+    FN028Filter,
+)
 
 from ..utils import StandardResultsSetPagination
 
@@ -14,6 +32,8 @@ from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from ..serializers import (
     FNProtocolSerializer,
     FN011Serializer,
+    FN012ListSerializer,
+    FN012ProtocolListSerializer,
     FN013Serializer,
     FN013ListSerializer,
     FN014Serializer,
@@ -134,6 +154,28 @@ class FN011DetailView(generics.RetrieveAPIView):
         )
         .all()
     )
+
+
+class FN012ListView(generics.ListAPIView):
+    """An api end point to list all of the sampling specs (species and
+    group) for a specific project."""
+
+    serializer_class = FN012ListSerializer
+    filterset_class = FN012Filter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
+    queryset = FN012.objects.all().select_related("project", "species")
+
+
+class FN012ProtocolListView(generics.ListAPIView):
+    """An api end point to list all of the sampling specs (species and
+    group) for a specific lake and protocol."""
+
+    serializer_class = FN012ProtocolListSerializer
+    filterset_class = FN012ProtocolFilter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
+    queryset = FN012Protocol.objects.all().select_related("protocol", "lake")
 
 
 class FN013ListView(generics.ListAPIView):

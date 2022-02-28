@@ -12,6 +12,8 @@ from .FN0_serializers import (
     FNProtocolSerializer,
     FN011SimpleSerializer,
     FN011Serializer,
+    FN012ListSerializer,
+    FN012ProtocolListSerializer,
     FN013Serializer,
     FN013ListSerializer,
     FN014Serializer,

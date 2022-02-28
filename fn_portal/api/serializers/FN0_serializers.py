@@ -5,6 +5,9 @@ from django.contrib.auth import get_user_model
 from fn_portal.models import (
     FNProtocol,
     FN011,
+    FN012Base,
+    FN012,
+    FN012Protocol,
     FN013,
     FN014,
     FN022,
@@ -162,6 +165,72 @@ class FN011WizardSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+
+class FN012BaseListSerializer(serializers.ModelSerializer):
+    """A base class for our FN012 serailizers - inherted by FN012 and
+    FN012Protocol serializers which add their key fields.  This
+    serializer is not used directly.
+
+    """
+
+    spc = serializers.CharField(read_only=True, source="species.spc")
+
+    class Meta:
+        model = FN012Base
+        fields = (
+            "spc",
+            "grp",
+            "grp_des",
+            "biosam",
+            "sizsam",
+            "sizatt",
+            "sizint",
+            "fdsam",
+            "spcmrk",
+            "agedec",
+            "flen_min",
+            "flen_max",
+            "tlen_min",
+            "tlen_max",
+            "rwt_min",
+            "rwt_max",
+            "k_min_error",
+            "k_min_warn",
+            "k_max_error",
+            "k_max_warn",
+            "slug",
+            "id",
+        )
+
+
+class FN012ListSerializer(FN012BaseListSerializer):
+    """A readonly seralizer class that returns the sampling specs as
+    expected from FN-II.  it is inherits from FN012Base and adds a
+    field for project code.
+
+    """
+
+    prj_cd = serializers.CharField(read_only=True, source="project.prj_cd")
+
+    class Meta:
+        model = FN012
+        fields = ("prj_cd",) + FN012BaseListSerializer.Meta.fields
+
+
+class FN012ProtocolListSerializer(FN012BaseListSerializer):
+    """A readonly seralizer class that returns the sampling specs as
+    expected from FN-II for a specific protocol and lake.  it is
+    inherits from FN012Base and adds a fields for protocol and lake.
+
+    """
+
+    protocol = serializers.CharField(read_only=True, source="protocol.abbrev")
+    lake = serializers.CharField(read_only=True, source="lake.abbrev")
+
+    class Meta:
+        model = FN012Protocol
+        fields = ("protocol", "lake") + FN012BaseListSerializer.Meta.fields
 
 
 class ProjectGearProcessTypeSerializer(serializers.ModelSerializer):

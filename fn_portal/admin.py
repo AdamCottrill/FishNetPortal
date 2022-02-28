@@ -3,7 +3,7 @@ from django.contrib import admin
 from fn_portal.models import (
     FN011,
     FN012,
-    FN012Default,
+    FN012Protocol,
     FNProtocol,
     Gear,
     GearFamily,
@@ -64,6 +64,13 @@ class Admin_FN012(admin.ModelAdmin):
         "flen2tlen_beta",
     ]
 
+    def get_queryset(self, request):
+        return (
+            super(Admin_FN012, self)
+            .get_queryset(request)
+            .select_related("project", "species")
+        )
+
     def get_readonly_fields(self, request, obj=None):
         if obj:
             return self.readonly_fields + ("project", "species", "grp")
@@ -73,7 +80,7 @@ class Admin_FN012(admin.ModelAdmin):
         return obj.project.prj_cd
 
 
-class Admin_FN012Default(admin.ModelAdmin):
+class Admin_FN012Protocol(admin.ModelAdmin):
     """Admin class for Protocol Species Sampling Specs (FN012)"""
 
     search_fields = [
@@ -86,20 +93,15 @@ class Admin_FN012Default(admin.ModelAdmin):
         "species",
         "grp",
         "grp_des",
-        # "lake__abbrev",
-        ##"protocol__abbrev",
+        "lake",
+        "protocol",
         "biosam",
     )
-    list_filter = (
-        "lake__abbrev",
-        "species__spc",
-        "grp",
-        # "protocol__abbrev"
-    )
+    list_filter = ("lake__abbrev", "species__spc", "grp", "protocol")
     exclude = ("slug",)
 
     fields = [
-        "protocol",
+        "protocol__abbrev",
         "lake",
         "species",
         "grp",
@@ -127,6 +129,13 @@ class Admin_FN012Default(admin.ModelAdmin):
         "flen2tlen_alpha",
         "flen2tlen_beta",
     ]
+
+    def get_queryset(self, request):
+        return (
+            super(Admin_FN012Protocol, self)
+            .get_queryset(request)
+            .select_related("lake", "protocol", "species")
+        )
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -240,7 +249,7 @@ class Admin_Gear2SubGear(admin.ModelAdmin):
 
 admin.site.register(FN011, Admin_FN011)
 admin.site.register(FN012, Admin_FN012)
-admin.site.register(FN012Default, Admin_FN012Default)
+admin.site.register(FN012Protocol, Admin_FN012Protocol)
 admin.site.register(FNProtocol, Admin_FNProtocol)
 admin.site.register(Gear, Admin_Gear)
 admin.site.register(GearEffortProcessType, Admin_GearProcessType)
