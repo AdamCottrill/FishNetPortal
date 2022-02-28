@@ -4,6 +4,8 @@ import factory
 
 from ...models import (
     FN011,
+    FN012,
+    FN012Protocol,
     FN013,
     FN014,
     FN022,
@@ -12,7 +14,7 @@ from ...models import (
     FNProtocol,
     ProjectGearProcessType,
 )
-from .common_factories import LakeFactory
+from .common_factories import LakeFactory, SpeciesFactory
 from .gear_factories import GearFactory
 from .user_factory import UserFactory
 
@@ -94,6 +96,69 @@ class ProjectGearProcessTypeFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(FN011Factory)
     gear = factory.SubFactory(GearFactory)
     process_type = 1
+
+
+class FN012Factory(factory.django.DjangoModelFactory):
+    """A factory for FN012 objects."""
+
+    class Meta:
+        model = FN012
+        django_get_or_create = ("project", "species", "grp")
+
+    project = factory.SubFactory(FN011Factory)
+    species = factory.SubFactory(SpeciesFactory)
+    grp = "00"
+    grp_des = "default group"
+    biosam = "1"
+    sizsam = 1
+    sizatt = "FLEN"
+    sizint = 1
+    fdsam1 = "0"
+    spcmrk1 = "0"
+    agedec1 = "X"
+    agedec2 = "0"
+    flen_min = 150
+    flen_max = 750
+    tlen_min = 150
+    tlen_max = 750
+    rwt_min = 100
+    rwt_max = 2500
+    k_min_error = 0.2
+    k_min_warn = 0.5
+    k_max_error = 3.5
+    k_max_warn = 3.0
+
+
+class FN012ProtocolFactory(factory.django.DjangoModelFactory):
+    """A factory for FN012Protocol objects."""
+
+    class Meta:
+        model = FN012Protocol
+        django_get_or_create = ("protocol", "lake", "species", "grp")
+
+    protocol = factory.SubFactory(FNProtocolFactory)
+    lake = factory.SubFactory(LakeFactory)
+    species = factory.SubFactory(SpeciesFactory)
+    grp = "00"
+    grp_des = "default group"
+    biosam = "1"
+    sizsam = 1
+    sizatt = "FLEN"
+    sizint = 1
+    fdsam1 = "0"
+    spcmrk1 = "0"
+    agedec1 = "X"
+    agedec2 = "0"
+    flen_min = 150
+    flen_max = 750
+    tlen_min = 150
+    tlen_max = 750
+    rwt_min = 100
+    rwt_max = 2500
+    k_min_error = 0.2
+    k_min_warn = 0.5
+    k_max_error = 3.5
+    k_max_warn = 3.0
 
 
 class FN013Factory(factory.django.DjangoModelFactory):

@@ -27,7 +27,7 @@ class FN012Base(models.Model):
 
     slug = models.SlugField(max_length=100, unique=True)
     species = models.ForeignKey(
-        Species, related_name="%(class)s_sample_constraints", on_delete=models.CASCADE
+        Species, related_name="%(class)s_sample_specs", on_delete=models.CASCADE
     )
     grp = models.CharField(max_length=3, default="00", db_index=True)
 
@@ -327,7 +327,7 @@ class FN012(FN012Base):
     """A table to hold the FN012 data for an individual project."""
 
     project = models.ForeignKey(
-        "FN011", related_name="sampling_constraints", on_delete=models.CASCADE
+        "FN011", related_name="sample_specs", on_delete=models.CASCADE
     )
 
     class Meta:
@@ -344,12 +344,12 @@ class FN012Protocol(FN012Base):
     """Default FN012 values for a each lake and protocol."""
 
     lake = models.ForeignKey(
-        Lake, related_name="default_sampling_constraints", on_delete=models.CASCADE
+        Lake, related_name="sample_specs", on_delete=models.CASCADE
     )
 
     protocol = models.ForeignKey(
         FNProtocol,
-        related_name="default_sampling_constraints",
+        related_name="sample_specs",
         on_delete=models.CASCADE,
     )
 
@@ -362,6 +362,6 @@ class FN012Protocol(FN012Base):
 
     def get_slug(self):
         return (
-            f"fn012default-{self.lake.abbrev}-{self.protocol.abbrev}"
+            f"fn012protocol-{self.lake.abbrev}-{self.protocol.abbrev}"
             + f"-{self.species.spc}-{self.grp}"
         )

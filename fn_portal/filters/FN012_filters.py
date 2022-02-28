@@ -18,12 +18,12 @@ class FN012SubFilter(django_filters.FilterSet):
         field_name="species__spc_nmco", lookup_expr="icontains"
     )
 
-    spc_nmsc__like = django_filters.CharFilter(
-        field_name="species__spc_nmsc", lookup_expr="icontains"
-    )
-
     spc_nmco__not_like = django_filters.CharFilter(
         field_name="species__spc_nmco", lookup_expr="icontains", exclude=True
+    )
+
+    spc_nmsc__like = django_filters.CharFilter(
+        field_name="species__spc_nmsc", lookup_expr="icontains"
     )
 
     spc_nmsc__not_like = django_filters.CharFilter(

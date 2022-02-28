@@ -40,42 +40,16 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
-from .FN011_fixtures import projects, netsets, efforts, catchcounts, fish, age_estimates
-
-filter_args = [
-    ({"prj_date0": "2010-10-10"}, [0]),
-    ({"prj_date0__lte": "2010-10-10"}, [0, 1, 4, 5]),
-    ({"prj_date0__gte": "2010-10-10"}, [0, 2, 3]),
-    ({"prj_date1": "2010-10-10"}, [1]),
-    ({"prj_date1__lte": "2010-10-10"}, [1, 4, 5]),
-    ({"prj_date1__gte": "2010-10-10"}, [0, 1, 2, 3]),
-    ({"year": "2010"}, [0, 1]),
-    ({"year__gte": "2010"}, [0, 1, 2, 3]),
-    ({"year__gt": "2010"}, [2, 3]),
-    ({"year__lte": "2010"}, [0, 1, 4, 5]),
-    ({"year__lt": "2010"}, [4, 5]),
-    ({"prj_cd": "LOA_IA10_000"}, [0]),
-    ({"prj_cd": "LOA_IA10_000,LSA_IA07_555"}, [0, 5]),
-    ({"prj_cd__not": "LSA_IA08_444"}, [0, 1, 2, 3, 5]),
-    ({"prj_cd__not": "LOA_IA10_000,LSA_IA07_555"}, [1, 2, 3, 4]),
-    ({"prj_cd__like": "IA10"}, [0, 1]),
-    ({"prj_cd__not_like": "IA10"}, [2, 3, 4, 5]),
-    ({"prj_cd__endswith": "555"}, [5]),
-    ({"prj_cd__not_endswith": "444"}, [0, 1, 2, 3, 5]),
-    ({"prj_nm__like": "superior"}, [4, 5]),
-    ({"prj_nm__not_like": "superior"}, [0, 1, 2, 3]),
-    ({"prj_nm__like": "Superior"}, [4, 5]),
-    ({"prj_nm__not_like": "Superior"}, [0, 1, 2, 3]),
-    ({"prj_ldr": "hsimpson"}, [0, 1, 5]),
-    ({"protocol": "BSM"}, [0, 1, 3]),
-    ({"protocol": "BSM,FWIN"}, [0, 1, 2, 3]),
-    ({"protocol__not": "BSM"}, [2, 4, 5]),
-    ({"protocol__not": "BSM,FWIN"}, [4, 5]),
-    ({"lake": "HU"}, [2]),
-    ({"lake": "HU,SU"}, [2, 4, 5]),
-    ({"lake__not": "HU"}, [0, 1, 3, 4, 5]),
-    ({"lake__not": "HU,SU"}, [0, 1, 3]),
-]
+from .FN011_fixtures import (
+    projects,
+    sample_specs,
+    netsets,
+    efforts,
+    catchcounts,
+    fish,
+    age_estimates,
+)
+from .fn011_filter_args import fn011_filter_args as filter_args
 
 
 @pytest.mark.django_db
@@ -98,6 +72,34 @@ def test_FN011Readonly_filters(client, projects, filter, expected):
             slugs.append(x.slug)
 
     url = reverse("fn_portal_api:project_list")
+    response = client.get(url, filter)
+    assert response.status_code == status.HTTP_200_OK
+
+    # pull out the slugs from the response:
+    payload = response.data["results"]
+    observed_slugs = {x["slug"] for x in payload}
+
+    assert len(payload) == len(expected)
+    assert set(slugs) == observed_slugs
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("filter,expected", filter_args)
+def test_FN012_filters_FN011_attrs(client, sample_specs, filter, expected):
+    """The readonly api endpoint for FN012 objects accepts a large number
+    of parameters that are actually attributes of the project (year,
+    project code, project lead, start and end date ect.) This test
+    will verify that only sampling constraints matching the specified
+    criteria of the project are returned.
+
+    """
+
+    slugs = []
+    for i, x in enumerate(sample_specs):
+        if i in expected:
+            slugs.append(x.slug)
+
+    url = reverse("fn_portal_api:sample_specs_list")
     response = client.get(url, filter)
     assert response.status_code == status.HTTP_200_OK
 

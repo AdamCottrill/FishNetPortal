@@ -65,7 +65,7 @@ def test_FN121Readonly_only_get_allowed(api_client):
 def test_FN121Readonly_filters():
     """The readonly api endpoint for FN121 objects accepts a large number
     of potential parameters as filters. This test will verify that only
-    net sets matcing the specified criteria are returned.
+    net sets matching the specified criteria are returned.
 
     This test will be parameterized with a list of two element tuples,
     the filter to apply, and a list of the FN121 slugs expected in the

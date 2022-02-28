@@ -13,7 +13,7 @@ def project():
 
 @pytest.fixture()
 def species():
-    species = SpeciesFactory()
+    species = SpeciesFactory(spc="091")
     return species
 
 
@@ -59,7 +59,7 @@ def test_FN012_default_str(lake, protocol, species):
     fn012 = FN012Protocol(lake=lake, protocol=protocol, species=species, grp=grp)
     fn012.save()
 
-    expected = f"fn012default-{lake_abbrev}-{protocol_abbrev}-{spc}-{grp}"
+    expected = f"fn012protocol-{lake_abbrev}-{protocol_abbrev}-{spc}-{grp}"
     assert str(fn012) == expected.lower()
 
 

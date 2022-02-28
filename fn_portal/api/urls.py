@@ -87,11 +87,11 @@ urlpatterns = [
     path("protocols/", FNProtocolListView.as_view(), name="protocol_list"),
     path("project_wizard/", project_wizard, name="project_wizard"),
     path("fn011/", FN011ListView.as_view(), name="project_list"),
-    path("fn012/", FN012ListView.as_view(), name="sampling_specs_list"),
+    path("fn012/", FN012ListView.as_view(), name="sample_specs_list"),
     path(
         "fn012_protocol/",
         FN012ProtocolListView.as_view(),
-        name="protocol_sampling_specs_list",
+        name="protocol_sample_specs_list",
     ),
     path("fn011/<slug:slug>/", FN011DetailView.as_view(), name="project_detail"),
     path("fn013/", FN013ListView.as_view(), name="fn013_list"),

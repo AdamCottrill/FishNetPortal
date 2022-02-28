@@ -4,6 +4,8 @@ from .user_factory import UserFactory
 from .FN0_factories import (
     FNProtocolFactory,
     FN011Factory,
+    FN012Factory,
+    FN012ProtocolFactory,
     FN013Factory,
     FN014Factory,
     FN022Factory,

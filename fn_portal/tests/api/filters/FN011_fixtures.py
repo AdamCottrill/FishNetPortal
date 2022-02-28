@@ -21,6 +21,7 @@ from fn_portal.tests.factories.common_factories import SpeciesFactory
 
 from ...factories import (
     FN011Factory,
+    FN012Factory,
     FN022Factory,
     FN026Factory,
     FN028Factory,
@@ -130,6 +131,38 @@ def netsets(projects):
 
     for item in projects:
         items.append(FN121Factory(project=item))
+    return items
+
+
+@pytest.fixture
+def sample_specs(projects):
+    """Create one sampling spec for each proejct - in the same order as the projects array."""
+    items = []
+
+    species_attrs = [
+        {
+            "spc": "075",
+            "spc_nmco": "Chinook Salmon",
+            "spc_nmsc": "Oncorhynchus tshawytscha",
+        },
+        {"spc": "076", "spc_nmco": "Rainbow Trout", "spc_nmsc": "Oncorhynchus mykiss"},
+        {
+            "spc": "081",
+            "spc_nmco": "Lake Trout",
+            "spc_nmsc": "Salvelinus namaycush",
+        },
+        {
+            "spc": "091",
+            "spc_nmco": "Lake Whitefish",
+            "spc_nmsc": "Coregonus clupeaformis",
+        },
+        {"spc": "331", "spc_nmco": "Yellow Perch", "spc_nmsc": "Perca flavescens"},
+        {"spc": "334", "spc_nmco": "Walleye", "spc_nmsc": "Sander vitreum"},
+    ]
+
+    for i, item in enumerate(projects):
+        species = SpeciesFactory(**species_attrs[i])
+        items.append(FN012Factory(project=item, species=species))
     return items
 
 
