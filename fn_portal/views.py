@@ -147,11 +147,14 @@ def project_detail(request, slug):
         "samples__effort",
         "samples__effort__catch",
         "samples__effort__catch__species",
-        "protocol",
+        "sample_specs",
+        "sample_specs__species",
         "seasons",
         "modes",
+        "modes__gear",
+        "modes__gear__subgears",
         "spatial_strata",
-    )
+    ).select_related("protocol", "prj_ldr")
 
     project = get_object_or_404(proj, slug=slug)
     netsets = (

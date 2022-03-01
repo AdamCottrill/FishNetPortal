@@ -18,6 +18,11 @@
          margin-bottom: 3px;
      }
      .dc-chart g.row text {fill: black;}
+
+     .capitalize {
+         text-transform: capitalize;
+     }
+
     </style>
 
 
@@ -122,7 +127,7 @@
 
                 <div class="card mt-4 mb-2">
                     <div class="card-header">
-                        <h5>Project Details</h5>
+                        <h5>Project Details (FN011)</h5>
                     </div>
                     <div class="card-body">
                         <p><strong>Project Lead:</strong>{{project.prj_ldr.first_name}} {{project.prj_ldr.last_name}}</p>
@@ -139,7 +144,7 @@
 
                         <div class="card my-2">
                             <div class="card-header">
-                                <h5>Seasons</h5>
+                                <h5>Seasons (FN022)</h5>
                             </div>
                             <div class="card-body">
                                 <table id="ssn-table" class="table">
@@ -169,7 +174,7 @@
                     <div class="col-6">
                         <div class="card my-2">
                             <div class="card-header">
-                                <h5>Spatial Strata</h5>
+                                <h5>Spatial Strata (FN026)</h5>
                             </div>
                             <div class="card-body">
 
@@ -197,7 +202,7 @@
 
                 <div class="card my-2">
                     <div class="card-header">
-                        <h5>Fishing Modes</h5>
+                        <h5>Fishing Modes (FN028)</h5>
                     </div>
                     <div class="card-body">
                         <table id="mode-table" class="table">
@@ -227,6 +232,74 @@
                     </div>
                 </div>
 
+
+                <div class="card my-2">
+                    <div class="card-header">
+                        <h5>Sampling Specs (FN012)</h5>
+                    </div>
+                    <div class="card-body">
+
+                        {% if project.sample_specs.all|length %}
+
+                        <table id="mode-table" class="table tablesorter">
+                            <thead>
+                                <tr>
+                                    <th>SPECIES NAME</th>
+                                    <th>SPC</th>
+                                    <th>GRP</th>
+                                    <th>GRP DES</th>
+                                    <th>BIOSAM</th>
+                                    <th>SIZSAM</th>
+                                    <th>SIZATT</th>
+                                    <th>SIZINT</th>
+                                    <th>FDSAM</th>
+                                    <th>SPCMRK</th>
+                                    <th>AGEDEC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in project.sample_specs.all %}
+                                    <tr>
+                                        <td class="capitalize">{{ item.species.spc_nmco}}</td>
+                                        <td> {{ item.species.spc}} </td>
+                                        <td> {{ item.grp}} </td>
+                                        <td> {{ item.grp_des}} </td>
+                                        <td
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ item.get_biosam_display }}"
+                                        > {{ item.biosam}} </td>
+                                        <td    data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ item.get_sizsam_display }}"> {{ item.sizsam}} </td>
+                                        <td    data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </TD>
+                                        <td> {{ item.sizint}} </td>
+                                        <td    data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="{{ item.get_fdsam1_display }}{%if item.get_fdsam2_display %}- {{ item.get_fdsam2_display }}{% endif %}"> {{ item.fdsam}} </td>
+                                        <td    data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="{{ item.get_spcmrk1_display }}{%if item.get_spcmrk2_display %}- {{ item.get_spcmrk2_display }}{% endif %}"> {{ item.spcmrk}} </td>
+                                        <td    data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="{{ item.get_agedec1_display }}{%if item.get_agedec2_display %}- {{ item.get_agedec2_display }}{% endif %}"> {{ item.agedec}} </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        {% else %}
+
+                        <div>No Sampling Specifications Provided</div>
+
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
             </div>
             <div class="tab-pane fade" id="net-sets" role="tabpanel" aria-labelledby="net-sets-tab">
                 {% if project.samples.all %}
@@ -243,6 +316,8 @@
                             <th>Effort Duration</th>
                             <th>Gear</th>
                             <th>Orient</th>
+                            <th>Set Type</th>
+                            <th>Process Type</th>
                             <th>Site Depth(m)</th>
                             <th>Total Catch</th>
                         </tr>
@@ -255,7 +330,9 @@
                                     <td> {{ item.effdt1|date:"N j,Y" }} </td>
                                     <td> {{ item.effdur|floatformat:2 }} </td>
                                     <td> {{ item.mode.gear.gr_code }} </td>
-                                    <td> {{ item.mode.orient }} </td>
+                                    <td> {{ item.mode.get_orient_display }} </td>
+                                    <td> {{ item.mode.get_gruse_display }} </td>
+                                    <td> {{ item.process_type }} </td>
                                     <td> {{ item.sidep|floatformat:2 }} </td>
                                     <td> {{ item.total_catch_count|default_if_none:0 }}</td>
                                 </tr>
@@ -558,6 +635,7 @@
 
     <script type="text/javascript">
      $( document ).ready(function() {
+         $('[data-toggle="tooltip"]').tooltip()
          // prepare the sidebar by expanding just the current year
          var my_year={{ project.year }}{{project.project.year}};
          var div_name = "#project-year-" + my_year;
