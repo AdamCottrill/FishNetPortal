@@ -239,18 +239,6 @@ class FN012Base(models.Model):
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(4.0)],
     )
-    flen2tlen_alpha = models.FloatField(
-        "Intercept of FLEN-TLEN Regression",
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(-20.0), MaxValueValidator(80.0)],
-    )
-    flen2tlen_beta = models.FloatField(
-        "Slope of FLEN-TLEN Regression",
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(1.0), MaxValueValidator(1.25)],
-    )
 
     class Meta:
         abstract = True

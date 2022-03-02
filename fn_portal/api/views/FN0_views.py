@@ -175,7 +175,7 @@ class FN012ProtocolListView(generics.ListAPIView):
     filterset_class = FN012ProtocolFilter
     pagination_class = StandardResultsSetPagination
     permission_classes = [ReadOnly]
-    queryset = FN012Protocol.objects.all().select_related("protocol", "lake")
+    queryset = FN012Protocol.objects.all().select_related("protocol", "lake", "species")
 
 
 class FN013ListView(generics.ListAPIView):
