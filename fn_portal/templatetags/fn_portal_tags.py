@@ -12,6 +12,11 @@ def sidebar_projects():
     return {"projects": FN011.objects.all().order_by("-year")}
 
 
+@register.filter
+def lookup(value, key):
+    return value.get(key, [])
+
+
 @register.simple_tag(takes_context=True)
 def query_transform(context, include_page=False, **kwargs):
     """

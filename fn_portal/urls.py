@@ -20,6 +20,8 @@ from .views import (
     sample_catch_counts_json,
     sample_detail,
     ProjectWizardView,
+    FN012ProtocolList,
+    fn012protocol_detail,
 )
 
 # from rest_framework.schemas import get_schema_view
@@ -64,6 +66,14 @@ urlpatterns = [
         "gears/edit_subgear/<str:gear_code>/<str:eff>/",
         view=edit_subgear,
         name="edit_subgear",
+    ),
+    path(
+        "fn012_protocol/", view=FN012ProtocolList.as_view(), name="fn012_protocol_list"
+    ),
+    path(
+        "fn012_protocol_detail/<str:lake>/<str:protocol>/",
+        view=fn012protocol_detail,
+        name="fn012_protocol_detail",
     ),
     # =============================================
     #  API VIEWS / AJAX endpoints used in templates

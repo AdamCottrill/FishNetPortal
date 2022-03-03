@@ -24,7 +24,7 @@ from django.views.generic import ListView, TemplateView
 from common.models import Lake, Species
 from .filters import FN011Filter
 from .forms import GearForm, DataUploadForm
-from .models import FN011, FN013, FN121, FN123, Gear
+from .models import FN011, FN013, FN121, FN123, Gear, FNProtocol, FN012Protocol
 
 from .data_upload.project_upload import process_accdb_upload
 
@@ -670,3 +670,57 @@ class ProjectWizardView(TemplateView):
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+
+class FN012ProtocolList(ListView):
+    """"""
+
+    queryset = FN012Protocol.objects.all().prefetch_related("lake")
+    template_name = "fn_portal/protocol_list.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        get any additional context information that has been passed in with
+        the request.
+        """
+
+        context = super(FN012ProtocolList, self).get_context_data(**kwargs)
+
+        context["lakes"] = {x.abbrev: x.lake_name for x in Lake.objects.all()}
+
+        return context
+
+    def get_queryset(self):
+
+        qs = (
+            FN012Protocol.objects.values(
+                "lake__abbrev", "protocol__label", "protocol__abbrev"
+            )
+            .order_by("lake__abbrev", "protocol__abbrev")
+            .distinct()
+        )
+
+        return qs
+
+
+def fn012protocol_detail(request, lake, protocol):
+    """This view is used to display a summary of the assessment prtococol
+    and a table of the default fn012 values fro that lake and protocol.
+
+    Arguments:
+    - `request`:
+    - `lake`:  abbreviation of the lake
+    - `protocol`: abbeviation of fisheries protocol (bsm, fwin)
+
+    """
+
+    lake_object = Lake.objects.get(abbrev=lake)
+
+    fn_protocol = FNProtocol.objects.get(abbrev=protocol)
+
+    fn012 = FN012Protocol.objects.filter(
+        lake=lake_object, protocol=fn_protocol
+    ).prefetch_related("species")
+    context = {"lake": lake_object, "protocol": fn_protocol, "fn012": fn012}
+
+    return render(request, "fn_portal/fn012protocol_detail.html", context)

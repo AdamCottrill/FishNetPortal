@@ -1,0 +1,58 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load static %}
+{% load fn_portal_tags %}
+
+
+
+
+{% block title  %} {{ block.super }}| Protocol List  {% endblock %}
+
+{% block content %}
+
+    <div class="container my-3">
+        <h2>Assessment Protocols By Lake</h2>
+    </div>
+
+    <div class="container" >
+
+        {% regroup object_list by lake__abbrev as protocol_list %}
+
+        {% for lake in protocol_list %}
+            <div class="card my-2">
+                <div class="card-header">
+                    <h5>{{ lakes | lookup:lake.grouper }} ({{ lake.grouper }})</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Protocol</th>
+                                <th scope="col" class='text-center'>Confirmed</th>
+                                <th scope="col" class='text-center'>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for protocol in lake.list %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url  'fn_portal:fn012_protocol_detail' lake=lake.grouper protocol=protocol.protocol__abbrev%}">
+                                            {{protocol.protocol__label}} ({{protocol.protocol__abbrev}})
+                                        </a>
+                                    </td>
+                                    <td class='text-center'>
+                                        {% if protocol.confirmed %} Yes {% else  %} No {% endif %}
+                                    </td>
+                                    <td class='text-center'>
+                                        {% if protocol.active %} Yes {% else  %} No {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

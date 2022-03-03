@@ -1,0 +1,172 @@
+{% extends "fn_portal/fn_portal_base.html" %}
+
+{% load static %}
+
+{% block extrahead  %}
+
+    <style type="text/css" media="screen">
+
+        .capitalize {
+         text-transform: capitalize;
+     }
+
+    </style>
+
+
+{% endblock %}
+
+
+{% block title  %} {{ block.super }}| Protocol List  {% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid" >
+        <div class="container">
+            <h2>Default Sampling Specification for {{ protocol.label }} ({{protocol.abbrev}}) conducted in {{lake.lake_name}} ({{lake.abbrev}})</h2>
+
+            <div class="card my-2">
+                <div class="card-header">
+                    <div class="row  justify-content-between">
+                        <div class="col">
+                            <h5>Protocol Description</h5>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{%url "fn_portal:project_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}">View these projects</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if  protocol.description_html %}
+                        <div>{{protocol.description_html}}</div>
+                    {% else %}
+                        <div>Coming soon...</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card my-2">
+            <div class="card-header">
+                <div class="row  justify-content-between">
+                        <div class="col">
+                            <h5>Sampling Specs (FN012)</h5>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{%url "fn_portal_api:protocol_sample_specs_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}&export=csv">Export as csv</a>
+                        </div>
+                </div>
+            </div>
+            <div class="card-body">
+
+                {% if fn012|length %}
+
+                    <table id="mode-table" class="table table-sm tablesorter">
+                        <thead>
+                            <tr>
+                                <th>SPECIES NAME</th>
+                                <th>SPC</th>
+                                <th>GRP</th>
+                                <th>GRP DES</th>
+                                <th>BIOSAM</th>
+                                <th>SIZSAM</th>
+                                <th>SIZATT</th>
+                                <th>SIZINT</th>
+                                <th>FDSAM</th>
+                                <th>SPCMRK</th>
+                                <th>AGEDEC</th>
+
+                                <th>FLEN_MIN</th>
+                                <th>FLEN_MAX</th>
+                                <th>TLEN_MIN</TH>
+                                <TH>TLEN_MAX</th>
+                                <th>RWT_MIN</th>
+                                <th>RWT_MAX</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in fn012 %}
+                                <tr>
+                                    <td class="capitalize">{% if  item.species.spc_nmco %} {{ item.species.spc_nmco}} {% else %} {{ item.species.spc_nmsc}} {% endif %}</td>
+                                    <td> {{ item.species.spc}} </td>
+                                    <td> {{ item.grp}} </td>
+                                    <td> {{ item.grp_des}} </td>
+                                    <td
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="{{ item.get_biosam_display }}"
+                                    > {{ item.biosam}} </td>
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_sizsam_display }}"> {{ item.sizsam}} </td>
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </TD>
+                                    <td> {{ item.sizint}} </td>
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_fdsam1_display }}{%if item.get_fdsam2_display %}- {{ item.get_fdsam2_display }}{% endif %}"> {{ item.fdsam}} </td>
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_spcmrk1_display }}{%if item.get_spcmrk2_display %}- {{ item.get_spcmrk2_display }}{% endif %}"> {{ item.spcmrk}} </td>
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_agedec1_display }}{%if item.get_agedec2_display %}- {{ item.get_agedec2_display }}{% endif %}"> {{ item.agedec}} </td>
+
+                                    <td>{{item.flen_min}}</td>
+                                    <td>{{item.flen_max}}</td>
+                                    <td>{{item.tlen_min}}</td>
+                                    <td>{{item.tlen_max}}</td>
+                                    <td>{{item.rwt_min}}</td>
+                                    <td>{{item.rwt_max}}</td>
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div>No Sampling Specifications Provided</div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.js"></script>
+
+    <!-- tablesorter widget file - loaded after the plugin -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.7/js/jquery.tablesorter.widgets.js"></script>
+
+
+
+    <script type="text/javascript">
+
+     $( document ).ready(function() {
+         $('[data-toggle="tooltip"]').tooltip()
+
+     });
+
+
+     $(".tablesorter").tablesorter({
+         theme: 'bootstrap',
+         widthFixed: true,
+         showProcessing: true,
+         headerTemplate: '{content} {icon}',
+         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgetOptions: {
+             scroller_height: 300,
+             scroller_barWidth: 17,
+             scroller_jumpToHeader: true,
+             scroller_idPrefix: 's_'
+         }
+     });
+
+    </script>
+
+
+{% endblock %}

@@ -1,8 +1,10 @@
 """Views for api endpoints for our FN0 models."""
-
+import csv
 
 from rest_framework import generics
-from django.db.models import F
+from django.db.models import F, Value
+from django.db.models.functions import Concat, LPad
+from django.http import HttpResponse
 
 from fn_portal.models import (
     FNProtocol,
@@ -175,7 +177,75 @@ class FN012ProtocolListView(generics.ListAPIView):
     filterset_class = FN012ProtocolFilter
     pagination_class = StandardResultsSetPagination
     permission_classes = [ReadOnly]
-    queryset = FN012Protocol.objects.all().select_related("protocol", "lake", "species")
+
+    def get_queryset(self):
+        """ """
+        qs = (
+            FN012Protocol.objects.all()
+            .select_related("protocol", "lake", "species")
+            .order_by("slug")
+        )
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        """ """
+        default = super(FN012ProtocolListView, self).get(request, *args, **kwargs)
+        if request.GET.get("export") == "csv":
+            return self.export(request, *args, **kwargs)
+        return default
+
+    def export(self, request, *args, **kwargs):
+
+        lake = request.GET.get("lake")
+        protocol = request.GET.get("protocol")
+        qs = self.get_queryset()
+
+        fields = [
+            "spc_nmco",
+            "spc",
+            "grp",
+            "grp_des",
+            "biosam",
+            "sizsam",
+            "sizatt",
+            "sizint",
+            "fdsam",
+            "spcmrk",
+            "agedec",
+            "flen_min",
+            "flen_max",
+            "tlen_min",
+            "tlen_max",
+            "rwt_min",
+            "rwt_max",
+            "k_min_error",
+            "k_min_warn",
+            "k_max_error",
+            "k_max_warn",
+        ]
+
+        qs = (
+            qs.filter(lake__abbrev=lake, protocol__abbrev=protocol)
+            .annotate(
+                spc_nmco=F("species__spc_nmco"),
+                spc=LPad("species__spc", 3, Value("0")),
+                fdsam=Concat("fdsam1", "fdsam2"),
+                agedec=Concat("agedec1", "agedec2"),
+                spcmrk=Concat("spcmrk1", "spcmrk2"),
+            )
+            .values_list(*fields)
+        )
+
+        filename = f"FN012_Values_{lake}_{protocol}.csv"
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+
+        writer = csv.writer(response)
+        writer.writerow(fields)
+        writer.writerows(qs)
+
+        return response
 
 
 class FN013ListView(generics.ListAPIView):
