@@ -24,7 +24,7 @@
         <div class="container">
             <h2>Default Sampling Specification for {{ protocol.label }} ({{protocol.abbrev}}) conducted in {{lake.lake_name}} ({{lake.abbrev}})</h2>
 
-            <div class="card my-2">
+            <div class="card my-4">
                 <div class="card-header">
                     <div class="row  justify-content-between">
                         <div class="col">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="card-body">
                     {% if  protocol.description_html %}
-                        <div>{{protocol.description_html}}</div>
+                        <div>{{protocol.description_html|safe}}</div>
                     {% else %}
                         <div>Coming soon...</div>
                     {% endif %}
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="card my-2">
+        <div class="card my-4">
             <div class="card-header">
                 <div class="row  justify-content-between">
                         <div class="col">

@@ -68,7 +68,9 @@ urlpatterns = [
         name="edit_subgear",
     ),
     path(
-        "fn012_protocol/", view=FN012ProtocolList.as_view(), name="fn012_protocol_list"
+        "protocols_by_lake/",
+        view=FN012ProtocolList.as_view(),
+        name="protocols_by_lake_list",
     ),
     path(
         "fn012_protocol_detail/<str:lake>/<str:protocol>/",
