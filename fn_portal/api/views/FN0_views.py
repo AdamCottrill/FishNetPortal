@@ -212,6 +212,7 @@ class FN012ProtocolListView(generics.ListAPIView):
             "fdsam",
             "spcmrk",
             "agedec",
+            "lamsam",
             "flen_min",
             "flen_max",
             "tlen_min",

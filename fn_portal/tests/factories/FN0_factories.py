@@ -117,6 +117,7 @@ class FN012Factory(factory.django.DjangoModelFactory):
     spcmrk1 = "0"
     agedec1 = "X"
     agedec2 = "0"
+    lamsam = "2"
     flen_min = 150
     flen_max = 750
     tlen_min = 150
@@ -149,6 +150,7 @@ class FN012ProtocolFactory(factory.django.DjangoModelFactory):
     spcmrk1 = "0"
     agedec1 = "X"
     agedec2 = "0"
+    lamsam = "2"
     flen_min = 150
     flen_max = 750
     tlen_min = 150

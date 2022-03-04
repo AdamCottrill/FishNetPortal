@@ -189,6 +189,7 @@ class FN012BaseListSerializer(serializers.ModelSerializer):
             "fdsam",
             "spcmrk",
             "agedec",
+            "lamsam",
             "flen_min",
             "flen_max",
             "tlen_min",

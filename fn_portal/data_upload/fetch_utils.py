@@ -81,6 +81,7 @@ def get_fn012_stmt():
                 FDSAM,
                 SPCMRK,
                 AGEDEC,
+                LAMSAM,
                 FLEN_MIN,
                 FLEN_MAX,
                 TLEN_MIN,

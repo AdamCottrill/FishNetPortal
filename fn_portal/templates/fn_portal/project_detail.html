@@ -23,6 +23,7 @@
          text-transform: capitalize;
      }
 
+
     </style>
 
 
@@ -147,7 +148,7 @@
                                 <h5>Seasons (FN022)</h5>
                             </div>
                             <div class="card-body">
-                                <table id="ssn-table" class="table">
+                                <table id="ssn-table" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Season</th>
@@ -178,7 +179,7 @@
                             </div>
                             <div class="card-body">
 
-                                <table id="space-table" class="table">
+                                <table id="space-table" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Space</th>
@@ -205,7 +206,7 @@
                         <h5>Fishing Modes (FN028)</h5>
                     </div>
                     <div class="card-body">
-                        <table id="mode-table" class="table">
+                        <table id="mode-table" class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Mode</th>
@@ -239,9 +240,11 @@
                     </div>
                     <div class="card-body">
 
+
+
                         {% if project.sample_specs.all|length %}
 
-                        <table id="mode-table" class="table table-sm tablesorter">
+                            <table id="mode-table" class="table table-sm table-hover tablesorter">
                             <thead>
                                 <tr>
                                     <th>SPECIES NAME</th>
@@ -255,6 +258,7 @@
                                     <th>FDSAM</th>
                                     <th>SPCMRK</th>
                                     <th>AGEDEC</th>
+                                    <th>LAMSAM</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -274,7 +278,7 @@
                                             title="{{ item.get_sizsam_display }}"> {{ item.sizsam}} </td>
                                         <td    data-toggle="tooltip"
                                             data-placement="top"
-                                            title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </TD>
+                                            title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </td>
                                         <td> {{ item.sizint}} </td>
                                         <td    data-toggle="tooltip"
                                                data-placement="top"
@@ -285,6 +289,10 @@
                                         <td    data-toggle="tooltip"
                                                data-placement="top"
                                                title="{{ item.get_agedec1_display }}{%if item.get_agedec2_display %}- {{ item.get_agedec2_display }}{% endif %}"> {{ item.agedec}} </td>
+                                        <td    data-toggle="tooltip"
+                                               data-placement="top"
+                                               title="{{ item.get_lamsam_display }}"> {{ item.lamsam}} </td>
+
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -295,7 +303,6 @@
                         <div>No Sampling Specifications Provided</div>
 
                         {% endif %}
-
 
                     </div>
                 </div>
@@ -568,7 +575,7 @@
                                     </div>
                                     <div class="card-body">
                                         {% if  gear.get_subgears %}
-                                            <table class="table">
+                                            <table class="table table-hover">
                                                 <thead>
                                                     <tr>
                                                         <th> Panels </th>
@@ -1135,11 +1142,11 @@
     <script type="text/javascript">
 
      $(".tablesorter").tablesorter({
-         theme: 'bootstrap',
+         //theme: 'bootstrap',
          widthFixed: true,
          showProcessing: true,
          headerTemplate: '{content} {icon}',
-         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgets: ['zebra', 'uitheme',  'scroller'],
          widgetOptions: {
              scroller_height: 300,
              scroller_barWidth: 17,

@@ -179,6 +179,18 @@ class FN012Base(models.Model):
         choices=AGEDEC2_CHOICES,
     )
 
+    LAMSAM_CHOICES = (
+        ("0", "Not Collected"),
+        ("1", "XLAM (NO LONGER SUPPORTED)"),
+        ("2", "LAMIJC"),
+    )
+    lamsam = models.CharField(
+        help_text="Lamprey Reporting",
+        max_length=1,
+        default="2",
+        choices=LAMSAM_CHOICES,
+    )
+
     flen_min = models.FloatField(
         "Minimum Fork Length (mm)",
         blank=True,
@@ -207,13 +219,13 @@ class FN012Base(models.Model):
         "Minimum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(5000)],
+        validators=[MinValueValidator(1), MaxValueValidator(15000)],
     )
     rwt_max = models.FloatField(
         "Maximum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(5000)],
+        validators=[MinValueValidator(1), MaxValueValidator(15000)],
     )
     k_min_error = models.FloatField(
         "Minimum K (TLEN) - error",

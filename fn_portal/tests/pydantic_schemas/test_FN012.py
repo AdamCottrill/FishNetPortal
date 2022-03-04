@@ -41,6 +41,7 @@ def data():
         "fdsam": "0",
         "spcmrk": "0",
         "agedec": "X0",
+        "lamsam": "2",
         "flen_min": 150,
         "flen_max": 750,
         "tlen_min": 150,
@@ -90,6 +91,7 @@ required_fields = [
     "fdsam",
     "spcmrk",
     "agedec",
+    "lamsam",
     "flen_min",
     "flen_max",
     "tlen_min",
@@ -172,6 +174,11 @@ error_list = [
         "agedec",
         "ZZ",
         "string does not match regex",
+    ),
+    (
+        "lamsam",
+        "AA1",
+        "value is not a valid enumeration member",
     ),
     (
         "flen_min",

@@ -50,6 +50,7 @@ class Admin_FN012(admin.ModelAdmin):
         "spcmrk2",
         "agedec1",
         "agedec2",
+        "lamsam",
         "flen_min",
         "flen_max",
         "tlen_min",
@@ -60,8 +61,6 @@ class Admin_FN012(admin.ModelAdmin):
         "k_min_warn",
         "k_max_error",
         "k_max_warn",
-        "flen2tlen_alpha",
-        "flen2tlen_beta",
     ]
 
     def get_queryset(self, request):
@@ -101,7 +100,7 @@ class Admin_FN012Protocol(admin.ModelAdmin):
     exclude = ("slug",)
 
     fields = [
-        "protocol__abbrev",
+        "protocol",
         "lake",
         "species",
         "grp",
@@ -116,6 +115,7 @@ class Admin_FN012Protocol(admin.ModelAdmin):
         "spcmrk2",
         "agedec1",
         "agedec2",
+        "lamsam",
         "flen_min",
         "flen_max",
         "tlen_min",
@@ -126,9 +126,10 @@ class Admin_FN012Protocol(admin.ModelAdmin):
         "k_min_warn",
         "k_max_error",
         "k_max_warn",
-        "flen2tlen_alpha",
-        "flen2tlen_beta",
     ]
+
+    def get_protocol(self, obj):
+        return obj.protocol_abbrev
 
     def get_queryset(self, request):
         return (

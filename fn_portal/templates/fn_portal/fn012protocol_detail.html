@@ -31,7 +31,7 @@
                             <h5>Protocol Description</h5>
                         </div>
                         <div class="col text-end">
-                            <a href="{%url "fn_portal:project_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}">View these projects</a>
+                            <a href="{% url "fn_portal:project_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}">View these projects</a>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                             <h5>Sampling Specs (FN012)</h5>
                         </div>
                         <div class="col text-end">
-                            <a href="{%url "fn_portal_api:protocol_sample_specs_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}&export=csv">Export as csv</a>
+                            <a href="{%  url "fn_portal_api:protocol_sample_specs_list"%}?protocol={{protocol.abbrev}}&lake={{lake.abbrev}}&export=csv">Export as csv</a>
                         </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
 
                 {% if fn012|length %}
 
-                    <table id="mode-table" class="table table-sm tablesorter">
+                    <table id="mode-table" class="table table-sm table-hover tablesorter">
                         <thead>
                             <tr>
                                 <th>SPECIES NAME</th>
@@ -74,7 +74,7 @@
                                 <th>FDSAM</th>
                                 <th>SPCMRK</th>
                                 <th>AGEDEC</th>
-
+                                <th>LAMSAM</th>
                                 <th>FLEN_MIN</th>
                                 <th>FLEN_MAX</th>
                                 <th>TLEN_MIN</TH>
@@ -101,7 +101,7 @@
                                            title="{{ item.get_sizsam_display }}"> {{ item.sizsam}} </td>
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
-                                           title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </TD>
+                                           title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </td>
                                     <td> {{ item.sizint}} </td>
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
@@ -112,7 +112,9 @@
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
                                            title="{{ item.get_agedec1_display }}{%if item.get_agedec2_display %}- {{ item.get_agedec2_display }}{% endif %}"> {{ item.agedec}} </td>
-
+                                    <td    data-toggle="tooltip"
+                                           data-placement="top"
+                                           title="{{ item.get_lamsam_display }}"> {{ item.lamsam}} </td>
                                     <td>{{item.flen_min}}</td>
                                     <td>{{item.flen_max}}</td>
                                     <td>{{item.tlen_min}}</td>
@@ -153,11 +155,11 @@
 
 
      $(".tablesorter").tablesorter({
-         theme: 'bootstrap',
+         //theme: 'bootstrap',
          widthFixed: true,
          showProcessing: true,
          headerTemplate: '{content} {icon}',
-         widgets: ['zebra', 'uitheme', 'scroller'],
+         widgets: [ 'uitheme', 'scroller'],
          widgetOptions: {
              scroller_height: 300,
              scroller_barWidth: 17,

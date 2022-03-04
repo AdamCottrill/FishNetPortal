@@ -32,6 +32,13 @@ class SizAttEnum(str, Enum):
     tlen = "TLEN"
 
 
+class LamSamEnum(str, Enum):
+
+    NotSampled = "0"
+    XLAM = "1"
+    LAMIJC = "2"
+
+
 class FN012(FNBase):
     """ """
 
@@ -47,6 +54,7 @@ class FN012(FNBase):
     sizsam: SizSamEnum
     sizatt: SizAttEnum
     sizint: conint(ge=1, le=50)
+    lamsam: LamSamEnum
 
     fdsam: constr(regex=FDSAM_REGEX, max_length=2)
     spcmrk: constr(regex=SPCMRK_REGEX, max_length=2)

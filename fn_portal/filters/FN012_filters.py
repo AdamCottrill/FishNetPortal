@@ -51,6 +51,9 @@ class FN012SubFilter(django_filters.FilterSet):
     agedec = ValueInFilter(field_name="agedec")
     agedec__not = ValueInFilter(field_name="agedec", exclude=True)
 
+    lamsam = ValueInFilter(field_name="lamsam")
+    lamsam__not = ValueInFilter(field_name="lamsam", exclude=True)
+
     class Meta:
         model = FN012
         fields = [
@@ -62,6 +65,7 @@ class FN012SubFilter(django_filters.FilterSet):
             "fdsam",
             "spcmrk",
             "agedec",
+            "lamsam",
         ]
 
 
