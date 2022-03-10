@@ -340,3 +340,19 @@ def test_sizatt_case_insensitive(data, sizsam, valid, fld, msg):
         with pytest.raises(ValidationError) as excinfo:
             FN012(**data)
             assert msg in str(excinfo.value)
+
+
+def test_agedec_00_is_valid(data):
+    """It is not clear if 00 should be a valid AGEDEC code as it
+    translates to "no ageing structure collected, aged using a
+    non-validated method".  However, it is the most common value for
+    agedec in the Fishnet archives. THis test verifies that it works
+    (today), but might be used someday to verify that it is not
+    allowed.
+
+
+    """
+    AGEDEC = "00"
+    data["agedec"] = AGEDEC
+    item = FN012(**data)
+    assert item.agedec == AGEDEC

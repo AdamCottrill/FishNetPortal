@@ -32,6 +32,7 @@ def test_invalid_spcmrk(value):
 
 valid_agedec = [
     "0",
+    "00",
     "10",
     "20",
     "21",
@@ -46,7 +47,6 @@ valid_agedec = [
 
 invalid_agedec = [
     "",
-    "00",
     "01",
     "02",
     "22",
