@@ -78,7 +78,8 @@ class FN012Base(models.Model):
 
     sizint = models.IntegerField(
         help_text="Size Sample Interval (mm)",
-        default=1,
+        blank=True,
+        null=True,
         validators=[MinValueValidator(1), MaxValueValidator(50)],
     )
 
@@ -219,37 +220,38 @@ class FN012Base(models.Model):
         "Minimum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(15000)],
+        validators=[MinValueValidator(1), MaxValueValidator(55000)],
     )
     rwt_max = models.FloatField(
         "Maximum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(15000)],
+        validators=[MinValueValidator(1), MaxValueValidator(55000)],
     )
     k_min_error = models.FloatField(
         "Minimum K (TLEN) - error",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(2.0)],
+        validators=[MinValueValidator(0.05), MaxValueValidator(5.0)],
     )
     k_min_warn = models.FloatField(
         "Minimum K (TLEN) - warning",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(1.5)],
-    )
-    k_max_error = models.FloatField(
-        "Maximum K (FLEN) - error",
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(5.0)],
+        validators=[MinValueValidator(0.07), MaxValueValidator(4.0)],
     )
     k_max_warn = models.FloatField(
         "Maximum K (FLEN) - warning",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(4.0)],
+        validators=[MinValueValidator(0.07), MaxValueValidator(4.0)],
+    )
+
+    k_max_error = models.FloatField(
+        "Maximum K (FLEN) - error",
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0.05), MaxValueValidator(5.0)],
     )
 
     class Meta:

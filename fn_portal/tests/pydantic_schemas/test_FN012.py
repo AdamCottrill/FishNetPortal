@@ -86,8 +86,6 @@ required_fields = [
     "grp_des",
     "biosam",
     "sizsam",
-    "sizatt",
-    "sizint",
     "fdsam",
     "spcmrk",
     "agedec",
@@ -227,8 +225,8 @@ error_list = [
     ),
     (
         "rwt_min",
-        "6000",
-        "ensure this value is less than 5000",
+        "600000",
+        "ensure this value is less than 55000",
     ),
     (
         "rwt_max",
@@ -237,33 +235,33 @@ error_list = [
     ),
     (
         "rwt_max",
-        "6000",
-        "ensure this value is less than 5000",
+        "60000",
+        "ensure this value is less than 55000",
     ),
     (
         "k_min_error",
         "0",
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0.05",
     ),
     (
         "k_min_error",
-        "2.5",
-        "ensure this value is less than 2.0",
+        "6.5",
+        "ensure this value is less than 5.0",
     ),
     (
         "k_min_warn",
         "0",
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0.07",
     ),
     (
         "k_min_warn",
-        "2.5",
-        "ensure this value is less than 1.5",
+        "6.5",
+        "ensure this value is less than 4.0",
     ),
     (
         "k_max_error",
         "0",
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0.05",
     ),
     (
         "k_max_error",
@@ -273,7 +271,7 @@ error_list = [
     (
         "k_max_warn",
         "0",
-        "ensure this value is greater than 0",
+        "ensure this value is greater than or equal to 0.07",
     ),
     (
         "k_max_warn",
@@ -296,3 +294,49 @@ def test_invalid_data(data, fld, value, msg):
     with pytest.raises(ValidationError) as excinfo:
         FN012(**data)
     assert msg in str(excinfo.value)
+
+
+# test flen FLEN Flen
+flen_list = ["FLEN", "flen", "fLEn"]
+
+
+@pytest.mark.parametrize("flen", flen_list)
+def test_sizatt_case_insensitive(data, flen):
+    """sizatt shouldbe converted to uppercase by the validator so that
+    users don't have to work about it.  FLEN, flen, and FlEn should
+    all produce the same result.
+
+    """
+    data["sizatt"] = flen
+    item = FN012(**data)
+    assert item.sizatt == "FLEN"
+
+
+# required sizatt and sizint if sizsam is not null
+sizsam_attrs = [
+    (1, True, "sizatt", None),
+    (1, True, "sizint", None),
+    (2, False, "sizatt", "SIZATT is required if SIZSAM is 2 or 3"),
+    (2, False, "sizint", "SIZINT is required if SIZSAM is 2 or 3"),
+]
+
+
+@pytest.mark.parametrize("sizsam,valid,fld,msg", sizsam_attrs)
+def test_sizatt_case_insensitive(data, sizsam, valid, fld, msg):
+    """sizatt and sizint are required only if sizsam is one of the choices
+    that requires FN124 data - in which case we need to know how big
+    the bins are and what is being measured.  The pydantic schema
+    should be in valid if either of those two fields are empy and
+    sizsam is 2 or 3, otherwize it should be fine.
+
+    """
+    data["sizsam"] = sizsam
+    data[fld] = None
+
+    if valid:
+        item = FN012(**data)
+        assert item.sizsam == sizsam
+    else:
+        with pytest.raises(ValidationError) as excinfo:
+            FN012(**data)
+            assert msg in str(excinfo.value)
