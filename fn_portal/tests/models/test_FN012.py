@@ -206,7 +206,7 @@ def test_FN012_agedec(project, species, agedec1, agedec2, expected):
 @pytest.mark.parametrize("agedec1,agedec2,expected", fdsam_agedec_spcmrk_list)
 def test_FN012_default_agedec(lake, protocol, species, agedec1, agedec2, expected):
     """The FN012 base model has a property that returns the value of agedec
-    as a concatentation of agedec1 and agedec2.  fsdsam2 should only be
+    as a concatentation of agedec1 and agedec2.  agedec2 should only be
     returned if it is not empty."""
 
     fn012 = FN012Protocol(
@@ -221,7 +221,7 @@ def test_FN012_default_agedec(lake, protocol, species, agedec1, agedec2, expecte
 
 
 invalid_args = [
-    ("agedec", {"agedec1": "0", "agedec2": "2"}),
+    # ("agedec", {"agedec1": "0", "agedec2": "2"}),
     ("agedec", {"agedec1": 2, "agedec2": None}),
     ("fdsam", {"fdsam1": 0, "fdsam2": 2}),
     ("fdsam", {"fdsam1": 2, "fdsam2": None}),
@@ -257,11 +257,11 @@ def test_FN012_invalid(project, species, field, args):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("field,args", invalid_args)
-def test_FN012_default_invalid(lake, protocol, species, field, args):
+def test_FN012Protocol_invalid(lake, protocol, species, field, args):
     """The FN012 model has several validation checks that need to be verifyied:
 
-    + if agedec1 is 0, agedec2 must be null,
-    + if agedec1 is not 0, agedec2 must not be null,
+    # + if agedec1 is 0, agedec2 must be null,
+    # + if agedec1 is not 0, agedec2 must not be null,
 
     + if fdsam1 is 0, fdsam2 must be null,
     + if fdsam1 is not 0, fdsam2 must not be null,
@@ -279,4 +279,49 @@ def test_FN012_default_invalid(lake, protocol, species, field, args):
         fn012.save()
 
     msg = f"Invalid {field.upper()} code"
+    assert msg in str(excinfo.value)
+
+
+@pytest.mark.django_db
+def test_FN012_agedec_00_is_valid(lake, protocol, species):
+    """00 is currently allowed as a valid agedec value (at least it is the
+    most common one in the fishnet archives).  This test verifies that
+    it is allowed (but could be used some day to verify that it is
+    not!)
+
+    """
+
+    fn012 = FN012Protocol(
+        lake=lake,
+        protocol=protocol,
+        species=species,
+        grp="00",
+        agedec1="0",
+        agedec2="0",
+    )
+    fn012.save()
+    assert fn012.agedec == "00"
+
+
+@pytest.mark.django_db
+def test_FN012_agedec_02_is_invalid(lake, protocol, species):
+    """02 is not a valid agedec code. the second character is optional,
+    and must be either a 0 or a 1.  Verify that an error is thrown if
+    another value is passed in.
+
+    """
+
+    fn012 = FN012Protocol(
+        lake=lake,
+        protocol=protocol,
+        species=species,
+        grp="00",
+        agedec1="0",
+        agedec2="2",
+    )
+
+    with pytest.raises(ValidationError) as excinfo:
+        fn012.save()
+
+    msg = "Value '2' is not a valid choice."
     assert msg in str(excinfo.value)

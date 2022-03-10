@@ -281,9 +281,7 @@ class FN012Base(models.Model):
         fields. The first value indictates if the data was collected or not,
         the second indicates how. the second should only be populated if the
         first character is something other than 0."""
-        if (self.agedec1 == "0" and self.agedec2 is not None) or (
-            self.agedec1 != "0" and self.agedec2 is None
-        ):
+        if self.agedec1 != "0" and self.agedec2 is None:
             raise ValidationError(_("Invalid AGEDEC code."))
         if (self.fdsam1 == "0" and self.fdsam2 is not None) or (
             self.fdsam1 != "0" and self.fdsam2 is None
@@ -319,10 +317,10 @@ class FN012Base(models.Model):
         """the original fn-II field agedec is made of two sub fields.  This
         property returns agedec by concatenating agedec1 and agedec2."""
 
-        if self.agedec1 == "0":
-            return self.agedec1
-        else:
+        if self.agedec2:
             return f"{self.agedec1}{self.agedec2}"
+        else:
+            return self.agedec1
 
 
 class FN012(FN012Base):
