@@ -16,6 +16,7 @@ class OrientEnum(str, Enum):
 
     perpendicular = "1"
     paralell = "2"
+    other = "3"
     upstream = "U"
     downstream = "D"
     unknown = "9"

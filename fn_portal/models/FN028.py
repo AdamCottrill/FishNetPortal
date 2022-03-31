@@ -36,6 +36,7 @@ class FN028(models.Model):
     ORIENT_CHOICES = [
         ("1", "Perpendicular"),
         ("2", "Paralell"),
+        ("3", "Other"),
         ("9", "Unknown"),
         ("U", "Upstream"),
         ("D", "Downstream"),
