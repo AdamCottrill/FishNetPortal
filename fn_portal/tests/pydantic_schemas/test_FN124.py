@@ -54,12 +54,12 @@ error_list = [
     (
         "siz",
         -4,
-        "ensure this value is greater than or equal to 20",
+        "ensure this value is greater than or equal to 10",
     ),
     (
         "siz",
-        19,
-        "ensure this value is greater than or equal to 20",
+        9,
+        "ensure this value is greater than or equal to 10",
     ),
     (
         "sizcnt",

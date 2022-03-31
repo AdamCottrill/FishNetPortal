@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import constr, conint, validator
 from .FNBase import FNBase
-from .utils import string_to_int
+from .utils import string_to_int, empty_to_none
 
 
 class EdgeEnum(str, Enum):
@@ -21,7 +21,8 @@ class EdgeEnum(str, Enum):
 class FN127(FNBase):
     """Pydantic model for age estimates.
 
-    Like FN125tags - this model should be updated  when we refactor the FN127 model into separte fields.
+    Like FN125tags - this model should be updated when we refactor the
+    FN127 model into separate fields.
 
     TODO: Add additional constrains on agemt and xagem.
 
@@ -42,6 +43,8 @@ class FN127(FNBase):
     _string_to_int = validator("agea", "conf", "nca", allow_reuse=True, pre=True)(
         string_to_int
     )
+
+    _empty_to_none = validator("edge", allow_reuse=True, pre=True)(empty_to_none)
 
     @validator("agemt")
     @classmethod

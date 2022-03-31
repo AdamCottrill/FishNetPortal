@@ -90,16 +90,6 @@ required_fields = [
     "spcmrk",
     "agedec",
     "lamsam",
-    "flen_min",
-    "flen_max",
-    "tlen_min",
-    "tlen_max",
-    "rwt_min",
-    "rwt_max",
-    "k_min_error",
-    "k_min_warn",
-    "k_max_error",
-    "k_max_warn",
 ]
 
 
@@ -119,6 +109,54 @@ def test_required_fields(data, fld):
         FN012(**data)
 
     msg = "none is not an allowed value"
+    assert msg in str(excinfo.value)
+
+
+biosam_required_fields = [
+    "flen_min",
+    "flen_max",
+    "tlen_min",
+    "tlen_max",
+    "rwt_min",
+    "rwt_max",
+    "k_min_error",
+    "k_min_warn",
+    "k_max_error",
+    "k_max_warn",
+]
+
+
+@pytest.mark.parametrize("fld", biosam_required_fields)
+def test_biosam_required_fields_biosam_0(data, fld):
+    """The biological constriant fields are only required if BIOSAM<>0.
+    If biosam is 0, they can be null.
+    """
+
+    data[fld] = None
+    data["biosam"] = "0"
+
+    item = FN012(**data)
+
+    assert item.slug == data["slug"]
+    assert item.project_id == data["project_id"]
+    assert item.species_id == data["species_id"]
+
+
+@pytest.mark.parametrize("fld", biosam_required_fields)
+def test_biosam_required_fields_biosam_1(data, fld):
+    """The biological constriant fields are only required if BIOSAM<>0. If
+    biosam is something other than one, these fields should be
+    populated.
+
+    """
+
+    data[fld] = None
+    data["biosam"] = "1"
+
+    with pytest.raises(ValidationError) as excinfo:
+        FN012(**data)
+
+    msg = f"{fld} is required if BIOSAM='1'"
     assert msg in str(excinfo.value)
 
 

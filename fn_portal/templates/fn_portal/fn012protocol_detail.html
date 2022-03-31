@@ -115,12 +115,12 @@
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
                                            title="{{ item.get_lamsam_display }}"> {{ item.lamsam}} </td>
-                                    <td>{{item.flen_min}}</td>
-                                    <td>{{item.flen_max}}</td>
-                                    <td>{{item.tlen_min}}</td>
-                                    <td>{{item.tlen_max}}</td>
-                                    <td>{{item.rwt_min}}</td>
-                                    <td>{{item.rwt_max}}</td>
+                                    <td>{{item.flen_min|default_if_none:"---"}}</td>
+                                    <td>{{item.flen_max|default_if_none:"---"}}</td>
+                                    <td>{{item.tlen_min|default_if_none:"---"}}</td>
+                                    <td>{{item.tlen_max|default_if_none:"---"}}</td>
+                                    <td>{{item.rwt_min|default_if_none:"---"}}</td>
+                                    <td>{{item.rwt_max|default_if_none:"---"}}</td>
 
                                 </tr>
                             {% endfor %}

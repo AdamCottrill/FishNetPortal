@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import PositiveInt, PositiveFloat, confloat, validator
 from .FNBase import FNBase
-from .utils import string_to_float, string_to_int
+from .utils import string_to_float, string_to_int, empty_to_none
 
 
 class FdMesEnum(str, Enum):
@@ -28,3 +28,4 @@ class FN126(FNBase):
 
     _string_to_float = validator("fdval", allow_reuse=True, pre=True)(string_to_float)
     _string_to_int = validator("lf", allow_reuse=True, pre=True)(string_to_int)
+    _empty_to_none = validator("fdmes", allow_reuse=True, pre=True)(empty_to_none)

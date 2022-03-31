@@ -10,7 +10,7 @@ class FN124(FNBase):
 
     slug: str
     catch_id: PositiveInt
-    siz: conint(ge=20)
+    siz: conint(ge=10)
     sizcnt: PositiveInt
 
     class Config:

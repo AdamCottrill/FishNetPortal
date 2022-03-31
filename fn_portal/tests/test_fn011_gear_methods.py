@@ -41,4 +41,4 @@ def test_fn011_get_121_gear_codes(project):
 
     """
     expected = ["GL00", "TP99"]
-    assert project.get_121_gear_codes() == expected
+    assert set(project.get_121_gear_codes()) == set(expected)

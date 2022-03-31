@@ -61,23 +61,23 @@ class FN012(FNBase):
     spcmrk: constr(regex=SPCMRK_REGEX, max_length=2)
     agedec: constr(regex=AGEDEC_REGEX, max_length=2)
 
-    flen_min: confloat(gt=0, lt=700)
-    flen_max: confloat(gt=0, lt=2000)
-    tlen_min: confloat(gt=0, lt=700)
-    tlen_max: confloat(gt=0, lt=2000)
+    flen_min: Optional[confloat(gt=0, lt=700)]
+    flen_max: Optional[confloat(gt=0, lt=2000)]
+    tlen_min: Optional[confloat(gt=0, lt=700)]
+    tlen_max: Optional[confloat(gt=0, lt=2000)]
 
-    rwt_min: confloat(gt=0, lt=55000)
-    rwt_max: confloat(gt=0, lt=55000)
+    rwt_min: Optional[confloat(gt=0, lt=55000)]
+    rwt_max: Optional[confloat(gt=0, lt=55000)]
 
     # make sure min is less than max
     # errors are more extreme than warn.
 
-    # no max (lt) on min values:
-    k_min_error: confloat(ge=0.05, lt=5.0)
-    k_min_warn: confloat(ge=0.07, lt=4.0)
-    # no min (gt) on max values:
-    k_max_warn: confloat(ge=0.07, lt=4.0)
-    k_max_error: confloat(ge=0.05, lt=5.0)
+    # no max (lt)] on min values:
+    k_min_error: Optional[confloat(ge=0.05, lt=5.0)]
+    k_min_warn: Optional[confloat(ge=0.07, lt=4.0)]
+    # no min (gt)] on max values:
+    k_max_warn: Optional[confloat(ge=0.07, lt=4.0)]
+    k_max_error: Optional[confloat(ge=0.05, lt=5.0)]
 
     _to_uppercase = validator("sizatt", allow_reuse=True, pre=True)(to_uppercase)
 
@@ -94,5 +94,25 @@ class FN012(FNBase):
         sizsam = values.get("sizsam")
         if sizsam in (2, 3) and v is None:
             msg = f"SIZATT is required if SIZSAM is 2 or 3"
+            raise ValueError(msg)
+        return v
+
+    @validator(
+        "flen_min",
+        "flen_max",
+        "tlen_min",
+        "tlen_max",
+        "rwt_min",
+        "rwt_max",
+        "k_min_error",
+        "k_min_warn",
+        "k_max_warn",
+        "k_max_error",
+    )
+    def biosam_required_field(cls, v, values, field):
+        biosam = values.get("biosam")
+
+        if biosam is not "0" and v is None:
+            msg = f"{field.name} is required if BIOSAM='{biosam}'"
             raise ValueError(msg)
         return v
