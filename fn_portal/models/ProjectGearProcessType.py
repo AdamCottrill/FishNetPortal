@@ -20,6 +20,8 @@ class ProjectGearProcessType(models.Model):
         ("5", "Other (TBD)"),
     ]
 
+    id = models.AutoField(primary_key=True)
+
     project = models.ForeignKey(
         FN011, related_name="gear_process_types", on_delete=models.CASCADE
     )

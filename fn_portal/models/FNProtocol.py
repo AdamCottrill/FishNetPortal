@@ -19,6 +19,8 @@ class FNProtocol(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     label = models.CharField(max_length=100, unique=True)
     abbrev = models.CharField(max_length=10, unique=True)
     description = models.TextField(

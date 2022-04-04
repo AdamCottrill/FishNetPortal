@@ -26,6 +26,8 @@ class FN022(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     project = models.ForeignKey(
         "FN011", related_name="seasons", on_delete=models.CASCADE
     )

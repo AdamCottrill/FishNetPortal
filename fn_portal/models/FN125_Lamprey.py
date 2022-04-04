@@ -9,6 +9,8 @@ class FN125_Lamprey(models.Model):
     a table for lamprey data.
     """
 
+    id = models.AutoField(primary_key=True)
+
     fish = models.ForeignKey(
         FN125, related_name="lamprey_marks", on_delete=models.CASCADE
     )

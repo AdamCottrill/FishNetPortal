@@ -10,6 +10,8 @@ class FN028(models.Model):
     Class to represent the fishing modes used in a project.
     """
 
+    id = models.AutoField(primary_key=True)
+
     project = models.ForeignKey("FN011", related_name="modes", on_delete=models.CASCADE)
     mode = models.CharField(
         help_text="Mode Code", max_length=2, blank=False, db_index=True

@@ -9,6 +9,8 @@ class FN125(models.Model):
     A table for biological data collected from fish
     """
 
+    id = models.AutoField(primary_key=True)
+
     catch = models.ForeignKey(FN123, related_name="fish", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
     fish = models.CharField(max_length=6)

@@ -21,6 +21,8 @@ class FN026(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     project = models.ForeignKey(
         "FN011", related_name="spatial_strata", on_delete=models.CASCADE
     )

@@ -9,6 +9,8 @@ class FN124(models.Model):
     a table for catch tallies.
     """
 
+    id = models.AutoField(primary_key=True)
+
     catch = models.ForeignKey(
         FN123, related_name="length_tallies", on_delete=models.CASCADE
     )

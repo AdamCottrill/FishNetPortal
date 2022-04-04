@@ -44,6 +44,8 @@ class GearFamily(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     family = models.CharField(max_length=100)
     abbrev = models.CharField(max_length=10, unique=True)
     gear_type = models.CharField(max_length=2)
@@ -74,6 +76,8 @@ class Gear(models.Model):
        samples).
 
     """
+
+    id = models.AutoField(primary_key=True)
 
     assigned_to = models.ForeignKey(
         User,
@@ -168,6 +172,8 @@ class SubGear(models.Model):
         ("6", "Other"),
     ]
 
+    id = models.AutoField(primary_key=True)
+
     gear = models.ManyToManyField(
         "Gear", through="Gear2SubGear", related_name="subgears"
     )
@@ -219,6 +225,8 @@ class Gear2SubGear(models.Model):
     of cases 137 m)
 
     """
+
+    id = models.AutoField(primary_key=True)
 
     gear = models.ForeignKey(Gear, related_name="gang", on_delete=models.CASCADE)
     subgear = models.ForeignKey(SubGear, related_name="gang", on_delete=models.CASCADE)
@@ -307,6 +315,8 @@ class GearEffortProcessType(models.Model):
         ("4", "By Panel"),
         ("5", "Other (TBD)"),
     ]
+
+    id = models.AutoField(primary_key=True)
 
     gear = models.ForeignKey(
         Gear, related_name="process_types", on_delete=models.CASCADE

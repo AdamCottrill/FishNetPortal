@@ -9,6 +9,8 @@ class FN127(models.Model):
     A table for age interpretations collected from fish
     """
 
+    id = models.AutoField(primary_key=True)
+
     fish = models.ForeignKey(
         FN125, related_name="age_estimates", on_delete=models.CASCADE
     )

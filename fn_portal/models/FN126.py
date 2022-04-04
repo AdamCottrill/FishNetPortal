@@ -9,6 +9,8 @@ class FN126(models.Model):
     a table for diet data collected in the field.
     """
 
+    id = models.AutoField(primary_key=True)
+
     fish = models.ForeignKey(FN125, related_name="diet_data", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
     food = models.IntegerField("Food Id")

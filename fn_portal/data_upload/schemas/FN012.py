@@ -112,7 +112,7 @@ class FN012(FNBase):
     def biosam_required_field(cls, v, values, field):
         biosam = values.get("biosam")
 
-        if biosam is not "0" and v is None:
+        if biosam != "0" and v is None:
             msg = f"{field.name} is required if BIOSAM='{biosam}'"
             raise ValueError(msg)
         return v

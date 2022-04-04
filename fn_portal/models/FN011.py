@@ -22,6 +22,8 @@ class FN011(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     protocol = models.ForeignKey(
         FNProtocol, related_name="projects", on_delete=models.CASCADE
     )

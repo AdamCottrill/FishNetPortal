@@ -18,6 +18,8 @@ class FN121(models.Model):
     A table to hold information on fishing events/efforts
     """
 
+    id = models.AutoField(primary_key=True)
+
     management_units = models.ManyToManyField(
         ManagementUnit, related_name="fn121_samples", blank=True
     )

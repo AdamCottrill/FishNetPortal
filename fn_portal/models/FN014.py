@@ -9,6 +9,8 @@ class FN014(models.Model):
     FN-II table for Gear Panel Attributes by project-gear
     """
 
+    id = models.AutoField(primary_key=True)
+
     gear = models.ForeignKey(FN013, related_name="gear_effs", on_delete=models.CASCADE)
     eff = models.CharField(max_length=4, blank=True, null=True)
     eff_des = models.TextField(blank=True, null=True)

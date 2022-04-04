@@ -11,6 +11,8 @@ class FN122(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     sample = models.ForeignKey(FN121, related_name="effort", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
     # sam = models.CharField(max_length=5, blank=True, null=True)

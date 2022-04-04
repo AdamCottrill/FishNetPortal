@@ -11,6 +11,8 @@ class FN125Tag(models.Model):
     A table for the tag(s) assoicated with a fish.
     """
 
+    id = models.AutoField(primary_key=True)
+
     fish = models.ForeignKey(FN125, related_name="fishtags", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
     fish_tag_id = models.IntegerField("Identifier for a Fn125_tag record")

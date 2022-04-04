@@ -9,6 +9,8 @@ class FN013(models.Model):
     FN-II table for Project Gear
     """
 
+    id = models.AutoField(primary_key=True)
+
     # sample = models.ForeignKey(FN121, related_name="gear",
     # on_delete=models.CASCADE)
     project = models.ForeignKey(FN011, related_name="gear", on_delete=models.CASCADE)

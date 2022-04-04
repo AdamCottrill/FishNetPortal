@@ -25,6 +25,8 @@ class FN012Base(models.Model):
 
     """
 
+    id = models.AutoField(primary_key=True)
+
     slug = models.SlugField(max_length=100, unique=True)
     species = models.ForeignKey(
         Species, related_name="%(class)s_sample_specs", on_delete=models.CASCADE

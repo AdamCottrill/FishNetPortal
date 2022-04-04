@@ -134,6 +134,7 @@ class FN011ListView(generics.ListAPIView):
             "lake__centroid_ontario",
         )
         .all()
+        .order_by("slug")
     )
 
 
@@ -166,7 +167,11 @@ class FN012ListView(generics.ListAPIView):
     filterset_class = FN012Filter
     pagination_class = StandardResultsSetPagination
     permission_classes = [ReadOnly]
-    queryset = FN012.objects.all().select_related("project", "species")
+    queryset = (
+        FN012.objects.all()
+        .select_related("project", "species")
+        .order_by("species", "grp")
+    )
 
 
 class FN012ProtocolListView(generics.ListAPIView):

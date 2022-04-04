@@ -11,6 +11,8 @@ class FN123(models.Model):
     a table for catch counts.
     """
 
+    id = models.AutoField(primary_key=True)
+
     effort = models.ForeignKey(FN122, related_name="catch", on_delete=models.CASCADE)
     species = models.ForeignKey(
         Species, related_name="fn_catch_counts", on_delete=models.CASCADE
