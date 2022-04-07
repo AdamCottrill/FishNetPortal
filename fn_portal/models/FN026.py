@@ -2,9 +2,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from .FN011 import FN011
+from .BaseModel import FNPortalBaseModel
 
 
-class FN026(models.Model):
+class FN026(FNPortalBaseModel):
     """
     Class to represent the spatial strat used in a project.
 

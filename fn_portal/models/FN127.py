@@ -2,9 +2,10 @@ from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 
 from .FN125 import FN125
+from .BaseModel import FNPortalBaseModel
 
 
-class FN127(models.Model):
+class FN127(FNPortalBaseModel):
     """
     A table for age interpretations collected from fish
     """

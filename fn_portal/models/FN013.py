@@ -2,9 +2,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from .FN011 import FN011
+from .BaseModel import FNPortalBaseModel
 
 
-class FN013(models.Model):
+class FN013(FNPortalBaseModel):
     """
     FN-II table for Project Gear
     """

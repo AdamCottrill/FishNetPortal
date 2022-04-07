@@ -2,9 +2,10 @@ from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 
 from .FN123 import FN123
+from .BaseModel import FNPortalBaseModel
 
 
-class FN125(models.Model):
+class FN125(FNPortalBaseModel):
     """
     A table for biological data collected from fish
     """

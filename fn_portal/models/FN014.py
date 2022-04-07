@@ -2,9 +2,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from .FN013 import FN013
+from .BaseModel import FNPortalBaseModel
 
 
-class FN014(models.Model):
+class FN014(FNPortalBaseModel):
     """
     FN-II table for Gear Panel Attributes by project-gear
     """

@@ -8,11 +8,12 @@ from django.urls import reverse
 
 User = get_user_model()
 
+from .BaseModel import FNPortalBaseModel
 from .Gear import Gear
 from .FNProtocol import FNProtocol
 
 
-class FN011(models.Model):
+class FN011(FNPortalBaseModel):
     """
     Project meta data.
 
@@ -59,6 +60,15 @@ class FN011(models.Model):
     )
 
     comment0 = models.TextField(blank=True, null=True)
+
+    STATUS_CHOICES = (
+        ("archive", "Archive"),
+        ("initiated", "Initiated"),
+        ("validated", "Validated"),
+        ("complete", "Complete"),
+    )
+
+    status = models.CharField(max_length=25, choices=STATUS_CHOICES, default="archive")
 
     class Meta:
         verbose_name_plural = "FN011 - Projects"

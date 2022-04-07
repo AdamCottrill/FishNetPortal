@@ -2,9 +2,10 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from .FN011 import FN011
+from .BaseModel import FNPortalBaseModel
 
 
-class FN022(models.Model):
+class FN022(FNPortalBaseModel):
     """
     Class to represent the seasons (temporal strata) used in each project.
 
