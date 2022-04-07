@@ -49,6 +49,7 @@ class FN011Factory(factory.django.DjangoModelFactory):
     prj_ldr = factory.SubFactory(UserFactory)
     lake = factory.SubFactory(LakeFactory)
     protocol = factory.SubFactory(FNProtocolFactory)
+    status = "initiated"
 
     @factory.lazy_attribute
     def prj_date0(self):

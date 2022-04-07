@@ -187,6 +187,36 @@ filter_attrs = [
             "LHA_IA19_666",
         ],
     ),
+    (
+        "status",
+        "complete",
+        [
+            "LHA_IA15_555",
+            "LHA_IA19_666",
+        ],
+        [
+            "LHA_IA19_000",
+            "LSA_IA15_222",
+            "LHA_IA10_111",
+            "LHA_IA19_333",
+            "LSA_IA10_444",
+        ],
+    ),
+    (
+        "status",
+        "validated,complete",
+        [
+            "LHA_IA19_333",
+            "LSA_IA10_444",
+            "LHA_IA15_555",
+            "LHA_IA19_666",
+        ],
+        [
+            "LHA_IA19_000",
+            "LSA_IA15_222",
+            "LHA_IA10_111",
+        ],
+    ),
 ]
 
 
@@ -227,6 +257,7 @@ html = [
     ('<div class="card-header">Years</div>'),
     ('<div class="card-header">Project Code</div>'),
     ('<div class="card-header">Project Source</div>'),
+    ('<div class="card-header">Project Status</div>'),
 ]
 
 
@@ -317,6 +348,15 @@ filter_buttons = [
         """<a class='btn btn-warning btn-sm btn-pill'
      href='/fn_portal/' role='button'>
         Project Code like: _123
+     <i class="fa fa-times-circle"></i>
+     </a>""",
+    ),
+    (
+        "status",
+        "complete",
+        """<a class='btn btn-primary btn-sm btn-pill'
+     href='/fn_portal/' role='button'>
+        Status: Complete
      <i class="fa fa-times-circle"></i>
      </a>""",
     ),

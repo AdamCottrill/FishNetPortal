@@ -184,6 +184,7 @@ def project_list():
         lake=huron,
         prj_ldr=homer,
         year=2019,
+        status="archive",
         source="smallfish",
     )
 
@@ -193,6 +194,7 @@ def project_list():
         lake=huron,
         prj_ldr=homer,
         year=2010,
+        status="archive",
         source="nearshore",
     )
 
@@ -202,6 +204,7 @@ def project_list():
         lake=superior,
         prj_ldr=homer,
         year=2015,
+        status="initiated",
         source="offshore",
     )
 
@@ -211,6 +214,7 @@ def project_list():
         lake=huron,
         prj_ldr=homer,
         year=2019,
+        status="validated",
         source="offshore",
     )
 
@@ -220,6 +224,7 @@ def project_list():
         lake=superior,
         prj_ldr=barney,
         year=2010,
+        status="validated",
         source="offshore",
     )
 
@@ -229,6 +234,7 @@ def project_list():
         lake=huron,
         prj_ldr=barney,
         year=2015,
+        status="complete",
         source="nearshore",
     )
 
@@ -238,6 +244,7 @@ def project_list():
         lake=huron,
         prj_ldr=barney,
         year=2019,
+        status="complete",
         source="offshore",
     )
 

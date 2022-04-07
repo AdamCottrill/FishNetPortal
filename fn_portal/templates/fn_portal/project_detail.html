@@ -6,6 +6,8 @@
 
 {% block extrahead  %}
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css"
           integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM="
@@ -22,6 +24,7 @@
      .capitalize {
          text-transform: capitalize;
      }
+
 
 
     </style>
@@ -137,12 +140,32 @@
                         <p><strong>Protocol:</strong>{{project.protocol}}</p>
                         <p><strong>Desciption:</strong>{{project.comment0}}</p>
 
+                        <hr/>
+
+                        <div class="row">
+                            <div class="col">
+                                <p><strong>Project Status:</strong>
+                                    {{project.status|status_badge}}
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p><strong>Created:</strong>
+                                    <em>    {{project.created_timestamp}}</em>
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p><strong>Last Modified:</strong>
+                                    <em>
+                                        {{project.modified_timestamp}}
+                                    </em>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-6">
-
                         <div class="card my-2">
                             <div class="card-header">
                                 <h5>Seasons (FN022)</h5>
