@@ -164,6 +164,8 @@ class FN011WizardSerializer(serializers.ModelSerializer):
                 }
             )
 
+        data["status"] = "initiated"
+
         return data
 
 

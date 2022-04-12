@@ -1,4 +1,5 @@
 from fn_portal.api.serializers import FN011WizardSerializer
+from fn_portal.models import FN011
 
 import pytest
 from ...factories import UserFactory, LakeFactory, FNProtocolFactory
@@ -146,3 +147,16 @@ def test_invalid_prj_cds(fixtures, data, prj_cd):
     assert item.is_valid() is False
     message = "That is not a valid FN-II project code."
     assert message in item.errors["prj_cd"][0]
+
+
+@pytest.mark.django_db
+def test_status_set_to_initiated(fixtures, data):
+    """Status is not passed into the wizard endpoint, but should be set to
+    'initiated' when the serializer is saved."""
+
+    item = FN011WizardSerializer(data=data)
+    assert item.is_valid() is True
+    item.save()
+
+    project = FN011.objects.get(prj_cd=data["prj_cd"])
+    assert project.status == "initiated"

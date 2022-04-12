@@ -32,6 +32,12 @@ from fn_portal.data_upload.target_utils import (
     get_user_cache,
 )
 
+from .upload_utils import (
+    create_update_delete,
+    get_create_update_delete,
+    batch_update_model,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -219,7 +225,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
             # delete our old project data:
             # need to use django for now - us SA later..add()
-            Fnp.FN011.objects.filter(prj_cd__in=PRJ_CDs).delete()
+            # Fnp.FN011.objects.filter(prj_cd__in=PRJ_CDs).delete()
 
             # =========================
             #        FN011
@@ -228,9 +234,14 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             logger.debug("Creating FN011 records...")
             items = []
             for item in fn011["data"]:
-                obj = Fnp.FN011(**item.dict())
-                items.append(obj)
-            Fnp.FN011.objects.bulk_create(items)
+                obj, created = Fnp.FN011.objects.update_or_create(
+                    prj_cd=item.prj_cd, defaults=item.dict()
+                )
+                obj.status = "validated"
+                obj.save()
+                # obj = Fnp.FN011(**item.dict())
+                # items.append(obj)
+            # Fnp.FN011.objects.bulk_create(items)
             filters = {"prj_cd__in": PRJ_CDs}
             fn011_map = get_id_cache(Fnp.FN011, filters=filters)
 
@@ -238,56 +249,66 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             #        FN012
             logger.debug("Creating FN012 records...")
             # data = prep.fn012(fn012, fn011_cache)
-            for item in fn012["data"]:
-                tmp = item.dict()
-                # split compound fields
-                agedec = tmp.pop("agedec")
-                tmp["agedec1"] = agedec[0]
-                tmp["agedec2"] = None if len(agedec) == 1 else agedec[1]
 
-                spcmrk = tmp.pop("spcmrk")
-                tmp["spcmrk1"] = spcmrk[0]
-                tmp["spcmrk2"] = None if len(spcmrk) == 1 else spcmrk[1]
+            data = [x.dict() for x in fn012["data"]]
 
-                fdsam = tmp.pop("fdsam")
-                tmp["fdsam1"] = fdsam[0]
-                tmp["fdsam2"] = None if len(fdsam) == 1 else fdsam[1]
-
-                project_id = tmp["project_id"]
-                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
-
-                obj = Fnp.FN012(**tmp)
-                obj.save()
             filters = {"project__prj_cd__in": PRJ_CDs}
+            create_slugs, update_slugs, delete_slugs = get_create_update_delete(
+                Fnp.FN012, filters, data
+            )
+
+            Fnp.FN012.objects.filter(slug__in=delete_slugs).delete()
+
+            to_be_created = []
+            updates = {}
+
+            for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
+
+                # split compound fields
+                agedec = item.pop("agedec")
+                item["agedec1"] = agedec[0]
+                item["agedec2"] = None if len(agedec) == 1 else agedec[1]
+
+                spcmrk = item.pop("spcmrk")
+                item["spcmrk1"] = spcmrk[0]
+                item["spcmrk2"] = None if len(spcmrk) == 1 else spcmrk[1]
+
+                fdsam = item.pop("fdsam")
+                item["fdsam1"] = fdsam[0]
+                item["fdsam2"] = None if len(fdsam) == 1 else fdsam[1]
+
+                project_id = item["project_id"]
+                item["project_id"] = fn011_map[fn011_inverse[project_id]]
+
+                if item["slug"] in create_slugs:
+                    to_be_created.append(Fnp.FN012(**item))
+                else:
+                    updates[item["slug"]] = item
+
+            Fnp.FN012.objects.bulk_create(to_be_created)
+            batch_update_model(Fnp.FN012, update_slugs, updates)
+
             fn012_map = get_id_cache(Fnp.FN012, filters=filters)
 
             # =========================
             #        FN022
             logger.debug("Creating FN022 records...")
-            # data = prep.fn022(fn022, fn011_cache)
-            items = []
-            for item in fn022["data"]:
-                tmp = item.dict()
-                project_id = tmp["project_id"]
-                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
-                obj = Fnp.FN022(**tmp)
-                items.append(obj)
-            Fnp.FN022.objects.bulk_create(items)
-            filters = {"project__prj_cd__in": PRJ_CDs}
+
+            data = [x.dict() for x in fn022["data"]]
+            create_update_delete(
+                data, Fnp.FN022, filters, "project_id", fn011_map, fn011_inverse
+            )
             fn022_map = get_id_cache(Fnp.FN022, filters=filters)
 
             # =========================
             #        FN026
             logger.debug("Creating FN026 records...")
             # data = prep.fn026(fn026, fn011_cache)
-            items = []
-            for item in fn026["data"]:
-                tmp = item.dict()
-                project_id = tmp["project_id"]
-                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
-                obj = Fnp.FN026(**tmp)
-                items.append(obj)
-            Fnp.FN026.objects.bulk_create(items)
+
+            data = [x.dict() for x in fn026["data"]]
+            create_update_delete(
+                data, Fnp.FN026, filters, "project_id", fn011_map, fn011_inverse
+            )
             fn026_map = get_id_cache(Fnp.FN026, filters=filters)
 
             # =========================
@@ -295,103 +316,107 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
             # data = prep.fn028(fn028, fn011_cache, gear_cache)
             logger.debug("Creating FN028 records...")
-            items = []
-            for item in fn028["data"]:
-                tmp = item.dict()
-                project_id = tmp["project_id"]
-                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
-                obj = Fnp.FN028(**tmp)
-                items.append(obj)
-            Fnp.FN028.objects.bulk_create(items)
+            data = [x.dict() for x in fn028["data"]]
+            create_update_delete(
+                data, Fnp.FN028, filters, "project_id", fn011_map, fn011_inverse
+            )
             fn028_map = get_id_cache(Fnp.FN028, filters=filters)
 
             # =========================
             #        FN121
 
-            # our FN121 object have a save method that needs to be called - not
+            # our FN121 object have a save method that needs to be called - it is not
             # called if we bulk created them.
 
             # refesh_fks( for prjcd, ssn, space, mode)
 
             # data = prep.fn121(
-            #     fn121, fn011_cache, fn022_cache, fn026_cache, fn028_cache, grid5_cache
-            logger.debug("Inserting FN121 records")
-            items = []
-            for item in fn121["data"]:
+            #     fn121, fn011_cache, fn022_cache, fn026_cache, fn028_cache, grid5_cache)
 
-                tmp = item.dict()
-                project_id = tmp["project_id"]
-                tmp["project_id"] = fn011_map[fn011_inverse[project_id]]
+            logger.debug("Inserting and Updating FN121 records")
 
-                ssn_id = tmp["ssn_id"]
-                tmp["ssn_id"] = fn022_map[fn022_inverse[ssn_id]]
+            data = [x.dict() for x in fn121["data"]]
+            create_slugs, update_slugs, delete_slugs = get_create_update_delete(
+                Fnp.FN121, filters, data
+            )
+            Fnp.FN121.objects.filter(slug__in=delete_slugs).delete()
+            to_be_created = []
+            updates = {}
 
-                space_id = tmp["space_id"]
-                tmp["space_id"] = fn026_map[fn026_inverse[space_id]]
+            for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
+                # call preprocessor here to make any necessary transformation to each item
+                # what needs to be done depends on the current model.
 
-                mode_id = tmp["mode_id"]
-                tmp["mode_id"] = fn028_map[fn028_inverse[mode_id]]
+                project_id = item["project_id"]
+                item["project_id"] = fn011_map[fn011_inverse[project_id]]
 
-                obj = Fnp.FN121(**tmp)
-                obj.save()
+                ssn_id = item["ssn_id"]
+                item["ssn_id"] = fn022_map[fn022_inverse[ssn_id]]
+
+                space_id = item["space_id"]
+                item["space_id"] = fn026_map[fn026_inverse[space_id]]
+
+                mode_id = item["mode_id"]
+                item["mode_id"] = fn028_map[fn028_inverse[mode_id]]
+
+                if item["slug"] in create_slugs:
+                    obj = Fnp.FN121(**item)
+                    obj.save()
+                else:
+                    # update item:
+                    obj = Fnp.FN121.objects.get(slug=item["slug"])
+                    for attr in item:
+                        if getattr(obj, attr) != item[attr]:
+                            setattr(obj, attr, item[attr])
+                    obj.save()
+
             fn121_map = get_id_cache(Fnp.FN121, filters=filters)
 
             # =========================
             #        FN122
 
-            logger.debug("Inserting FN122 records")
-            items = []
-            for item in fn122["data"]:
-                tmp = item.dict()
-                sample_id = tmp["sample_id"]
-                tmp["sample_id"] = fn121_map[fn121_inverse[sample_id]]
-                obj = Fnp.FN122(**tmp)
-                items.append(obj)
-            Fnp.FN122.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN122 records")
+
+            data = [x.dict() for x in fn122["data"]]
             filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data, Fnp.FN122, filters, "sample_id", fn121_map, fn121_inverse
+            )
+
             fn122_map = get_id_cache(Fnp.FN122, filters=filters)
 
             # =========================
             #        FN123
 
-            logger.debug("Inserting FN123 records")
-            items = []
-            for item in fn123["data"]:
-                tmp = item.dict()
-                effort_id = tmp["effort_id"]
-                tmp["effort_id"] = fn122_map[fn122_inverse[effort_id]]
-                obj = Fnp.FN123(**tmp)
-                items.append(obj)
-            Fnp.FN123.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN123 records")
             filters = {"effort__sample__project__prj_cd__in": PRJ_CDs}
+            data = [x.dict() for x in fn123["data"]]
+            create_update_delete(
+                data, Fnp.FN123, filters, "effort_id", fn122_map, fn122_inverse
+            )
+
             fn123_map = get_id_cache(Fnp.FN123, filters=filters)
 
             # =========================
             #        FN124
 
-            logger.debug("Inserting FN124 records")
-            items = []
-            for item in fn124["data"]:
-                tmp = item.dict()
-                catch_id = tmp["catch_id"]
-                tmp["catch_id"] = fn123_map[fn123_inverse[catch_id]]
-                obj = Fnp.FN124(**tmp)
-                items.append(obj)
-            Fnp.FN124.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN124 records")
+            filters = {"catch__effort__sample__project__prj_cd__in": PRJ_CDs}
+            data = [x.dict() for x in fn124["data"]]
+            create_update_delete(
+                data, Fnp.FN124, filters, "catch_id", fn123_map, fn123_inverse
+            )
 
             # =========================
             #        FN125
 
-            logger.debug("Inserting FN125 records")
-            items = []
-            for item in fn125["data"]:
-                tmp = item.dict()
-                catch_id = tmp["catch_id"]
-                tmp["catch_id"] = fn123_map[fn123_inverse[catch_id]]
-                obj = Fnp.FN125(**tmp)
-                items.append(obj)
-            Fnp.FN125.objects.bulk_create(items)
-            filters = {"catch__effort__sample__project__prj_cd__in": PRJ_CDs}
+            logger.debug("Inserting and Updating FN125 records")
+
+            data = [x.dict() for x in fn125["data"]]
+            create_update_delete(
+                data, Fnp.FN125, filters, "catch_id", fn123_map, fn123_inverse
+            )
+
             fn125_map = get_id_cache(Fnp.FN125, filters=filters)
 
             # Update FN123.biocnt once all of our FN125 objects have been created
@@ -410,54 +435,39 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             # =========================
             #        FN125-Tags
 
-            logger.debug("Inserting FN125Tags records")
-            items = []
-            for item in fn125tags["data"]:
-                tmp = item.dict()
-                fish_id = tmp["fish_id"]
-                tmp["fish_id"] = fn125_map[fn125_inverse[fish_id]]
-                obj = Fnp.FN125Tag(**tmp)
-                items.append(obj)
-            Fnp.FN125Tag.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN125Tags records")
+            filters = {"fish__catch__effort__sample__project__prj_cd__in": PRJ_CDs}
+            data = [x.dict() for x in fn125tags["data"]]
+            create_update_delete(
+                data, Fnp.FN125Tag, filters, "fish_id", fn125_map, fn125_inverse
+            )
 
             # =========================
             #        FN125-Lamprey
 
-            logger.debug("Inserting FN125Lamprey records")
-            items = []
-            for item in fn125lamprey["data"]:
-                tmp = item.dict()
-                fish_id = tmp["fish_id"]
-                tmp["fish_id"] = fn125_map[fn125_inverse[fish_id]]
-                obj = Fnp.FN125_Lamprey(**tmp)
-                items.append(obj)
-            Fnp.FN125_Lamprey.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN125Lamprey records")
+            data = [x.dict() for x in fn125lamprey["data"]]
+            create_update_delete(
+                data, Fnp.FN125_Lamprey, filters, "fish_id", fn125_map, fn125_inverse
+            )
 
             # =========================
             #        FN126
 
-            logger.debug("Inserting FN126 records")
-            items = []
-            for item in fn126["data"]:
-                tmp = item.dict()
-                fish_id = tmp["fish_id"]
-                tmp["fish_id"] = fn125_map[fn125_inverse[fish_id]]
-                obj = Fnp.FN126(**tmp)
-                items.append(obj)
-            Fnp.FN126.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN126 records")
+            data = [x.dict() for x in fn126["data"]]
+            create_update_delete(
+                data, Fnp.FN126, filters, "fish_id", fn125_map, fn125_inverse
+            )
 
             # =========================
             #        FN127
 
-            logger.debug("Inserting FN127 records")
-            items = []
-            for item in fn127["data"]:
-                tmp = item.dict()
-                fish_id = tmp["fish_id"]
-                tmp["fish_id"] = fn125_map[fn125_inverse[fish_id]]
-                obj = Fnp.FN127(**tmp)
-                items.append(obj)
-            Fnp.FN127.objects.bulk_create(items)
+            logger.debug("Inserting and Updating FN127 records")
+            data = [x.dict() for x in fn127["data"]]
+            create_update_delete(
+                data, Fnp.FN127, filters, "fish_id", fn125_map, fn125_inverse
+            )
 
             return {"status": "success", "prj_cds": PRJ_CDs}
 
