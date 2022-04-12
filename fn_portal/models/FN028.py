@@ -3,9 +3,10 @@ from django.template.defaultfilters import slugify
 
 from .Gear import Gear
 from .FN011 import FN011
+from .BaseModel import FNPortalBaseModel
 
 
-class FN028(models.Model):
+class FN028(FNPortalBaseModel):
     """
     Class to represent the fishing modes used in a project.
     """

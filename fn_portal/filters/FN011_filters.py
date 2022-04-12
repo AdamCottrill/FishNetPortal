@@ -82,6 +82,9 @@ class FN011Filter(django_filters.FilterSet):
 
     spc_caught = ValueInFilter(field_name="samples__effort__catch__species__spc")
 
+    status = ValueInFilter(field_name="status")
+    status__not = ValueInFilter(field_name="status", exclude=True)
+
     # spc_caught
     # spc_sampled
     # gr
@@ -100,4 +103,5 @@ class FN011Filter(django_filters.FilterSet):
             "prj_date1",
             "lake",
             "source",
+            "status",
         ]

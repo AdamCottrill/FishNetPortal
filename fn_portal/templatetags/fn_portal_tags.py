@@ -1,4 +1,7 @@
 from django import template
+from django.template.defaultfilters import stringfilter
+from django.utils.safestring import mark_safe
+
 from fn_portal.models import FN011
 
 register = template.Library()
@@ -65,3 +68,44 @@ def strip_parameter(context, param):
         return "?" + query.urlencode()
     else:
         return context["request"].path
+
+
+@register.filter(is_safe=True)
+@stringfilter
+def status_badge(status):
+    """return an bootstrap-5 badge with a colour and icon appropriate for
+    the given status."""
+
+    html = """<span class="badge rounded-pill bg-{colour}">
+    {status}
+    <i class="fa {icon}"></i>
+    </span>"""
+
+    badge_attrs = {
+        "archive": {
+            "status": status.title(),
+            "colour": "danger",
+            "icon": "fa-exclamation-triangle",
+        },
+        "initiated": {
+            "status": status.title(),
+            "colour": "warning",
+            "icon": "fa-tasks",
+        },
+        "validated": {
+            "status": status.title(),
+            "colour": "info",
+            "icon": "fa-check-circle",
+        },
+        "complete": {"status": status.title(), "colour": "success", "icon": "fa-lock"},
+    }
+
+    default = {
+        "status": status.title(),
+        "colour": "secondary",
+        "icon": "fa-question-circle",
+    }
+
+    attrs = badge_attrs.get(status, default)
+
+    return mark_safe(html.format(**attrs))

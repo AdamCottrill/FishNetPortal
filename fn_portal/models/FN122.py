@@ -2,9 +2,10 @@ from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 
 from .FN121 import FN121
+from .BaseModel import FNPortalBaseModel
 
 
-class FN122(models.Model):
+class FN122(FNPortalBaseModel):
     """
     A table to hold information about individual fishing
     efforts(mesh/panel attributes)

@@ -4,8 +4,10 @@ from markdown import markdown
 
 User = get_user_model()
 
+from .BaseModel import FNPortalBaseModel
 
-class GearFamily(models.Model):
+
+class GearFamily(FNPortalBaseModel):
     """
     A model to associate sub-gears with the appropriate gears.  Gears
     are comprised of subgears, but only subgears in the same family
@@ -57,7 +59,7 @@ class GearFamily(models.Model):
         return "{} ({})".format(self.family, self.abbrev)
 
 
-class Gear(models.Model):
+class Gear(FNPortalBaseModel):
     """
     A master table of gears.
 
@@ -134,7 +136,7 @@ class Gear(models.Model):
     #     return FN121.objects.filter(gr=self.gr_code).count()
 
 
-class SubGear(models.Model):
+class SubGear(FNPortalBaseModel):
     """
     A master table of gear panel attributes.
 
@@ -210,7 +212,7 @@ class SubGear(models.Model):
         )
 
 
-class Gear2SubGear(models.Model):
+class Gear2SubGear(FNPortalBaseModel):
     """
     An association table between gears and their sub-gears.
 
@@ -240,7 +242,7 @@ class Gear2SubGear(models.Model):
         return "{} - {}".format(self.gear, self.subgear)
 
 
-class GearEffortProcessType(models.Model):
+class GearEffortProcessType(FNPortalBaseModel):
     """
     A table to capture the known process types and associated effort for each gear.
 

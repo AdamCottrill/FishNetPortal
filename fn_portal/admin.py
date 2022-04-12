@@ -17,8 +17,8 @@ class Admin_FN011(admin.ModelAdmin):
     """Admin class for Projects (FN011)"""
 
     search_fields = ["prj_nm", "prj_cd"]
-    list_display = ("prj_cd", "prj_nm", "prj_ldr", "prj_date0", "prj_date1")
-    list_filter = ("lake", "protocol", "year")
+    list_display = ("prj_cd", "prj_nm", "prj_ldr", "prj_date0", "prj_date1", "status")
+    list_filter = ("lake", "status", "protocol", "year")
     date_hierarchy = "prj_date0"
 
     def get_readonly_fields(self, request, obj=None):

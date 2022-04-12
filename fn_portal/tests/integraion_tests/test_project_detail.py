@@ -67,6 +67,44 @@ def test_project_detail_renders_project_name_and_code(client, project):
 
 
 @pytest.mark.django_db
+def test_project_detail_status_created_modified(client, project):
+    """The project detail page should include a badge that indicated what
+    the project status is, as well as a timestamp for the time the record
+    was created and the time the last record was modified.
+    """
+
+    url = reverse("fn_portal:project_detail", kwargs={"slug": project.slug})
+    response = client.get(url)
+    assert response.status_code == 200
+
+    expected = "<strong>Project Status:</strong>"
+    assertContains(response, expected, html=True)
+    assertContains(response, project.get_status_display())
+
+    dateformat = "%B %#d, %Y, %#I:%M %p"
+    timestamp = (
+        project.created_timestamp.strftime(dateformat)
+        .replace("AM", "a.m.")
+        .replace("PM", "p.m.")
+    )
+
+    expected = f"""<p><strong>Created:</strong>
+                 <em> {timestamp}</em>
+                </p>"""
+    assertContains(response, expected, html=True)
+
+    timestamp = (
+        project.modified_timestamp.strftime(dateformat)
+        .replace("AM", "a.m.")
+        .replace("PM", "p.m.")
+    )
+    expected = f"""<p><strong>Last Modified:</strong>
+                 <em> {timestamp}</em>
+                </p>"""
+    assertContains(response, expected, html=True)
+
+
+@pytest.mark.django_db
 def test_project_detail_net_set_summary_table(client, project):
     """The project detail page should include a table will the basic
     informaion of each net set, including the total catch.

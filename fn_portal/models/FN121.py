@@ -7,13 +7,14 @@ from django.db.models import F, Sum, Count
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
+from .BaseModel import FNPortalBaseModel
 from .FN011 import FN011
 from .FN022 import FN022
 from .FN026 import FN026
 from .FN028 import FN028
 
 
-class FN121(models.Model):
+class FN121(FNPortalBaseModel):
     """
     A table to hold information on fishing events/efforts
     """

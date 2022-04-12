@@ -83,6 +83,39 @@ def test_FN011Readonly_filters(client, projects, filter, expected):
     assert set(slugs) == observed_slugs
 
 
+status_filters = [
+    ({"status": "archive"}, [0, 1]),
+    ({"status__not": "archive"}, [2, 3, 4, 5]),
+    ({"status": "validated,complete"}, [4, 5]),
+    ({"status__not": "validated,complete"}, [0, 1, 2, 3]),
+]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("filter,expected", status_filters)
+def test_FN011Readonly_status_filters(client, projects, filter, expected):
+    """The status filters are currently only available on the FN011
+    objects, so they are tested separately here.
+
+    """
+
+    slugs = []
+    for i, x in enumerate(projects):
+        if i in expected:
+            slugs.append(x.slug)
+
+    url = reverse("fn_portal_api:project_list")
+    response = client.get(url, filter)
+    assert response.status_code == status.HTTP_200_OK
+
+    # pull out the slugs from the response:
+    payload = response.data["results"]
+    observed_slugs = {x["slug"] for x in payload}
+
+    assert len(payload) == len(expected)
+    assert set(slugs) == observed_slugs
+
+
 @pytest.mark.django_db
 @pytest.mark.parametrize("filter,expected", filter_args)
 def test_FN012_filters_FN011_attrs(client, sample_specs, filter, expected):

@@ -4,7 +4,10 @@ from .Gear import Gear
 from .FN011 import FN011
 
 
-class ProjectGearProcessType(models.Model):
+from .BaseModel import FNPortalBaseModel
+
+
+class ProjectGearProcessType(FNPortalBaseModel):
     """
     ProjectGearProcessType holds the process types for each gear as
     specified in the design of the project.  The processtype captures

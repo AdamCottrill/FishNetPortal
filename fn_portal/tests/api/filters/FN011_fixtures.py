@@ -62,6 +62,7 @@ def projects():
         lake=lake_ontario,
         protocol=bsm,
         year=2010,
+        status="archive",
         prj_date0=date(2010, 10, 10),
         prj_date1=date(2010, 10, 17),
     )
@@ -73,6 +74,7 @@ def projects():
         lake=lake_ontario,
         protocol=bsm,
         year=2010,
+        status="archive",
         prj_date0=date(2010, 10, 1),
         prj_date1=date(2010, 10, 10),
     )
@@ -83,6 +85,7 @@ def projects():
         prj_ldr=barney,
         lake=lake_huron,
         protocol=fwin,
+        status="initiated",
         year=2012,
         prj_date0=date(2012, 10, 10),
         prj_date1=date(2012, 10, 17),
@@ -95,6 +98,7 @@ def projects():
         lake=lake_erie,
         protocol=bsm,
         year=2013,
+        status="initiated",
         prj_date0=date(2013, 10, 1),
         prj_date1=date(2013, 10, 10),
     )
@@ -106,6 +110,7 @@ def projects():
         lake=lake_superior,
         protocol=oscin,
         year=2008,
+        status="validated",
         prj_date0=date(2008, 10, 10),
         prj_date1=date(2008, 10, 17),
     )
@@ -117,6 +122,7 @@ def projects():
         lake=lake_superior,
         protocol=nscin,
         year=2007,
+        status="complete",
         prj_date0=date(2007, 10, 1),
         prj_date1=date(2007, 10, 10),
     )

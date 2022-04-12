@@ -1,8 +1,10 @@
 from django.db import models
 from markdown import markdown
 
+from .BaseModel import FNPortalBaseModel
 
-class FNProtocol(models.Model):
+
+class FNProtocol(FNPortalBaseModel):
     """
     A table to capture the assessment protocols available for
     projects.

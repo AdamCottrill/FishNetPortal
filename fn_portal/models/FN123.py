@@ -4,9 +4,10 @@ from django.template.defaultfilters import slugify
 
 
 from .FN122 import FN122
+from .BaseModel import FNPortalBaseModel
 
 
-class FN123(models.Model):
+class FN123(FNPortalBaseModel):
     """
     a table for catch counts.
     """

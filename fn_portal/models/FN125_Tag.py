@@ -4,9 +4,10 @@ from django.template.defaultfilters import slugify
 
 
 from .FN125 import FN125
+from .BaseModel import FNPortalBaseModel
 
 # NOTE - this should be named FN125_Tag
-class FN125Tag(models.Model):
+class FN125Tag(FNPortalBaseModel):
     """
     A table for the tag(s) assoicated with a fish.
     """

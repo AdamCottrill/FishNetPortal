@@ -6,7 +6,6 @@
 {% block extrahead  %}
 
 
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
 
@@ -136,6 +135,29 @@
                 </div>
 
 
+                <div class="card my-2">
+                    <div class="card-header">
+                        Project Status
+                        {% if 'status' in filters %}
+                            <a class="pull-right" href="{% strip_parameter 'status' %}">Reset</a>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            {% for item in project_status %}
+                                <li>
+                                    <a href="?{% query_transform status=item.name %}">
+                                        {{  item.name }} (n={{item.N}})
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+
+
+
 
             </div>
             <div class="col-md-9">
@@ -222,6 +244,14 @@
                             </a>
                         {% endif %}
 
+                        {% if filters.status %}
+                            <a class="btn btn-primary btn-sm btn-pill"
+                               href="{% strip_parameter param='status' %}" role="button">
+                                Status: {{ filters.status|title }}
+                                <i class="fa fa-times-circle"></i>
+                            </a>
+                        {% endif %}
+
 
                         {% if filters.prj_cd__like %}
                             <a class="btn btn-warning btn-sm btn-pill"
@@ -236,7 +266,6 @@
                             <a class="pull-right" href="{% url  'fn_portal:project_list' %}">Clear Filters</a>
                         {% endif %}
 
-
                     </div>
                 </div>
 
@@ -250,6 +279,7 @@
                                 <th>Project Name</th>
                                 <th>Project Lead</th>
                                 <th>Project Source</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -279,9 +309,12 @@
                                             {{ project.source|title }}
 
                                         </a>
-
-
                                     </td>
+                                    <td>
+                                        {{project.get_status_display}}
+                                    </td>
+
+
                                 </tr>
                             {% endfor %}
                         </tbody>

@@ -10,9 +10,10 @@ from common.models import Species, Lake
 
 from .FN011 import FN011
 from .FNProtocol import FNProtocol
+from .BaseModel import FNPortalBaseModel
 
 
-class FN012Base(models.Model):
+class FN012Base(FNPortalBaseModel):
     """The FN012 table functions as a constraint table to ensure that
     catch counts (entries in the FN123 table and lower) are associated
     with a documented species and group. The FN012 also provides a

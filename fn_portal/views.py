@@ -116,6 +116,12 @@ class ProjectList(ListView):
 
         context["project_source"] = project_source
 
+        project_status = (
+            qs.values(name=F("status")).order_by("status").annotate(N=Count("status"))
+        )
+
+        context["project_status"] = project_status
+
         paginator = Paginator(self.object_list, self.paginate_by)
         page = self.request.GET.get("page")
         try:
