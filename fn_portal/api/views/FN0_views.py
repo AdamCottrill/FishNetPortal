@@ -186,9 +186,10 @@ class FN012ProtocolListView(generics.ListAPIView):
     def get_queryset(self):
         """ """
         qs = (
-            FN012Protocol.objects.all()
-            .select_related("protocol", "lake", "species")
+            FN012Protocol.objects.select_related("protocol", "species")
+            .prefetch_related("lake")
             .order_by("slug")
+            .all()
         )
         return qs
 

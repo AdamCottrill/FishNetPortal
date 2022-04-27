@@ -362,6 +362,9 @@ class FN012Protocol(FN012Base):
             fields=["lake", "protocol", "species" "grp"],
             name="unique_lake_protocol_species_grp",
         )
+        indexes = [
+            models.Index(fields=["lake", "protocol"]),
+        ]
 
     def get_slug(self):
         return (
