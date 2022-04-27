@@ -79,7 +79,9 @@ class FN012(FNBase):
     k_max_warn: Optional[confloat(ge=0.07, lt=4.0)]
     k_max_error: Optional[confloat(ge=0.05, lt=5.0)]
 
-    _to_uppercase = validator("sizatt", allow_reuse=True, pre=True)(to_uppercase)
+    _to_uppercase = validator("sizatt", "agedec", allow_reuse=True, pre=True)(
+        to_uppercase
+    )
 
     @validator("sizint")
     def check_sizint_if_sizsam(cls, v, values):

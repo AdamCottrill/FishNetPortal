@@ -141,6 +141,8 @@ mode_list = [
     ("girth", "", None),
     ("agest", "24AMV", "24AMV"),
     ("tissue", "18D", "18D"),
+    ("agest", "24amv", "24AMV"),
+    ("tissue", "18d", "18D"),
 ]
 
 

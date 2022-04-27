@@ -3,7 +3,7 @@ from enum import Enum, IntEnum
 from pydantic import conint, confloat, validator, constr
 
 from .FNBase import FNBase, prj_cd_regex
-from .utils import string_to_int, string_to_float
+from .utils import string_to_int, string_to_float, to_uppercase
 
 
 class FateEnum(str, Enum):
@@ -69,6 +69,10 @@ class FN125(FNBase):
     )
 
     _string_to_float = validator("rwt", allow_reuse=True, pre=True)(string_to_float)
+
+    _to_uppercase = validator(
+        "agest", "tissue", "clipc", "clipa", allow_reuse=True, pre=True
+    )(to_uppercase)
 
     @validator("fate", pre=True)
     def set_fate(cls, fate):
