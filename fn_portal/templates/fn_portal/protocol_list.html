@@ -41,10 +41,10 @@
                                         </a>
                                     </td>
                                     <td class='text-center'>
-                                        {% if protocol.confirmed %} Yes {% else  %} No {% endif %}
+                                        {% if protocol.confirmed is True %} Yes {% else  %} No {% endif %}
                                     </td>
                                     <td class='text-center'>
-                                        {% if protocol.active %} Yes {% else  %} No {% endif %}
+                                        {% if protocol.active is True %} Yes {% else  %} No {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

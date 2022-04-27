@@ -1,0 +1,24 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+    <div>
+
+        <h2>FN012 Prototocol Values Upload</h2>
+
+        <p>This form can be used by GLIS administrators to upload new
+        values for FN012 Protocols.  The uploaded csv file should be
+        exactly the same as the downloaded csv file, with the addition
+        of columns for lake and protocol the fn012 values will be
+        associated with, and should contain the abbreviations for
+        those entities (e.g. - 'HU' and 'BSM').</p>
+
+        <form action="." method="POST" enctype="multipart/form-data">
+            {{ form.as_p }}
+            {% csrf_token %}
+
+            <button type="submit">Upload CSV</button>
+        </form>
+    </div>
+    <br />
+
+{% endblock %}

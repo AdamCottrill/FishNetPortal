@@ -1,4 +1,11 @@
+import csv
+
+from django import forms
 from django.contrib import admin
+from django.shortcuts import render, redirect
+from django.urls import path
+
+from common.models import Lake, Species
 
 from fn_portal.models import (
     FN011,
@@ -11,6 +18,10 @@ from fn_portal.models import (
     Gear2SubGear,
     GearEffortProcessType,
 )
+
+
+class CsvImportForm(forms.Form):
+    csv_file = forms.FileField()
 
 
 class Admin_FN011(admin.ModelAdmin):
@@ -82,6 +93,8 @@ class Admin_FN012(admin.ModelAdmin):
 class Admin_FN012Protocol(admin.ModelAdmin):
     """Admin class for Protocol Species Sampling Specs (FN012)"""
 
+    change_list_template = "admin/fn012protocol_changelist.html"
+
     search_fields = [
         "lake__abbrev",
         "protocol__label",
@@ -127,6 +140,75 @@ class Admin_FN012Protocol(admin.ModelAdmin):
         "k_max_error",
         "k_max_warn",
     ]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path("import-csv/", self.import_csv),
+        ]
+        return my_urls + urls
+
+    def import_csv(self, request):
+        """This is a very fragile csv upload modified from:
+        https://books.agiliq.com/projects/django-admin-cookbook/en/latest/import.html
+
+        It works, but should be refactored to include better
+        validation and error trapping.
+
+        """
+        if request.method == "POST":
+            csv_file = request.FILES["csv_file"]
+            decoded_file = csv_file.read().decode("utf-8-sig").splitlines()
+
+            data = csv.DictReader(decoded_file)
+
+            lake_cache = {x.abbrev: x for x in Lake.objects.all()}
+            species_cache = {x.spc: x for x in Species.objects.all()}
+            protocol_cache = {x.abbrev: x for x in FNProtocol.objects.all()}
+
+            for item in data:
+
+                lake_abbrev = item.pop("lake")
+                spc = item.pop("spc")
+                protocol_abbrev = item.pop("protocol")
+                grp = item.pop("grp")
+                item.pop("spc_nmco")
+
+                lake = lake_cache[lake_abbrev]
+                species = species_cache[spc]
+                protocol = protocol_cache[protocol_abbrev]
+
+                fn012, created = FN012Protocol.objects.get_or_create(
+                    lake=lake, protocol=protocol, species=species, grp=grp
+                )
+
+                # fdsam, spcmrk, and agedec are compound fields that need to be split
+                agedec = item.pop("agedec")
+                item["agedec1"] = agedec[0]
+                item["agedec2"] = None if len(agedec) == 1 else agedec[1]
+
+                spcmrk = item.pop("spcmrk")
+                item["spcmrk1"] = spcmrk[0]
+                item["spcmrk2"] = None if len(spcmrk) == 1 else spcmrk[1]
+
+                fdsam = item.pop("fdsam")
+                item["fdsam1"] = fdsam[0]
+                item["fdsam2"] = None if len(fdsam) == 1 else fdsam[1]
+
+                # size in must be a number or None - not an empty string.
+                sizint = item.pop("sizint")
+                item["sizint"] = None if sizint == "" else int(sizint)
+
+                for attr in item:
+                    print(attr)
+                    setattr(fn012, attr, item[attr])
+                fn012.save()
+
+            self.message_user(request, "Your csv file has been imported")
+            return redirect("..")
+        form = CsvImportForm()
+        payload = {"form": form}
+        return render(request, "admin/csv_form.html", payload)
 
     def get_protocol(self, obj):
         return obj.protocol_abbrev

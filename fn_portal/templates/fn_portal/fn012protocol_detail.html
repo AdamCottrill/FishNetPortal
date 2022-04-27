@@ -102,7 +102,7 @@
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
                                            title="{{ item.get_sizatt_display }}"> {{ item.sizatt}} </td>
-                                    <td> {{ item.sizint}} </td>
+                                    <td> {{ item.sizint|default_if_none:"---"}} </td>
                                     <td    data-toggle="tooltip"
                                            data-placement="top"
                                            title="{{ item.get_fdsam1_display }}{%if item.get_fdsam2_display %}- {{ item.get_fdsam2_display }}{% endif %}"> {{ item.fdsam}} </td>
