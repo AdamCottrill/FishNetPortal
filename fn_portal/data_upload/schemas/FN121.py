@@ -57,10 +57,10 @@ class FN121(FNBase):
     site: Optional[str]
 
     dd_lat: Optional[confloat(ge=41.6, le=49.1)] = None
-    dd_lon: Optional[confloat(ge=-89.6, le=-76.3)] = None
+    dd_lon: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
     dd_lat1: Optional[confloat(ge=41.6, le=49.1)] = None
-    dd_lon1: Optional[confloat(ge=-89.6, le=-76.3)] = None
+    dd_lon1: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
     sitem: Optional[confloat(ge=-30, le=30)] = None
     sitem0: Optional[confloat(ge=-30, le=30)] = None

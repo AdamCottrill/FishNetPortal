@@ -155,6 +155,8 @@ class Admin_FN012Protocol(admin.ModelAdmin):
         It works, but should be refactored to include better
         validation and error trapping.
 
+
+
         """
         if request.method == "POST":
             csv_file = request.FILES["csv_file"]
@@ -200,7 +202,6 @@ class Admin_FN012Protocol(admin.ModelAdmin):
                 item["sizint"] = None if sizint == "" else int(sizint)
 
                 for attr in item:
-                    print(attr)
                     setattr(fn012, attr, item[attr])
                 fn012.save()
 

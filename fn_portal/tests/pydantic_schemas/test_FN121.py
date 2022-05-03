@@ -239,8 +239,8 @@ error_list = [
     ),
     (
         "dd_lon",
-        -75.0,
-        "ensure this value is less than or equal to -76.3",
+        -72.0,
+        "ensure this value is less than or equal to -74.32",
     ),
     (
         "dd_lon1",
@@ -249,8 +249,8 @@ error_list = [
     ),
     (
         "dd_lon1",
-        -75.0,
-        "ensure this value is less than or equal to -76.3",
+        -72.0,
+        "ensure this value is less than or equal to -74.32",
     ),
     (
         "effdur",
