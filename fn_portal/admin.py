@@ -39,7 +39,7 @@ class Admin_FN011(admin.ModelAdmin):
 
 
 class Admin_FN012(admin.ModelAdmin):
-    """Admin class for Species Sampling Specs (FN012)"""
+    """Admin class for Species Sampling Specs (FN012) by project"""
 
     search_fields = ["project__prj_cd", "species__spc", "species__spc_nmco"]
     list_display = ("get_prj_cd", "species", "grp", "grp_des", "biosam")
@@ -152,10 +152,8 @@ class Admin_FN012Protocol(admin.ModelAdmin):
         """This is a very fragile csv upload modified from:
         https://books.agiliq.com/projects/django-admin-cookbook/en/latest/import.html
 
-        It works, but should be refactored to include better
+        this method works, but should be refactored to include better
         validation and error trapping.
-
-
 
         """
         if request.method == "POST":
@@ -171,18 +169,22 @@ class Admin_FN012Protocol(admin.ModelAdmin):
             for item in data:
 
                 lake_abbrev = item.pop("lake")
-                spc = item.pop("spc")
+                spc = str(item.pop("spc"))
                 protocol_abbrev = item.pop("protocol")
                 grp = item.pop("grp")
                 item.pop("spc_nmco")
 
-                lake = lake_cache[lake_abbrev]
-                species = species_cache[spc]
-                protocol = protocol_cache[protocol_abbrev]
+                lake = lake_cache[lake_abbrev.upper()]
+                species = species_cache[spc.zfill(3)]
+                protocol = protocol_cache[protocol_abbrev.upper()]
 
                 fn012, created = FN012Protocol.objects.get_or_create(
                     lake=lake, protocol=protocol, species=species, grp=grp
                 )
+
+                # make sure that siz att is always FLEN or TLEN not flen and tlen
+                sizatt = item["sizatt"]
+                item["sizatt"] = sizatt.upper()
 
                 # fdsam, spcmrk, and agedec are compound fields that need to be split
                 agedec = item.pop("agedec")

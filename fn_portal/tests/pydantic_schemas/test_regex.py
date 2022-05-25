@@ -1,7 +1,11 @@
 import pytest
 import re
 
-from fn_portal.data_upload.schemas.FN012 import SPCMRK_REGEX, AGEDEC_REGEX, FDSAM_REGEX
+from fn_portal.data_upload.schemas.FN012Base import (
+    SPCMRK_REGEX,
+    AGEDEC_REGEX,
+    FDSAM_REGEX,
+)
 
 valid_spcmrk = ["0", "10", "11", "12", "20", "21", "30", "31", "32"]
 

@@ -13,7 +13,8 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 # from django.core import serializers
 from django.db import connection
-from django.db.models import Count, F, Q, Sum
+from django.db.models import Count, F, Q, Sum, Value
+from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -699,13 +700,24 @@ class FN012ProtocolList(ListView):
     def get_queryset(self):
 
         qs = (
-            FN012Protocol.objects.values(
-                "lake__abbrev", "protocol__label", "protocol__abbrev"
+            FN012Protocol.objects.annotate(
+                lake_label=Concat(
+                    F("lake__lake_name"), Value(" ("), F("lake__abbrev"), Value(")")
+                ),
+                active=F("protocol__active"),
+                confirmed=F("protocol__confirmed"),
+            )
+            .values(
+                "lake_label",
+                "lake__abbrev",
+                "protocol__label",
+                "protocol__abbrev",
+                "active",
+                "confirmed",
             )
             .order_by("lake__abbrev", "protocol__abbrev")
             .distinct()
         )
-
         return qs
 
 

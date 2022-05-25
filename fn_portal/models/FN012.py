@@ -199,7 +199,7 @@ class FN012Base(FNPortalBaseModel):
         "Minimum Fork Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(700)],
+        validators=[MinValueValidator(1), MaxValueValidator(750)],
     )
     flen_max = models.FloatField(
         "Maximim Fork Length (mm)",
@@ -211,7 +211,7 @@ class FN012Base(FNPortalBaseModel):
         "Minimum Total Length (mm)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(700)],
+        validators=[MinValueValidator(1), MaxValueValidator(750)],
     )
     tlen_max = models.FloatField(
         "Maximum Total Length (mm)",
@@ -223,7 +223,7 @@ class FN012Base(FNPortalBaseModel):
         "Minimum Round Weight (g)",
         blank=True,
         null=True,
-        validators=[MinValueValidator(1), MaxValueValidator(55000)],
+        validators=[MinValueValidator(0.1), MaxValueValidator(55000)],
     )
     rwt_max = models.FloatField(
         "Maximum Round Weight (g)",
