@@ -6,6 +6,7 @@ from .FN022_filters import FN022Filter
 from .FN026_filters import FN026Filter
 from .FN028_filters import FN028Filter
 from .FN121_filters import FN121Filter
+from .FN121Limno_filters import FN121LimnoFilter
 from .FN122_filters import FN122Filter
 from .FN123_filters import FN123Filter
 from .FN124_filters import FN124Filter

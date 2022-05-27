@@ -25,6 +25,7 @@ from .FN1_views import (
     # ProjectWizardCreateProject,
     project_wizard,
     NetSetList,
+    FN121LimnoList,
     EffortList,
     CatchCountList,
     LengthTallyList,

@@ -33,6 +33,7 @@ from .FN1_serializers import (
     FN121Serializer,
     FN121ReadOnlySerializer,
     FN121PostSerializer,
+    FN121LimnoSerializer,
     FN122Serializer,
     FN123Serializer,
     FN124Serializer,

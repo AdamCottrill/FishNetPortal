@@ -148,6 +148,28 @@ class FN121PostSerializer(FN121Serializer):
         read_only_fields = ("slug", "id")
 
 
+class FN121LimnoSerializer(serializers.ModelSerializer):
+    """A serializer for limnological (water chemistry) data associated with
+    a particular net set."""
+
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = FN122
+
+        fields = (
+            "prj_cd",
+            "sam",
+            "do_gear",
+            "xo2",
+            "xo22",
+            "surfdo2",
+            "surfdo22",
+            "slug",
+        )
+
+
 class FN122Serializer(serializers.ModelSerializer):
     """"""
 

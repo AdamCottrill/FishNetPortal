@@ -85,6 +85,7 @@ class FN121(FNPortalBaseModel):
     dd_lon1 = models.FloatField("End Longitude (dd)", blank=True, null=True)
 
     geom = models.PointField(
+        "Sample Point",
         srid=4326,
         help_text="Represented as (longitude, latitude)",
         spatial_index=True,

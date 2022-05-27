@@ -10,6 +10,7 @@ from common.models import ManagementUnit
 from fn_portal.models import (
     FN011,
     FN121,
+    FN121Limno,
     FN122,
     FN123,
     FN124,
@@ -27,6 +28,7 @@ from rest_framework.response import Response
 
 from ...filters import (
     FN121Filter,
+    FN121LimnoFilter,
     FN122Filter,
     FN123Filter,
     FN124Filter,
@@ -47,6 +49,7 @@ from ..serializers import (
     FN121Serializer,
     FN121ReadOnlySerializer,
     FN121PostSerializer,
+    FN121LimnoSerializer,
     FN122Serializer,
     FN123Serializer,
     FN124Serializer,
@@ -230,6 +233,33 @@ class NetSetList(generics.ListAPIView):
         )
 
         return queryset
+
+
+class FN121LimnoList(generics.ListAPIView):
+    """A read-only endpoint for Limno data.  Accepts all of the query
+    parmeters as FN121, with addition of 'gte', 'gt', 'lt', 'lte',
+    'null' and 'not_null' arguments for each limnologilal parameter.
+    """
+
+    serializer_class = FN121LimnoSerializer
+    pagination_class = LargeResultsSetPagination
+    filterset_class = FN121LimnoFilter
+
+    queryset = (
+        FN121Limno.objects.select_related("sample", "sample__project")
+        .order_by("slug")
+        .annotate(prj_cd=F("sample__project__prj_cd"), sam=F("sample__sam"))
+        .values(
+            "prj_cd",
+            "sam",
+            "do_gear",
+            "xo2",
+            "xo22",
+            "surfdo2",
+            "surfdo22",
+            "slug",
+        )
+    )
 
 
 class EffortList(generics.ListAPIView):
