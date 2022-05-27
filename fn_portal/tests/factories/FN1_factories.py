@@ -2,6 +2,7 @@ import factory
 
 from ...models import (
     FN121,
+    FN121Limno,
     FN122,
     FN123,
     FN124,
@@ -32,6 +33,24 @@ class FN121Factory(factory.django.DjangoModelFactory):
     space = factory.SubFactory(FN026Factory, __sequence=1)
     mode = factory.SubFactory(FN028Factory, __sequence=1)
     grid5 = factory.SubFactory(Grid5Factory, __sequence=1)
+
+
+class FN121LimnoFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Limno objects - individual water chemistry
+    values that may or may not be collected depending on the project.
+    1:1 relationshop with FN121 objects."""
+
+    class Meta:
+        model = FN121Limno
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+
+    do_gear = 12.0
+    xo2 = 11.0
+    xo22 = 11.0
+    surfdo2 = 14.0
+    surfdo22 = 14.0
 
 
 class FN122Factory(factory.django.DjangoModelFactory):

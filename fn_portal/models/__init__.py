@@ -10,6 +10,7 @@ from .ProjectGearProcessType import ProjectGearProcessType
 from .Gear import GearFamily, Gear, SubGear, Gear2SubGear, GearEffortProcessType
 
 from .FN121 import FN121
+from .FN121Limno import FN121Limno
 from .FN122 import FN122
 from .FN123 import FN123
 from .FN124 import FN124
