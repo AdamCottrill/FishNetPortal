@@ -149,6 +149,15 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn121_cache = {x.slug: i for i, x in enumerate(fn121["data"])}
         fn121_inverse = {v: k for k, v in fn121_cache.items()}
 
+        logger.debug("Fetching FN121LIMNO records")
+        stmt = fetch.get_fn121limno_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn121limno = prep.fn121limno(rs, fn121_cache)
+        if fn121limno.get("errors"):
+            return {"status": "error", "errors": fn121limno.get("errors")}
+        fn121limno_cache = {x.slug: (i + 1) for i, x in enumerate(fn121limno["data"])}
+        fn121limno_inverse = {v: k for k, v in fn121limno_cache.items()}
+
         logger.debug("Fetching FN122 records")
         stmt = fetch.get_fn122_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -371,6 +380,18 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
                     obj.save()
 
             fn121_map = get_id_cache(Fnp.FN121, filters=filters)
+
+            # =========================
+            #        FN121Limno
+
+            logger.debug("Inserting and Updating FN121Limno records")
+
+            data = [x.dict() for x in fn121limno["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data, Fnp.FN121Limno, filters, "sample_id", fn121_map, fn121_inverse
+            )
+            # no map needed as there are no children for FN121Limno objects.
 
             # =========================
             #        FN122

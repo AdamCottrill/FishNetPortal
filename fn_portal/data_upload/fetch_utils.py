@@ -211,6 +211,24 @@ def get_fn121_stmt():
     return stmt
 
 
+def get_fn121limno_stmt():
+    """NOTE - table name in associated with this query is currently
+    FN121_DO but is likely to change to FN121_LIMNO in future template
+    iterations.
+    """
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                DO_GEAR,
+                XO2,
+                XO22,
+                SURFDO2,
+                SURFDO22
+         from FN121_DO"""
+    return stmt
+
+
 def get_fn122_stmt():
 
     stmt = """select

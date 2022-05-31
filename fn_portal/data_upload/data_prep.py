@@ -24,6 +24,7 @@ from .schemas import (
     FN026,
     FN028,
     FN121,
+    FN121Limno,
     FN122,
     FN123,
     FN124,
@@ -177,6 +178,26 @@ def fn121(
         item["mode_id"] = fn028_cache.get(f"{prj_cd}-{mode}".lower())
         try:
             tmp = FN121(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+def fn121limno(data, fn121_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-limno".lower()
+        item["sample_id"] = fn121_cache.get(fn121_key)
+        item["slug"] = slug
+        try:
+            tmp = FN121Limno(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])

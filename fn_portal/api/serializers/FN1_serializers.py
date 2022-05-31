@@ -7,6 +7,7 @@ from fn_portal.models import (
     FN026,
     FN028,
     FN121,
+    FN121Limno,
     FN122,
     FN123,
     FN124,
@@ -156,7 +157,7 @@ class FN121LimnoSerializer(serializers.ModelSerializer):
     sam = serializers.CharField(read_only=True)
 
     class Meta:
-        model = FN122
+        model = FN121Limno
 
         fields = (
             "prj_cd",
