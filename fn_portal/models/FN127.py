@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
+from django.db.models import Q, UniqueConstraint
 
 from .FN125 import FN125
 from .BaseModel import FNPortalBaseModel
@@ -39,6 +40,17 @@ class FN127(FNPortalBaseModel):
     class Meta:
         ordering = ["fish", "ageid"]
         unique_together = ("fish", "ageid")
+        indexes = [
+            models.Index(fields=["fish", "preferred"]),
+            models.Index(fields=["fish", "ageid", "preferred"]),
+        ]
+        constraints = [
+            UniqueConstraint(
+                fields=["fish"],
+                name="idx_fish_one_preferred_age",
+                condition=Q(preferred=True),
+            ),
+        ]
 
     def __str__(self):
         return "{} (age={})".format(self.slug.upper(), self.agea)

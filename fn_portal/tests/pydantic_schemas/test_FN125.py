@@ -229,13 +229,13 @@ error_list = [
     # condition
     (
         "rwt",
-        "120",
-        "FLEN/TLEN (440) is too large for the round weight (RWT=120.0)",
+        "80",
+        "FLEN/TLEN (440) is too large for the round weight (RWT=80.0)",
     ),
     (
         "rwt",
-        "120",
-        "FLEN/TLEN (450) is too large for the round weight (RWT=120.0)",
+        "80",
+        "FLEN/TLEN (450) is too large for the round weight (RWT=80.0)",
     ),
     (
         "rwt",

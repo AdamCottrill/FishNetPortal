@@ -94,7 +94,7 @@ class FN125(FNBase):
     @validator("tlen", "flen")
     @classmethod
     def check_condition(cls, v, values, **kwargs):
-        """mininum of 0.145 from very small smelt sampled in lake erie
+        """mininum of 0.1 for very, very, small smelt sampled in lake erie
         (lenght=41, rwt=0.1)"""
         rwt = values.get("rwt")
         if rwt is not None and v is not None:
@@ -102,7 +102,7 @@ class FN125(FNBase):
             if k > 3.5:
                 msg = f"FLEN/TLEN ({v}) is too short for the round weight (RWT={rwt}) (K={k:.3f})"
                 raise ValueError(msg)
-            if k < 0.145:
+            if k < 0.1:
                 msg = f"FLEN/TLEN ({v}) is too large for the round weight (RWT={rwt}) (K={k:.3f})"
                 raise ValueError(msg)
         return v

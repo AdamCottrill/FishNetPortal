@@ -148,13 +148,13 @@
                             </div>
                             <div class="col">
                                 <p><strong>Created:</strong>
-                                    <em>    {{project.created_timestamp}}</em>
+                                    <em>    {{project.created_timestamp|date:"F j, Y, g:i a"}}</em>
                                 </p>
                             </div>
                             <div class="col">
                                 <p><strong>Last Modified:</strong>
                                     <em>
-                                        {{project.modified_timestamp}}
+                                        {{project.modified_timestamp|date:"F j, Y, g:i a"}}
                                     </em>
                                 </p>
                             </div>

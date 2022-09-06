@@ -241,7 +241,6 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
             # data = prep.fn011(fn011, lake_cache, protocol_cache, user_cache)
             logger.debug("Creating FN011 records...")
-            items = []
             for item in fn011["data"]:
                 obj, created = Fnp.FN011.objects.update_or_create(
                     prj_cd=item.prj_cd, defaults=item.dict()

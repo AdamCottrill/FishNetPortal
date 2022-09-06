@@ -171,6 +171,22 @@ class FN121LimnoSerializer(serializers.ModelSerializer):
         )
 
 
+class FN122ReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN122 objects. Used by get_fn122 endpoint."""
+
+    id = serializers.IntegerField(read_only=True)
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    effdst = serializers.FloatField(read_only=True)
+    grdep = serializers.FloatField(read_only=True)
+    grtem0 = serializers.FloatField(read_only=True)
+    grtem1 = serializers.FloatField(read_only=True)
+    waterhaul = serializers.BooleanField(read_only=True)
+    comment2 = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
 class FN122Serializer(serializers.ModelSerializer):
     """"""
 
@@ -318,61 +334,37 @@ class FN127NestedSerializer(serializers.ModelSerializer):
         )
 
 
-class FN125ReadOnlySerializer(serializers.ModelSerializer):
+class FN125ReadOnlySerializer(serializers.Serializer):
+    """ """
 
+    id = serializers.IntegerField(read_only=True)
     prj_cd = serializers.CharField(read_only=True)
     sam = serializers.CharField(read_only=True)
     eff = serializers.CharField(read_only=True)
     spc = serializers.CharField(read_only=True)
     grp = serializers.CharField(read_only=True)
+    fish = serializers.CharField(read_only=True)
+    flen = serializers.FloatField(read_only=True)
+    tlen = serializers.FloatField(read_only=True)
+    rwt = serializers.FloatField(read_only=True)
+    girth = serializers.FloatField(read_only=True)
+    clipc = serializers.CharField(read_only=True)
+    clipa = serializers.CharField(read_only=True)
+    sex = serializers.CharField(read_only=True)
+    mat = serializers.CharField(read_only=True)
+    gon = serializers.CharField(read_only=True)
+    noda = serializers.CharField(read_only=True)
+    nodc = serializers.CharField(read_only=True)
+    agest = serializers.CharField(read_only=True)
+    fate = serializers.CharField(read_only=True)
     age = serializers.IntegerField(read_only=True)
-    # lamijc = serializers.CharField(read_only=True)
-
-    # # child tables
-    # lamprey_marks = FN125LampreyNestedSerializer(
-    #     many=True, required=False, allow_null=True
-    # )
-    # fishtags = FN125TagNestedSerializer(many=True, required=False, allow_null=True)
-    # diet_data = FN126NestedSerializer(many=True, required=False, allow_null=True)
-    # age_estimates = FN127NestedSerializer(many=True, required=False, allow_null=True)
-
-    class Meta:
-        model = FN125
-        fields = (
-            "id",
-            "prj_cd",
-            "sam",
-            "eff",
-            "spc",
-            "grp",
-            "fish",
-            "flen",
-            "tlen",
-            "rwt",
-            "girth",
-            "clipc",
-            "clipa",
-            "sex",
-            "mat",
-            "gon",
-            "noda",
-            "nodc",
-            "agest",
-            "fate",
-            "age",
-            "tissue",
-            "age_flag",
-            "lam_flag",
-            "stom_flag",
-            "tag_flag",
-            # "lamijc",
-            # "fishtags",
-            # "lamprey_marks",
-            # "age_estimates",
-            # "diet_data",
-            "comment5",
-            "slug",
-        )
+    tissue = serializers.CharField(read_only=True)
+    age_flag = serializers.CharField(read_only=True)
+    lam_flag = serializers.CharField(read_only=True)
+    stom_flag = serializers.CharField(read_only=True)
+    tag_flag = serializers.CharField(read_only=True)
+    comment5 = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
 
 
 class FN125Serializer(serializers.ModelSerializer):

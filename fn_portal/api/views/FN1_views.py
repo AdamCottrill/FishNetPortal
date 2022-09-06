@@ -51,6 +51,7 @@ from ..serializers import (
     FN121PostSerializer,
     FN121LimnoSerializer,
     FN122Serializer,
+    FN122ReadOnlySerializer,
     FN123Serializer,
     FN124Serializer,
     FN125LampreySerializer,
@@ -270,8 +271,8 @@ class EffortList(generics.ListAPIView):
 
     """
 
-    serializer_class = FN122Serializer
-    pagination_class = LargeResultsSetPagination
+    serializer_class = FN122ReadOnlySerializer
+    pagination_class = XLargeResultsSetPagination
     filterset_class = FN122Filter
     queryset = (
         FN122.objects.select_related("sample", "sample__project")
@@ -286,6 +287,7 @@ class EffortList(generics.ListAPIView):
             "grdep",
             "grtem0",
             "grtem1",
+            "waterhaul",
             "slug",
         )
     )

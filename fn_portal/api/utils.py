@@ -10,15 +10,15 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class LargeResultsSetPagination(PageNumberPagination):
-    page_size = 500
-    page_size_query_param = "page_size"
-    max_page_size = 1000
-
-
-class XLargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = "page_size"
     max_page_size = 2000
+
+
+class XLargeResultsSetPagination(PageNumberPagination):
+    page_size = 2000
+    page_size_query_param = "page_size"
+    max_page_size = 5000
 
 
 def flatten_gear(gear_array):
