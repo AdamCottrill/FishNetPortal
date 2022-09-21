@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
+from django.utils.text import slugify
 
-from .FN125 import FN125
 from .BaseModel import FNPortalBaseModel
+from .FN125 import FN125
 
 
 class FN125_Lamprey(FNPortalBaseModel):

@@ -213,7 +213,7 @@ class NetSetList(generics.ListAPIView):
         queryset = (
             (
                 FN121.objects.select_related(
-                    "project", "grid5", "grid5__lake", "ssn", "space", "mode"
+                    "project", "grid5", "grid5__lake", "ssn", "subspace", "mode"
                 )
                 .prefetch_related(prefetched)
                 .defer(

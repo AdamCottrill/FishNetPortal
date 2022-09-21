@@ -2,15 +2,14 @@ from common.models import Lake
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import F, Sum
-from django.template.defaultfilters import slugify
 from django.urls import reverse
-
+from django.utils.text import slugify
 
 User = get_user_model()
 
 from .BaseModel import FNPortalBaseModel
-from .Gear import Gear
 from .FNProtocol import FNProtocol
+from .Gear import Gear
 
 
 class FN011(FNPortalBaseModel):

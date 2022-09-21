@@ -1,10 +1,9 @@
 from common.models import Species
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
+from django.utils.text import slugify
 
-
-from .FN122 import FN122
 from .BaseModel import FNPortalBaseModel
+from .FN122 import FN122
 
 
 class FN123(FNPortalBaseModel):

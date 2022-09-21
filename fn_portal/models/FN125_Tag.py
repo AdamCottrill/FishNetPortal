@@ -1,10 +1,9 @@
 from django.contrib.gis.db import models
+from django.utils.text import slugify
 
-from django.template.defaultfilters import slugify
-
-
-from .FN125 import FN125
 from .BaseModel import FNPortalBaseModel
+from .FN125 import FN125
+
 
 # NOTE - this should be named FN125_Tag
 class FN125Tag(FNPortalBaseModel):

@@ -10,6 +10,7 @@ from .factories import (
     FN014Factory,
     FN022Factory,
     FN026Factory,
+    FN026SubspaceFactory,
     FN028Factory,
     FN121Factory,
     FN122Factory,
@@ -82,7 +83,7 @@ def project():
         ssn_date1=ssn_date1,
     )
 
-    FN026Factory(
+    space1 = FN026Factory(
         project=project,
         space="S1",
         space_des="Space 1",
@@ -90,8 +91,21 @@ def project():
         dd_lon=-81.1,
         __sequence=1,
     )
-    FN026Factory(
+    space2 = FN026Factory(
         project=project, space="S2", space_des="Space 2", dd_lat=45.2, dd_lon=-81.2
+    )
+
+    subspace1 = FN026SubspaceFactory(
+        space=space1,
+        subspace="ss1",
+        subspace_des="Subspace 1",
+    )
+    subspace2 = FN026SubspaceFactory(
+        space=space2,
+        subspace="ss2",
+        subspace_des="Subspace 2",
+        dd_lat=45.2,
+        dd_lon=-81.2,
     )
 
     gl00 = GearFactory(gr_code="GL00", grtp="GL")

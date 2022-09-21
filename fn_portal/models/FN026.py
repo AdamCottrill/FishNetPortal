@@ -1,8 +1,8 @@
 from django.db import models
-from django.template.defaultfilters import slugify
+from django.utils.text import slugify
 
-from .FN011 import FN011
 from .BaseModel import FNPortalBaseModel
+from .FN011 import FN011
 
 
 class FN026(FNPortalBaseModel):
@@ -31,7 +31,7 @@ class FN026(FNPortalBaseModel):
     label = models.CharField(max_length=110, blank=False, help_text="Space Label")
 
     space = models.CharField(
-        max_length=2, blank=False, help_text="Space Code", db_index=True
+        max_length=4, blank=False, help_text="Space Code", db_index=True
     )
     space_des = models.CharField(
         max_length=100, blank=False, help_text="Space Description"

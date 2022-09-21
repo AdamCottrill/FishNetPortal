@@ -18,7 +18,7 @@
 
 import pytest
 from django.urls import reverse
-from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from ..fixtures import project
 

@@ -19,6 +19,7 @@ import pytest
 from fn_portal.tests.factories.FN0_factories import (
     FN022Factory,
     FN026Factory,
+    FN026SubspaceFactory,
     FN028Factory,
 )
 
@@ -84,7 +85,15 @@ def project(users):
 
     FN022Factory(ssn="00", project=project1, __sequence=1)
 
-    FN026Factory(project=project1, space="11", space_des="a test space", __sequence=1)
+    space = FN026Factory(
+        project=project1, space="11", space_des="a test space", __sequence=1
+    )
+
+    FN026SubspaceFactory(
+        space=space,
+        subspace="00",
+        subspace_des="a test subspace",
+    )
 
     gl32 = GearFactory(gr_code="GL32", grtp="GL")
     FN028Factory(mode="AA", project=project1, gear=gl32, __sequence=1)
@@ -145,12 +154,18 @@ def net_sets(project, grid):
         project=project, space="11", space_des="a test space", __sequence=1
     )
 
+    subspace = FN026SubspaceFactory(
+        space=space,
+        subspace="00",
+        subspace_des="a test subspace",
+    )
+
     sam1 = FN121Factory(
         mode=mode1,
         project=project,
         sam="sam1",
         ssn=ssn,
-        space=space,
+        subspace=subspace,
         effdt0=datetime(2019, 10, 21),
         effdt1=datetime(2019, 10, 22),
         efftm0=time(10, 30),
@@ -164,7 +179,7 @@ def net_sets(project, grid):
         project=project,
         sam="sam2",
         ssn=ssn,
-        space=space,
+        subspace=subspace,
         grid5=grid,
         effdt0=datetime(2019, 10, 20),
         effdt1=datetime(2019, 10, 21),
@@ -178,7 +193,7 @@ def net_sets(project, grid):
         project=project,
         sam="sam3",
         ssn=ssn,
-        space=space,
+        subspace=subspace,
         grid5=grid,
         effdt0=datetime(2019, 10, 22),
         efftm0=time(12, 0),

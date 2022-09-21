@@ -10,6 +10,7 @@ from ...models import (
     FN014,
     FN022,
     FN026,
+    FN026Subspace,
     FN028,
     FNProtocol,
     ProjectGearProcessType,
@@ -233,9 +234,21 @@ class FN026Factory(factory.django.DjangoModelFactory):
         model = FN026
         django_get_or_create = ["project", "space"]
 
-    space = factory.Sequence(lambda n: "{:02d}".format(n)[-2:])
-    space_des = "The Lake"
     project = factory.SubFactory(FN011Factory)
+    space = factory.Sequence(lambda n: "{:04d}".format(n)[-4:])
+    space_des = "The Lake"
+
+
+class FN026SubspaceFactory(factory.django.DjangoModelFactory):
+    """a factory for spatial sub-strata"""
+
+    class Meta:
+        model = FN026Subspace
+        django_get_or_create = ["subspace"]
+
+    space = factory.SubFactory(FN026Factory)
+    subspace = factory.Sequence(lambda n: "{:04d}".format(n)[-4:])
+    subspace_des = "The southern part"
 
 
 class FN028Factory(factory.django.DjangoModelFactory):

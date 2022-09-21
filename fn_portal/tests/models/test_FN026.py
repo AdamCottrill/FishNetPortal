@@ -42,3 +42,16 @@ def test_duplicate_space():
 
     msg = "duplicate key value violates unique constraint"
     assert msg in str(excinfo.value)
+
+
+@pytest.mark.skip
+@pytest.mark.django_db()
+def test_space_polygons_are_disjoint():
+    """If we have more than one space with po
+    lygon geometries in our
+    project, we need to ensure that they don't overlap.  If they do
+    overlap, an error should be thrown because a sample in the overlap
+    area would belong to two spatial strata.
+
+    """
+    assert 0 == 1

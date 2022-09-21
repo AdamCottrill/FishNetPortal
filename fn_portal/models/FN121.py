@@ -1,17 +1,12 @@
 from common.models import Grid5, ManagementUnit
-
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
-from django.db.models import F, Sum, Count
-
-from django.template.defaultfilters import slugify
+from django.db.models import F, Sum
 from django.urls import reverse
+from django.utils.text import slugify
 
 from .BaseModel import FNPortalBaseModel
-from .FN011 import FN011
-from .FN022 import FN022
-from .FN026 import FN026
-from .FN028 import FN028
+from . import FN011, FN022, FN026, FN026Subspace, FN028
 
 
 class FN121(FNPortalBaseModel):
@@ -30,9 +25,15 @@ class FN121(FNPortalBaseModel):
     ssn = models.ForeignKey(
         FN022, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
     )
-    space = models.ForeignKey(
-        FN026, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
+
+    subspace = models.ForeignKey(
+        FN026Subspace,
+        related_name="samples",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
+
     mode = models.ForeignKey(
         FN028, related_name="samples", blank=True, null=True, on_delete=models.CASCADE
     )

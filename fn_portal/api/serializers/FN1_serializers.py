@@ -4,7 +4,7 @@ from common.models import Grid5
 from fn_portal.models import (
     FN011,
     FN022,
-    FN026,
+    FN026Subspace,
     FN028,
     FN121,
     FN121Limno,
@@ -28,7 +28,8 @@ class FN121Serializer(serializers.ModelSerializer):
 
     prj_cd = serializers.CharField(source="project.prj_cd")
     ssn = serializers.CharField(source="ssn.ssn")
-    space = serializers.CharField(source="space.space")
+    space = serializers.CharField(source="subspace.space.space")
+    subspace = serializers.CharField(source="subspace.subspace")
     mode = serializers.CharField(source="mode.mode")
     grid5 = serializers.CharField(source="grid5.grid")
 
@@ -46,6 +47,7 @@ class FN121Serializer(serializers.ModelSerializer):
             "sam",
             "ssn",
             "space",
+            "subspace",
             "mode",
             "effdt0",
             "effdt1",
@@ -105,8 +107,11 @@ class FN121PostSerializer(FN121Serializer):
         many=False, read_only=False, slug_field="slug", queryset=FN022.objects.all()
     )
 
-    space = serializers.SlugRelatedField(
-        many=False, read_only=False, slug_field="slug", queryset=FN026.objects.all()
+    subspace = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field="slug",
+        queryset=FN026Subspace.objects.all(),
     )
 
     mode = serializers.SlugRelatedField(
@@ -125,7 +130,7 @@ class FN121PostSerializer(FN121Serializer):
             "project",
             "sam",
             "ssn",
-            "space",
+            "subspace",
             "mode",
             "effdt0",
             "effdt1",

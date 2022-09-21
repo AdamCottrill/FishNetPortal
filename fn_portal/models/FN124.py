@@ -1,8 +1,8 @@
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
+from django.utils.text import slugify
 
-from .FN123 import FN123
 from .BaseModel import FNPortalBaseModel
+from .FN123 import FN123
 
 
 class FN124(FNPortalBaseModel):

@@ -41,6 +41,7 @@ field crew (who cannot edit or create projects)
 
 
 from datetime import datetime
+from django.db.models.query import prefetch_related_objects
 
 import pytest
 from django.urls import reverse
@@ -58,6 +59,7 @@ def netset_data(grid):
         "sam": "16",
         "ssn": "00",
         "space": "11",
+        "subspace": "00",
         "mode": "AA",
         "effdt0": "2019-10-03",
         "effdt1": "2019-10-04",
@@ -222,8 +224,9 @@ def test_fn121_listview_create_permissions(
     ssn = netset_data["ssn"]
     netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
 
-    space = netset_data["space"]
-    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+    space = netset_data.pop("space")
+    subspace = netset_data["subspace"]
+    netset_data["subspace"] = f"{project.prj_cd}-{space}-{subspace}".lower()
 
     mode = netset_data["mode"]
     netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
@@ -255,8 +258,9 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     ssn = netset_data["ssn"]
     netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
 
-    space = netset_data["space"]
-    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+    space = netset_data.pop("space")
+    subspace = netset_data["subspace"]
+    netset_data["subspace"] = f"{project.prj_cd}-{space}-{subspace}".lower()
 
     mode = netset_data["mode"]
     netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
@@ -266,10 +270,6 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
 
     url = reverse("fn_portal_api:FN121_listview", kwargs={"prj_cd": project.prj_cd})
     response = api_client.post(url, netset_data, format="json")
-
-    fname = "c:/1work/scrapbook/wtf.html"
-    with open(fname, "wb") as f:
-        f.write(response.content)
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -337,7 +337,8 @@ def test_fn121_detailview(api_client, net_sets):
         "slug": net_set.slug,
         "sam": net_set.sam,
         "ssn": net_set.ssn.ssn,
-        "space": net_set.space.space,
+        "space": net_set.subspace.space.space,
+        "subspace": net_set.subspace.subspace,
         "mode": net_set.mode.mode,
         "effdt0": net_set.effdt0.strftime("%Y-%m-%d"),
         "effdt1": net_set.effdt1.strftime("%Y-%m-%d"),
@@ -379,8 +380,10 @@ def test_fn121_detailview_put_permissions(
     ssn = netset_data["ssn"]
     netset_data["ssn"] = f"{project.prj_cd}-{ssn}".lower()
 
-    space = netset_data["space"]
-    netset_data["space"] = f"{project.prj_cd}-{space}".lower()
+    space = netset_data.pop("space")
+    subspace = netset_data["subspace"]
+
+    netset_data["subspace"] = f"{project.prj_cd}-{space}-{subspace}".lower()
 
     mode = netset_data["mode"]
     netset_data["mode"] = f"{project.prj_cd}-{mode}".lower()
@@ -435,8 +438,11 @@ def test_fn121_update(api_client, project, net_sets):
     # labels with the slugs so the serializer can create the relationships
     ssn = data["ssn"]
     data["ssn"] = f"{prj_cd}-{ssn}".lower()
-    space = data["space"]
-    data["space"] = f"{prj_cd}-{space}".lower()
+
+    space = data.pop("space")
+    subspace = data["subspace"]
+    data["subspace"] = f"{prj_cd}-{space}-{subspace}".lower()
+
     mode = data["mode"]
     data["mode"] = f"{prj_cd}-{mode}".lower()
 

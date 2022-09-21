@@ -1,8 +1,8 @@
 from django.db import models
-from django.template.defaultfilters import slugify
+from django.utils.text import slugify
 
-from .FN011 import FN011
 from .BaseModel import FNPortalBaseModel
+from .FN011 import FN011
 
 
 class FN013(FNPortalBaseModel):

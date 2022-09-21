@@ -1,16 +1,14 @@
 # from django.db import models
+from common.models import Lake, Species
 from django.contrib.gis.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
 
-from common.models import Species, Lake
-
+from .BaseModel import FNPortalBaseModel
 from .FN011 import FN011
 from .FNProtocol import FNProtocol
-from .BaseModel import FNPortalBaseModel
 
 
 class FN012Base(FNPortalBaseModel):

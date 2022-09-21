@@ -1,8 +1,6 @@
 from django.contrib.gis.db import models
-
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.template.defaultfilters import slugify
-from django.urls import reverse
+from django.utils.text import slugify
 
 from .BaseModel import FNPortalBaseModel
 from .FN121 import FN121
