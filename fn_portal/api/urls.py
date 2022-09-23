@@ -14,54 +14,53 @@
 
 from django.urls import path, re_path
 
-# from rest_framework import routers
-
-from .views import (
-    SpeciesListView,
-    ProjectLeadListView,
-    GearListView,
-    GearEffortProcessTypeListView,
-    LakeExtentListView,
-    FNProtocolListView,
-    # readonly endpoints:
-    # FN011ViewSet,
-    project_wizard,
-    FN011ListView,
+from .views import (  # readonly endpoints:; FN011ViewSet,; CRUD Endpoints:
+    BioSampleList,
+    CatchCountList,
+    EffortList,
     FN011DetailView,
+    FN011ListView,
     FN012ListView,
     FN012ProtocolListView,
-    FN013ListView,
     FN013DetailView,
-    FN014ListView,
+    FN013ListView,
     FN014DetailView,
-    FN022ListView,
+    FN014ListView,
     FN022DetailView,
-    FN026ListView,
+    FN022ListView,
     FN026DetailView,
-    FN028ListView,
+    FN026ListView,
+    FN026SubspaceListView,
     FN028DetailView,
-    NetSetList,
+    FN028ListView,
+    FN121DetailView,
     FN121LimnoList,
-    EffortList,
-    CatchCountList,
-    LengthTallyList,
-    BioSampleList,
-    FN125TagReadOnlyList,
+    FN121ListView,
+    FN122DetailView,
+    FN122ListView,
+    FN123DetailView,
+    FN123ListView,
+    FN125DetailView,
     FN125LampreyReadOnlyList,
+    FN125ListView,
+    FN125TagReadOnlyList,
     FN126ReadOnlyList,
     FN127ReadOnlyList,
-    # CRUD Endpoints:
-    FN121ListView,
-    FN121DetailView,
-    FN122ListView,
-    FN122DetailView,
-    FN123ListView,
-    FN123DetailView,
-    FN125ListView,
-    FN125DetailView,
+    FNProtocolListView,
+    GearEffortProcessTypeListView,
+    GearListView,
+    LakeExtentListView,
+    LengthTallyList,
+    NetSetList,
+    ProjectLeadListView,
+    SpeciesListView,
+    project_wizard,
 )
 
-PRJ_CD_REGEX = r"(?P<prj_cd>[A-Za-z0-9]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})/$"
+# from rest_framework import routers
+
+
+PRJ_CD_REGEX = r"(?P<prj_cd>[A-Za-z0-9]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})"
 
 app_name = "fn_portal_api"
 
@@ -98,6 +97,17 @@ urlpatterns = [
     path("fn013/", FN013ListView.as_view(), name="fn013_list"),
     path("fn022/", FN022ListView.as_view(), name="season_list"),
     path("fn026/", FN026ListView.as_view(), name="space_list"),
+    re_path(
+        fr"fn026subspace/{PRJ_CD_REGEX}/(?P<space>[0-9a-zA-Z]{{1,4}})/",
+        FN026SubspaceListView.as_view(),
+        name="project_space_subspace_list",
+    ),
+    re_path(
+        fr"fn026subspace/{PRJ_CD_REGEX}/",
+        FN026SubspaceListView.as_view(),
+        name="project_subspace_list",
+    ),
+    path("fn026subspace/", FN026SubspaceListView.as_view(), name="subspace_list"),
     path("fn028/", FN028ListView.as_view(), name="mode_list"),
     path("fn121/", NetSetList.as_view(), name="netset_list"),
     path("fn121limno/", FN121LimnoList.as_view(), name="fn121limno_list"),
@@ -112,7 +122,7 @@ urlpatterns = [
     # =========================
     # CRUD ENDPOINTS:
     # FN121
-    re_path(PRJ_CD_REGEX, FN121ListView.as_view(), name="FN121_listview"),
+    re_path(f"{PRJ_CD_REGEX}/$", FN121ListView.as_view(), name="FN121_listview"),
     path("<str:prj_cd>/fn013", FN013ListView.as_view(), name="fn013-list"),
     path(
         "<str:prj_cd>/fn013/<str:gr>",

@@ -22,6 +22,7 @@ from .FN0_serializers import (
     FN026Serializer,
     FN026SimpleSerializer,
     FN026ListSerializer,
+    FN026SubspaceSerializer,
     FN028Serializer,
     FN028SimpleSerializer,
     FN028ListSerializer,

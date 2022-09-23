@@ -99,13 +99,15 @@ def project():
         space=space1,
         subspace="ss1",
         subspace_des="Subspace 1",
+        dd_lat=45.11,
+        dd_lon=-81.11,
     )
     subspace2 = FN026SubspaceFactory(
         space=space2,
         subspace="ss2",
         subspace_des="Subspace 2",
-        dd_lat=45.2,
-        dd_lon=-81.2,
+        dd_lat=45.22,
+        dd_lon=-81.22,
     )
 
     gl00 = GearFactory(gr_code="GL00", grtp="GL")
@@ -125,6 +127,7 @@ def project():
     net1 = FN121Factory(
         sam="1",
         mode=mode1,
+        subspace=subspace1,
         sidep=25,
         effdur=24.1211,
         project=project,
@@ -152,6 +155,7 @@ def project():
     net2 = FN121Factory(
         sam="2",
         mode=mode2,
+        subspace=subspace2,
         sidep=5,
         effdur=22.5,
         project=project,

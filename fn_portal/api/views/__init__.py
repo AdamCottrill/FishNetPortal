@@ -15,6 +15,7 @@ from .FN0_views import (
     FN022ListView,
     FN022DetailView,
     FN026ListView,
+    FN026SubspaceListView,
     FN026DetailView,
     FN028ListView,
     FN028DetailView,

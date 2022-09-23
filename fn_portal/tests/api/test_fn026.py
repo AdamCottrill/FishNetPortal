@@ -18,11 +18,10 @@
 
 """
 
-import json
 
 import pytest
 from django.urls import reverse
-from fn_portal.models import FN026
+
 from fn_portal.tests.fixtures import api_client, project
 from rest_framework import status
 

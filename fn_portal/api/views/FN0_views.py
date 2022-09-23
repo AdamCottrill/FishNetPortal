@@ -1,23 +1,22 @@
 """Views for api endpoints for our FN0 models."""
 import csv
 
-from rest_framework import generics
 from django.db.models import F, Value
 from django.db.models.functions import Concat, LPad
 from django.http import HttpResponse
-
 from fn_portal.models import (
-    FNProtocol,
     FN011,
     FN012,
-    FN012Protocol,
     FN013,
     FN014,
     FN022,
     FN026,
     FN028,
-    Gear,
+    FN012Protocol,
+    FN026Subspace,
+    FNProtocol,
 )
+from rest_framework import generics
 
 from ...filters import (
     FN011Filter,
@@ -25,27 +24,27 @@ from ...filters import (
     FN012ProtocolFilter,
     FN022Filter,
     FN026Filter,
+    FN026SubspaceFilter,
     FN028Filter,
 )
-
-from ..utils import StandardResultsSetPagination
-
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from ..serializers import (
-    FNProtocolSerializer,
     FN011Serializer,
     FN012ListSerializer,
     FN012ProtocolListSerializer,
-    FN013Serializer,
     FN013ListSerializer,
+    FN013Serializer,
     FN014Serializer,
-    FN022Serializer,
     FN022ListSerializer,
-    FN026Serializer,
+    FN022Serializer,
     FN026ListSerializer,
-    FN028Serializer,
+    FN026Serializer,
+    FN026SubspaceSerializer,
     FN028ListSerializer,
+    FN028Serializer,
+    FNProtocolSerializer,
 )
+from ..utils import StandardResultsSetPagination
 
 
 class FNProtocolListView(generics.ListAPIView):
@@ -407,6 +406,44 @@ class FN026DetailView(generics.RetrieveUpdateDestroyAPIView):
         """"""
         prj_cd = self.kwargs.get("prj_cd")
         return FN026.objects.filter(project__slug=prj_cd.lower())
+
+
+class FN026SubspaceListView(generics.ListAPIView):
+    """an api end point to list all of the subspaces.  Optional
+    arguments for prj_cd and space allow this endpoint to return all
+    of the subspaces associated with a project, or all of the
+    subspaces for a space within a project.
+
+    """
+
+    serializer_class = FN026SubspaceSerializer
+    filterset_class = FN026SubspaceFilter
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [ReadOnly]
+
+    def get_queryset(self):
+        """"""
+
+        qs = FN026Subspace.objects.annotate(
+            prj_cd=F("space__project__prj_cd"), space_code=F("space__space")
+        ).select_related("space", "space__project")
+        prj_cd = self.kwargs.get("prj_cd")
+        space = self.kwargs.get("space")
+        if prj_cd:
+            qs = qs.filter(space__project__prj_cd=prj_cd)
+        if space:
+            qs = qs.filter(space__space=space)
+
+        return qs.values(
+            "prj_cd",
+            "space_code",
+            "subspace",
+            "subspace_des",
+            "dd_lat",
+            "dd_lon",
+            "slug",
+            "id",
+        )
 
 
 class FN028ListView(generics.ListAPIView):

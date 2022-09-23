@@ -430,6 +430,24 @@ class FN026Serializer(serializers.ModelSerializer):
         )
 
 
+class FN026SubspaceSerializer(serializers.Serializer):
+    """This is a super minimal serializer for spatial strata associated
+    with a project. It is used by api endpoint to return read-only
+    data in FN-II format. Fast and flat. The same as
+    FN026SimpleSerializer but project is repalced with prj_cd.
+
+    """
+
+    prj_cd = serializers.CharField(read_only=True)
+    space = serializers.CharField(read_only=True, source="space_code")
+    subspace = serializers.CharField(read_only=True)
+    subspace_des = serializers.CharField(read_only=True)
+    dd_lat = serializers.FloatField(read_only=True)
+    dd_lon = serializers.FloatField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+    id = serializers.IntegerField(read_only=True)
+
+
 class FN028ListSerializer(serializers.ModelSerializer):
     """This is a super minimal serializer for fishing mode associated with
     a project. It is used by api endpoint to return read-only data in
