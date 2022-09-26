@@ -60,7 +60,6 @@ class FN121(FNPortalBaseModel):
     sitp = models.CharField("Site Type", max_length=4, blank=True, null=True)
     site = models.CharField("Site Label", max_length=100, blank=True, null=True)
 
-    sitem = models.FloatField("Site Temperature (degrees C)", blank=True, null=True)
     sitem0 = models.FloatField(
         "Start Site Temperature (degrees C)", blank=True, null=True
     )
@@ -78,6 +77,7 @@ class FN121(FNPortalBaseModel):
         "Max. Gear Depth (m)", blank=True, null=True, db_index=True
     )
     secchi0 = models.FloatField("First Secchi Depth", blank=True, null=True)
+    secchi1 = models.FloatField("Second Secchi Depth", blank=True, null=True)
 
     slime = models.IntegerField(blank=True, null=True)
 

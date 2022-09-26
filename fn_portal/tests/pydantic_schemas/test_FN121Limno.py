@@ -38,11 +38,12 @@ def data():
     data = {
         "slug": "lha_ia19_002-1-limno",
         "sample_id": 1,
-        "do_gear": 12.0,
-        "xo2": 11.0,
-        "xo22": 11.0,
-        "surfdo2": 14.0,
-        "surfdo22": 14.0,
+        "o2gear0": 12.0,
+        "o2gear0": 12.5,
+        "o2bot0": 11.0,
+        "o2bot1": 11.0,
+        "o2surf0": 14.0,
+        "o2surf1": 14.0,
     }
     return data
 
@@ -86,11 +87,12 @@ def test_required_fields(data, fld):
 
 
 optional_fields = [
-    "do_gear",
-    "xo2",
-    "xo22",
-    "surfdo2",
-    "surfdo22",
+    "o2gear0",
+    "o2gear1",
+    "o2bot0",
+    "o2bot1",
+    "o2surf0",
+    "o2surf1",
 ]
 
 
@@ -109,16 +111,18 @@ def test_optional_fields(data, fld):
 
 mode_list = [
     # field, input, output
-    ("do_gear", "", None),
-    ("do_gear", "10.1", 10.1),
-    ("xo2", "", None),
-    ("xo2", "10.1", 10.1),
-    ("xo22", "", None),
-    ("xo22", "10.1", 10.1),
-    ("surfdo2", "", None),
-    ("surfdo2", "10.1", 10.1),
-    ("surfdo22", "", None),
-    ("surfdo22", "10.1", 10.1),
+    ("o2gear0", "", None),
+    ("o2gear0", "10.1", 10.1),
+    ("o2gear1", "", None),
+    ("o2gear1", "10.1", 10.1),
+    ("o2bot0", "", None),
+    ("o2bot0", "10.1", 10.1),
+    ("o2bot1", "", None),
+    ("o2bot1", "10.1", 10.1),
+    ("o2surf0", "", None),
+    ("o2surf0", "10.1", 10.1),
+    ("o2surf1", "", None),
+    ("o2surf1", "10.1", 10.1),
 ]
 
 
@@ -140,33 +144,39 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
 
 error_list = [
-    ("do_gear", -40.6, "ensure this value is greater than or equal to 0"),
+    ("o2gear0", -40.6, "ensure this value is greater than or equal to 0"),
     (
-        "do_gear",
+        "o2gear0",
         40.6,
         "ensure this value is less than or equal to 20",
     ),
-    ("xo2", -40.6, "ensure this value is greater than or equal to 0"),
+    ("o2gear1", -40.6, "ensure this value is greater than or equal to 0"),
     (
-        "xo2",
+        "o2gear1",
         40.6,
         "ensure this value is less than or equal to 20",
     ),
-    ("xo22", -40.6, "ensure this value is greater than or equal to 0"),
+    ("o2bot0", -40.6, "ensure this value is greater than or equal to 0"),
     (
-        "xo22",
+        "o2bot0",
         40.6,
         "ensure this value is less than or equal to 20",
     ),
-    ("surfdo2", -40.6, "ensure this value is greater than or equal to 0"),
+    ("o2bot1", -40.6, "ensure this value is greater than or equal to 0"),
     (
-        "surfdo2",
+        "o2bot1",
         40.6,
         "ensure this value is less than or equal to 20",
     ),
-    ("surfdo22", -40.6, "ensure this value is greater than or equal to 0"),
+    ("o2surf0", -40.6, "ensure this value is greater than or equal to 0"),
     (
-        "surfdo22",
+        "o2surf0",
+        40.6,
+        "ensure this value is less than or equal to 20",
+    ),
+    ("o2surf1", -40.6, "ensure this value is greater than or equal to 0"),
+    (
+        "o2surf1",
         40.6,
         "ensure this value is less than or equal to 20",
     ),

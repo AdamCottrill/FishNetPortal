@@ -76,7 +76,7 @@ def netset_data(grid):
         "dd_lon0": -80.8095,
         # "grid5": {"grid": str(grid.grid), "slug": grid.slug},
         "grid5": str(grid.grid),
-        "sitem": 23,
+        "sitem0": 23,
         "comment1": "Some sample data",
         "secchi0": 10,
     }
@@ -290,7 +290,7 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.dd_lat0 == netset_data["dd_lat0"]
     assert fn121.dd_lon0 == netset_data["dd_lon0"]
 
-    assert fn121.sitem == netset_data["sitem"]
+    assert fn121.sitem0 == netset_data["sitem0"]
     assert fn121.comment1 == netset_data["comment1"]
     assert fn121.secchi0 == netset_data["secchi0"]
 
@@ -354,7 +354,7 @@ def test_fn121_detailview(api_client, net_sets):
         "grid5": str(net_set.grid5.grid),
         "dd_lat0": net_set.dd_lat0,
         "dd_lon0": net_set.dd_lon0,
-        "sitem": net_set.sitem,
+        "sitem0": net_set.sitem0,
         "comment1": net_set.comment1,
         "secchi0": net_set.secchi0,
     }

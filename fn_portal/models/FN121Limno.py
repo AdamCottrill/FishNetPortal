@@ -22,31 +22,37 @@ class FN121Limno(FNPortalBaseModel):
         primary_key=True,
     )
 
-    do_gear = models.FloatField(
-        "Dissolved Oxygen (mg/l) at Gear",
+    o2gear0 = models.FloatField(
+        "Dissolved Oxygen (mg/l) at Gear [start]",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(20)],
     )
-    xo2 = models.FloatField(
+    o2gear1 = models.FloatField(
+        "Dissolved Oxygen (mg/l) at Gear [end]",
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+    )
+    o2bot0 = models.FloatField(
         "Bottom Dissolved Oxygen (mg/l) [start]",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(20)],
     )
-    xo22 = models.FloatField(
+    o2bot1 = models.FloatField(
         "Bottom Dissolved Oxygen (mg/l)  [end]",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(20)],
     )
-    surfdo2 = models.FloatField(
+    o2surf0 = models.FloatField(
         "Surface Dissolved Oxygen (mg/l)  [start]",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(20)],
     )
-    surfdo22 = models.FloatField(
+    o2surf1 = models.FloatField(
         "Surface Dissolved Oxygen (mg/l) [end]",
         blank=True,
         null=True,

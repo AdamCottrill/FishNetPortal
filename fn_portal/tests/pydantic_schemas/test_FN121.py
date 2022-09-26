@@ -56,7 +56,6 @@ def data():
         "dd_lon0": -81.2,
         "dd_lat1": 45.6,
         "dd_lon1": -81.1,
-        "sitem": 18.1,
         "sitem0": 18.1,
         "sitem1": 21.2,
         "sidep0": 10.2,
@@ -122,7 +121,6 @@ optional_fields = [
     "effst",
     "sitp",
     "site",
-    "sitem",
     "sitem0",
     "sitem1",
     "sidep0",
@@ -178,7 +176,6 @@ field_list = [
     ("secchi0", "", None),
     ("grdepmin", "", None),
     ("grdepmax", "", None),
-    ("sitem", "", None),
     ("sitem0", "", None),
     ("sitem1", "", None),
 ]
@@ -392,11 +389,6 @@ error_list = [
         "value is not a valid enumeration member;",
     ),
     (
-        "sitem",
-        -31.1,
-        "ensure this value is greater than or equal to -30",
-    ),
-    (
         "sitem0",
         -31.1,
         "ensure this value is greater than or equal to -30",
@@ -405,11 +397,6 @@ error_list = [
         "sitem1",
         -31.1,
         "ensure this value is greater than or equal to -30",
-    ),
-    (
-        "sitem",
-        31.1,
-        "ensure this value is less than or equal to 30",
     ),
     (
         "sitem0",

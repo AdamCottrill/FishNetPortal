@@ -48,16 +48,18 @@ def test_FN121Limno_fn_keys():
 
 
 invalid_args = [
-    ("do_gear", -10, "Ensure this value is greater than or equal to 0."),
-    ("do_gear", 50.1, "Ensure this value is less than or equal to 20."),
-    ("xo2", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("xo2", 50.1, "Ensure this value is less than or equal to 20."),
-    ("xo22", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("xo22", 50.1, "Ensure this value is less than or equal to 20."),
-    ("surfdo2", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("surfdo2", 50.1, "Ensure this value is less than or equal to 20."),
-    ("surfdo22", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("surfdo22", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2gear0", -10, "Ensure this value is greater than or equal to 0."),
+    ("o2gear0", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2gear1", -10, "Ensure this value is greater than or equal to 0."),
+    ("o2gear1", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2bot0", -0.1, "Ensure this value is greater than or equal to 0."),
+    ("o2bot0", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2bot1", -0.1, "Ensure this value is greater than or equal to 0."),
+    ("o2bot1", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2surf0", -0.1, "Ensure this value is greater than or equal to 0."),
+    ("o2surf0", 50.1, "Ensure this value is less than or equal to 20."),
+    ("o2surf1", -0.1, "Ensure this value is greater than or equal to 0."),
+    ("o2surf1", 50.1, "Ensure this value is less than or equal to 20."),
 ]
 
 

@@ -51,11 +51,12 @@ class FN121LimnoFactory(factory.django.DjangoModelFactory):
 
     sample = factory.SubFactory(FN121Factory)
 
-    do_gear = 12.0
-    xo2 = 11.0
-    xo22 = 11.0
-    surfdo2 = 14.0
-    surfdo22 = 14.0
+    o2gear0 = 12.0
+    o2gear1 = 12.5
+    o2bot0 = 11.0
+    o2bot1 = 11.0
+    o2surf0 = 14.0
+    o2surf1 = 14.0
 
 
 class FN122Factory(factory.django.DjangoModelFactory):

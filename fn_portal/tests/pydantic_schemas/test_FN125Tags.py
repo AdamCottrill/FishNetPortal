@@ -42,8 +42,7 @@ def data():
         "tagid": "123654A",
         "tagdoc": "25012",
         "tagstat": "A",
-        "xcwtseq": None,
-        "xtaginckd": None,
+        "cwtseq": None,
         "comment_tag": "not a real tag",
     }
     return data
@@ -91,7 +90,7 @@ def test_required_fields(data, fld):
     assert msg in str(excinfo.value)
 
 
-optional_fields = ["xcwtseq", "xtaginckd", "comment_tag"]
+optional_fields = ["cwtseq", "comment_tag"]
 
 
 @pytest.mark.parametrize("fld", optional_fields)
@@ -109,7 +108,7 @@ def test_optional_fields(data, fld):
 
 mode_list = [
     # field, input, output
-    ("xcwtseq", "", None),
+    ("cwtseq", "", None),
 ]
 
 
@@ -133,7 +132,7 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
 error_list = [
     (
-        "xcwtseq",
+        "cwtseq",
         -4,
         "ensure this value is greater than 0",
     ),

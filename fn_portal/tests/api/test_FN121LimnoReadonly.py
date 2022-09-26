@@ -98,11 +98,12 @@ def test_FN121LimnoReadonly_expected_keys(api_client, fn121Limno_records):
         "prj_cd",
         "sam",
         "slug",
-        "do_gear",
-        "xo2",
-        "xo22",
-        "surfdo2",
-        "surfdo22",
+        "o2gear0",
+        "o2gear1",
+        "o2bot0",
+        "o2bot1",
+        "o2surf0",
+        "o2surf1",
     ]
 
     assert set(observed) == set(expected)

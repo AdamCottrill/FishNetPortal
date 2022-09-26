@@ -253,11 +253,12 @@ class FN121LimnoList(generics.ListAPIView):
         .values(
             "prj_cd",
             "sam",
-            "do_gear",
-            "xo2",
-            "xo22",
-            "surfdo2",
-            "surfdo22",
+            "o2gear0",
+            "o2gear1",
+            "o2bot0",
+            "o2bot1",
+            "o2surf0",
+            "o2surf1",
             "slug",
         )
     )
@@ -511,9 +512,8 @@ class FN125TagReadOnlyList(generics.ListAPIView):
             "tagstat",
             "tagid",
             "tagdoc",
-            "xcwtseq",
-            "xtaginckd",
-            "xtag_chk",
+            "cwtseq",
+            "tag_checked",
             "comment_tag",
             "slug",
         )

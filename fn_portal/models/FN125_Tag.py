@@ -26,11 +26,13 @@ class FN125Tag(FNPortalBaseModel):
     tagdoc = models.CharField(
         "Tag Documentation", max_length=6, db_index=True, blank=True, null=True
     )
-    xcwtseq = models.CharField(
+    cwtseq = models.CharField(
         "Sequential CWT number", max_length=5, blank=True, null=True
     )
-    xtaginckd = models.CharField(max_length=6, blank=True, null=True)
-    xtag_chk = models.CharField(max_length=50, blank=True, null=True)
+
+    tag_checked = models.CharField(
+        "Has this tag been checked again", max_length=50, blank=True, null=True
+    )
 
     comment_tag = models.TextField(blank=True, null=True)
 

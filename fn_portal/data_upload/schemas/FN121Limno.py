@@ -17,15 +17,23 @@ class FN121Limno(FNBase):
     slug: str
     sample_id: int
 
-    do_gear: Optional[confloat(ge=0, le=20)] = None
-    xo2: Optional[confloat(ge=0, le=20)] = None
-    xo22: Optional[confloat(ge=0, le=20)] = None
-    surfdo2: Optional[confloat(ge=0, le=20)] = None
-    surfdo22: Optional[confloat(ge=0, le=20)] = None
+    o2gear0: Optional[confloat(ge=0, le=20)] = None
+    o2gear1: Optional[confloat(ge=0, le=20)] = None
+    o2bot0: Optional[confloat(ge=0, le=20)] = None
+    o2bot1: Optional[confloat(ge=0, le=20)] = None
+    o2surf0: Optional[confloat(ge=0, le=20)] = None
+    o2surf1: Optional[confloat(ge=0, le=20)] = None
 
     class Config:
         validate_assignment = True
 
     _string_to_float = validator(
-        "do_gear", "xo2", "xo22", "surfdo2", "surfdo22", allow_reuse=True, pre=True
+        "o2gear0",
+        "o2gear1",
+        "o2bot0",
+        "o2bot1",
+        "o2surf0",
+        "o2surf1",
+        allow_reuse=True,
+        pre=True,
     )(string_to_float)

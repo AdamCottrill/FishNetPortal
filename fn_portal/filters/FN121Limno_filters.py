@@ -20,74 +20,86 @@ class FN121LimnoInProjectFilter(GeoFilterSet):
         field_name="sample__management_units__slug", exclude=True
     )
 
-    do_gear = django_filters.NumberFilter(field_name="do_gear", lookup_expr="exact")
-    do_gear__gte = django_filters.NumberFilter(field_name="do_gear", lookup_expr="gte")
-    do_gear__lte = django_filters.NumberFilter(field_name="do_gear", lookup_expr="lte")
-    do_gear__gt = django_filters.NumberFilter(field_name="do_gear", lookup_expr="gt")
-    do_gear__lt = django_filters.NumberFilter(field_name="do_gear", lookup_expr="lt")
-    do_gear__null = django_filters.BooleanFilter(
-        field_name="do_gear", lookup_expr="isnull"
+    o2gear0 = django_filters.NumberFilter(field_name="o2gear0", lookup_expr="exact")
+    o2gear0__gte = django_filters.NumberFilter(field_name="o2gear0", lookup_expr="gte")
+    o2gear0__lte = django_filters.NumberFilter(field_name="o2gear0", lookup_expr="lte")
+    o2gear0__gt = django_filters.NumberFilter(field_name="o2gear0", lookup_expr="gt")
+    o2gear0__lt = django_filters.NumberFilter(field_name="o2gear0", lookup_expr="lt")
+    o2gear0__null = django_filters.BooleanFilter(
+        field_name="o2gear0", lookup_expr="isnull"
     )
-    do_gear__not_null = django_filters.BooleanFilter(
-        field_name="do_gear", lookup_expr="isnull", exclude=True
-    )
-
-    xo2 = django_filters.NumberFilter(field_name="xo2", lookup_expr="exact")
-    xo2__gte = django_filters.NumberFilter(field_name="xo2", lookup_expr="gte")
-    xo2__lte = django_filters.NumberFilter(field_name="xo2", lookup_expr="lte")
-    xo2__gt = django_filters.NumberFilter(field_name="xo2", lookup_expr="gt")
-    xo2__lt = django_filters.NumberFilter(field_name="xo2", lookup_expr="lt")
-    xo2__null = django_filters.BooleanFilter(field_name="xo2", lookup_expr="isnull")
-    xo2__not_null = django_filters.BooleanFilter(
-        field_name="xo2", lookup_expr="isnull", exclude=True
+    o2gear0__not_null = django_filters.BooleanFilter(
+        field_name="o2gear0", lookup_expr="isnull", exclude=True
     )
 
-    xo22 = django_filters.NumberFilter(field_name="xo22", lookup_expr="exact")
-    xo22__gte = django_filters.NumberFilter(field_name="xo22", lookup_expr="gte")
-    xo22__lte = django_filters.NumberFilter(field_name="xo22", lookup_expr="lte")
-    xo22__gt = django_filters.NumberFilter(field_name="xo22", lookup_expr="gt")
-    xo22__lt = django_filters.NumberFilter(field_name="xo22", lookup_expr="lt")
-    xo22__null = django_filters.BooleanFilter(field_name="xo22", lookup_expr="isnull")
-    xo22__not_null = django_filters.BooleanFilter(
-        field_name="xo22", lookup_expr="isnull", exclude=True
+    o2gear1 = django_filters.NumberFilter(field_name="o2gear1", lookup_expr="exact")
+    o2gear1__gte = django_filters.NumberFilter(field_name="o2gear1", lookup_expr="gte")
+    o2gear1__lte = django_filters.NumberFilter(field_name="o2gear1", lookup_expr="lte")
+    o2gear1__gt = django_filters.NumberFilter(field_name="o2gear1", lookup_expr="gt")
+    o2gear1__lt = django_filters.NumberFilter(field_name="o2gear1", lookup_expr="lt")
+    o2gear1__null = django_filters.BooleanFilter(
+        field_name="o2gear1", lookup_expr="isnull"
+    )
+    o2gear1__not_null = django_filters.BooleanFilter(
+        field_name="o2gear1", lookup_expr="isnull", exclude=True
     )
 
-    surfdo2 = django_filters.NumberFilter(field_name="surfdo2", lookup_expr="exact")
-    surfdo2__gte = django_filters.NumberFilter(field_name="surfdo2", lookup_expr="gte")
-    surfdo2__lte = django_filters.NumberFilter(field_name="surfdo2", lookup_expr="lte")
-    surfdo2__gt = django_filters.NumberFilter(field_name="surfdo2", lookup_expr="gt")
-    surfdo2__lt = django_filters.NumberFilter(field_name="surfdo2", lookup_expr="lt")
-    surfdo2__null = django_filters.BooleanFilter(
-        field_name="surfdo2", lookup_expr="isnull"
+    o2bot0 = django_filters.NumberFilter(field_name="o2bot0", lookup_expr="exact")
+    o2bot0__gte = django_filters.NumberFilter(field_name="o2bot0", lookup_expr="gte")
+    o2bot0__lte = django_filters.NumberFilter(field_name="o2bot0", lookup_expr="lte")
+    o2bot0__gt = django_filters.NumberFilter(field_name="o2bot0", lookup_expr="gt")
+    o2bot0__lt = django_filters.NumberFilter(field_name="o2bot0", lookup_expr="lt")
+    o2bot0__null = django_filters.BooleanFilter(
+        field_name="o2bot0", lookup_expr="isnull"
     )
-    surfdo2__not_null = django_filters.BooleanFilter(
-        field_name="surfdo2", lookup_expr="isnull", exclude=True
+    o2bot0__not_null = django_filters.BooleanFilter(
+        field_name="o2bot0", lookup_expr="isnull", exclude=True
     )
 
-    surfdo22 = django_filters.NumberFilter(field_name="surfdo22", lookup_expr="exact")
-    surfdo22__gte = django_filters.NumberFilter(
-        field_name="surfdo22", lookup_expr="gte"
+    o2bot1 = django_filters.NumberFilter(field_name="o2bot1", lookup_expr="exact")
+    o2bot1__gte = django_filters.NumberFilter(field_name="o2bot1", lookup_expr="gte")
+    o2bot1__lte = django_filters.NumberFilter(field_name="o2bot1", lookup_expr="lte")
+    o2bot1__gt = django_filters.NumberFilter(field_name="o2bot1", lookup_expr="gt")
+    o2bot1__lt = django_filters.NumberFilter(field_name="o2bot1", lookup_expr="lt")
+    o2bot1__null = django_filters.BooleanFilter(
+        field_name="o2bot1", lookup_expr="isnull"
     )
-    surfdo22__lte = django_filters.NumberFilter(
-        field_name="surfdo22", lookup_expr="lte"
+    o2bot1__not_null = django_filters.BooleanFilter(
+        field_name="o2bot1", lookup_expr="isnull", exclude=True
     )
-    surfdo22__gt = django_filters.NumberFilter(field_name="surfdo22", lookup_expr="gt")
-    surfdo22__lt = django_filters.NumberFilter(field_name="surfdo22", lookup_expr="lt")
-    surfdo22__null = django_filters.BooleanFilter(
-        field_name="surfdo22", lookup_expr="isnull"
+
+    o2surf0 = django_filters.NumberFilter(field_name="o2surf0", lookup_expr="exact")
+    o2surf0__gte = django_filters.NumberFilter(field_name="o2surf0", lookup_expr="gte")
+    o2surf0__lte = django_filters.NumberFilter(field_name="o2surf0", lookup_expr="lte")
+    o2surf0__gt = django_filters.NumberFilter(field_name="o2surf0", lookup_expr="gt")
+    o2surf0__lt = django_filters.NumberFilter(field_name="o2surf0", lookup_expr="lt")
+    o2surf0__null = django_filters.BooleanFilter(
+        field_name="o2surf0", lookup_expr="isnull"
     )
-    surfdo22__not_null = django_filters.BooleanFilter(
-        field_name="surfdo22", lookup_expr="isnull", exclude=True
+    o2surf0__not_null = django_filters.BooleanFilter(
+        field_name="o2surf0", lookup_expr="isnull", exclude=True
+    )
+
+    o2surf1 = django_filters.NumberFilter(field_name="o2surf1", lookup_expr="exact")
+    o2surf1__gte = django_filters.NumberFilter(field_name="o2surf1", lookup_expr="gte")
+    o2surf1__lte = django_filters.NumberFilter(field_name="o2surf1", lookup_expr="lte")
+    o2surf1__gt = django_filters.NumberFilter(field_name="o2surf1", lookup_expr="gt")
+    o2surf1__lt = django_filters.NumberFilter(field_name="o2surf1", lookup_expr="lt")
+    o2surf1__null = django_filters.BooleanFilter(
+        field_name="o2surf1", lookup_expr="isnull"
+    )
+    o2surf1__not_null = django_filters.BooleanFilter(
+        field_name="o2surf1", lookup_expr="isnull", exclude=True
     )
 
     class Meta:
         model = FN121Limno
         fields = [
-            "do_gear",
-            "xo2",
-            "xo22",
-            "surfdo2",
-            "surfdo22",
+            "o2gear0",
+            "o2bot0",
+            "o2bot1",
+            "o2surf0",
+            "o2surf1",
         ]
 
 
@@ -254,9 +266,9 @@ class FN121LimnoFilter(FN121LimnoInProjectFilter):
     class Meta:
         model = FN121Limno
         fields = [
-            "do_gear",
-            "xo2",
-            "xo22",
-            "surfdo2",
-            "surfdo22",
+            "o2gear0",
+            "o2bot0",
+            "o2bot1",
+            "o2surf0",
+            "o2surf1",
         ]
