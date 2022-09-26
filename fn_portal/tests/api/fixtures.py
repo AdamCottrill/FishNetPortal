@@ -172,7 +172,7 @@ def net_sets(project, grid):
         efftm1=time(8, 30),
         effdur=22.0,
         grid5=grid,
-        sidep=40,
+        sidep0=40,
     )
     sam2 = FN121Factory(
         mode=mode2,
@@ -186,7 +186,7 @@ def net_sets(project, grid):
         efftm0=time(12, 0),
         efftm1=time(13, 30),
         effdur=25.5,
-        sidep=10,
+        sidep0=10,
     )
     sam3 = FN121Factory(
         mode=mode3,
@@ -197,7 +197,7 @@ def net_sets(project, grid):
         grid5=grid,
         effdt0=datetime(2019, 10, 22),
         efftm0=time(12, 0),
-        sidep=25,
+        sidep0=25,
     )
 
     return [sam1, sam2, sam3]

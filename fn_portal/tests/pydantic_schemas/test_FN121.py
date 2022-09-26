@@ -52,18 +52,18 @@ def data():
         "effst": 1,
         "sitp": None,
         "site": "the dock",
-        "dd_lat": 45.5,
-        "dd_lon": -81.2,
+        "dd_lat0": 45.5,
+        "dd_lon0": -81.2,
         "dd_lat1": 45.6,
         "dd_lon1": -81.1,
         "sitem": 18.1,
         "sitem0": 18.1,
         "sitem1": 21.2,
-        "sidep": 10.2,
+        "sidep0": 10.2,
         "grdepmin": 8.2,
         "grdepmax": 11.6,
-        "secchi": None,
-        "xslime": None,
+        "secchi0": None,
+        "slime": None,
         "crew": "homer",
         "comment1": "not a real sample",
     }
@@ -125,11 +125,11 @@ optional_fields = [
     "sitem",
     "sitem0",
     "sitem1",
-    "sidep",
+    "sidep0",
     "grdepmin",
     "grdepmax",
-    "secchi",
-    "xslime",
+    "secchi0",
+    "slime",
     "crew",
     "comment1",
 ]
@@ -174,8 +174,8 @@ def test_valid_data(data, fld, value):
 field_list = [
     # field, input, output
     ("effdur", "", None),
-    ("sidep", "", None),
-    ("secchi", "", None),
+    ("sidep0", "", None),
+    ("secchi0", "", None),
     ("grdepmin", "", None),
     ("grdepmax", "", None),
     ("sitem", "", None),
@@ -202,9 +202,9 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
 
 paired_field_list = [
-    ("dd_lat", "dd_lon", "", None),
+    ("dd_lat0", "dd_lon0", "", None),
     ("dd_lat1", "dd_lon1", "", None),
-    ("dd_lat", "dd_lon", "0", None),
+    ("dd_lat0", "dd_lon0", "0", None),
     ("dd_lat1", "dd_lon1", "0", None),
 ]
 
@@ -227,14 +227,14 @@ def test_paired_alternatives(data, fld1, fld2, value_in, value_out):
 
 error_list = [
     (
-        "dd_lat",
+        "dd_lat0",
         None,
-        "dd_lat must be populated with a valid latitude if dd_lon is provided",
+        "dd_lat0 must be populated with a valid latitude if dd_lon0 is provided",
     ),
     (
-        "dd_lon",
+        "dd_lon0",
         None,
-        "dd_lon must be populated with a valid longitude if dd_lat is provided",
+        "dd_lon0 must be populated with a valid longitude if dd_lat0 is provided",
     ),
     (
         "dd_lat1",
@@ -247,14 +247,14 @@ error_list = [
         "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided",
     ),
     (
-        "dd_lat",
+        "dd_lat0",
         "0",
-        "dd_lat must be populated with a valid latitude if dd_lon is provided",
+        "dd_lat0 must be populated with a valid latitude if dd_lon0 is provided",
     ),
     (
-        "dd_lon",
+        "dd_lon0",
         "0",
-        "dd_lon must be populated with a valid longitude if dd_lat is provided",
+        "dd_lon0 must be populated with a valid longitude if dd_lat0 is provided",
     ),
     (
         "dd_lat1",
@@ -267,12 +267,12 @@ error_list = [
         "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided",
     ),
     (
-        "dd_lat",
+        "dd_lat0",
         40.6,
         "ensure this value is greater than or equal to 41.6",
     ),
     (
-        "dd_lat",
+        "dd_lat0",
         49.5,
         "ensure this value is less than or equal to 49.1",
     ),
@@ -287,12 +287,12 @@ error_list = [
         "ensure this value is less than or equal to 49.1",
     ),
     (
-        "dd_lon",
+        "dd_lon0",
         -90.1,
         "ensure this value is greater than or equal to -89.6",
     ),
     (
-        "dd_lon",
+        "dd_lon0",
         -72.0,
         "ensure this value is less than or equal to -74.32",
     ),
@@ -312,12 +312,12 @@ error_list = [
         "ensure this value is greater than 0",
     ),
     (
-        "sidep",
+        "sidep0",
         -1.0,
         "ensure this value is greater than 0",
     ),
     (
-        "secchi",
+        "secchi0",
         -1.0,
         "ensure this value is greater than 0",
     ),
@@ -372,17 +372,17 @@ error_list = [
         "Lift date (effdt1=2019-08-03) occurs before set date(effdt0=2019-10-03)",
     ),
     (
-        "xslime",
+        "slime",
         99,
         "value is not a valid enumeration member;",
     ),
     (
-        "xslime",
+        "slime",
         9,
         "value is not a valid enumeration member;",
     ),
     (
-        "xslime",
+        "slime",
         6,
         "value is not a valid enumeration member;",
     ),

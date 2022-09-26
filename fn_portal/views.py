@@ -218,11 +218,11 @@ def project_catch_counts_json(request, slug):
         .annotate(sam=F("effort__sample__sam"))
         .annotate(eff=F("effort__eff"))
         .annotate(lift_date=F("effort__sample__effdt1"))
-        .annotate(dd_lat=F("effort__sample__dd_lat"))
-        .annotate(dd_lon=F("effort__sample__dd_lon"))
+        .annotate(dd_lat=F("effort__sample__dd_lat0"))
+        .annotate(dd_lon=F("effort__sample__dd_lon0"))
         .annotate(gear=F("effort__sample__mode__gear__gr_code"))
         .annotate(effst=F("effort__sample__effst"))
-        .annotate(sidep=F("effort__sample__sidep"))
+        .annotate(sidep=F("effort__sample__sidep0"))
         .annotate(effdst=F("effort__effdst"))
         .annotate(grdep=F("effort__grdep"))
         .annotate(spc=F("species__spc_nmco"))
@@ -312,7 +312,7 @@ def project_spc_biodata_json(request, slug, spc):
     sql = """SELECT fn125.id, sam, grp,
                effdt1 as lift_date,
                fn011.year as yr,
-               sidep,
+               sidep0 as sidep,
                eff,
                species.spc,
                species.spc_nmco,

@@ -22,8 +22,14 @@ class FN121SubFilter(GeoFilterSet):
     sam = ValueInFilter(field_name="sam")
     sam__not = ValueInFilter(field_name="sam", exclude=True)
 
-    sidep__gte = django_filters.NumberFilter(field_name="sidep", lookup_expr="gte")
-    sidep__lte = django_filters.NumberFilter(field_name="sidep", lookup_expr="lte")
+    sidep0__gte = django_filters.NumberFilter(field_name="sidep0", lookup_expr="gte")
+    sidep0__lte = django_filters.NumberFilter(field_name="sidep0", lookup_expr="lte")
+    # sidep is an api aliase for sidep0
+    sidep__gte = django_filters.NumberFilter(field_name="sidep0", lookup_expr="gte")
+    sidep__lte = django_filters.NumberFilter(field_name="sidep0", lookup_expr="lte")
+
+    sidep1__gte = django_filters.NumberFilter(field_name="sidep1", lookup_expr="gte")
+    sidep1__lte = django_filters.NumberFilter(field_name="sidep1", lookup_expr="lte")
 
     grtp = ValueInFilter(field_name="mode__gear__grtp")
     grtp__not = ValueInFilter(field_name="mode__gear__grtp", exclude=True)
@@ -89,7 +95,8 @@ class FN121SubFilter(GeoFilterSet):
             "project__lake",
             "project__source",
             "grid5__grid",
-            "sidep",
+            "sidep0",
+            "sidep1",
             "gr",
             "grtp",
         ]
@@ -185,7 +192,8 @@ class FN121Filter(FN121SubFilter):
             "project__lake",
             "project__source",
             "grid5__grid",
-            "sidep",
+            "sidep0",
+            "sidep1",
             "gr",
             "grtp",
         ]

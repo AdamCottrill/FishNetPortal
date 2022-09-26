@@ -68,19 +68,22 @@ class FN121(FNPortalBaseModel):
         "End Site Temperature (degrees C)", blank=True, null=True
     )
 
-    sidep = models.FloatField("Site Depth (m)", blank=True, null=True, db_index=True)
+    sidep0 = models.FloatField("Site Depth 0 (m)", blank=True, null=True, db_index=True)
+    sidep1 = models.FloatField("Site Depth 1 (m)", blank=True, null=True, db_index=True)
+
     grdepmin = models.FloatField(
         "Min. Gear Depth (m)", blank=True, null=True, db_index=True
     )
     grdepmax = models.FloatField(
         "Max. Gear Depth (m)", blank=True, null=True, db_index=True
     )
-    secchi = models.FloatField(blank=True, null=True)
-    xslime = models.IntegerField(blank=True, null=True)
+    secchi0 = models.FloatField("First Secchi Depth", blank=True, null=True)
+
+    slime = models.IntegerField(blank=True, null=True)
 
     slug = models.SlugField(max_length=100, unique=True)
-    dd_lat = models.FloatField("Start Latitude(dd)", blank=True, null=True)
-    dd_lon = models.FloatField("Start Longitude (dd)", blank=True, null=True)
+    dd_lat0 = models.FloatField("Start Latitude(dd)", blank=True, null=True)
+    dd_lon0 = models.FloatField("Start Longitude (dd)", blank=True, null=True)
 
     dd_lat1 = models.FloatField("End Latitude (dd)", blank=True, null=True)
     dd_lon1 = models.FloatField("End Longitude (dd)", blank=True, null=True)
@@ -126,8 +129,8 @@ class FN121(FNPortalBaseModel):
                 msg = "The sample dates for this effort do not fall within a season defined for this project."
                 raise ValueError(msg)
 
-        if self.dd_lat and self.dd_lon:
-            self.geom = Point(self.dd_lon, self.dd_lat, srid="4326")
+        if self.dd_lat0 and self.dd_lon0:
+            self.geom = Point(self.dd_lon0, self.dd_lat0, srid="4326")
 
         self.slug = slugify(self.fishnet_keys())
 

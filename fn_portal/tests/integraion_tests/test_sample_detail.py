@@ -94,7 +94,7 @@ def test_sample_detail_renders_net_attributes(client, project):
     assertContains(response, "<td>{}</td>".format(sample.mode.gear.gr_code), html=True)
     assertContains(response, "<td>{}</td>".format(sample.mode.orient), html=True)
     assertContains(response, "<td>{:.2f}</td>".format(sample.effdur), html=True)
-    assertContains(response, "<td>{:.1f}</td>".format(sample.sidep), html=True)
+    assertContains(response, "<td>{:.1f}</td>".format(sample.sidep0), html=True)
 
 
 @pytest.mark.django_db

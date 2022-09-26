@@ -361,7 +361,7 @@
                                     <td> {{ item.mode.get_orient_display }} </td>
                                     <td> {{ item.mode.get_gruse_display }} </td>
                                     <td> {{ item.process_type }} </td>
-                                    <td> {{ item.sidep|floatformat:2 }} </td>
+                                    <td> {{ item.sidep0|floatformat:2 }} </td>
                                     <td> {{ item.total_catch_count|default_if_none:0 }}</td>
                                 </tr>
                             {% endfor %}

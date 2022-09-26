@@ -70,15 +70,15 @@ def netset_data(grid):
         # "grtp": "GL",
         # "gr": "GL50",
         # "orient": "1",
-        "sidep": 5.7,
+        "sidep0": 5.7,
         "site": "44",
-        "dd_lat": 45.8595,
-        "dd_lon": -80.8095,
+        "dd_lat0": 45.8595,
+        "dd_lon0": -80.8095,
         # "grid5": {"grid": str(grid.grid), "slug": grid.slug},
         "grid5": str(grid.grid),
         "sitem": 23,
         "comment1": "Some sample data",
-        "secchi": 10,
+        "secchi0": 10,
     }
 
     return netset_data
@@ -127,6 +127,8 @@ filter_list = [
     ("active", "True", ["sam3"]),
     ("sidep__gte", "25", ["sam1", "sam3"]),
     ("sidep__lte", "25", ["sam2", "sam3"]),
+    ("sidep0__gte", "25", ["sam1", "sam3"]),
+    ("sidep0__lte", "25", ["sam2", "sam3"]),
     ("grtp", "TP", ["sam2"]),  # fail
     ("grtp", "TP,HP", ["sam2"]),  # fail
     ("grtp__not", "TP", ["sam1", "sam3"]),
@@ -283,14 +285,14 @@ def test_fn121_listview_create(api_client, project, grid, netset_data):
     assert fn121.efftm1 == datetime.strptime(netset_data["efftm1"], "%H:%M:%S").time()
     assert fn121.effst == netset_data["effst"]
 
-    assert fn121.sidep == netset_data["sidep"]
+    assert fn121.sidep0 == netset_data["sidep0"]
     assert fn121.site == netset_data["site"]
-    assert fn121.dd_lat == netset_data["dd_lat"]
-    assert fn121.dd_lon == netset_data["dd_lon"]
+    assert fn121.dd_lat0 == netset_data["dd_lat0"]
+    assert fn121.dd_lon0 == netset_data["dd_lon0"]
 
     assert fn121.sitem == netset_data["sitem"]
     assert fn121.comment1 == netset_data["comment1"]
-    assert fn121.secchi == netset_data["secchi"]
+    assert fn121.secchi0 == netset_data["secchi0"]
 
     grid = fn121.grid5
     assert grid.slug == netset_data["grid5"]
@@ -346,15 +348,15 @@ def test_fn121_detailview(api_client, net_sets):
         "efftm0": net_set.efftm0.strftime("%H:%M:%S"),
         "efftm1": net_set.efftm1.strftime("%H:%M:%S"),
         "effst": net_set.effst,
-        "sidep": net_set.sidep,
+        "sidep0": net_set.sidep0,
         "site": net_set.site,
         # "grid5": {"grid": str(net_set.grid5.grid), "slug": net_set.grid5.slug},
         "grid5": str(net_set.grid5.grid),
-        "dd_lat": net_set.dd_lat,
-        "dd_lon": net_set.dd_lon,
+        "dd_lat0": net_set.dd_lat0,
+        "dd_lon0": net_set.dd_lon0,
         "sitem": net_set.sitem,
         "comment1": net_set.comment1,
-        "secchi": net_set.secchi,
+        "secchi0": net_set.secchi0,
     }
 
     for k, v in expected.items():

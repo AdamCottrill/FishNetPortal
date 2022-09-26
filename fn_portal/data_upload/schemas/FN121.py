@@ -56,8 +56,8 @@ class FN121(FNBase):
     sitp: Optional[str]
     site: Optional[str]
 
-    dd_lat: Optional[confloat(ge=41.6, le=49.1)] = None
-    dd_lon: Optional[confloat(ge=-89.6, le=-74.32)] = None
+    dd_lat0: Optional[confloat(ge=41.6, le=49.1)] = None
+    dd_lon0: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
     dd_lat1: Optional[confloat(ge=41.6, le=49.1)] = None
     dd_lon1: Optional[confloat(ge=-89.6, le=-74.32)] = None
@@ -66,27 +66,31 @@ class FN121(FNBase):
     sitem0: Optional[confloat(ge=-30, le=30)] = None
     sitem1: Optional[confloat(ge=-30, le=30)] = None
 
-    sidep: Optional[PositiveFloat] = None
+    sidep0: Optional[PositiveFloat] = None
+    sidep1: Optional[PositiveFloat] = None
     # grdep: Union[None, PositiveFloat, EmptyStrToNone]
     grdepmin: Optional[confloat(ge=0)] = None
     grdepmax: Optional[PositiveFloat] = None
 
-    secchi: Optional[PositiveFloat] = None
-    xslime: Optional[XslimeEnum]
+    secchi0: Optional[PositiveFloat] = None
+    # secchi1: Optional[PositiveFloat] = None
+    slime: Optional[XslimeEnum]
 
     crew: Optional[str]
     comment1: Optional[str]
 
     _string_to_float = validator(
-        "dd_lat",
-        "dd_lon",
+        "dd_lat0",
+        "dd_lon0",
         "dd_lat1",
         "dd_lon1",
-        "sidep",
+        "sidep0",
+        "sidep1",
         "effdur",
         "grdepmin",
         "grdepmax",
-        "secchi",
+        "secchi0",
+        # "secchi1",
         "sitem",
         "sitem0",
         "sitem1",
@@ -95,7 +99,7 @@ class FN121(FNBase):
     )(string_to_float)
 
     _strip_0 = validator(
-        "dd_lat", "dd_lon", "dd_lat1", "dd_lon1", allow_reuse=True, pre=True
+        "dd_lat0", "dd_lon0", "dd_lat1", "dd_lon1", allow_reuse=True, pre=True
     )(strip_0)
 
     @validator("efftm0", "efftm1", pre=True)
@@ -137,31 +141,31 @@ class FN121(FNBase):
                 )
         return v
 
-    @validator("dd_lon")
-    def dd_lat_and_dd_lon(cls, v, values):
-        dd_lat = values.get("dd_lat")
-        if v and dd_lat:
+    @validator("dd_lon0")
+    def dd_lat0_and_dd_lon0(cls, v, values):
+        dd_lat0 = values.get("dd_lat0")
+        if v and dd_lat0:
             return v
-        if v and dd_lat is None:
+        if v and dd_lat0 is None:
             raise ValueError(
-                "dd_lat must be populated with a valid latitude if dd_lon is provided."
+                "dd_lat0 must be populated with a valid latitude if dd_lon0 is provided."
             )
-        if v is None and dd_lat:
+        if v is None and dd_lat0:
             raise ValueError(
-                "dd_lon must be populated with a valid longitude if dd_lat is provided."
+                "dd_lon0 must be populated with a valid longitude if dd_lat0 is provided."
             )
         return v
 
     @validator("dd_lon1")
     def dd_lat1_and_dd_lon1(cls, v, values):
-        dd_lat = values.get("dd_lat1")
-        if v and dd_lat:
+        dd_lat0 = values.get("dd_lat1")
+        if v and dd_lat0:
             return v
-        if v and dd_lat is None:
+        if v and dd_lat0 is None:
             raise ValueError(
                 "dd_lat1 must be populated with a valid latitude if dd_lon1 is provided."
             )
-        if v is None and dd_lat:
+        if v is None and dd_lat0:
             raise ValueError(
                 "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided."
             )

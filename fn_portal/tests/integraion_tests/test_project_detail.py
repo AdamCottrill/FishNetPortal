@@ -124,7 +124,7 @@ def test_project_detail_net_set_summary_table(client, project):
             response, "<td>{}</td>".format(sample.mode.gear.gr_code), html=True
         )
         assertContains(response, "<td>{:.2f}</td>".format(sample.effdur), html=True)
-        assertContains(response, "<td>{:.2f}</td>".format(sample.sidep), html=True)
+        assertContains(response, "<td>{:.2f}</td>".format(sample.sidep0), html=True)
         assertContains(
             response, "<td>{}</td>".format(sample.total_catch()["total"]), html=True
         )
