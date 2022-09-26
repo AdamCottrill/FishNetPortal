@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import PositiveFloat, validator, confloat
 
-from .utils import yr_to_year, string_to_float
+from .utils import yr_to_year, string_to_float, strip_0
 from .FNBase import FNBase, prj_cd_regex
 
 from enum import IntEnum
@@ -37,7 +37,7 @@ class FN121(FNBase):
     grid5_id: int
     project_id: int
     ssn_id: int
-    space_id: int
+    subspace_id: int
     mode_id: int
     slug: str
 
@@ -94,12 +94,9 @@ class FN121(FNBase):
         pre=True,
     )(string_to_float)
 
-    @validator("dd_lat", "dd_lon", "dd_lat1", "dd_lon1", pre=True)
-    def strip_0(cls, v):
-        """Lat lon can be null, but they cannot be 0."""
-        if v == 0:
-            return None
-        return v
+    _strip_0 = validator(
+        "dd_lat", "dd_lon", "dd_lat1", "dd_lon1", allow_reuse=True, pre=True
+    )(strip_0)
 
     @validator("efftm0", "efftm1", pre=True)
     def strip_date(cls, v):
@@ -138,4 +135,34 @@ class FN121(FNBase):
                 raise ValueError(
                     f"grdepmax ({v} m) must be greater than or equal to grdepmin ({grdepmin} m)."
                 )
+        return v
+
+    @validator("dd_lon")
+    def dd_lat_and_dd_lon(cls, v, values):
+        dd_lat = values.get("dd_lat")
+        if v and dd_lat:
+            return v
+        if v and dd_lat is None:
+            raise ValueError(
+                "dd_lat must be populated with a valid latitude if dd_lon is provided."
+            )
+        if v is None and dd_lat:
+            raise ValueError(
+                "dd_lon must be populated with a valid longitude if dd_lat is provided."
+            )
+        return v
+
+    @validator("dd_lon1")
+    def dd_lat1_and_dd_lon1(cls, v, values):
+        dd_lat = values.get("dd_lat1")
+        if v and dd_lat:
+            return v
+        if v and dd_lat is None:
+            raise ValueError(
+                "dd_lat1 must be populated with a valid latitude if dd_lon1 is provided."
+            )
+        if v is None and dd_lat:
+            raise ValueError(
+                "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided."
+            )
         return v

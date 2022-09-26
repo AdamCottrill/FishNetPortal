@@ -60,7 +60,10 @@ class FN012Base(FNBase):
 
     fdsam: constr(regex=FDSAM_REGEX, max_length=2)
     spcmrk: constr(regex=SPCMRK_REGEX, max_length=2)
+
+    # TODO: - delete agedec and replace with agest
     agedec: constr(regex=AGEDEC_REGEX, max_length=2)
+    # agest: constr(regex=AGEDEC_REGEX, max_length=2)
 
     flen_min: Optional[confloat(gt=0, lt=700)]
     flen_max: Optional[confloat(gt=0, lt=2000)]

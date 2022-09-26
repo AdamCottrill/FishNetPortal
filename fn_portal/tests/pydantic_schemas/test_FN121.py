@@ -40,7 +40,7 @@ def data():
         "grid5_id": 1,
         "project_id": 1,
         "ssn_id": 1,
-        "space_id": 1,
+        "subspace_id": 1,
         "mode_id": 1,
         "slug": "lha_ia19_022-12",
         "sam": "12",
@@ -87,7 +87,7 @@ required_fields = [
     "grid5_id",
     "project_id",
     "ssn_id",
-    "space_id",
+    "subspace_id",
     "mode_id",
     "slug",
     "sam",
@@ -122,10 +122,6 @@ optional_fields = [
     "effst",
     "sitp",
     "site",
-    "dd_lat",
-    "dd_lon",
-    "dd_lat1",
-    "dd_lon1",
     "sitem",
     "sitem0",
     "sitem1",
@@ -175,7 +171,7 @@ def test_valid_data(data, fld, value):
     assert item_dict[fld] == value
 
 
-mode_list = [
+field_list = [
     # field, input, output
     ("effdur", "", None),
     ("sidep", "", None),
@@ -185,21 +181,15 @@ mode_list = [
     ("sitem", "", None),
     ("sitem0", "", None),
     ("sitem1", "", None),
-    ("dd_lat", "", None),
-    ("dd_lon", "", None),
-    ("dd_lat1", "", None),
-    ("dd_lon1", "", None),
 ]
 
 
-@pytest.mark.parametrize("fld,value_in,value_out", mode_list)
+@pytest.mark.parametrize("fld,value_in,value_out", field_list)
 def test_valid_alternatives(data, fld, value_in, value_out):
-    """When the pydanic model is created, it should transform some fo the
-    fields.  Mode should be a two letter code made from uppercase
-    letters or digits.  The pydantic model should convert any letters
-    to uppercase automatically. Uppercase letters and any numbers
-    should be returned unchanged.  mode_des should be trimmed of any
-    white mode and converted to upper case.
+    """When the pydanic model is created, it should transform some
+    optional fields.  For example fields that contain an empty string
+    should be converted to None to eliminate empty strings in our
+    master dataset.
 
     Arguments:
     - `data`:
@@ -211,7 +201,71 @@ def test_valid_alternatives(data, fld, value_in, value_out):
     assert item_dict[fld] == value_out
 
 
+paired_field_list = [
+    ("dd_lat", "dd_lon", "", None),
+    ("dd_lat1", "dd_lon1", "", None),
+    ("dd_lat", "dd_lon", "0", None),
+    ("dd_lat1", "dd_lon1", "0", None),
+]
+
+
+@pytest.mark.parametrize("fld1,fld2,value_in,value_out", paired_field_list)
+def test_paired_alternatives(data, fld1, fld2, value_in, value_out):
+    """When the pydanic model is created, it should transform some
+    optional fields.  Some fields must be transformed in pairs - lat
+    and long are only valid if they are both populated, or both null.
+    Arguments: - `data`:
+
+    """
+    data[fld1] = value_in
+    data[fld2] = value_in
+    item = FN121(**data)
+    item_dict = item.dict()
+    assert item_dict[fld1] == value_out
+    assert item_dict[fld2] == value_out
+
+
 error_list = [
+    (
+        "dd_lat",
+        None,
+        "dd_lat must be populated with a valid latitude if dd_lon is provided",
+    ),
+    (
+        "dd_lon",
+        None,
+        "dd_lon must be populated with a valid longitude if dd_lat is provided",
+    ),
+    (
+        "dd_lat1",
+        None,
+        "dd_lat1 must be populated with a valid latitude if dd_lon1 is provided",
+    ),
+    (
+        "dd_lon1",
+        None,
+        "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided",
+    ),
+    (
+        "dd_lat",
+        "0",
+        "dd_lat must be populated with a valid latitude if dd_lon is provided",
+    ),
+    (
+        "dd_lon",
+        "0",
+        "dd_lon must be populated with a valid longitude if dd_lat is provided",
+    ),
+    (
+        "dd_lat1",
+        "0",
+        "dd_lat1 must be populated with a valid latitude if dd_lon1 is provided",
+    ),
+    (
+        "dd_lon1",
+        "0",
+        "dd_lon1 must be populated with a valid longitude if dd_lat1 is provided",
+    ),
     (
         "dd_lat",
         40.6,

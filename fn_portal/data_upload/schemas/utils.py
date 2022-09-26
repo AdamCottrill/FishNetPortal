@@ -79,3 +79,10 @@ def yr_to_year(yr):
         return f"20{yr}"
     else:
         return f"19{yr}"
+
+
+def strip_0(val):
+    """Lat lon can be null, but they cannot be 0."""
+    if val == 0 or val == "0" or val == "":
+        return None
+    return val

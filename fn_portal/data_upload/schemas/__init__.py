@@ -5,6 +5,7 @@ from .FN013 import FN013
 from .FN014 import FN014
 from .FN022 import FN022
 from .FN026 import FN026
+from .FN026Subspace import FN026Subspace
 from .FN028 import FN028
 from .FN121 import FN121
 from .FN121Limno import FN121Limno
