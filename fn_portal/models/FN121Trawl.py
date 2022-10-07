@@ -6,18 +6,7 @@ from django.utils.text import slugify
 from .BaseModel import FNPortalBaseModel
 from .FN121 import FN121
 
-VESSEL_DIRECTION_CHOICES = [
-    (0, "Variable"),
-    (1, "Northeast"),
-    (2, "East"),
-    (3, "Southeast"),
-    (4, "South"),
-    (5, "Southwest"),
-    (6, "West"),
-    (7, "Northwest"),
-    (8, "North"),
-    (9, "Not Definable"),
-]
+from .choices import VESSEL_DIRECTION_CHOICES
 
 
 class FN121Trawl(FNPortalBaseModel):

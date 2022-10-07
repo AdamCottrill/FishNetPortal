@@ -34,26 +34,39 @@ VEGETATION_CHOICES = [
     (4, "Dense (>75%)"),
 ]
 
-COVER_CHOICES = [
-    ("BO", "Boulder"),
-    ("CO", "Combination"),
-    ("LT", "Log & Tree"),
-    ("MA", "Macrophytes"),
-    ("NC", "No Cover"),
-    ("OD", "Organic Debris"),
-    ("OT", "Other"),
-    ("UB", "Undercut Bank"),
-]
+# COVER_CHOICES = [
+#     ("BO", "Boulder"),
+#     ("CO", "Combination"),
+#     ("LT", "Log & Tree"),
+#     ("MA", "Macrophytes"),
+#     ("NC", "No Cover"),
+#     ("OD", "Organic Debris"),
+#     ("OT", "Other"),
+#     ("UB", "Undercut Bank"),
+# ]
 
-BOTTOM_CHOICES = [
-    ("BO", "Boulder (>25 cm)"),
-    ("BR", "Bedrock or Rock"),
-    ("CL", "Clay"),
-    ("DE", "Detritus"),
-    ("GP", "Gravel/Pebble (0.2-8 cm)"),
-    ("MA", "Marl"),
-    ("MU", "Muck"),
-    ("RC", "Rubble/Cobble (8-25 cm)"),
-    ("SA", "Sand"),
-    ("SI", "Silt"),
+# BOTTOM_CHOICES = [
+#     ("BO", "Boulder (>25 cm)"),
+#     ("BR", "Bedrock or Rock"),
+#     ("CL", "Clay"),
+#     ("DE", "Detritus"),
+#     ("GP", "Gravel/Pebble (0.2-8 cm)"),
+#     ("MA", "Marl"),
+#     ("MU", "Muck"),
+#     ("RC", "Rubble/Cobble (8-25 cm)"),
+#     ("SA", "Sand"),
+#     ("SI", "Silt"),
+# ]
+
+VESSEL_DIRECTION_CHOICES = [
+    (0, "Variable"),
+    (1, "Northeast"),
+    (2, "East"),
+    (3, "Southeast"),
+    (4, "South"),
+    (5, "Southwest"),
+    (6, "West"),
+    (7, "Northwest"),
+    (8, "North"),
+    (9, "Not Definable"),
 ]

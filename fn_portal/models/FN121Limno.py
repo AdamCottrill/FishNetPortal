@@ -26,37 +26,37 @@ class FN121Limno(FNPortalBaseModel):
         "Dissolved Oxygen (mg/l) at Gear [start]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
     o2gear1 = models.FloatField(
         "Dissolved Oxygen (mg/l) at Gear [end]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
     o2bot0 = models.FloatField(
         "Bottom Dissolved Oxygen (mg/l) [start]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
     o2bot1 = models.FloatField(
         "Bottom Dissolved Oxygen (mg/l)  [end]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
     o2surf0 = models.FloatField(
         "Surface Dissolved Oxygen (mg/l)  [start]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
     o2surf1 = models.FloatField(
         "Surface Dissolved Oxygen (mg/l) [end]",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        validators=[MinValueValidator(0), MaxValueValidator(15)],
     )
 
     class Meta:

@@ -81,6 +81,5 @@ def test_Fn123nonfish_parameter_outside_bounds(taxon_list, fld, value, msg):
 
     with pytest.raises(ValidationError) as excinfo:
         fn123nonfish = FN123NonFishFactory(effort=fn122, taxon=taxon, **data)
-        fn123.save()
 
     assert msg in str(excinfo.value)

@@ -1,6 +1,6 @@
-from typing import Optional, Union
+from typing import Optional
 
-from pydantic import PositiveFloat, constr, confloat, validator
+from pydantic import confloat, validator
 
 
 from .FNBase import FNBase
@@ -17,12 +17,12 @@ class FN121Limno(FNBase):
     slug: str
     sample_id: int
 
-    o2gear0: Optional[confloat(ge=0, le=20)] = None
-    o2gear1: Optional[confloat(ge=0, le=20)] = None
-    o2bot0: Optional[confloat(ge=0, le=20)] = None
-    o2bot1: Optional[confloat(ge=0, le=20)] = None
-    o2surf0: Optional[confloat(ge=0, le=20)] = None
-    o2surf1: Optional[confloat(ge=0, le=20)] = None
+    o2gear0: Optional[confloat(ge=0, le=15)] = None
+    o2gear1: Optional[confloat(ge=0, le=15)] = None
+    o2bot0: Optional[confloat(ge=0, le=15)] = None
+    o2bot1: Optional[confloat(ge=0, le=15)] = None
+    o2surf0: Optional[confloat(ge=0, le=15)] = None
+    o2surf1: Optional[confloat(ge=0, le=15)] = None
 
     class Config:
         validate_assignment = True

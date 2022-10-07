@@ -148,37 +148,37 @@ error_list = [
     (
         "o2gear0",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
     ("o2gear1", -40.6, "ensure this value is greater than or equal to 0"),
     (
         "o2gear1",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
     ("o2bot0", -40.6, "ensure this value is greater than or equal to 0"),
     (
         "o2bot0",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
     ("o2bot1", -40.6, "ensure this value is greater than or equal to 0"),
     (
         "o2bot1",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
     ("o2surf0", -40.6, "ensure this value is greater than or equal to 0"),
     (
         "o2surf0",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
     ("o2surf1", -40.6, "ensure this value is greater than or equal to 0"),
     (
         "o2surf1",
         40.6,
-        "ensure this value is less than or equal to 20",
+        "ensure this value is less than or equal to 15",
     ),
 ]
 
