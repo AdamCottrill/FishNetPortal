@@ -3,6 +3,7 @@ import factory
 from ...models import (
     FN121,
     FN121Limno,
+    FN121Weather,
     FN122,
     FN123,
     FN124,
@@ -57,6 +58,36 @@ class FN121LimnoFactory(factory.django.DjangoModelFactory):
     o2bot1 = 11.0
     o2surf0 = 14.0
     o2surf1 = 14.0
+
+
+class FN121WeatherFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Weather objects - individual weather
+    conditions at the start and end of a smampling event.  Weather
+    attributes may or may not be collected depending on the project.
+    They have a 1:1 relationshop with FN121 objects.
+
+    """
+
+    class Meta:
+        model = FN121Weather
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+
+    airtem0 = 11.2
+    airtem1 = 9.8
+    wind_speed0 = 10
+    wind_speed1 = 5
+    wind_direction0 = 90
+    wind_direction1 = 270
+    precip0 = "40"
+    precip1 = "00"
+    # cloud_pc0 = 20
+    # cloud_pc1 = 80
+    # waveht0 = 0.1
+    # waveht1 = 0.3
+    precip_duration = 1
+    wave_duration = 2
 
 
 class FN122Factory(factory.django.DjangoModelFactory):

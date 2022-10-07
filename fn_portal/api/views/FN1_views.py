@@ -206,7 +206,9 @@ class NetSetList(generics.ListAPIView):
         if mu_type:
             mus = ManagementUnit.objects.filter(mu_type=mu_type).defer("geom")
         else:
-            mus = ManagementUnit.objects.filter(primary=True).defer("geom")
+            mus = ManagementUnit.objects.filter(
+                lake_management_unit_type__primary=True
+            ).defer("geom")
 
         prefetched = Prefetch("management_units", queryset=mus, to_attr="mu")
 

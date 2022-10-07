@@ -17,7 +17,7 @@ class FN121Limno(FNPortalBaseModel):
 
     sample = models.OneToOneField(
         FN121,
-        related_name="fn121_sample",
+        related_name="limno_data",
         on_delete=models.CASCADE,
         primary_key=True,
     )

@@ -18,6 +18,7 @@ from .FN0_factories import (
 from .FN1_factories import (
     FN121Factory,
     FN121LimnoFactory,
+    FN121WeatherFactory,
     FN122Factory,
     FN123Factory,
     FN124Factory,
