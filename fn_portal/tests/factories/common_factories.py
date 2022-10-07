@@ -1,7 +1,7 @@
 import factory
 from django.contrib.gis.geos import GEOSGeometry
 
-from common.models import Species, Lake, Grid5
+from common.models import Species, Lake, Grid5, CoverType, BottomType, Vessel
 
 
 wkt = (
@@ -52,3 +52,45 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
     spc = factory.Sequence(lambda n: n)
     spc_nmco = "Lake Trout"
     spc_nmsc = "Salvelinus nameychush"
+
+
+class BottomTypeFactory(factory.django.DjangoModelFactory):
+    """
+    A factory for bottom types.
+    """
+
+    class Meta:
+        model = BottomType
+        django_get_or_create = ("abbrev",)
+
+    abbrev = "BO"
+    label = "Boulder"
+    obsolete_date = None
+
+
+class CoverTypeFactory(factory.django.DjangoModelFactory):
+    """
+    A factory for cover types.
+    """
+
+    class Meta:
+        model = CoverType
+        django_get_or_create = ("abbrev",)
+
+    abbrev = "MA"
+    label = "Macrophytes"
+    obsolete_date = None
+
+
+class VesselFactory(factory.django.DjangoModelFactory):
+    """
+    A factory for Vessels.
+    """
+
+    class Meta:
+        model = Vessel
+        django_get_or_create = ("abbrev",)
+
+    abbrev = "RV-OE"
+    label = "Ontario Explorer"
+    obsolete_date = None

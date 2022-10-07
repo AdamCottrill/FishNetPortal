@@ -4,6 +4,7 @@ from ...models import (
     FN121,
     FN121Limno,
     FN121Weather,
+    FN121Trapnet,
     FN122,
     FN123,
     FN124,
@@ -19,7 +20,7 @@ from .FN0_factories import (
     FN026SubspaceFactory,
     FN028Factory,
 )
-from .common_factories import Grid5Factory
+from .common_factories import Grid5Factory, BottomTypeFactory, CoverTypeFactory
 
 
 class FN121Factory(factory.django.DjangoModelFactory):
@@ -88,6 +89,28 @@ class FN121WeatherFactory(factory.django.DjangoModelFactory):
     # waveht1 = 0.3
     precip_duration = 1
     wave_duration = 2
+
+
+class FN121TrapnetFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Trapnet objects - individual trapnet
+    attributes.  Trapnet attributes may or may not be collected
+    depending on the project.  They have a 1:1 relationshop with FN121
+    objects.
+
+    """
+
+    class Meta:
+        model = FN121Trapnet
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+    bottom = factory.SubFactory(BottomTypeFactory)
+    cover = factory.SubFactory(CoverTypeFactory)
+
+    vegetation = 1
+    lead_angle = 90
+    leaduse = 25
+    distoff = 0
 
 
 class FN122Factory(factory.django.DjangoModelFactory):
