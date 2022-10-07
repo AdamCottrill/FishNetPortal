@@ -1,6 +1,6 @@
 from common.models import Vessel
 from django.contrib.gis.db import models
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 
 from .BaseModel import FNPortalBaseModel
@@ -44,7 +44,7 @@ class FN121Trawl(FNPortalBaseModel):
         "The speed of the research vessel (knots) during the sample.",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
 
     vessel_direction = models.IntegerField(
@@ -52,7 +52,6 @@ class FN121Trawl(FNPortalBaseModel):
         choices=VESSEL_DIRECTION_CHOICES,
         blank=True,
         null=True,
-        validators=[MinValueValidator(0)],
     )
 
     warp = models.FloatField(
@@ -77,6 +76,8 @@ class FN121Trawl(FNPortalBaseModel):
         """when we save the object, make sure that our slug is populated."""
 
         self.slug = slugify(self.fishnet_keys())
+
+        self.full_clean()
 
         super(FN121Trawl, self).save(*args, **kwargs)
 

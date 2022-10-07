@@ -5,7 +5,9 @@ from ...models import (
     FN121Limno,
     FN121Weather,
     FN121Trapnet,
+    FN121Trawl,
     FN122,
+    FN122Transect,
     FN123,
     FN124,
     FN125,
@@ -20,7 +22,12 @@ from .FN0_factories import (
     FN026SubspaceFactory,
     FN028Factory,
 )
-from .common_factories import Grid5Factory, BottomTypeFactory, CoverTypeFactory
+from .common_factories import (
+    Grid5Factory,
+    BottomTypeFactory,
+    CoverTypeFactory,
+    VesselFactory,
+)
 
 
 class FN121Factory(factory.django.DjangoModelFactory):
@@ -83,10 +90,6 @@ class FN121WeatherFactory(factory.django.DjangoModelFactory):
     wind_direction1 = 270
     precip0 = "40"
     precip1 = "00"
-    # cloud_pc0 = 20
-    # cloud_pc1 = 80
-    # waveht0 = 0.1
-    # waveht1 = 0.3
     precip_duration = 1
     wave_duration = 2
 
@@ -111,6 +114,44 @@ class FN121TrapnetFactory(factory.django.DjangoModelFactory):
     lead_angle = 90
     leaduse = 25
     distoff = 0
+
+
+class FN121TrawlFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Trawl objects - individual trawling
+    attributes.  Trawl attributes may or may not be collected
+    depending on the project.  They have a 1:1 relationshop with FN121
+    objects.
+
+    """
+
+    class Meta:
+        model = FN121Trawl
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+    vessel = factory.SubFactory(VesselFactory)
+    vessel_speed = 3.2
+    vessel_direction = 2
+    warp = 45.1
+
+
+class FN122TransectFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Transect objects - individual points that
+    comprise a smapling event.  Most appropriate for trawling and
+    electrofishing sampling events.  Transect attributes may or may
+    not be collected depending on the project.
+
+    """
+
+    class Meta:
+        model = FN122Transect
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+    track_id = factory.Sequence(lambda n: n)
+    dd_lat = 45.5
+    dd_lon = -81.5
+    sidep = 11.2
 
 
 class FN122Factory(factory.django.DjangoModelFactory):
