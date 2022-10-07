@@ -1,4 +1,4 @@
-from .common_factories import LakeFactory, Grid5Factory, SpeciesFactory
+from .common_factories import LakeFactory, Grid5Factory, SpeciesFactory, TaxonFactory
 
 from .user_factory import UserFactory
 from .FN0_factories import (
@@ -24,6 +24,7 @@ from .FN1_factories import (
     FN122Factory,
     FN122TransectFactory,
     FN123Factory,
+    FN123NonFishFactory,
     FN124Factory,
     FN125Factory,
     FN125LampreyFactory,

@@ -1,8 +1,6 @@
 import factory
+from common.models import BottomType, CoverType, Grid5, Lake, Species, Taxon, Vessel
 from django.contrib.gis.geos import GEOSGeometry
-
-from common.models import Species, Lake, Grid5, CoverType, BottomType, Vessel
-
 
 wkt = (
     "MULTIPOLYGON(((-82.000 43.999,"
@@ -52,6 +50,24 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
     spc = factory.Sequence(lambda n: n)
     spc_nmco = "Lake Trout"
     spc_nmsc = "Salvelinus nameychush"
+
+
+class TaxonFactory(factory.django.DjangoModelFactory):
+    """
+    A factory for Taxon objects.
+    """
+
+    class Meta:
+        model = Taxon
+        django_get_or_create = ("itiscode",)
+
+    taxon = "161989"
+    itiscode = 161989
+    taxon_name = "Oncorhynchus mykiss"
+    taxon_label = "rainbow trout"
+    taxonomic_rank = "species"
+    vertinvert = "vertebrate"
+    omnr_provincial_code = "F076"
 
 
 class BottomTypeFactory(factory.django.DjangoModelFactory):

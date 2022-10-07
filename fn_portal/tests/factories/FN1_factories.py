@@ -9,6 +9,7 @@ from ...models import (
     FN122,
     FN122Transect,
     FN123,
+    FN123NonFish,
     FN124,
     FN125,
     FN126,
@@ -24,6 +25,8 @@ from .FN0_factories import (
 )
 from .common_factories import (
     Grid5Factory,
+    SpeciesFactory,
+    TaxonFactory,
     BottomTypeFactory,
     CoverTypeFactory,
     VesselFactory,
@@ -179,7 +182,24 @@ class FN123Factory(factory.django.DjangoModelFactory):
         django_get_or_create = ("effort", "species", "grp")
 
     effort = factory.SubFactory(FN122Factory)
+    species = factory.SubFactory(SpeciesFactory)
     grp = "00"
+
+
+class FN123NonFishFactory(factory.django.DjangoModelFactory):
+    """A factory for FN123 objects.  Only fields that are required or have
+    been tested are currently inlcuded in this factory.
+
+    """
+
+    class Meta:
+        model = FN123NonFish
+        django_get_or_create = ("effort", "taxon")
+
+    effort = factory.SubFactory(FN122Factory)
+    taxon = factory.SubFactory(TaxonFactory)
+    catcnt = 10
+    mortcnt = 1
 
 
 class FN124Factory(factory.django.DjangoModelFactory):
