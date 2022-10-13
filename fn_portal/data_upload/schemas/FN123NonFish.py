@@ -34,3 +34,4 @@ class FN123NonFish(FNBase):
             if catcnt < v:
                 msg = f"MORTCNT ({v}) cannot be greater than CATCNT ({catcnt})"
                 raise ValueError(msg)
+        return v

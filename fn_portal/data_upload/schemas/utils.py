@@ -17,7 +17,9 @@ from pydantic.validators import str_validator
 
 
 def string_to_float(v) -> Optional[float]:
-    """A validator that will convert floats passed in as strings to a python float"""
+    """A validator that will convert floats passed in as strings to a
+    python float."""
+
     if v is None:
         return v
     else:
@@ -29,7 +31,9 @@ def string_to_float(v) -> Optional[float]:
 
 
 def string_to_int(v) -> Optional[int]:
-    """A validator that will convert floats passed in as strings to a python float"""
+    """A validator that will convert floats passed in as strings to a
+    python integer"""
+
     if v is None:
         return v
     else:

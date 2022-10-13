@@ -43,6 +43,7 @@ class FN123(FNBase):
             if catcnt < v:
                 msg = f"BIOCNT ({v}) cannot be greater than CATCNT ({catcnt})"
                 raise ValueError(msg)
+        return v
 
     @validator("subcnt")
     def check_catcnt_vs_subcnt(cls, v, values):
@@ -51,6 +52,7 @@ class FN123(FNBase):
             if catcnt < v:
                 msg = f"SUBCNT ({v}) cannot be greater than CATCNT ({catcnt})"
                 raise ValueError(msg)
+        return v
 
     @validator("subwt")
     def check_catwt_vs_subwt(cls, v, values):
@@ -59,3 +61,4 @@ class FN123(FNBase):
             if catwt < v:
                 msg = f"SUBWT ({v}) cannot be greater than CATWT ({catwt})"
                 raise ValueError(msg)
+        return v

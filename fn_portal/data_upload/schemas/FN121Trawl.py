@@ -1,9 +1,10 @@
 from enum import IntEnum
 from typing import Optional
 
-from pydantic import confloat
+from pydantic import confloat, validator
 
 from .FNBase import FNBase
+from .utils import string_to_float, string_to_int
 
 
 class VesselDirectionEnum(IntEnum):
@@ -38,3 +39,14 @@ class FN121Trawl(FNBase):
 
     class Config:
         validate_assignment = True
+
+    _string_to_float = validator(
+        "vessel_speed",
+        "warp",
+        allow_reuse=True,
+        pre=True,
+    )(string_to_float)
+
+    _string_to_int = validator("vessel_direction", allow_reuse=True, pre=True)(
+        string_to_int
+    )
