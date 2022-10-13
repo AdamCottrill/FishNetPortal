@@ -2,8 +2,15 @@ from typing import Optional
 from enum import Enum, IntEnum
 from pydantic import conint, confloat, validator, constr
 
-from .FNBase import FNBase, prj_cd_regex
-from .utils import string_to_int, string_to_float, to_uppercase
+from .FNBase import FNBase
+from .utils import (
+    check_ascii_sort,
+    string_to_int,
+    string_to_float,
+    to_uppercase,
+    check_ascii_sort,
+    check_agest,
+)
 
 
 class FateEnum(str, Enum):
@@ -74,6 +81,8 @@ class FN125(FNBase):
         "agest", "tissue", "clipc", "clipa", allow_reuse=True, pre=True
     )(to_uppercase)
 
+    _check_agest = validator("agest", allow_reuse=True)(check_agest)
+
     @validator("fate", pre=True)
     def set_fate(cls, fate):
         if fate:
@@ -107,17 +116,6 @@ class FN125(FNBase):
                 raise ValueError(msg)
         return v
 
-    @validator("agest")
-    @classmethod
-    def check_agest(cls, value, values):
-        if value is not None:
-            allowed = "01234567ABCDEFMTV"
-            unknown = [c for c in value if c not in allowed]
-            if unknown:
-                msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"
-                raise ValueError(msg)
-        return value
-
     @validator("tissue")
     @classmethod
     def check_tissue(cls, value, values):
@@ -128,8 +126,6 @@ class FN125(FNBase):
                 msg = f"Unknown tissue code ({','.join(unknown)}) found in TISSUE ({value})"
                 raise ValueError(msg)
         return value
-
-    # ascii-sort clips, node, agest and tissue
 
     @validator("clipc", "clipa")
     @classmethod
@@ -142,14 +138,7 @@ class FN125(FNBase):
                 raise ValueError(msg)
         return value
 
-    @validator("clipc", "clipa", "tissue", "agest")
-    @classmethod
-    def check_ascii_sort(cls, value, values):
-        if value is not None:
-            val = list(value)
-            val.sort()
-            val = "".join(val)
-            if val != value:
-                msg = f"Found non-ascii sorted value ({value}) found in clipa/clipc/agest or tissue (it should be: {val})"
-                raise ValueError(msg)
-        return value
+    # ascii-sort clips, node, agest and tissue
+    _check_ascii_sort = validator(
+        "agest", "tissue", "clipc", "clipa", allow_reuse=True
+    )(check_ascii_sort)

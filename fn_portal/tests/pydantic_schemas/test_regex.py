@@ -3,7 +3,7 @@ import re
 
 from fn_portal.data_upload.schemas.FN012Base import (
     SPCMRK_REGEX,
-    AGEDEC_REGEX,
+    AGEST_REGEX,
     FDSAM_REGEX,
 )
 
@@ -34,48 +34,54 @@ def test_invalid_spcmrk(value):
     assert re.match(SPCMRK_REGEX, value) is None
 
 
-valid_agedec = [
+valid_agest = [
     "0",
+    "0",
+    "1",
+    "1A",
+    "2",
+    "23",
+    "23A",
+    "2A",
+    "247A",
+    "45",
+    "4A",
+    "4ABF",
+    "5",
+    "A",
+]
+
+
+invalid_agest = [
+    "",
+    " ",
+    "01",
+    "K0",
+    "\\",
     "00",
     "10",
     "20",
-    "21",
     "50",
     "A0",
-    "A1",
     "B0",
     "D0",
     "X0",
-    "X1",
-]
-
-invalid_agedec = [
-    "",
-    "01",
-    "02",
-    "22",
-    "2",
-    "KK",
-    "K0",
-    "K1",
-    "X",
-    "\\",
 ]
 
 
-@pytest.mark.parametrize("value", valid_agedec)
-def test_valid_agedec(value):
+@pytest.mark.parametrize("value", valid_agest)
+def test_valid_agest(value):
     """Our spcmark regular expression should match all of our valid
     spcmarks."""
 
-    assert re.match(AGEDEC_REGEX, value) is not None
+    assert re.match(AGEST_REGEX, value) is not None
 
 
-@pytest.mark.parametrize("value", invalid_agedec)
-def test_invalid_agedec(value):
+@pytest.mark.parametrize("value", invalid_agest)
+def test_invalid_agest(value):
     """our regular expression should not match spcmark values that are not
     valid"""
-    assert re.match(AGEDEC_REGEX, value) is None
+    assert re.match(AGEST_REGEX, value) is None
 
 
 valid_fdsam = ["0", "11", "12", "13", "21", "22", "23"]

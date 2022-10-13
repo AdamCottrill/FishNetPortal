@@ -251,22 +251,22 @@ error_list = [
     (
         "agest",
         "41",
-        "Found non-ascii sorted value (41) found in clipa/clipc/agest or tissue (it should be: 14",
+        "Found non-ascii sorted value '41' (it should be: 14)",
     ),
     (
         "clipa",
         "41",
-        "Found non-ascii sorted value (41) found in clipa/clipc/agest or tissue (it should be: 14",
+        "Found non-ascii sorted value '41' (it should be: 14)",
     ),
     (
         "clipc",
         "41",
-        "Found non-ascii sorted value (41) found in clipa/clipc/agest or tissue (it should be: 14",
+        "Found non-ascii sorted value '41' (it should be: 14)",
     ),
     (
         "tissue",
         "41",
-        "Found non-ascii sorted value (41) found in clipa/clipc/agest or tissue (it should be: 14",
+        "Found non-ascii sorted value '41' (it should be: 14)",
     ),
 ]
 

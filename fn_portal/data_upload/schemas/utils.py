@@ -50,6 +50,27 @@ def empty_to_none(v: str) -> Optional[str]:
     return v
 
 
+def check_ascii_sort(value: str) -> Optional[str]:
+    if value is not None:
+        val = list(value)
+        val.sort()
+        val = "".join(val)
+        if val != value:
+            msg = f"Found non-ascii sorted value '{value}' (it should be: {val})"
+            raise ValueError(msg)
+    return value
+
+
+def check_agest(value: str) -> Optional[str]:
+    if value is not None:
+        allowed = "01234567ABCDEFMTV"
+        unknown = [c for c in value if c not in allowed]
+        if unknown:
+            msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"
+            raise ValueError(msg)
+        return value
+
+
 class EmptyStrToNone(str):
     @classmethod
     def __get_validators__(cls):

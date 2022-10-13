@@ -3,13 +3,13 @@ from enum import Enum, IntEnum
 from typing import Optional
 from pydantic import validator, constr, confloat, conint
 
-from .utils import not_specified, to_uppercase, yr_to_year
+from .utils import to_uppercase, check_ascii_sort, check_agest
 from .FNBase import FNBase
 
 GRP_REGEX = "^([A-Z0-9]{1,2})$"
 FDSAM_REGEX = "^(0|[12][1-3])$"
 SPCMRK_REGEX = "^(0|[1-3][0-2])$"
-AGEDEC_REGEX = "^(00?|[1234567ABCDEFGMTVX][01])$"
+AGEST_REGEX = "^(0|[1234567ABCDEFMTV]+)$"
 
 
 class BioSamEnum(str, Enum):
@@ -61,9 +61,7 @@ class FN012Base(FNBase):
     fdsam: constr(regex=FDSAM_REGEX, max_length=2)
     spcmrk: constr(regex=SPCMRK_REGEX, max_length=2)
 
-    # TODO: - delete agedec and replace with agest
-    agedec: constr(regex=AGEDEC_REGEX, max_length=2)
-    # agest: constr(regex=AGEDEC_REGEX, max_length=2)
+    agest: constr(regex=AGEST_REGEX, max_length=8)
 
     flen_min: Optional[confloat(gt=0, lt=700)]
     flen_max: Optional[confloat(gt=0, lt=2000)]
@@ -83,11 +81,11 @@ class FN012Base(FNBase):
     k_max_warn: Optional[confloat(ge=0.07, lt=4.0)]
     k_max_error: Optional[confloat(ge=0.05, lt=5.0)]
 
-    _to_uppercase = validator("sizatt", "agedec", allow_reuse=True, pre=True)(
+    _to_uppercase = validator("sizatt", "agest", allow_reuse=True, pre=True)(
         to_uppercase
     )
 
-    @validator("sizint")
+    @validator("sizint", allow_reuse=True)
     def check_sizint_if_sizsam(cls, v, values):
         sizsam = values.get("sizsam")
         if sizsam in (2, 3) and v is None:
@@ -95,7 +93,7 @@ class FN012Base(FNBase):
             raise ValueError(msg)
         return v
 
-    @validator("sizatt")
+    @validator("sizatt", allow_reuse=True)
     def check_sizatt_if_sizsam(cls, v, values):
         sizsam = values.get("sizsam")
         if sizsam in (2, 3) and v is None:
@@ -114,6 +112,7 @@ class FN012Base(FNBase):
         "k_min_warn",
         "k_max_warn",
         "k_max_error",
+        allow_reuse=True,
     )
     def biosam_required_field(cls, v, values, field):
         biosam = values.get("biosam")
@@ -122,3 +121,6 @@ class FN012Base(FNBase):
             msg = f"{field.name} is required if BIOSAM='{biosam}'"
             raise ValueError(msg)
         return v
+
+    _check_ascii_sort = validator("agest", allow_reuse=True)(check_ascii_sort)
+    _check_agest = validator("agest", allow_reuse=True)(check_agest)
