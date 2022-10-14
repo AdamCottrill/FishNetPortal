@@ -10,7 +10,7 @@ A. Cottrill
 =============================================================
 """
 
-
+from datetime import datetime
 from typing import Optional
 
 from pydantic.validators import str_validator
@@ -69,6 +69,17 @@ def check_agest(value: str) -> Optional[str]:
             msg = f"Unknown aging structures ({','.join(unknown)}) found in AGEST ({value})"
             raise ValueError(msg)
         return value
+
+
+def strip_date(value):
+    """pyodbc treats times as datetimes. we need to strip the date off if
+    it is there."""
+
+    if value == "":
+        return None
+    if isinstance(value, datetime):
+        return value.time()
+    return value
 
 
 class EmptyStrToNone(str):

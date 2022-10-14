@@ -1,12 +1,11 @@
-from datetime import date, time, datetime
+from datetime import date, time
+from enum import IntEnum
 from typing import Optional
 
-from pydantic import PositiveFloat, validator, confloat
+from pydantic import PositiveFloat, confloat, validator
 
-from .utils import yr_to_year, string_to_float, strip_0
-from .FNBase import FNBase, prj_cd_regex
-
-from enum import IntEnum
+from .FNBase import FNBase
+from .utils import string_to_float, strip_0, strip_date, yr_to_year
 
 
 class EffstEnum(IntEnum):
@@ -73,7 +72,7 @@ class FN121(FNBase):
     grdepmax: Optional[PositiveFloat] = None
 
     secchi0: Optional[PositiveFloat] = None
-    # secchi1: Optional[PositiveFloat] = None
+    secchi1: Optional[PositiveFloat] = None
     slime: Optional[XslimeEnum]
 
     crew: Optional[str]
@@ -90,7 +89,7 @@ class FN121(FNBase):
         "grdepmin",
         "grdepmax",
         "secchi0",
-        # "secchi1",
+        "secchi1",
         "sitem",
         "sitem0",
         "sitem1",
@@ -102,13 +101,7 @@ class FN121(FNBase):
         "dd_lat0", "dd_lon0", "dd_lat1", "dd_lon1", allow_reuse=True, pre=True
     )(strip_0)
 
-    @validator("efftm0", "efftm1", pre=True)
-    def strip_date(cls, v):
-        """pyodbc treats times as datetimes. we need to strip the date off if
-        it is there."""
-        if isinstance(v, datetime):
-            return v.time()
-        return v
+    _strip_date = validator("efftm0", "efftm1", allow_reuse=True, pre=True)(strip_date)
 
     @validator("effdt0", "effdt1")
     @classmethod

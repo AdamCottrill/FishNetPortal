@@ -28,6 +28,7 @@
 
 
 import pytest
+from datetime import time
 from pydantic import ValidationError
 
 from fn_portal.data_upload.schemas import FN122
@@ -40,9 +41,12 @@ def data():
         "sample_id": 1,
         "eff": "001",
         "effdst": 75,
-        "grdep": 12,
+        "grdep0": 12,
+        "grdep1": 12.5,
         "grtem0": 12.2,
         "grtem1": 13.1,
+        "efftm0": "12:00",
+        "efftm1": "12:30",
         "waterhaul": False,
         "comment2": "best effort yet",
     }
@@ -90,9 +94,12 @@ def test_required_fields(data, fld):
 
 optional_fields = [
     "effdst",
-    "grdep",
+    "grdep0",
+    "grdep1",
     "grtem0",
     "grtem1",
+    "efftm0",
+    "efftm1",
     "comment2",
     "waterhaul",
 ]
@@ -114,13 +121,16 @@ def test_optional_fields(data, fld):
 mode_list = [
     # field, input, output
     ("effdst", "", None),
-    ("grdep", "", None),
+    ("grdep0", "", None),
+    ("grdep1", "", None),
     ("grtem0", "", None),
     ("grtem1", "", None),
     ("eff", "1", "1"),
     ("eff", "12", "12"),
     ("eff", "2 ", "2"),
     ("eff", " 2", "2"),
+    ("efftm0", "", None),
+    ("efftm1", "", None),
     ("waterhaul", None, False),
 ]
 
@@ -151,7 +161,12 @@ error_list = [
         "ensure this value is greater than 0",
     ),
     (
-        "grdep",
+        "grdep0",
+        -40.6,
+        "ensure this value is greater than 0",
+    ),
+    (
+        "grdep1",
         -40.6,
         "ensure this value is greater than 0",
     ),
@@ -174,6 +189,16 @@ error_list = [
         "grtem1",
         31.6,
         "ensure this value is less than or equal to 30",
+    ),
+    (
+        "efftm0",
+        "foobar",
+        "validation error for FN122\nefftm0\n  invalid time format",
+    ),
+    (
+        "efftm1",
+        "foobar",
+        "validation error for FN122\nefftm1\n  invalid time format",
     ),
 ]
 
