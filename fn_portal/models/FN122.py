@@ -19,10 +19,13 @@ class FN122(FNPortalBaseModel):
     # sam = models.CharField(max_length=5, blank=True, null=True)
     eff = models.CharField(max_length=4, db_index=True, default=1)
     effdst = models.FloatField(blank=True, null=True)
-    grdep = models.FloatField(blank=True, null=True)
+    grdep0 = models.FloatField(blank=True, null=True)
+    grdep1 = models.FloatField(blank=True, null=True)
     grtem0 = models.FloatField(blank=True, null=True)
     grtem1 = models.FloatField(blank=True, null=True)
     waterhaul = models.BooleanField(default=False)
+    efftm0 = models.TimeField("Effort Start Date", blank=True, null=True, db_index=True)
+    efftm1 = models.TimeField("Effort End Time", blank=True, null=True, db_index=True)
     comment2 = models.TextField(blank=True, null=True)
 
     class Meta:

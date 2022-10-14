@@ -45,14 +45,15 @@ class FN121(FNPortalBaseModel):
         blank=True,
         null=True,
     )
-    # move to gear and fn028
 
     sam = models.CharField(max_length=5, db_index=True)
     effdt0 = models.DateField("Effort Start Date", blank=True, null=True, db_index=True)
     effdt1 = models.DateField("Effort End Date", blank=True, null=True, db_index=True)
     effdur = models.FloatField("Effort Duration (hours)", blank=True, null=True)
-    efftm0 = models.TimeField("Effort Start Date", blank=True, null=True, db_index=True)
-    efftm1 = models.TimeField("Effort End Time", blank=True, null=True, db_index=True)
+    efftm0 = models.TimeField(
+        "Sampling Start Date", blank=True, null=True, db_index=True
+    )
+    efftm1 = models.TimeField("Sampling End Time", blank=True, null=True, db_index=True)
     effst = models.CharField(
         "Effort Status", max_length=2, blank=True, null=True, db_index=True
     )

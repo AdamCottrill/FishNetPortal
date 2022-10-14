@@ -214,20 +214,23 @@ def project_catch_counts_json(request, slug):
             "effort_sample_mode__gear",
             "effort_sample_project",
         )
-        .annotate(prj_cd=F("effort__sample__project__prj_cd"))
-        .annotate(sam=F("effort__sample__sam"))
-        .annotate(eff=F("effort__eff"))
-        .annotate(lift_date=F("effort__sample__effdt1"))
-        .annotate(dd_lat=F("effort__sample__dd_lat0"))
-        .annotate(dd_lon=F("effort__sample__dd_lon0"))
-        .annotate(gear=F("effort__sample__mode__gear__gr_code"))
-        .annotate(effst=F("effort__sample__effst"))
-        .annotate(sidep=F("effort__sample__sidep0"))
-        .annotate(effdst=F("effort__effdst"))
-        .annotate(grdep=F("effort__grdep"))
-        .annotate(spc=F("species__spc_nmco"))
-        .annotate(spc_code=F("species__spc"))
-        .annotate(catch=F("catcnt"))
+        .annotate(
+            prj_cd=F("effort__sample__project__prj_cd"),
+            sam=F("effort__sample__sam"),
+            eff=F("effort__eff"),
+            lift_date=F("effort__sample__effdt1"),
+            dd_lat=F("effort__sample__dd_lat0"),
+            dd_lon=F("effort__sample__dd_lon0"),
+            gear=F("effort__sample__mode__gear__gr_code"),
+            effst=F("effort__sample__effst"),
+            sidep=F("effort__sample__sidep0"),
+            effdst=F("effort__effdst"),
+            # TODO: add grdep1
+            grdep=F("effort__grdep0"),
+            spc=F("species__spc_nmco"),
+            spc_code=F("species__spc"),
+            catch=F("catcnt"),
+        )
         .values(
             "prj_cd",
             "lift_date",
@@ -391,21 +394,24 @@ def project_catch_over_time_json(request, slug):
             "effort",
             "species",
         )
-        .annotate(year=F("effort__sample__project__year"))
-        .annotate(prj_cd=F("effort__sample__project__prj_cd"))
-        .annotate(sam=F("effort__sample__sam"))
-        .annotate(eff=F("effort__eff"))
-        .annotate(lift_date=F("effort__sample__effdt1"))
-        .annotate(dd_lat=F("effort__sample__dd_lat"))
-        .annotate(dd_lon=F("effort__sample__dd_lon"))
-        .annotate(gear=F("effort__sample__mode__gear__gr_code"))
-        .annotate(effst=F("effort__sample__effst"))
-        .annotate(sidep=F("effort__sample__sidep"))
-        .annotate(effdst=F("effort__effdst"))
-        .annotate(grdep=F("effort__grdep"))
-        .annotate(spc=F("species__spc_nmco"))
-        .annotate(spc_code=F("species__spc"))
-        .annotate(catch=F("catcnt"))
+        .annotate(
+            year=F("effort__sample__project__year"),
+            prj_cd=F("effort__sample__project__prj_cd"),
+            sam=F("effort__sample__sam"),
+            eff=F("effort__eff"),
+            lift_date=F("effort__sample__effdt1"),
+            dd_lat=F("effort__sample__dd_lat"),
+            dd_lon=F("effort__sample__dd_lon"),
+            gear=F("effort__sample__mode__gear__gr_code"),
+            effst=F("effort__sample__effst"),
+            sidep=F("effort__sample__sidep"),
+            effdst=F("effort__effdst"),
+            # todo add grdep1
+            grdep=F("effort__grdep0"),
+            spc=F("species__spc_nmco"),
+            spc_code=F("species__spc"),
+            catch=F("catcnt"),
+        )
         .values(
             "prj_cd",
             "lift_date",

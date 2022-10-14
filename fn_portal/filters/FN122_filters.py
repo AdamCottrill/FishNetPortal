@@ -31,11 +31,17 @@ class FN122InProjectFilter(GeoFilterSet):
     effdst__gt = django_filters.NumberFilter(field_name="effdst", lookup_expr="gt")
     effdst__lt = django_filters.NumberFilter(field_name="effdst", lookup_expr="lt")
 
-    grdep = django_filters.NumberFilter(field_name="grdep", lookup_expr="exact")
-    grdep__gte = django_filters.NumberFilter(field_name="grdep", lookup_expr="gte")
-    grdep__lte = django_filters.NumberFilter(field_name="grdep", lookup_expr="lte")
-    grdep__gt = django_filters.NumberFilter(field_name="grdep", lookup_expr="gt")
-    grdep__lt = django_filters.NumberFilter(field_name="grdep", lookup_expr="lt")
+    grdep0 = django_filters.NumberFilter(field_name="grdep0", lookup_expr="exact")
+    grdep0__gte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gte")
+    grdep0__lte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lte")
+    grdep0__gt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gt")
+    grdep0__lt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lt")
+
+    grdep1 = django_filters.NumberFilter(field_name="grdep1", lookup_expr="exact")
+    grdep1__gte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gte")
+    grdep1__lte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lte")
+    grdep1__gt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gt")
+    grdep1__lt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lt")
 
     grtem0 = django_filters.NumberFilter(field_name="grtem0", lookup_expr="exact")
     grtem0__gte = django_filters.NumberFilter(field_name="grtem0", lookup_expr="gte")

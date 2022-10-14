@@ -264,20 +264,36 @@ class FN124Filter(FN124SubFilter):
         field_name="catch__effort__effdst", lookup_expr="lt"
     )
 
-    grdep = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="exact"
+    grdep0 = django_filters.NumberFilter(
+        field_name="catch__effort__grdep0", lookup_expr="exact"
     )
-    grdep__gte = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="gte"
+    grdep0__gte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep0", lookup_expr="gte"
     )
-    grdep__lte = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="lte"
+    grdep0__lte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep0", lookup_expr="lte"
     )
-    grdep__gt = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="gt"
+    grdep0__gt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep0", lookup_expr="gt"
     )
-    grdep__lt = django_filters.NumberFilter(
-        field_name="catch__effort__grdep", lookup_expr="lt"
+    grdep0__lt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep0", lookup_expr="lt"
+    )
+
+    grdep1 = django_filters.NumberFilter(
+        field_name="catch__effort__grdep1", lookup_expr="exact"
+    )
+    grdep1__gte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep1", lookup_expr="gte"
+    )
+    grdep1__lte = django_filters.NumberFilter(
+        field_name="catch__effort__grdep1", lookup_expr="lte"
+    )
+    grdep1__gt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep1", lookup_expr="gt"
+    )
+    grdep1__lt = django_filters.NumberFilter(
+        field_name="catch__effort__grdep1", lookup_expr="lt"
     )
 
     grtem0 = django_filters.NumberFilter(

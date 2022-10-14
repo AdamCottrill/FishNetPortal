@@ -189,9 +189,12 @@ class FN122ReadOnlySerializer(serializers.Serializer):
     sam = serializers.CharField(read_only=True)
     eff = serializers.CharField(read_only=True)
     effdst = serializers.FloatField(read_only=True)
-    grdep = serializers.FloatField(read_only=True)
+    grdep0 = serializers.FloatField(read_only=True)
+    grdep1 = serializers.FloatField(read_only=True)
     grtem0 = serializers.FloatField(read_only=True)
     grtem1 = serializers.FloatField(read_only=True)
+    efftm0 = serializers.TimeField(read_only=True)
+    efftm1 = serializers.TimeField(read_only=True)
     waterhaul = serializers.BooleanField(read_only=True)
     comment2 = serializers.CharField(read_only=True)
     slug = serializers.CharField(read_only=True)
@@ -212,9 +215,12 @@ class FN122Serializer(serializers.ModelSerializer):
             "sam",
             "eff",
             "effdst",
-            "grdep",
+            "grdep0",
+            "grdep1",
             "grtem0",
             "grtem1",
+            "efftm0",
+            "efftm1",
             "waterhaul",
             "comment2",
             "slug",

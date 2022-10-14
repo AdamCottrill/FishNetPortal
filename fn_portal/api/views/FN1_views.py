@@ -287,9 +287,12 @@ class EffortList(generics.ListAPIView):
             "sam",
             "eff",
             "effdst",
-            "grdep",
+            "grdep0",
+            "grdep1",
             "grtem0",
             "grtem1",
+            "efftm0",
+            "efftm1",
             "waterhaul",
             "slug",
         )
