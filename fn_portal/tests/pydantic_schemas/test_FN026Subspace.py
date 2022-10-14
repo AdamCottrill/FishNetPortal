@@ -41,6 +41,7 @@ def data():
         "space_id": 1,
         "subspace": "IB",
         "subspace_des": "the inner bay",
+        "subspace_wt": 0.5,
         "grdep_ge": 10.1,
         "grdep_lt": 100.1,
         "sidep_ge": 10.1,
@@ -96,6 +97,7 @@ def test_required_fields(data, fld):
 
 optional_fields = [
     "subspace_des",
+    "subspace_wt",
     "grdep_ge",
     "grdep_lt",
     "sidep_ge",
@@ -239,6 +241,7 @@ error_list = [
         "ensure this value is less than or equal to -74.32",
     ),
     ("subspace_wt", 0, "ensure this value is greater than 0"),
+    ("subspace_wt", 1.1, "ensure this value is less than or equal to 1"),
 ]
 
 

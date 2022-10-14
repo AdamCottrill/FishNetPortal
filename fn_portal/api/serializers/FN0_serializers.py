@@ -190,6 +190,7 @@ class FN012BaseListSerializer(serializers.ModelSerializer):
             "sizint",
             "fdsam",
             "spcmrk",
+            "agest",
             "agedec",
             "lamsam",
             "flen_min",
@@ -379,7 +380,16 @@ class FN026ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FN026
-        fields = ("prj_cd", "space", "space_des", "dd_lat", "dd_lon", "slug", "id")
+        fields = (
+            "prj_cd",
+            "space",
+            "space_des",
+            "space_wt",
+            "dd_lat",
+            "dd_lon",
+            "slug",
+            "id",
+        )
 
 
 class FN026SimpleSerializer(serializers.ModelSerializer):
@@ -403,6 +413,7 @@ class FN026SimpleSerializer(serializers.ModelSerializer):
             "project",
             "space",
             "space_des",
+            "space_wt",
             "dd_lat",
             "dd_lon",
         )
@@ -416,6 +427,7 @@ class FN026Serializer(serializers.ModelSerializer):
             "label",
             "space",
             "space_des",
+            "space_wt",
             "area_lst",
             "grdep_ge",
             "grdep_lt",
@@ -442,6 +454,7 @@ class FN026SubspaceSerializer(serializers.Serializer):
     space = serializers.CharField(read_only=True, source="space_code")
     subspace = serializers.CharField(read_only=True)
     subspace_des = serializers.CharField(read_only=True)
+    subspace_wt = serializers.FloatField(read_only=True)
     dd_lat = serializers.FloatField(read_only=True)
     dd_lon = serializers.FloatField(read_only=True)
     slug = serializers.CharField(read_only=True)

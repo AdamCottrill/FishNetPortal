@@ -169,6 +169,8 @@ class FN012Base(FNPortalBaseModel):
         choices=AGEDEC1_CHOICES,
     )
 
+    agest = models.CharField(max_length=20, default="0")
+
     AGEDEC2_CHOICES = (
         ("0", "Not validated"),
         ("1", "Validated"),

@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.text import slugify
 
@@ -36,6 +37,14 @@ class FN026(FNPortalBaseModel):
     space_des = models.CharField(
         max_length=100, blank=False, help_text="Space Description"
     )
+
+    space_wt = models.FloatField(
+        blank=True,
+        null=True,
+        help_text="A weighting factor assigned to a SPACE",
+        validators=[MinValueValidator(0), MaxValueValidator(1)],
+    )
+
     # this should be fk relationship to another table
     site_lst = models.CharField(
         max_length=100,

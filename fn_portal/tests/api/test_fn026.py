@@ -78,6 +78,7 @@ def test_fn026_detail(api_client, project):
         "label",
         "space",
         "space_des",
+        "space_wt",
         "area_lst",
         "grdep_ge",
         "grdep_lt",

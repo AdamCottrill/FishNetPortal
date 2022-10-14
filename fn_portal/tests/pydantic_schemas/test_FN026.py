@@ -41,6 +41,7 @@ def data():
         "project_id": 1,
         "space": "A1",
         "space_des": "the lake",
+        "space_wt": 0.5,
         # "area_lst": "Foo,bar,baz",
         # "site_lst": "town,city,village",
         # "sitp_lst": "bedrock,sand,gravel,muck",
@@ -99,6 +100,7 @@ def test_required_fields(data, fld):
 
 optional_fields = [
     "space_des",
+    "space_wt",
     "grdep_ge",
     "grdep_lt",
     "sidep_ge",
@@ -242,6 +244,7 @@ error_list = [
         "ensure this value is less than or equal to -74.32",
     ),
     ("space_wt", 0, "ensure this value is greater than 0"),
+    ("space_wt", 1.1, "ensure this value is less than or equal to 1"),
 ]
 
 

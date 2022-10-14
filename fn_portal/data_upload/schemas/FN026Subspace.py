@@ -18,7 +18,7 @@ class FN026Subspace(FNBase):
     sidep_ge: Optional[confloat(ge=0)] = None
     sidep_lt: Optional[PositiveFloat] = None
 
-    subspace_wt: Optional[confloat(gt=0)] = None
+    subspace_wt: Optional[confloat(gt=0, le=1)] = None
 
     dd_lat: Optional[confloat(ge=41.6, le=49.1)] = None
     dd_lon: Optional[confloat(ge=-89.6, le=-74.32)] = None

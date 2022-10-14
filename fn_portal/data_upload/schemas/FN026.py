@@ -17,7 +17,7 @@ class FN026(FNBase):
     grdep_lt: Optional[PositiveFloat] = None
     sidep_ge: Optional[confloat(ge=0)] = None
     sidep_lt: Optional[PositiveFloat] = None
-    space_wt: Optional[confloat(gt=0)] = None
+    space_wt: Optional[confloat(gt=0, le=1)] = None
 
     dd_lat: Optional[confloat(ge=41.6, le=49.1)] = None
     dd_lon: Optional[confloat(ge=-89.6, le=-74.32)] = None

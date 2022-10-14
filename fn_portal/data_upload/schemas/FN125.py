@@ -61,10 +61,7 @@ class FN125(FNBase):
     agest: Optional[str]
     fate: FateEnum = FateEnum.killed
 
-    age_flag: Optional[bool]
-    lam_flag: Optional[bool]
     stom_flag: Optional[bool]
-    tag_flag: Optional[bool]
 
     comment5: Optional[str]
 
