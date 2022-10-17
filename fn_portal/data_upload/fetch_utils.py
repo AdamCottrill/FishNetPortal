@@ -80,7 +80,7 @@ def get_fn012_stmt():
                 BIOSAM,
                 FDSAM,
                 SPCMRK,
-                AGEDEC,
+                AGEST,
                 LAMSAM,
                 FLEN_MIN,
                 FLEN_MAX,
@@ -116,14 +116,30 @@ def get_fn026_stmt():
              PRJ_CD,
              SPACE,
              SPACE_DES,
-             SITE_LST,
-             SITP_LST,
-             AREA_LST,
+             SPACE_WT,
              SIDEP_LT,
              SIDEP_GE,
              GRDEP_LT,
              GRDEP_GE
          from FN026"""
+    return stmt
+
+
+def get_fn026_subspace_stmt():
+
+    stmt = """ SELECT
+               PRJ_CD,
+               SPACE,
+               SUBSPACE,
+               SUBSPACE_DES,
+               SUBSPACE_WT,
+               DD_LAT,
+               DD_LON,
+               SIDEP_LT,
+               SIDEP_GE,
+               GRDEP_LT,
+               GRDEP_GE
+               FROM FN026_Subspace;"""
     return stmt
 
 
@@ -182,7 +198,7 @@ def get_fn121_stmt():
                 PRJ_CD,
                 SAM,
                 SSN,
-                SPACE,
+                SUBSPACE,
                 MODE,
                 EFFDT0,
                 EFFTM0,
@@ -191,20 +207,19 @@ def get_fn121_stmt():
                 EFFDUR,
                 EFFST,
                 SITP,
-                SITE,
-                GRID5,
-                DD_LAT0 as DD_LAT,
-                DD_LON0 as DD_LON,
+                DD_LAT0,
+                DD_LON0,
                 DD_LAT1,
                 DD_LON1,
-                SITEM,
                 SITEM1,
                 SITEM0,
-                SIDEP,
+                SIDEP0,
+                SIDEP1,
                 GRDEPMAX,
                 GRDEPMIN,
-                SECCHI,
-                XSLIME,
+                SECCHI0,
+                SECCHI1,
+                SLIME,
                 CREW,
                 COMMENT1
          from FN121"""
@@ -212,20 +227,69 @@ def get_fn121_stmt():
 
 
 def get_fn121limno_stmt():
-    """NOTE - table name in associated with this query is currently
-    FN121_DO but is likely to change to FN121_LIMNO in future template
-    iterations.
-    """
+    """Fetch the limnological fields from fn121 table"""
 
     stmt = """select
                 PRJ_CD,
                 SAM,
-                DO_GEAR,
-                XO2,
-                XO22,
-                SURFDO2,
-                SURFDO22
-         from FN121_DO"""
+                O2BOT0,
+                O2BOT1,
+                O2SURF0,
+                O2SURF1,
+                O2GR0,
+                O2GR1
+         from FN121"""
+    return stmt
+
+
+def get_fn121trawl_stmt():
+    """Fetch the trapnet fields from fn121 table"""
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                VESSEL,
+                VESSEL_DIRECTION,
+                VESSEL_SPEED,
+                WARP
+         from FN121"""
+    return stmt
+
+
+def get_fn121trapnet_stmt():
+    """Fetch the trap netting fields from fn121 table"""
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                BOTTOM,
+                COVER,
+                LEAD_ANGLE,
+                LEADUSE,
+                DISTOFF
+         from FN121"""
+    return stmt
+
+
+def get_fn121weather_stmt():
+    """Fetch the weaterh fields from fn121 table"""
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                AIRTEM0,
+                AIRTEM1,
+                WIND0,
+                WIND1,
+                PRECIP0,
+                PRECIP1,
+                CLOUD_PC0,
+                CLOUD_PC1,
+                WAVEHT0,
+                WAVEHT1,
+                XWEATHER
+                FROM FN121;
+    """
     return stmt
 
 
@@ -236,12 +300,29 @@ def get_fn122_stmt():
                 SAM,
                 EFF,
                 EFFDST,
-                GRDEP,
+                GRDEP0,
+                GRDEP1,
                 GRTEM0,
                 GRTEM1,
+                EFFTM0,
+                EFFTM1,
                 WATERHAUL,
                 COMMENT2
-         from FN122"""
+         from FN122;"""
+    return stmt
+
+
+def get_fn122transect_stmt():
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                TRACKID as TRACK_ID,
+                TIMESTAMP,
+                DD_LAT,
+                DD_LON,
+                SIDEP
+         from FN121_Transects"""
     return stmt
 
 
@@ -260,6 +341,20 @@ def get_fn123_stmt():
                 SUBWT,
                 COMMENT3 as COMMENT
          from FN123"""
+    return stmt
+
+
+def get_fn123nonfish_stmt():
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                EFF,
+                TAXON,
+                CATCNT,
+                MORTCNT,
+                COMMENT3 as COMMENT
+         from FN123_NonFish"""
     return stmt
 
 
@@ -300,10 +395,7 @@ def get_fn125_stmt():
                 TISSUE,
                 AGEST,
                 FATE,
-                AGE_FLAG,
-                LAM_FLAG,
                 STOM_FLAG,
-                TAG_FLAG,
                 COMMENT5
          from FN125"""
     return stmt
@@ -322,8 +414,7 @@ def get_fn125tags_stmt():
                 TAGID,
                 TAGDOC,
                 TAGSTAT,
-                XCWTSEQ,
-                XTAGINCKD,
+                CWTSEQ,
                 COMMENT_TAG
          from FN125_tags"""
     return stmt

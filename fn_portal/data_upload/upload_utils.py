@@ -94,3 +94,67 @@ def batch_update_model(model, update_slugs, updates):
                 objs.remove(obj)
         if len(objs) and len(list(fields)):
             model.objects.bulk_update(objs, fields=list(fields), batch_size=1000)
+
+
+def parse_wind(value):
+    """Wind (or xwind) is a fishnet-two field that is a combination of
+    two attributes - wind direction and wind speed separated by a
+    hyphen. This function accepts a wind string and returns a two
+    element array representing those attributes. there is a special
+    case where no wind is represented as '000'.
+
+    """
+    if value == "000":
+        return ["0", "0"]
+    else:
+        if value:
+            return value.split("-")
+        else:
+            return [None, None]
+
+
+def parse_compound_field(value):
+    """many fishnet fields are acutally compound strings that need to
+    split into their consituent parts.  This function currenly accepts
+    a string and returns the first two charactars as an array or
+    lenght two, or returns and two element array on Nones. (this could
+    be, should be generalized to accept a string of arbrary length.
+
+    """
+    if value:
+        if len(value) == 2:
+            return [value[0], value[1]]
+        return [value[0], None]
+    else:
+        return [None, None]
+
+
+def is_empty(item, excluding=[]):
+    """a helper function verify that a data object actually has
+    contains data, not just a row of empy values or strings."""
+
+    def strip_or_none(x):
+        """A helper for our helper - safely remove whitespaces if x
+        has a strip attribute otherwise, return x.
+
+        """
+        if hasattr(x, "strip"):
+            return x.strip()
+        else:
+            return x
+
+    all_empty = all(
+        (strip_or_none(value) == "" or value is None)
+        for key, value in item.items()
+        if key not in excluding
+    )
+    return all_empty
+
+
+def int_or_none(x):
+    """ """
+
+    try:
+        return int(x)
+    except (ValueError, TypeError):
+        return None

@@ -22,11 +22,17 @@ from .schemas import (
     FN012,
     FN022,
     FN026,
+    FN026Subspace,
     FN028,
     FN121,
-    FN121Limno,
+    # FN121Limno,
+    # FN121Trawl,
+    FN121Trapnet,
+    # FN121Weather,
     FN122,
+    FN122Transect,
     FN123,
+    FN123NonFish,
     FN124,
     FN125,
     FN125Tags,
@@ -34,6 +40,8 @@ from .schemas import (
     FN126,
     FN127,
 )
+
+from .upload_utils import is_empty
 
 
 def fn011(data, lake_cache, protocol_cache, user_cache):
@@ -124,6 +132,28 @@ def fn026(data, fn011_cache):
     return {"data": valid, "errors": errors}
 
 
+def fn026subspace(data, fn026_cache):
+    """pop off prj_cd and space and replace them with space_id from the fn026_cache"""
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        space = item.get("space")
+        subspace = item.get("subspace")
+        parent_key = f"{prj_cd}-{space}".lower()
+        item["space_id"] = fn026_cache.get(parent_key)
+        slug = f"{prj_cd}-{subspace}"
+        item["slug"] = slug.lower()
+        try:
+            tmp = FN026Subspace(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
 def fn028(data, fn011_cache, gear_cache):
 
     valid = []
@@ -150,7 +180,7 @@ def fn121(
     data,
     fn011_cache,
     fn022_cache,
-    fn026_cache,
+    fn026_subspace_cache,
     fn028_cache,
     grid5_cache,
     lake_abbrev="HU",
@@ -164,17 +194,18 @@ def fn121(
         prj_cd = item.pop("prj_cd")
         parent_key = f"{prj_cd}".lower()
         ssn = item.pop("ssn")
-        space = item.pop("space")
+        subspace = item.pop("subspace")
         mode = item.pop("mode")
-        grid5 = item.pop("grid5")
-        grid_key = f"{lake_abbrev}-{grid5}".lower()
+        # grid5 = item.pop("grid5")
+        # grid_key = f"{lake_abbrev}-{grid5}".lower()
         sam = item["sam"]
         slug = f"{prj_cd}-{sam}".lower()
         item["slug"] = slug
         item["project_id"] = fn011_cache.get(parent_key)
-        item["grid5_id"] = grid5_cache.get(grid_key)
+        # item["grid5_id"] = grid5_cache.get(grid_key)
+        item["grid5_id"] = 1408  # HACK FOR TODAY!!!
         item["ssn_id"] = fn022_cache.get(f"{prj_cd}-{ssn}".lower())
-        item["space_id"] = fn026_cache.get(f"{prj_cd}-{space}".lower())
+        item["subspace_id"] = fn026_subspace_cache.get(f"{prj_cd}-{subspace}".lower())
         item["mode_id"] = fn028_cache.get(f"{prj_cd}-{mode}".lower())
         try:
             tmp = FN121(**item)
@@ -184,7 +215,10 @@ def fn121(
     return {"data": valid, "errors": errors}
 
 
-def fn121limno(data, fn121_cache):
+def fn121_extension(data, schema, slug_label, fn121_cache):
+    """There are several tables that are 1:1 associates with a net
+    set.  These can all be handled with the same generic
+    function. Just pass in a the appropriate validator."""
 
     valid = []
     errors = []
@@ -193,15 +227,66 @@ def fn121limno(data, fn121_cache):
         prj_cd = item.pop("prj_cd")
         sam = item.pop("sam")
         fn121_key = f"{prj_cd}-{sam}".lower()
-        slug = f"{prj_cd}-{sam}-limno".lower()
-        item["sample_id"] = fn121_cache.get(fn121_key)
-        item["slug"] = slug
-        try:
-            tmp = FN121Limno(**item)
-            valid.append(tmp)
-        except ValidationError as err:
-            errors.append([item.get("slug"), err])
+        slug = f"{prj_cd}-{sam}-{slug_label}".lower()
+
+        # if all(value for value in items.values()):
+
+        if not is_empty(item):
+            item["sample_id"] = fn121_cache.get(fn121_key)
+            item["slug"] = slug
+            try:
+                tmp = schema(**item)
+                valid.append(tmp)
+            except ValidationError as err:
+                errors.append([item.get("slug"), err])
     return {"data": valid, "errors": errors}
+
+
+def fn121trapnet(data, fn121_cache, bottom_type_cache, cover_type_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        bottom_type = item.pop("bottom")
+        cover_type = item.pop("cover")
+
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-trapnet".lower()
+
+        if not is_empty(item):
+            item["sample_id"] = fn121_cache.get(fn121_key)
+            item["slug"] = slug
+            item["bottom_type_id"] = bottom_type_cache.get(bottom_type)
+            item["cover_type_id"] = cover_type_cache.get(cover_type)
+            try:
+                tmp = FN121Trapnet(**item)
+                valid.append(tmp)
+            except ValidationError as err:
+                errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+# def fn121weather(data, fn121_cache):
+
+#     valid = []
+#     errors = []
+
+#     for item in data:
+#         prj_cd = item.pop("prj_cd")
+#         sam = item.pop("sam")
+#         fn121_key = f"{prj_cd}-{sam}".lower()
+#         slug = f"{prj_cd}-{sam}-weather".lower()
+#         item["sample_id"] = fn121_cache.get(fn121_key)
+#         item["slug"] = slug
+#         try:
+#             tmp = FN121Weather(**item)
+#             valid.append(tmp)
+#         except ValidationError as err:
+#             errors.append([item.get("slug"), err])
+#     return {"data": valid, "errors": errors}
 
 
 def fn122(data, fn121_cache):
@@ -219,6 +304,27 @@ def fn122(data, fn121_cache):
         item["slug"] = slug
         try:
             tmp = FN122(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+def fn122transect(data, fn121_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        track_id = item.get("track_id")
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-{track_id}".lower()
+        item["sample_id"] = fn121_cache.get(fn121_key)
+        item["slug"] = slug
+        try:
+            tmp = FN122Transect(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])
@@ -244,6 +350,30 @@ def fn123(data, fn122_cache, species_cache):
 
         try:
             tmp = FN123(**item)
+            valid.append(tmp)
+        except ValidationError as err:
+            errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
+def fn123nonfish(data, fn122_cache, taxon_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        eff = item.pop("eff")
+        taxon = item.pop("taxon")
+        parent_key = f"{prj_cd}-{sam}-{eff}".lower()
+        slug = f"{prj_cd}-{sam}-{eff}-{taxon}".lower()
+        item["effort_id"] = fn122_cache.get(parent_key)
+        item["taxon_id"] = taxon_cache.get(taxon)
+        item["slug"] = slug
+
+        try:
+            tmp = FN123NonFish(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])

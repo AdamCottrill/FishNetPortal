@@ -41,7 +41,7 @@ def data():
         "fish_tag_id": 1,
         "tagid": "123654A",
         "tagdoc": "25012",
-        "tagstat": "A",
+        "tagstat": "C",
         "cwtseq": None,
         "comment_tag": "not a real tag",
     }
@@ -65,7 +65,6 @@ required_fields = [
     "slug",
     "fish_id",
     "fish_tag_id",
-    "tagid",
     "tagdoc",
     "tagstat",
 ]
@@ -152,6 +151,65 @@ def test_invalid_data(data, fld, value, msg):
     """
 
     data[fld] = value
+    with pytest.raises(ValidationError) as excinfo:
+        FN125Tags(**data)
+
+    assert msg in str(excinfo.value)
+
+
+# THere are some co-dependencies between fields - some combination are
+# valid, other are not.  These tests check first to ensure that valid
+# combination work, and then that invalid ones are caught and reported
+# appropriately:
+
+valid_combinations = [
+    # tag stat can be N if tag is is empy and tagdoc starts with 6 or p
+    {"tagstat": "N", "tagid": None, "tagdoc": "P1234"},
+    {"tagstat": "N", "tagid": None, "tagdoc": "61234"},
+]
+
+
+@pytest.mark.parametrize("fld_values", valid_combinations)
+def test_valid_field_combinations(data, fld_values):
+    """
+
+    Arguments:
+    - `data`:
+    """
+
+    data.update(fld_values)
+    item = FN125Tags(**data)
+
+    assert item.fish_id == data["fish_id"]
+    assert item.slug == data["slug"]
+
+
+invalid_combinations = [
+    # tag stat can be N if tag is is empy and tagdoc starts with 6 or p
+    [
+        {"tagstat": "N", "tagid": 1234, "tagdoc": "P1234"},
+        "TAGSTAT cannot be 'N' if TAGID is populated (TAGID='1234')",
+    ],
+    [
+        {"tagstat": "N", "tagid": 1234, "tagdoc": "21234"},
+        "TAGSTAT='N' is only allowed if TAGTYPE is 6 (CWT) or P (PIT).",
+    ],
+    [
+        {"tagstat": "A", "tagid": None, "tagdoc": "21234"},
+        "TAGID cannot be empty if TAGSTAT='A' (tag applied).",
+    ],
+]
+
+
+@pytest.mark.parametrize("fld_values,msg", invalid_combinations)
+def test_invalid_combinations(data, fld_values, msg):
+    """
+
+    Arguments:
+    - `data`:
+    """
+    data.update(fld_values)
+
     with pytest.raises(ValidationError) as excinfo:
         FN125Tags(**data)
 

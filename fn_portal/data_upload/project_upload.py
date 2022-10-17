@@ -11,6 +11,12 @@ DESCRIPTION:
 
 # import argparse
 
+from fn_portal.data_upload.schemas import (
+    FN121Limno,
+    FN121Trapnet,
+    FN121Trawl,
+    FN121Weather,
+)
 import os
 
 import logging
@@ -18,7 +24,7 @@ import logging
 from django.db import transaction, DatabaseError
 from django.db.models import OuterRef, Subquery, Count
 
-from common.models import Species, Lake, Grid5
+from common.models import Species, Lake, Grid5, Taxon, BottomType, CoverType
 
 import fn_portal.models as Fnp
 
@@ -36,6 +42,9 @@ from .upload_utils import (
     create_update_delete,
     get_create_update_delete,
     batch_update_model,
+    parse_wind,
+    parse_compound_field,
+    int_or_none,
 )
 
 
@@ -45,6 +54,8 @@ logger = logging.getLogger(__name__)
 def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
     spc_cache = get_id_cache(Species, ["spc"])
+    taxon_cache = get_id_cache(Taxon, ["itiscode"])
+
     lake_cache = get_id_cache(Lake, ["abbrev", "lake_name"])
     protocol_cache = get_id_cache(Fnp.FNProtocol, ["abbrev"])
 
@@ -115,6 +126,17 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn026_cache = {x.slug: (i + 1) for i, x in enumerate(fn026["data"])}
         fn026_inverse = {v: k for k, v in fn026_cache.items()}
 
+        logger.debug("Fetching FN026Subspace records")
+        stmt = fetch.get_fn026_subspace_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn026subspace = prep.fn026subspace(rs, fn026_cache)
+        if fn026subspace.get("errors"):
+            return {"status": "error", "errors": fn026subspace.get("errors")}
+        fn026_subspace_cache = {
+            x.slug: (i + 1) for i, x in enumerate(fn026subspace["data"])
+        }
+        fn026subspace_inverse = {v: k for k, v in fn026_subspace_cache.items()}
+
         logger.debug("Fetching FN028 records")
         stmt = fetch.get_fn028_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -139,7 +161,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             rs,
             fn011_cache,
             fn022_cache,
-            fn026_cache,
+            fn026_subspace_cache,
             fn028_cache,
             grid5_cache,
             lake_abbrev=LAKES[0],
@@ -152,11 +174,52 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         logger.debug("Fetching FN121LIMNO records")
         stmt = fetch.get_fn121limno_stmt()
         rs = fetch.execute_select(src_con, stmt)
-        fn121limno = prep.fn121limno(rs, fn121_cache)
+        fn121limno = prep.fn121_extension(rs, FN121Limno, "limno", fn121_cache)
+        # fn121limno = prep.fn121limno(rs, fn121_cache)
         if fn121limno.get("errors"):
             return {"status": "error", "errors": fn121limno.get("errors")}
         fn121limno_cache = {x.slug: (i + 1) for i, x in enumerate(fn121limno["data"])}
-        fn121limno_inverse = {v: k for k, v in fn121limno_cache.items()}
+        # fn121limno_inverse = {v: k for k, v in fn121limno_cache.items()}
+
+        logger.debug("Fetching FN121TRAWL records")
+        stmt = fetch.get_fn121trawl_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn121trawl = prep.fn121_extension(rs, FN121Trawl, "trawl", fn121_cache)
+        # fn121trawl = prep.fn121trawl(rs, fn121_cache)
+        if fn121trawl.get("errors"):
+            return {"status": "error", "errors": fn121trawl.get("errors")}
+        fn121trawl_cache = {x.slug: (i + 1) for i, x in enumerate(fn121trawl["data"])}
+        # fn121trawl_inverse = {v: k for k, v in fn121trawl_cache.items()}
+
+        logger.debug("Fetching FN121TRAPNET records")
+
+        bottom_type_cache = get_id_cache(BottomType, ["abbrev"])
+        cover_type_cache = get_id_cache(CoverType, ["abbrev"])
+
+        stmt = fetch.get_fn121trapnet_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn121trapnet = prep.fn121trapnet(
+            rs, fn121_cache, bottom_type_cache, cover_type_cache
+        )
+        # fn121trapnet = prep.fn121trapnet(rs, fn121_cache)
+        if fn121trapnet.get("errors"):
+            return {"status": "error", "errors": fn121trapnet.get("errors")}
+        fn121trapnet_cache = {
+            x.slug: (i + 1) for i, x in enumerate(fn121trapnet["data"])
+        }
+        # fn121trapnet_inverse = {v: k for k, v in fn121trapnet_cache.items()}
+
+        logger.debug("Fetching FN121WEATHER records")
+        stmt = fetch.get_fn121weather_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn121weather = prep.fn121_extension(rs, FN121Weather, "weather", fn121_cache)
+        # fn121weather = prep.fn121weather(rs, fn121_cache)
+        if fn121weather.get("errors"):
+            return {"status": "error", "errors": fn121weather.get("errors")}
+        fn121weather_cache = {
+            x.slug: (i + 1) for i, x in enumerate(fn121weather["data"])
+        }
+        # fn121limno_inverse = {v: k for k, v in fn121limno_cache.items()}
 
         logger.debug("Fetching FN122 records")
         stmt = fetch.get_fn122_stmt()
@@ -167,6 +230,18 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn122_cache = {x.slug: (i + 1) for i, x in enumerate(fn122["data"])}
         fn122_inverse = {v: k for k, v in fn122_cache.items()}
 
+        # TO DO: trasect data here
+        logger.debug("Fetching FN122TRANSECT records")
+        stmt = fetch.get_fn122transect_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        fn122transect = prep.fn122transect(rs, fn121_cache)
+        if fn122transect.get("errors"):
+            return {"status": "error", "errors": fn122transect.get("errors")}
+        fn122transect_cache = {
+            x.slug: (i + 1) for i, x in enumerate(fn122transect["data"])
+        }
+        fn122transect_inverse = {v: k for k, v in fn122transect_cache.items()}
+
         logger.debug("Fetching FN123 records")
         stmt = fetch.get_fn123_stmt()
         rs = fetch.execute_select(src_con, stmt)
@@ -176,6 +251,18 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             return {"status": "error", "errors": fn123.get("errors")}
         fn123_cache = {x.slug: (i + 1) for i, x in enumerate(fn123["data"])}
         fn123_inverse = {v: k for k, v in fn123_cache.items()}
+
+        logger.debug("Fetching FN123nonfish records")
+        stmt = fetch.get_fn123nonfish_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        # TODO: - replace spc_cache with FN012 cache
+        fn123nonfish = prep.fn123nonfish(rs, fn122_cache, taxon_cache)
+        if fn123nonfish.get("errors"):
+            return {"status": "error", "errors": fn123nonfish.get("errors")}
+        fn123nonfish_cache = {
+            x.slug: (i + 1) for i, x in enumerate(fn123nonfish["data"])
+        }
+        fn123nonfish_inverse = {v: k for k, v in fn123nonfish_cache.items()}
 
         logger.debug("Fetching FN124 records")
         stmt = fetch.get_fn124_stmt()
@@ -273,9 +360,9 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
 
                 # split compound fields
-                agedec = item.pop("agedec")
-                item["agedec1"] = agedec[0]
-                item["agedec2"] = None if len(agedec) == 1 else agedec[1]
+                # agedec = item.pop("agedec")
+                # item["agedec1"] = agedec[0]
+                # item["agedec2"] = None if len(agedec) == 1 else agedec[1]
 
                 spcmrk = item.pop("spcmrk")
                 item["spcmrk1"] = spcmrk[0]
@@ -320,6 +407,23 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             fn026_map = get_id_cache(Fnp.FN026, filters=filters)
 
             # =========================
+            #        FN026subspace
+            logger.debug("Creating FN026subspace records...")
+            subspace_filters = {"space__project__prj_cd__in": PRJ_CDs}
+            data = [x.dict() for x in fn026subspace["data"]]
+            create_update_delete(
+                data,
+                Fnp.FN026Subspace,
+                subspace_filters,
+                "space_id",
+                fn026_map,
+                fn026_inverse,
+            )
+            fn026subspace_map = get_id_cache(
+                Fnp.FN026Subspace, filters=subspace_filters
+            )
+
+            # =========================
             #        FN028
 
             # data = prep.fn028(fn028, fn011_cache, gear_cache)
@@ -361,8 +465,10 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
                 ssn_id = item["ssn_id"]
                 item["ssn_id"] = fn022_map[fn022_inverse[ssn_id]]
 
-                space_id = item["space_id"]
-                item["space_id"] = fn026_map[fn026_inverse[space_id]]
+                subspace_id = item["subspace_id"]
+                item["subspace_id"] = fn026subspace_map[
+                    fn026subspace_inverse[subspace_id]
+                ]
 
                 mode_id = item["mode_id"]
                 item["mode_id"] = fn028_map[fn028_inverse[mode_id]]
@@ -393,6 +499,77 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             # no map needed as there are no children for FN121Limno objects.
 
             # =========================
+            #        FN121Trapnet
+
+            logger.debug("Inserting and Updating FN121Trapnet records")
+
+            data = [x.dict() for x in fn121trapnet["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data, Fnp.FN121Trapnet, filters, "sample_id", fn121_map, fn121_inverse
+            )
+
+            # =========================
+            #        FN121Trawl
+
+            logger.debug("Inserting and Updating FN121Trawl records")
+
+            data = [x.dict() for x in fn121trawl["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data, Fnp.FN121Trawl, filters, "sample_id", fn121_map, fn121_inverse
+            )
+
+            # =========================
+            #        FN121Weather
+
+            logger.debug("Inserting and Updating FN121Weather records")
+
+            data = [x.dict() for x in fn121weather["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            # create_update_delete(
+            #    data, Fnp.FN121Weather, filters, "sample_id", fn121_map, fn121_inverse
+            # )
+
+            create_slugs, update_slugs, delete_slugs = get_create_update_delete(
+                Fnp.FN121Weather, filters, data
+            )
+
+            Fnp.FN121Weather.objects.filter(slug__in=delete_slugs).delete()
+
+            to_be_created = []
+            updates = {}
+
+            for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
+
+                wind = item.pop("wind0")
+                wind_direction, wind_speed = parse_wind(wind)
+                item["wind_direction0"] = wind_direction
+                item["wind_speed0"] = wind_speed
+
+                wind = item.pop("wind1")
+                wind_direction, wind_speed = parse_wind(wind)
+                item["wind_direction1"] = wind_direction
+                item["wind_speed1"] = wind_speed
+
+                xweather = item.pop("xweather")
+                precip_duration, wave_duration = parse_compound_field(xweather)
+
+                item["precip_duration"] = int_or_none(precip_duration)
+                item["wave_duration"] = int_or_none(wave_duration)
+
+                sample_id = item["sample_id"]
+                item["sample_id"] = fn121_map[fn121_inverse[sample_id]]
+
+                if item["slug"] in create_slugs:
+                    to_be_created.append(Fnp.FN121Weather(**item))
+                else:
+                    updates[item["slug"]] = item
+
+            Fnp.FN121Weather.objects.bulk_create(to_be_created)
+            batch_update_model(Fnp.FN121Weather, update_slugs, updates)
+
+            # =========================
             #        FN122
 
             logger.debug("Inserting and Updating FN122 records")
@@ -406,6 +583,18 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             fn122_map = get_id_cache(Fnp.FN122, filters=filters)
 
             # =========================
+            #        FN122Transect
+
+            logger.debug("Inserting and Updating FN122Transect records")
+
+            data = [x.dict() for x in fn122transect["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data, Fnp.FN122Transect, filters, "sample_id", fn121_map, fn121_inverse
+            )
+            # no inverse map for fn122Transect because it has no children
+
+            # =========================
             #        FN123
 
             logger.debug("Inserting and Updating FN123 records")
@@ -416,6 +605,16 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             )
 
             fn123_map = get_id_cache(Fnp.FN123, filters=filters)
+
+            # =========================
+            #        FN123 Non Fish
+
+            logger.debug("Inserting and Updating FN123 Non-Fish records")
+            filters = {"effort__sample__project__prj_cd__in": PRJ_CDs}
+            data = [x.dict() for x in fn123nonfish["data"]]
+            create_update_delete(
+                data, Fnp.FN123NonFish, filters, "effort_id", fn122_map, fn122_inverse
+            )
 
             # =========================
             #        FN124

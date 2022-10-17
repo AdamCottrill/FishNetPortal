@@ -8,6 +8,7 @@
 .flake8
 pyrightconfig.json
 sandbox.js
+sandbox.py
 utils/sandbox.py
 utils/mdbs/*
 node/*

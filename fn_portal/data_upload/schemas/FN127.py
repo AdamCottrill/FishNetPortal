@@ -61,7 +61,7 @@ class FN127(FNBase):
     @classmethod
     def check_agemt_prep1(cls, value, values):
         if value is not None:
-            allowed = "0123456789KT"
+            allowed = "0123456789CKT"
             prep = value[1]
             if prep not in allowed:
                 msg = f"Unknown aging prep1 method ({','.join(prep)}) found in agemt ({value})"

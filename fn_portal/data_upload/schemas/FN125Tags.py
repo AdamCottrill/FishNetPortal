@@ -1,5 +1,6 @@
 from enum import Enum, IntEnum
 from typing import Optional
+from django.db.models.query import prefetch_related_objects
 
 from pydantic import constr, validator, PositiveInt
 from .FNBase import FNBase
@@ -9,6 +10,7 @@ from .utils import string_to_int
 class TagStatEnum(str, Enum):
     on_capture = "C"
     tag_applied = "A"
+    no_tag = "N"
 
 
 class XTaginckdEnum(IntEnum):
@@ -40,7 +42,7 @@ class FN125Tags(FNBase):
     slug: str
     fish_id: int
     fish_tag_id: int
-    tagid: str
+    tagid: Optional[str]
     tagdoc: constr(regex="^([A-Z0-9]{5})$", min_length=5, max_length=5)
     tagstat: TagStatEnum = "A"
     cwtseq: Optional[PositiveInt] = None
@@ -48,3 +50,36 @@ class FN125Tags(FNBase):
     comment_tag: Optional[str]
 
     _string_to_int = validator("cwtseq", allow_reuse=True, pre=True)(string_to_int)
+
+    @validator("tagstat")
+    @classmethod
+    def check_tagstat_n(cls, value, values):
+        """Tag stat N (checked and not found) is only appropriate for pit or cwts."""
+        tagdoc = values.get("tagdoc")
+        if tagdoc and value == "N":
+            if tagdoc[0] not in ["P", "6"]:
+                msg = "TAGSTAT='N' is only allowed if TAGTYPE is 6 (CWT) or P (PIT)."
+                raise ValueError(msg)
+        return value
+
+    @validator("tagstat")
+    @classmethod
+    def check_null_tagid_if_tagstat_n(cls, value, values):
+        """If tag stat is 'N' - tagid must be null. If you have a
+        tagid, the tag was either applied or present on capture."""
+        tagid = values["tagid"]
+        if tagid and value == "N":
+            msg = f"TAGSTAT cannot be 'N' if TAGID is populated (TAGID='{tagid}')."
+            raise ValueError(msg)
+        return value
+
+    @validator("tagstat")
+    @classmethod
+    def check_null_tagid_if_tagstat_a(cls, value, values):
+        """If tag stat is 'N' - tagid must be null. If you have a
+        tagid, the tag was either applied or present on capture."""
+        tagid = values["tagid"]
+        if tagid is None and value == "A":
+            msg = f"TAGID cannot be empty if TAGSTAT='A' (tag applied)."
+            raise ValueError(msg)
+        return value
