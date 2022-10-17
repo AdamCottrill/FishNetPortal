@@ -27,7 +27,7 @@ class FN122Transect(FNPortalBaseModel):
         "Latitude (dd)",
         validators=[
             MinValueValidator(41.7),
-            MaxValueValidator(49.1),
+            MaxValueValidator(49.2),
         ],
     )
     dd_lon = models.FloatField(
@@ -39,7 +39,13 @@ class FN122Transect(FNPortalBaseModel):
     )
 
     sidep = models.FloatField(
-        "Site Depth (m)", blank=True, null=True, validators=[MinValueValidator(0)]
+        "Site Depth (m)",
+        blank=True,
+        null=True,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(400),
+        ],
     )
     comment = models.TextField(blank=True, null=True)
 

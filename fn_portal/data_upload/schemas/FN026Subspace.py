@@ -20,7 +20,7 @@ class FN026Subspace(FNBase):
 
     subspace_wt: Optional[confloat(gt=0, le=1)] = None
 
-    dd_lat: Optional[confloat(ge=41.6, le=49.1)] = None
+    dd_lat: Optional[confloat(ge=41.6, le=49.2)] = None
     dd_lon: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
     class Config:

@@ -137,7 +137,7 @@ error_list = [
     (
         "dd_lat",
         50.1,
-        "ensure this value is less than or equal to 49.1",
+        "ensure this value is less than or equal to 49.2",
     ),
     ("dd_lon", -90.0, "ensure this value is greater than or equal to -89.6"),
     (
@@ -146,6 +146,7 @@ error_list = [
         "ensure this value is less than or equal to -76.4",
     ),
     ("sidep", -1.0, "ensure this value is greater than or equal to 0"),
+    ("sidep", 500.0, "ensure this value is less than or equal to 400"),
     # ("timestamp", "2020-10-16 12:34:16", "ensure this value is greater than or equal to 0"),
 ]
 

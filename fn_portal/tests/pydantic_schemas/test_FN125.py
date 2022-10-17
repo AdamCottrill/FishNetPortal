@@ -55,7 +55,7 @@ def data():
         "fate": "K",
         "age_flag": True,
         "lam_flag": True,
-        "stom_flag": False,
+        "stom_flag": "0",
         "tag_flag": True,
         "comment5": "fn125 comment",
     }
@@ -267,6 +267,11 @@ error_list = [
         "tissue",
         "41",
         "Found non-ascii sorted value '41' (it should be: 14)",
+    ),
+    (
+        "stom_flag",
+        "X",
+        "value is not a valid enumeration member;",
     ),
 ]
 

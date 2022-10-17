@@ -231,7 +231,7 @@ error_list = [
     (
         "dd_lat",
         49.5,
-        "ensure this value is less than or equal to 49.1",
+        "ensure this value is less than or equal to 49.2",
     ),
     (
         "dd_lon",

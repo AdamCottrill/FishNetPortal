@@ -139,7 +139,7 @@ error_list = [
         10.1,
         "ensure this value is less than or equal to 10",
     ),
-    ("warp", -40.6, "ensure this value is greater than or equal to 0"),
+    ("warp", -40.6, "ensure this value is greater than 0"),
     (
         "vessel_direction",
         11,

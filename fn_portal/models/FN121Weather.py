@@ -100,14 +100,14 @@ class FN121Weather(FNPortalBaseModel):
         "Wave height measured in meters (m) at the time when sampling starts.",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(3)],
+        validators=[MinValueValidator(0), MaxValueValidator(3.5)],
     )
 
     waveht1 = models.FloatField(
         "Wave height measured in meters (m) at the time when sampling ends.",
         blank=True,
         null=True,
-        validators=[MinValueValidator(0), MaxValueValidator(3)],
+        validators=[MinValueValidator(0), MaxValueValidator(3.5)],
     )
 
     # FN121_Weather.XWEATHER

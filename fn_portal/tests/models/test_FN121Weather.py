@@ -247,9 +247,9 @@ invalid_args = [
     ("cloud_pc1", -0.1, "Ensure this value is greater than or equal to 0."),
     ("cloud_pc1", 100.1, "Ensure this value is less than or equal to 100."),
     ("waveht0", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("waveht0", 3.1, "Ensure this value is less than or equal to 3."),
+    ("waveht0", 3.6, "Ensure this value is less than or equal to 3.5."),
     ("waveht1", -0.1, "Ensure this value is greater than or equal to 0."),
-    ("waveht1", 3.1, "Ensure this value is less than or equal to 3."),
+    ("waveht1", 3.6, "Ensure this value is less than or equal to 3.5."),
     # choice fields
     ("precip0", "ZZ", "Value 'ZZ' is not a valid choice."),
     ("precip1", "ZZ", "Value 'ZZ' is not a valid choice."),

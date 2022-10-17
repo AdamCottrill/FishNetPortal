@@ -90,7 +90,7 @@ def test_wind_speed_direction_clean_method(fld1, value1, fld2, value2, msg):
 invalid_args = [
     ("track_id", -1, "Ensure this value is greater than or equal to 0."),
     ("dd_lat", 40.1, "Ensure this value is greater than or equal to 41.7."),
-    ("dd_lat", 49.5, "Ensure this value is less than or equal to 49.1."),
+    ("dd_lat", 49.5, "Ensure this value is less than or equal to 49.2."),
     ("dd_lon", -90.0, "Ensure this value is greater than or equal to -89.6."),
     ("dd_lon", -75.0, "Ensure this value is less than or equal to -76.4."),
     ("sidep", -1, "Ensure this value is greater than or equal to 0."),

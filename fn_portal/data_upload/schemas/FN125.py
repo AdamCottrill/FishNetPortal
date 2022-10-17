@@ -31,6 +31,12 @@ class MatEnum(IntEnum):
     unknown = 9
 
 
+class StomFlagEnum(str, Enum):
+    not_collected = "0"
+    fn126_records = "1"
+    external_database = "2"
+
+
 # see the data dictionary for valid goncodes
 gon_regex = r"(^[1-4|9]$)|(^([1-5]0)|(2[1-3])|(99))[2-8A-E]?$"
 
@@ -61,7 +67,7 @@ class FN125(FNBase):
     agest: Optional[str]
     fate: FateEnum = FateEnum.killed
 
-    stom_flag: Optional[bool]
+    stom_flag: Optional[StomFlagEnum]
 
     comment5: Optional[str]
 

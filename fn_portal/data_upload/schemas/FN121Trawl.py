@@ -35,7 +35,7 @@ class FN121Trawl(FNBase):
     vessel_id: Optional[int] = None
     vessel_speed: Optional[confloat(ge=0, le=10)] = None
     vessel_direction: Optional[VesselDirectionEnum] = None
-    warp: Optional[confloat(ge=0)] = None
+    warp: Optional[confloat(gt=0)] = None
 
     class Config:
         validate_assignment = True

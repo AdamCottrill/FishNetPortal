@@ -55,13 +55,12 @@ class FN121(FNBase):
     sitp: Optional[str]
     site: Optional[str]
 
-    dd_lat0: Optional[confloat(ge=41.6, le=49.1)] = None
+    dd_lat0: Optional[confloat(ge=41.6, le=49.2)] = None
     dd_lon0: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
-    dd_lat1: Optional[confloat(ge=41.6, le=49.1)] = None
+    dd_lat1: Optional[confloat(ge=41.6, le=49.2)] = None
     dd_lon1: Optional[confloat(ge=-89.6, le=-74.32)] = None
 
-    sitem: Optional[confloat(ge=-30, le=30)] = None
     sitem0: Optional[confloat(ge=-30, le=30)] = None
     sitem1: Optional[confloat(ge=-30, le=30)] = None
 
@@ -90,7 +89,6 @@ class FN121(FNBase):
         "grdepmax",
         "secchi0",
         "secchi1",
-        "sitem",
         "sitem0",
         "sitem1",
         allow_reuse=True,

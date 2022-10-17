@@ -31,9 +31,20 @@ class FN125(FNPortalBaseModel):
     agest = models.CharField(max_length=20, blank=True, null=True)
     fate = models.CharField(max_length=2, blank=True, null=True)
 
-    # flags for child tables:
+    STOM_FLAG_CHOICES = (
+        ("0", "Not Collected"),
+        ("1", "FN126 Records"),
+        ("2", "External Database"),
+    )
+    stom_flag = models.CharField(
+        help_text="Was a stomach sample collected?",
+        max_length=1,
+        default=0,
+        choices=STOM_FLAG_CHOICES,
+    )
+
+    # These are disappearing:
     age_flag = models.BooleanField(default=False)
-    stom_flag = models.BooleanField(default=False)
     lam_flag = models.BooleanField(default=False)
     tag_flag = models.BooleanField(default=False)
 

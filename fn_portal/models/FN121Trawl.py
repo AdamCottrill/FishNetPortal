@@ -26,7 +26,11 @@ class FN121Trawl(FNPortalBaseModel):
     )
 
     vessel = models.ForeignKey(
-        Vessel, related_name="trawl_samples", on_delete=models.CASCADE
+        Vessel,
+        related_name="trawl_samples",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
     vessel_speed = models.FloatField(

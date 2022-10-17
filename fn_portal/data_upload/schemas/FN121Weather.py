@@ -40,16 +40,16 @@ class FN121Weather(FNBase):
     airtem1: Optional[confloat(ge=-30, le=45)] = None
     cloud_pc0: Optional[confloat(ge=0, le=100)] = None
     cloud_pc1: Optional[confloat(ge=0, le=100)] = None
-    waveht0: Optional[confloat(ge=0, le=3)] = None
-    waveht1: Optional[confloat(ge=0, le=3)] = None
+    waveht0: Optional[confloat(ge=0, le=3.5)] = None
+    waveht1: Optional[confloat(ge=0, le=3.5)] = None
 
     # precip enum
     precip0: Optional[PrecipEnum] = None
     precip1: Optional[PrecipEnum] = None
 
     # XWIND_REGEX
-    xwind0: Optional[constr(regex=xwind_regex)]
-    xwind1: Optional[constr(regex=xwind_regex)]
+    wind0: Optional[constr(regex=xwind_regex)]
+    wind1: Optional[constr(regex=xwind_regex)]
 
     # XWEATHER_REGEX
     xweather: Optional[constr(regex=xweather_regex)]

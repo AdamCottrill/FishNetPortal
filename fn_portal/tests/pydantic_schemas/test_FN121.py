@@ -274,7 +274,7 @@ error_list = [
     (
         "dd_lat0",
         49.5,
-        "ensure this value is less than or equal to 49.1",
+        "ensure this value is less than or equal to 49.2",
     ),
     (
         "dd_lat1",
@@ -284,7 +284,7 @@ error_list = [
     (
         "dd_lat1",
         49.5,
-        "ensure this value is less than or equal to 49.1",
+        "ensure this value is less than or equal to 49.2",
     ),
     (
         "dd_lon0",

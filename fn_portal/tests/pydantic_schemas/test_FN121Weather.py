@@ -46,8 +46,8 @@ def data():
         "waveht1": 0.1,
         "precip0": "10",
         "precip1": "40",
-        "xwind0": "270-15",
-        "xwind1": "090-10",
+        "wind0": "270-15",
+        "wind1": "090-10",
         "xweather": "14",
     }
     return data
@@ -100,8 +100,8 @@ optional_fields = [
     "waveht1",
     "precip0",
     "precip1",
-    "xwind0",
-    "xwind1",
+    "wind0",
+    "wind1",
     "xweather",
 ]
 
@@ -134,8 +134,8 @@ alternative_values_list = [
     ("waveht0", "2.1", 2.1),
     ("waveht1", "", None),
     ("waveht1", "2.1", 2.1),
-    ("xwind0", "000-00", "000-00"),
-    ("xwind1", "000-00", "000-00"),
+    ("wind0", "000-00", "000-00"),
+    ("wind1", "000-00", "000-00"),
 ]
 
 
@@ -184,14 +184,14 @@ error_list = [
     ("waveht0", -1.0, "ensure this value is greater than or equal to 0"),
     (
         "waveht0",
-        3.1,
-        "ensure this value is less than or equal to 3",
+        3.6,
+        "ensure this value is less than or equal to 3.5",
     ),
     ("waveht1", -1.0, "ensure this value is greater than or equal to 0"),
     (
         "waveht1",
-        3.1,
-        "ensure this value is less than or equal to 3",
+        3.6,
+        "ensure this value is less than or equal to 3.5",
     ),
     (
         "precip0",
@@ -204,12 +204,12 @@ error_list = [
         "value is not a valid enumeration member;",
     ),
     (
-        "xwind0",
+        "wind0",
         "0",
         "string does not match regex",
     ),
     (
-        "xwind1",
+        "wind1",
         "0",
         "string does not match regex",
     ),

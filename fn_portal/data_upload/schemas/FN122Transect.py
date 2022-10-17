@@ -19,9 +19,9 @@ class FN122Transect(FNBase):
     sample_id: int
     track_id: int
 
-    dd_lat: confloat(ge=41.7, le=49.1)
+    dd_lat: confloat(ge=41.7, le=49.2)
     dd_lon: confloat(ge=-89.6, le=-76.4)
-    sidep: Optional[confloat(ge=0)] = None
+    sidep: Optional[confloat(ge=0, le=400)] = None
     timestamp: Optional[datetime] = None
     comment: Optional[str] = None
 
