@@ -419,6 +419,7 @@ class BioSampleList(generics.ListAPIView):
             "flen",
             "tlen",
             "rwt",
+            "eviswt",
             "girth",
             "clipc",
             "sex",

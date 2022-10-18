@@ -42,6 +42,15 @@ class FN125SubFilter(GeoFilterSet):
     rwt__gt = django_filters.NumberFilter(field_name="rwt", lookup_expr="gt")
     rwt__lt = django_filters.NumberFilter(field_name="rwt", lookup_expr="lt")
 
+    eviswt = django_filters.NumberFilter(field_name="eviswt")
+    eviswt__null = django_filters.BooleanFilter(
+        field_name="eviswt", lookup_expr="isnull"
+    )
+    eviswt__gte = django_filters.NumberFilter(field_name="eviswt", lookup_expr="gte")
+    eviswt__lte = django_filters.NumberFilter(field_name="eviswt", lookup_expr="lte")
+    eviswt__gt = django_filters.NumberFilter(field_name="eviswt", lookup_expr="gt")
+    eviswt__lt = django_filters.NumberFilter(field_name="eviswt", lookup_expr="lt")
+
     mat = ValueInFilter(field_name="mat")
     mat__not = ValueInFilter(field_name="mat", exclude=True)
     mat__null = django_filters.BooleanFilter(field_name="mat", lookup_expr="isnull")
@@ -98,6 +107,7 @@ class FN125SubFilter(GeoFilterSet):
             "tlen",
             "flen",
             "rwt",
+            "eviswt",
             "clipc",
             "clipa",
             "nodc",

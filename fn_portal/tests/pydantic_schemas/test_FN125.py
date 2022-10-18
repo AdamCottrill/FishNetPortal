@@ -40,6 +40,7 @@ def data():
         "catch_id": 1,
         "fish": 2,
         "rwt": 1100,
+        "eviswt": 900,
         "flen": 440,
         "tlen": 450,
         "girth": None,
@@ -99,6 +100,7 @@ def test_required_fields(data, fld):
 
 optional_fields = [
     "rwt",
+    "eviswt",
     "flen",
     "tlen",
     "girth",
@@ -247,6 +249,7 @@ error_list = [
         "4000",
         "FLEN/TLEN (450) is too short for the round weight (RWT=4000.0)",
     ),
+    ("eviswt", "1400", "EVISWT (1400.0) must be less than RWT (1100.0)"),
     # ascii-sorting:
     (
         "agest",
@@ -304,6 +307,7 @@ def test_rwt_between_0_and_1(data):
     """
     rwt = 0.25
     data["rwt"] = rwt
+    data["eviswt"] = None
     data["flen"] = None
     data["tlen"] = None
     item = FN125(**data)

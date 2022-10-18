@@ -385,6 +385,7 @@ def get_fn125_stmt():
                 TLEN,
                 GIRTH,
                 RWT,
+                EVISWT,
                 SEX,
                 MAT,
                 GON,

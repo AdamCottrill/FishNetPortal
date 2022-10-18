@@ -50,6 +50,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "rest_framework",
     "drf_yasg",
+    "treebeard",
     # "widget_tweaks",
     "corsheaders",
     "common",

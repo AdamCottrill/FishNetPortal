@@ -362,6 +362,7 @@ class FN125ReadOnlySerializer(serializers.Serializer):
     flen = serializers.FloatField(read_only=True)
     tlen = serializers.FloatField(read_only=True)
     rwt = serializers.FloatField(read_only=True)
+    eviswt = serializers.FloatField(read_only=True)
     girth = serializers.FloatField(read_only=True)
     clipc = serializers.CharField(read_only=True)
     clipa = serializers.CharField(read_only=True)
@@ -413,6 +414,7 @@ class FN125Serializer(serializers.ModelSerializer):
             "flen",
             "tlen",
             "rwt",
+            "eviswt",
             "girth",
             "clipc",
             "sex",
