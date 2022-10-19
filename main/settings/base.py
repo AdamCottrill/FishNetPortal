@@ -150,3 +150,5 @@ REST_FRAMEWORK = {
 
 # REACT_CSS_PATH = manifest["main.css"].replace("static/", "")
 # REACT_JS_PATH = manifest["main.js"].replace("static/", "")
+
+PRJ_CD_URL_REGEX = r"(?P<prj_cd>[A-Za-z0-9]{3}_[A-Za-z]{2}\d{2}_([A-Za-z]|\d){3})"

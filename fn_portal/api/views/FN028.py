@@ -4,9 +4,8 @@ from fn_portal.models import FN028
 
 from rest_framework import generics
 
-from ...filters import (
-    FN028Filter,
-)
+from ...filters import FN028Filter
+
 from ..permissions import IsPrjLeadCrewOrAdminOrReadOnly, ReadOnly
 from ..serializers import FN028ListSerializer, FN028Serializer
 

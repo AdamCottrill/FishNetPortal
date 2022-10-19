@@ -13,7 +13,7 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("common/", include("common.urls")),
     path("fn_portal/", include("fn_portal.urls")),
-    path("fn_portal/api/v1/", include("fn_portal.api.urls", namespace="fn_portal_api")),
+    path("fn_portal/api/v1/", include(("fn_portal.api.urls", "fn_portal_api"))),
 ]
 
 if settings.DEBUG:
