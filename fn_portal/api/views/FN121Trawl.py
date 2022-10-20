@@ -20,7 +20,7 @@ class FN121TrawlList(generics.ListAPIView):
     filterset_class = FN121TrawlFilter
 
     queryset = (
-        FN121Trawl.objects.select_related("sample", "sample__project")
+        FN121Trawl.objects.select_related("sample", "sample__project", "vessel")
         .order_by("slug")
         .annotate(
             prj_cd=F("sample__project__prj_cd"),

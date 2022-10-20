@@ -10,6 +10,7 @@ from .FN121_filters import FN121Filter
 from .FN121Limno_filters import FN121LimnoFilter
 from .FN121Trapnet_filters import FN121TrapnetFilter
 from .FN121Trawl_filters import FN121TrawlFilter
+from .FN121Weather_filters import FN121WeatherFilter
 from .FN122_filters import FN122Filter
 from .FN123_filters import FN123Filter
 from .FN124_filters import FN124Filter

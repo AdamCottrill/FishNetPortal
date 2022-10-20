@@ -37,6 +37,7 @@ from .FN1_serializers import (
     FN121LimnoSerializer,
     FN121TrapnetReadOnlySerializer,
     FN121TrawlReadOnlySerializer,
+    FN121WeatherReadOnlySerializer,
     FN122Serializer,
     FN122ReadOnlySerializer,
     FN123Serializer,

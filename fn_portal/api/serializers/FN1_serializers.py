@@ -178,20 +178,17 @@ class FN121LimnoSerializer(serializers.ModelSerializer):
             "o2surf0",
             "o2surf1",
             "slug",
-
         )
-
 
 
 class FN121TrapnetReadOnlySerializer(serializers.Serializer):
     """A read-only serializer for FN121Trapnet data. Used by
     get_fn121_trapnet endpoint."""
 
-
     prj_cd = serializers.CharField(read_only=True)
     sam = serializers.CharField(read_only=True)
-    cover_type  = serializers.CharField(read_only=True)
-    bottom_type  = serializers.CharField(read_only=True)
+    cover_type = serializers.CharField(read_only=True)
+    bottom_type = serializers.CharField(read_only=True)
     vegetation = serializers.IntegerField(read_only=True)
     lead_angle = serializers.FloatField(read_only=True)
     leaduse = serializers.FloatField(read_only=True)
@@ -199,21 +196,38 @@ class FN121TrapnetReadOnlySerializer(serializers.Serializer):
     slug = serializers.CharField(read_only=True)
 
 
-
 class FN121TrawlReadOnlySerializer(serializers.Serializer):
     """A read-only serializer for FN121Trawl data. Used by
     get_fn121_trawl endpoint."""
 
-
     prj_cd = serializers.CharField(read_only=True)
     sam = serializers.CharField(read_only=True)
-    vessel = serializers.CharField(read_only=True, source='vessel_abbrev')
+    vessel = serializers.CharField(read_only=True, source="vessel_abbrev")
     vessel_speed = serializers.FloatField(read_only=True)
     vessel_direction = serializers.IntegerField(read_only=True)
     warp = serializers.FloatField(read_only=True)
     slug = serializers.CharField(read_only=True)
 
 
+class FN121WeatherReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN121Trawl data. Used by
+    get_fn121_trawl endpoint."""
+
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+
+    airtem0 = serializers.FloatField(read_only=True)
+    airtem1 = serializers.FloatField(read_only=True)
+    wind0 = serializers.CharField(read_only=True)
+    wind1 = serializers.CharField(read_only=True)
+    precip0 = serializers.CharField(read_only=True)
+    precip1 = serializers.CharField(read_only=True)
+    cloud_pc0 = serializers.FloatField(read_only=True)
+    cloud_pc1 = serializers.FloatField(read_only=True)
+    waveht0 = serializers.FloatField(read_only=True)
+    waveht1 = serializers.FloatField(read_only=True)
+    xweather = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
 
 
 class FN122ReadOnlySerializer(serializers.Serializer):
