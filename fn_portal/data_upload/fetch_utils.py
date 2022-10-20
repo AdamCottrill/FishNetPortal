@@ -1,6 +1,6 @@
 """
 =============================================================
-~\fn_portal\data_upload\fetch_utils.py
+~/fn_portal/data_upload/fetch_utils.py
 Created: Aug-12-2021 09:43
 DESCRIPTION:
 

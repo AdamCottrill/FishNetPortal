@@ -181,6 +181,25 @@ class FN121LimnoSerializer(serializers.ModelSerializer):
         )
 
 
+
+class FN121TrapnetReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN121Trapnet data. Used by
+    get_fn121_trapnet endpoint."""
+
+    id = serializers.IntegerField(read_only=True)
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    cover_type  = serializers.CharField(read_only=True)
+    bottom_type  = serializers.CharField(read_only=True)
+    vegetation = serializers.IntegerField(read_only=True)
+    lead_angle = serializers.FloatField(read_only=True)
+    leaduse = serializers.FloatField(read_only=True)
+    distoff = serializers.FloatField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
+
+
 class FN122ReadOnlySerializer(serializers.Serializer):
     """A read-only serializer for FN122 objects. Used by get_fn122 endpoint."""
 

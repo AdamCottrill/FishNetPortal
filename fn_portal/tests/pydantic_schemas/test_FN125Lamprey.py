@@ -149,7 +149,7 @@ error_list = [
     (
         "xlam",
         "B535",
-        'string does not match regex "^0|\d{4}$"',
+        r'string does not match regex "^0|\d{4}$"',
     ),
 ]
 
