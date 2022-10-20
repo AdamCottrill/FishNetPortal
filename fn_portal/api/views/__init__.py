@@ -9,6 +9,7 @@ from .FN028 import FN028DetailView, FN028ListView
 from .FN121 import FN121DetailView, FN121ListView, NetSetList
 from .FN121Limno import FN121LimnoList
 from .FN121Trapnet import FN121TrapnetList
+from .FN121Trawl import FN121TrawlList
 from .FN122 import EffortList, FN122DetailView, FN122ListView
 from .FN123 import CatchCountList, FN123DetailView, FN123ListView
 from .FN124 import LengthTallyList

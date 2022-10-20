@@ -24,7 +24,7 @@ import logging
 from django.db import transaction, DatabaseError
 from django.db.models import OuterRef, Subquery, Count
 
-from common.models import Species, Lake, Grid5, Taxon, BottomType, CoverType
+from common.models import Species, Lake, Grid5, Taxon, BottomType, CoverType, Vessel
 
 import fn_portal.models as Fnp
 
@@ -182,9 +182,10 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         # fn121limno_inverse = {v: k for k, v in fn121limno_cache.items()}
 
         logger.debug("Fetching FN121TRAWL records")
+        vessel_cache = get_id_cache(Vessel, ["abbrev"])
         stmt = fetch.get_fn121trawl_stmt()
         rs = fetch.execute_select(src_con, stmt)
-        fn121trawl = prep.fn121_extension(rs, FN121Trawl, "trawl", fn121_cache)
+        fn121trawl = prep.fn121trawl(rs, FN121Trawl, "trawl", fn121_cache, vessel_cache)
         # fn121trawl = prep.fn121trawl(rs, fn121_cache)
         if fn121trawl.get("errors"):
             return {"status": "error", "errors": fn121trawl.get("errors")}

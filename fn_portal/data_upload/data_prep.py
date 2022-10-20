@@ -268,6 +268,33 @@ def fn121trapnet(data, fn121_cache, bottom_type_cache, cover_type_cache):
                 errors.append([item.get("slug"), err])
     return {"data": valid, "errors": errors}
 
+def fn121trawl(data, fn121_cache, vessel_cache):
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+        vessel = item.pop("vessel")
+
+
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-trapnet".lower()
+
+        if not is_empty(item):
+            item["sample_id"] = fn121_cache.get(fn121_key)
+            item["slug"] = slug
+            item["vessel_id"] = vessel_cache.get(vessel)
+
+            try:
+                tmp = FN121Trapnet(**item)
+                valid.append(tmp)
+            except ValidationError as err:
+                errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
 
 # def fn121weather(data, fn121_cache):
 

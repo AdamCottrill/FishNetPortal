@@ -15,13 +15,13 @@ class FN121TrapnetFilter(FN121AttributeFilter):
 
     """
 
-    bottom_type = ValueInFilter(field_name="bottom")
-    bottom_type__not = ValueInFilter(field_name="bottom", exclude=True)
-    bottom_type__null = django_filters.BooleanFilter(field_name="bottom", lookup_expr="isnull")
+    bottom_type = ValueInFilter(field_name="bottom__abbrev")
+    bottom_type__not = ValueInFilter(field_name="bottom__abbrev", exclude=True)
+    bottom_type__null = django_filters.BooleanFilter(field_name="bottom__abbrev", lookup_expr="isnull")
 
-    cover_type = ValueInFilter(field_name="cover")
-    cover_type__not = ValueInFilter(field_name="cover", exclude=True)
-    cover_type__null = django_filters.BooleanFilter(field_name="cover", lookup_expr="isnull")
+    cover_type = ValueInFilter(field_name="cover__abbrev")
+    cover_type__not = ValueInFilter(field_name="cover__abbrev", exclude=True)
+    cover_type__null = django_filters.BooleanFilter(field_name="cover__abbrev", lookup_expr="isnull")
 
 
     vegetation = django_filters.NumberFilter(field_name="vegetation", lookup_expr="exact")

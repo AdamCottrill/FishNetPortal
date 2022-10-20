@@ -178,6 +178,7 @@ class FN121LimnoSerializer(serializers.ModelSerializer):
             "o2surf0",
             "o2surf1",
             "slug",
+
         )
 
 
@@ -186,7 +187,7 @@ class FN121TrapnetReadOnlySerializer(serializers.Serializer):
     """A read-only serializer for FN121Trapnet data. Used by
     get_fn121_trapnet endpoint."""
 
-    id = serializers.IntegerField(read_only=True)
+
     prj_cd = serializers.CharField(read_only=True)
     sam = serializers.CharField(read_only=True)
     cover_type  = serializers.CharField(read_only=True)
@@ -195,6 +196,21 @@ class FN121TrapnetReadOnlySerializer(serializers.Serializer):
     lead_angle = serializers.FloatField(read_only=True)
     leaduse = serializers.FloatField(read_only=True)
     distoff = serializers.FloatField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
+
+class FN121TrawlReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN121Trawl data. Used by
+    get_fn121_trawl endpoint."""
+
+
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    vessel = serializers.CharField(read_only=True, source='vessel_abbrev')
+    vessel_speed = serializers.FloatField(read_only=True)
+    vessel_direction = serializers.IntegerField(read_only=True)
+    warp = serializers.FloatField(read_only=True)
     slug = serializers.CharField(read_only=True)
 
 

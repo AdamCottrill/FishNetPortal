@@ -1,4 +1,10 @@
-from .common_factories import LakeFactory, Grid5Factory, SpeciesFactory, TaxonFactory
+from .common_factories import (
+    LakeFactory,
+    Grid5Factory,
+    SpeciesFactory,
+    TaxonFactory,
+    VesselFactory,
+)
 
 from .user_factory import UserFactory
 from .FN0_factories import (

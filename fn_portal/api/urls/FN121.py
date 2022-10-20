@@ -7,7 +7,7 @@ from ..views import (  # readonly endpoints:; FN011ViewSet,; CRUD Endpoints:
     FN121ListView,
     FN121LimnoList,
     FN121TrapnetList,
-    #FN121TrawlList,
+    FN121TrawlList,
     NetSetList,
 )
 
@@ -20,5 +20,5 @@ urlpatterns = [
     path("fn121/<slug:slug>/", FN121DetailView.as_view(), name="FN121_detailview"),
     path("fn121limno/", FN121LimnoList.as_view(), name="fn121limno_list"),
     path("fn121trapnet/", FN121TrapnetList.as_view(), name="fn121trapnet_list"),
-    #path("fn121trawl/", FN121TrawlList.as_view(), name="fn121trawl_list"),
+    path("fn121trawl/", FN121TrawlList.as_view(), name="fn121trawl_list"),
 ]
