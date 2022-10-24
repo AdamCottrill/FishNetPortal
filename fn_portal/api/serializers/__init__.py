@@ -40,6 +40,7 @@ from .FN1_serializers import (
     FN121WeatherReadOnlySerializer,
     FN122Serializer,
     FN122ReadOnlySerializer,
+    FN122TransectReadOnlySerializer,
     FN123Serializer,
     FN123NonFishReadOnlySerializer,
     FN124Serializer,

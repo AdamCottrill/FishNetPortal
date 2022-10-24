@@ -1,4 +1,5 @@
 import factory
+from datetime import datetime
 
 from ...models import (
     FN121,
@@ -148,10 +149,11 @@ class FN122TransectFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = FN122Transect
-        django_get_or_create = ("sample",)
+        django_get_or_create = ("sample", "track_id")
 
     sample = factory.SubFactory(FN121Factory)
     track_id = factory.Sequence(lambda n: n)
+    timestamp = datetime(2012, 6, 8, 12, 15)
     dd_lat = 45.5
     dd_lon = -81.5
     sidep = 11.2

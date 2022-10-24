@@ -11,7 +11,7 @@ from .FN121Limno_filters import FN121LimnoFilter
 from .FN121Trapnet_filters import FN121TrapnetFilter
 from .FN121Trawl_filters import FN121TrawlFilter
 from .FN121Weather_filters import FN121WeatherFilter
-from .FN122_filters import FN122Filter
+from .FN122_filters import FN122Filter, FN122TransectFilter
 from .FN123_filters import FN123Filter, FN123NonFishFilter
 from .FN124_filters import FN124Filter
 from .FN125_filters import FN125Filter

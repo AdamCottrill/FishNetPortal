@@ -12,6 +12,7 @@ from .FN121Trapnet import FN121TrapnetList
 from .FN121Trawl import FN121TrawlList
 from .FN121Weather import FN121WeatherList
 from .FN122 import EffortList, FN122DetailView, FN122ListView
+from .FN122Transect import FN122TransectList
 from .FN123 import CatchCountList, FN123DetailView, FN123ListView
 from .FN123NonFish import FN123NonFishList
 from .FN124 import LengthTallyList

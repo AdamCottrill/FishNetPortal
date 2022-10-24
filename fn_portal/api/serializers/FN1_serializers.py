@@ -283,6 +283,21 @@ class FN122Serializer(serializers.ModelSerializer):
         return FN122.objects.create(**validated_data)
 
 
+class FN122TransectReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN122Transect objects. Used by get_fn122transect endpoint."""
+
+    id = serializers.IntegerField(read_only=True)
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    track_id = serializers.IntegerField(read_only=True)
+    sidep = serializers.FloatField(read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+    geom = serializers.CharField(read_only=True)
+    comment = serializers.CharField(read_only=True)
+    comment2 = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
 class FN123Serializer(serializers.ModelSerializer):
 
     prj_cd = serializers.CharField(read_only=True)

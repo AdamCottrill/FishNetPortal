@@ -2,12 +2,12 @@ import django_filters
 
 from .common_filters import ValueInFilter, NumberInFilter, GeoFilterSet, GeomFilter
 
-from ..models import FN122
+from ..models import FN122, FN122Transect
 
 
-class FN122InProjectFilter(GeoFilterSet):
-    """A fitlerset that allows us to select subsets of catch count objects by
-    by attributes of the catch counts (fn122 data only)"""
+class FN122SubFilter(GeoFilterSet):
+    """A fitlerset that allows us to select subsets objects by
+    by attributes of the project and sample - objects related to the FN121 table."""
 
     roi = GeomFilter(field_name="sample__geom__within", method="filter_roi")
 
@@ -19,52 +19,6 @@ class FN122InProjectFilter(GeoFilterSet):
     management_unit__not__in = ValueInFilter(
         field_name="sample__management_units__slug", exclude=True
     )
-
-    # Effort Attributes
-    # we could add gear depth here if it was populated more regularly.
-    eff = ValueInFilter(field_name="eff")
-    eff_not = ValueInFilter(field_name="eff", exclude=True)
-
-    effdst = django_filters.NumberFilter(field_name="effdst", lookup_expr="exact")
-    effdst__gte = django_filters.NumberFilter(field_name="effdst", lookup_expr="gte")
-    effdst__lte = django_filters.NumberFilter(field_name="effdst", lookup_expr="lte")
-    effdst__gt = django_filters.NumberFilter(field_name="effdst", lookup_expr="gt")
-    effdst__lt = django_filters.NumberFilter(field_name="effdst", lookup_expr="lt")
-
-    grdep0 = django_filters.NumberFilter(field_name="grdep0", lookup_expr="exact")
-    grdep0__gte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gte")
-    grdep0__lte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lte")
-    grdep0__gt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gt")
-    grdep0__lt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lt")
-
-    grdep1 = django_filters.NumberFilter(field_name="grdep1", lookup_expr="exact")
-    grdep1__gte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gte")
-    grdep1__lte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lte")
-    grdep1__gt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gt")
-    grdep1__lt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lt")
-
-    grtem0 = django_filters.NumberFilter(field_name="grtem0", lookup_expr="exact")
-    grtem0__gte = django_filters.NumberFilter(field_name="grtem0", lookup_expr="gte")
-    grtem0__lte = django_filters.NumberFilter(field_name="grtem0", lookup_expr="lte")
-    grtem0__gt = django_filters.NumberFilter(field_name="grtem0", lookup_expr="gt")
-    grtem0__lt = django_filters.NumberFilter(field_name="grtem0", lookup_expr="lt")
-
-    grtem1 = django_filters.NumberFilter(field_name="grtem1", lookup_expr="exact")
-    grtem1__gte = django_filters.NumberFilter(field_name="grtem1", lookup_expr="gte")
-    grtem1__lte = django_filters.NumberFilter(field_name="grtem1", lookup_expr="lte")
-    grtem1__gt = django_filters.NumberFilter(field_name="grtem1", lookup_expr="gt")
-    grtem1__lt = django_filters.NumberFilter(field_name="grtem1", lookup_expr="lt")
-
-    class Meta:
-        model = FN122
-        fields = ["eff"]
-
-
-class FN122Filter(FN122InProjectFilter):
-    """A filter that is inherited from FN122InProjectFilter and allows
-    additional filters based on attributes of the parent tables
-    (project, net set attributes).
-    """
 
     # FN011 attributes
     year = django_filters.CharFilter(
@@ -223,3 +177,98 @@ class FN122Filter(FN122InProjectFilter):
     class Meta:
         model = FN122
         fields = ["eff"]
+
+
+class FN122Filter(FN122SubFilter):
+    """A filter that is inherited from FN122SubFilter and allows
+    additional filters based on attributes of the effort itself.
+    """
+
+    # Effort Attributes
+    # we could add gear depth here if it was populated more regularly.
+    eff = ValueInFilter(field_name="eff")
+    eff_not = ValueInFilter(field_name="eff", exclude=True)
+
+    effdst = django_filters.NumberFilter(field_name="effdst", lookup_expr="exact")
+    effdst__gte = django_filters.NumberFilter(field_name="effdst", lookup_expr="gte")
+    effdst__lte = django_filters.NumberFilter(field_name="effdst", lookup_expr="lte")
+    effdst__gt = django_filters.NumberFilter(field_name="effdst", lookup_expr="gt")
+    effdst__lt = django_filters.NumberFilter(field_name="effdst", lookup_expr="lt")
+
+    grdep0 = django_filters.NumberFilter(field_name="grdep0", lookup_expr="exact")
+    grdep0__gte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gte")
+    grdep0__lte = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lte")
+    grdep0__gt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="gt")
+    grdep0__lt = django_filters.NumberFilter(field_name="grdep0", lookup_expr="lt")
+
+    grdep1 = django_filters.NumberFilter(field_name="grdep1", lookup_expr="exact")
+    grdep1__gte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gte")
+    grdep1__lte = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lte")
+    grdep1__gt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="gt")
+    grdep1__lt = django_filters.NumberFilter(field_name="grdep1", lookup_expr="lt")
+
+    grtem0 = django_filters.NumberFilter(field_name="grtem0", lookup_expr="exact")
+    grtem0__gte = django_filters.NumberFilter(field_name="grtem0", lookup_expr="gte")
+    grtem0__lte = django_filters.NumberFilter(field_name="grtem0", lookup_expr="lte")
+    grtem0__gt = django_filters.NumberFilter(field_name="grtem0", lookup_expr="gt")
+    grtem0__lt = django_filters.NumberFilter(field_name="grtem0", lookup_expr="lt")
+
+    grtem1 = django_filters.NumberFilter(field_name="grtem1", lookup_expr="exact")
+    grtem1__gte = django_filters.NumberFilter(field_name="grtem1", lookup_expr="gte")
+    grtem1__lte = django_filters.NumberFilter(field_name="grtem1", lookup_expr="lte")
+    grtem1__gt = django_filters.NumberFilter(field_name="grtem1", lookup_expr="gt")
+    grtem1__lt = django_filters.NumberFilter(field_name="grtem1", lookup_expr="lt")
+
+    class Meta:
+        model = FN122
+        fields = ["eff"]
+
+
+class FN122TransectFilter(FN122SubFilter):
+    """A filter that is inherited from FN122SubFilter and allows
+    additional filters based on attributes of the transect point itself.
+    """
+
+    transect_sidep = django_filters.NumberFilter(
+        field_name="sidep", lookup_expr="exact"
+    )
+    transect_sidep__gte = django_filters.NumberFilter(
+        field_name="sidep", lookup_expr="gte"
+    )
+    transect_sidep__lte = django_filters.NumberFilter(
+        field_name="sidep", lookup_expr="lte"
+    )
+    transect_sidep__gt = django_filters.NumberFilter(
+        field_name="sidep", lookup_expr="gt"
+    )
+    transect_sidep__lt = django_filters.NumberFilter(
+        field_name="sidep", lookup_expr="lt"
+    )
+
+    # allow us to filter by and between dates using one or both of:
+    # timestamp_date_before and timestamp_date_after
+    # ignores the time:
+    timestamp_date = django_filters.DateFromToRangeFilter()
+
+    timestamp__gte = django_filters.DateTimeFilter(
+        field_name="timestamp", lookup_expr="gte"
+    )
+    timestamp__lte = django_filters.DateTimeFilter(
+        field_name="timestamp", lookup_expr="lte"
+    )
+    timestamp__gt = django_filters.DateTimeFilter(
+        field_name="timestamp", lookup_expr="gt"
+    )
+    timestamp__lt = django_filters.DateTimeFilter(
+        field_name="timestamp", lookup_expr="lt"
+    )
+
+    # these will be applied to the geom of transect record:
+    transect_roi = GeomFilter(field_name="geom__within", method="filter_roi")
+    transect_buffered_point = GeomFilter(
+        field_name="geom__within", method="filter_point"
+    )
+
+    class Meta:
+        model = FN122Transect
+        fields = ["sidep", "timestamp"]

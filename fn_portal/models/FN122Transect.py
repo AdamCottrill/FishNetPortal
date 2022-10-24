@@ -9,7 +9,7 @@ from .BaseModel import FNPortalBaseModel
 from .FN121 import FN121
 
 
-class FN122Transect(FNPortalBaseModel):
+class FN122Transecti(FNPortalBaseModel):
     """A table to hold information points associated with gps logs
     that represent transects associated with a sample.  Examples
     include trawls or electrofishing passes.
