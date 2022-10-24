@@ -5,7 +5,7 @@ from pydantic import confloat, validator, constr
 from .FNBase import FNBase
 from .utils import string_to_float
 
-xwind_regex = r"^000|\d{3}-\d{2}$"
+xwind_regex = r"^000|\d{3}-\d{1,2}$"
 xweather_regex = r"^[1-4]{2}$"
 
 

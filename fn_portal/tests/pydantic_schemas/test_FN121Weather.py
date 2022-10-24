@@ -136,6 +136,9 @@ alternative_values_list = [
     ("waveht1", "2.1", 2.1),
     ("wind0", "000-00", "000-00"),
     ("wind1", "000-00", "000-00"),
+    # wind speed doesn't have to be left padded:
+    ("wind0", "270-5", "270-5"),
+    ("wind1", "100-9", "100-9"),
 ]
 
 
