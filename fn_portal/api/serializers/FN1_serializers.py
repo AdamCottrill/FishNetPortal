@@ -316,6 +316,21 @@ class FN123Serializer(serializers.ModelSerializer):
         return FN123.objects.create(**validated_data)
 
 
+class FN123NonFishReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN123 Non-fish objects. Used by
+    get_fn123NonFish endpoint."""
+
+    id = serializers.IntegerField(read_only=True)
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    eff = serializers.CharField(read_only=True)
+    taxon = serializers.CharField(read_only=True, source="taxon_code")
+    catcnt = serializers.IntegerField(read_only=True)
+    mortcnt = serializers.IntegerField(read_only=True)
+    comment3 = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
 class FN124Serializer(serializers.ModelSerializer):
 
     prj_cd = serializers.CharField(read_only=True)

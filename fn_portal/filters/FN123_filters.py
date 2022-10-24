@@ -1,13 +1,14 @@
 import django_filters
+from common.api.filters import taxon_node_filter
 
 from .common_filters import ValueInFilter, NumberInFilter, GeoFilterSet, GeomFilter
 
-from ..models import FN123
+from ..models import FN123, FN123NonFish
 
 
 class FN123SubFilter(GeoFilterSet):
-    """A fitlerset that allows us to select subsets of catch count objects by
-    by attributes of the catch counts (fn123 data only)"""
+    """A fitlerset that allows us to select subsets of FN123 catch count objects by
+    by attributes of the parent tables - FN011, FN121, FN122)"""
 
     roi = GeomFilter(field_name="effort__sample__geom__within", method="filter_roi")
 
@@ -21,36 +22,6 @@ class FN123SubFilter(GeoFilterSet):
     management_unit__not__in = ValueInFilter(
         field_name="effort__sample__management_units__slug", exclude=True
     )
-
-    grp = ValueInFilter(field_name="grp")
-    grp__not = ValueInFilter(field_name="grp", exclude=True)
-
-    spc = ValueInFilter(field_name="species__spc")
-    spc__not = ValueInFilter(field_name="species__spc", exclude=True)
-
-    catcnt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="exact")
-    catcnt__gte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gte")
-    catcnt__lte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lte")
-    catcnt__gt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gt")
-    catcnt__lt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lt")
-
-    biocnt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="exact")
-    biocnt__gte = django_filters.NumberFilter(field_name="biocnt", lookup_expr="gte")
-    biocnt__lte = django_filters.NumberFilter(field_name="biocnt", lookup_expr="lte")
-    biocnt__gt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="gt")
-    biocnt__lt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="lt")
-
-    class Meta:
-        model = FN123
-        fields = ["species__spc", "grp"]
-
-
-class FN123Filter(FN123SubFilter):
-    """A filter that is inherited from FN123SubFilter and allows
-    additional filters based on attributes of the parent tables
-    (project, net and effort Attributes).
-
-    """
 
     # FN011 ATTRIBUTES
     year = django_filters.CharFilter(
@@ -320,6 +291,63 @@ class FN123Filter(FN123SubFilter):
         field_name="effort__grtem1", lookup_expr="lt"
     )
 
+
+class FN123Filter(FN123SubFilter):
+    """A filter that is inherited from FN123SubFilter and allows
+    additional filters based on attributes of the FN123 object - catch
+    count, biocnt, ect.
+
+    """
+
+    grp = ValueInFilter(field_name="grp")
+    grp__not = ValueInFilter(field_name="grp", exclude=True)
+
+    spc = ValueInFilter(field_name="species__spc")
+    spc__not = ValueInFilter(field_name="species__spc", exclude=True)
+
+    catcnt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="exact")
+    catcnt__gte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gte")
+    catcnt__lte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lte")
+    catcnt__gt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gt")
+    catcnt__lt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lt")
+
+    biocnt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="exact")
+    biocnt__gte = django_filters.NumberFilter(field_name="biocnt", lookup_expr="gte")
+    biocnt__lte = django_filters.NumberFilter(field_name="biocnt", lookup_expr="lte")
+    biocnt__gt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="gt")
+    biocnt__lt = django_filters.NumberFilter(field_name="biocnt", lookup_expr="lt")
+
     class Meta:
         model = FN123
         fields = ["species__spc", "grp"]
+
+
+class FN123NonFishFilter(FN123SubFilter):
+    """A filter that is inherited from FN123SubFilter and allows
+    additional filters based on attributes of the FN123Non object - catch
+    count, mortcnt, taxon and taxon_node, ect.
+
+    """
+
+    taxon = ValueInFilter(field_name="taxon__taxon")
+    taxon__not = ValueInFilter(field_name="taxon__taxon", exclude=True)
+
+    taxon_node = django_filters.CharFilter(
+        field_name="taxon__taxon", method=taxon_node_filter
+    )
+
+    catcnt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="exact")
+    catcnt__gte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gte")
+    catcnt__lte = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lte")
+    catcnt__gt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="gt")
+    catcnt__lt = django_filters.NumberFilter(field_name="catcnt", lookup_expr="lt")
+
+    mortcnt = django_filters.NumberFilter(field_name="mortcnt", lookup_expr="exact")
+    mortcnt__gte = django_filters.NumberFilter(field_name="mortcnt", lookup_expr="gte")
+    mortcnt__lte = django_filters.NumberFilter(field_name="mortcnt", lookup_expr="lte")
+    mortcnt__gt = django_filters.NumberFilter(field_name="mortcnt", lookup_expr="gt")
+    mortcnt__lt = django_filters.NumberFilter(field_name="mortcnt", lookup_expr="lt")
+
+    class Meta:
+        model = FN123NonFish
+        fields = ["taxon__taxon", "catcnt", "mortcnt"]

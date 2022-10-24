@@ -41,6 +41,7 @@ from .FN1_serializers import (
     FN122Serializer,
     FN122ReadOnlySerializer,
     FN123Serializer,
+    FN123NonFishReadOnlySerializer,
     FN124Serializer,
     FN125Serializer,
     FN125ReadOnlySerializer,
