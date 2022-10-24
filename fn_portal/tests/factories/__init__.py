@@ -4,6 +4,8 @@ from .common_factories import (
     SpeciesFactory,
     TaxonFactory,
     VesselFactory,
+    BottomTypeFactory,
+    CoverTypeFactory,
 )
 
 from .user_factory import UserFactory
