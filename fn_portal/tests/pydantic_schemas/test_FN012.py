@@ -39,7 +39,7 @@ def data():
         "sizatt": "FLEN",
         "sizint": 1,
         "fdsam": "0",
-        "spcmrk": "0",
+        "spcmrk": "21",
         "agest": "14A",
         "lamsam": "2",
         "flen_min": 150,

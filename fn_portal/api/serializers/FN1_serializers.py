@@ -365,6 +365,7 @@ class FN124Serializer(serializers.ModelSerializer):
             "grp",
             "siz",
             "sizcnt",
+            # "comment4"
             "slug",
         )
 
@@ -443,20 +444,20 @@ class FN125ReadOnlySerializer(serializers.Serializer):
     rwt = serializers.FloatField(read_only=True)
     eviswt = serializers.FloatField(read_only=True)
     girth = serializers.FloatField(read_only=True)
-    clipc = serializers.CharField(read_only=True)
     clipa = serializers.CharField(read_only=True)
+    clipc = serializers.CharField(read_only=True)
     sex = serializers.CharField(read_only=True)
     mat = serializers.CharField(read_only=True)
     gon = serializers.CharField(read_only=True)
+    gonwt = serializers.CharField(read_only=True)
     noda = serializers.CharField(read_only=True)
     nodc = serializers.CharField(read_only=True)
     agest = serializers.CharField(read_only=True)
     fate = serializers.CharField(read_only=True)
     age = serializers.IntegerField(read_only=True)
     tissue = serializers.CharField(read_only=True)
-    age_flag = serializers.CharField(read_only=True)
-    lam_flag = serializers.CharField(read_only=True)
     stom_flag = serializers.CharField(read_only=True)
+    lam_flag = serializers.CharField(read_only=True)
     tag_flag = serializers.CharField(read_only=True)
     comment5 = serializers.CharField(read_only=True)
     slug = serializers.CharField(read_only=True)
@@ -708,6 +709,9 @@ class FN126Serializer(serializers.ModelSerializer):
             "food",
             "taxon",
             "fdcnt",
+            "fdmes",
+            "fdval",
+            "lf",
             "comment6",
             "slug",
         )
@@ -740,7 +744,10 @@ class FN127Serializer(serializers.ModelSerializer):
             "conf",
             "nca",
             "edge",
-            "agest",
+            "agestrm",
+            "agelake",
+            "spawnchkcnt",
+            "age_fail",
             "comment7",
             "slug",
         )

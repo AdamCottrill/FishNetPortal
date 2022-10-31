@@ -120,7 +120,9 @@ def get_fn026_stmt():
              SIDEP_LT,
              SIDEP_GE,
              GRDEP_LT,
-             GRDEP_GE
+             GRDEP_GE,
+             DD_LAT,
+             DD_LON
          from FN026"""
     return stmt
 
@@ -339,7 +341,7 @@ def get_fn123_stmt():
                 CATWT,
                 SUBCNT,
                 SUBWT,
-                COMMENT3 as COMMENT
+                COMMENT3
          from FN123"""
     return stmt
 
@@ -367,7 +369,8 @@ def get_fn124_stmt():
                 SPC,
                 GRP,
                 SIZ,
-                SIZCNT
+                SIZCNT,
+                COMMENT4
          from FN124"""
     return stmt
 
@@ -389,6 +392,7 @@ def get_fn125_stmt():
                 SEX,
                 MAT,
                 GON,
+                GONWT,
                 CLIPC,
                 CLIPA,
                 NODC,

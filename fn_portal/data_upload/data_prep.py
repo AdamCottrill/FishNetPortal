@@ -26,7 +26,7 @@ from .schemas import (
     FN028,
     FN121,
     # FN121Limno,
-    # FN121Trawl,
+    FN121Trawl,
     FN121Trapnet,
     # FN121Weather,
     FN122,
@@ -268,6 +268,7 @@ def fn121trapnet(data, fn121_cache, bottom_type_cache, cover_type_cache):
                 errors.append([item.get("slug"), err])
     return {"data": valid, "errors": errors}
 
+
 def fn121trawl(data, fn121_cache, vessel_cache):
 
     valid = []
@@ -278,7 +279,6 @@ def fn121trawl(data, fn121_cache, vessel_cache):
         sam = item.pop("sam")
         vessel = item.pop("vessel")
 
-
         fn121_key = f"{prj_cd}-{sam}".lower()
         slug = f"{prj_cd}-{sam}-trapnet".lower()
 
@@ -288,12 +288,11 @@ def fn121trawl(data, fn121_cache, vessel_cache):
             item["vessel_id"] = vessel_cache.get(vessel)
 
             try:
-                tmp = FN121Trapnet(**item)
+                tmp = FN121Trawl(**item)
                 valid.append(tmp)
             except ValidationError as err:
                 errors.append([item.get("slug"), err])
     return {"data": valid, "errors": errors}
-
 
 
 # def fn121weather(data, fn121_cache):

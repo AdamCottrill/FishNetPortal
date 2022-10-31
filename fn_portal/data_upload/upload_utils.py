@@ -26,7 +26,7 @@ def create_update_delete(data, model, filters, parent_key, parent_map, parent_in
     update using django bulk update and bulk create functionality.
 
     NOTE: this function is only suitable for models that have single
-    foreign keys, require anykind of pre-processing, and do not rely
+    foreign keys, do not require any kind of pre-processing, and do not rely
     on custom save functionality.  For example, it cannot be used for
     FN121 objects as they have multiple foreign keys to each of the
     design tables and use a custom save method to associate each
@@ -40,6 +40,7 @@ def create_update_delete(data, model, filters, parent_key, parent_map, parent_in
     model.objects.filter(slug__in=delete_slugs).delete()
     to_be_created = []
     updates = {}
+
     for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
         # call preprocessor here to make any necessary transformation to each item
         # what needs to be done depends on the current model.
@@ -81,10 +82,10 @@ def batch_update_model(model, update_slugs, updates):
 
     if len(updates):
         objs = [x for x in model.objects.filter(slug__in=update_slugs)]
+        fields = set()
         for obj in objs:
             attrs = updates[obj.slug]
             keep = False
-            fields = set()
             for attr in attrs:
                 if getattr(obj, attr) != attrs[attr]:
                     keep = True
@@ -92,8 +93,9 @@ def batch_update_model(model, update_slugs, updates):
                     setattr(obj, attr, attrs[attr])
             if keep is False:
                 objs.remove(obj)
-        if len(objs) and len(list(fields)):
-            model.objects.bulk_update(objs, fields=list(fields), batch_size=1000)
+        field_list = [x for x in fields]
+        if len(objs) and len(field_list):
+            model.objects.bulk_update(objs, fields=field_list, batch_size=1000)
 
 
 def parse_wind(value):

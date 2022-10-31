@@ -93,9 +93,6 @@ def test_FN012_default_duplicate(protocol, lake, species):
 
     """
 
-    protocol_abbrev = protocol.abbrev
-    lake_abbrev = lake.abbrev
-    spc = species.spc
     grp = "55"
 
     fn012a = FN012Protocol(lake=lake, protocol=protocol, species=species, grp=grp)
@@ -152,8 +149,8 @@ def test_FN012_default_fdsam(lake, protocol, species, fdsam1, fdsam2, expected):
 @pytest.mark.parametrize("spcmrk1,spcmrk2,expected", fdsam_agedec_spcmrk_list)
 def test_FN012_spcmrk(project, species, spcmrk1, spcmrk2, expected):
     """The FN012 base model has a property that returns the value of spcmrk
-    as a concatentation of spcmrk1 and spcmrk2.  fsdsam2 should only be
-    returned if it is not empty.
+    as a concatentation of spcmrk1 and spcmrk2.  spcmrk2 should only be
+    included if it is not empty.
 
     """
     fn012 = FN012(

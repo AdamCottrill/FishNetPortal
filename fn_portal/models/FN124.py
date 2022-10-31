@@ -19,6 +19,8 @@ class FN124(FNPortalBaseModel):
     siz = models.PositiveIntegerField()
     sizcnt = models.PositiveIntegerField()
 
+    comment4 = models.TextField(blank=True, null=True)
+
     class Meta:
         ordering = ["catch", "siz"]
         unique_together = ("catch", "siz")

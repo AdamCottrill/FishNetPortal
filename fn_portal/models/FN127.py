@@ -33,6 +33,28 @@ class FN127(FNPortalBaseModel):
     conf = models.IntegerField("Confidence", blank=True, null=True)
     nca = models.IntegerField("Number of Complete Annuli", blank=True, null=True)
 
+    agestrm = models.IntegerField("Fish Stream Age (yr)", blank=True, null=True)
+    agelake = models.IntegerField("Fish Lake Age (yr)", blank=True, null=True)
+    spawnchkcnt = models.IntegerField(
+        "The number of observed spawning checks", blank=True, null=True
+    )
+
+    AGE_FAIL_CHOICES = [
+        ("91", "No structure*"),
+        ("92", "Regenerated Scale / Crystalized Otolith"),
+        ("93", "Poorly Prepared Structure (poor rolled slide, cracked, sliced etc.)"),
+        ("94", "Mixed structures / unreliable contaminated sample"),
+        ("95", "Poor structure / unable to determine reliable age"),
+    ]
+
+    age_fail = models.CharField(
+        "reason for aging attemp failure",
+        choices=AGE_FAIL_CHOICES,
+        max_length=2,
+        blank=True,
+        null=True,
+    )
+
     ageaDate = models.DateTimeField(blank=True, null=True)
 
     comment7 = models.TextField(blank=True, null=True)

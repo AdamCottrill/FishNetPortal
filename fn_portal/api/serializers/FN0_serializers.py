@@ -385,6 +385,11 @@ class FN026ListSerializer(serializers.ModelSerializer):
             "space",
             "space_des",
             "space_wt",
+            "sidep_ge",
+            "sidep_lt",
+            "grdep_ge",
+            "grdep_lt",
+            "space_wt",
             "dd_lat",
             "dd_lon",
             "slug",
@@ -428,15 +433,15 @@ class FN026Serializer(serializers.ModelSerializer):
             "space",
             "space_des",
             "space_wt",
-            "area_lst",
+            # "area_lst",
             "grdep_ge",
             "grdep_lt",
             "sidep_ge",
             "sidep_lt",
             "grid_ge",
             "grid_lt",
-            "site_lst",
-            "sitp_lst",
+            # "site_lst",
+            # "sitp_lst",
             "dd_lat",
             "dd_lon",
         )
@@ -455,6 +460,10 @@ class FN026SubspaceSerializer(serializers.Serializer):
     subspace = serializers.CharField(read_only=True)
     subspace_des = serializers.CharField(read_only=True)
     subspace_wt = serializers.FloatField(read_only=True)
+    grdep_ge = serializers.FloatField(read_only=True)
+    grdep_lt = serializers.FloatField(read_only=True)
+    sidep_ge = serializers.FloatField(read_only=True)
+    sidep_lt = serializers.FloatField(read_only=True)
     dd_lat = serializers.FloatField(read_only=True)
     dd_lon = serializers.FloatField(read_only=True)
     slug = serializers.CharField(read_only=True)
@@ -470,11 +479,24 @@ class FN028ListSerializer(serializers.ModelSerializer):
     """
 
     prj_cd = serializers.CharField(read_only=True, source="project.prj_cd")
-    gear = serializers.CharField(read_only=True, source="gear.gr_code")
+    gr = serializers.CharField(read_only=True, source="gear.gr_code")
 
     class Meta:
         model = FN028
-        fields = ("prj_cd", "mode", "mode_des", "gear", "gruse", "orient", "slug", "id")
+        fields = (
+            "prj_cd",
+            "mode",
+            "mode_des",
+            "gr",
+            "gruse",
+            "orient",
+            "effdur_lt",
+            "effdur_ge",
+            "efftm0_lt",
+            "efftm0_ge",
+            "slug",
+            "id",
+        )
 
 
 class FN028SimpleSerializer(serializers.ModelSerializer):

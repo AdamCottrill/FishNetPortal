@@ -36,6 +36,7 @@ class EffortList(generics.ListAPIView):
             "efftm0",
             "efftm1",
             "waterhaul",
+            "comment2",
             "slug",
         )
     )

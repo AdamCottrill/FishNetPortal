@@ -25,6 +25,7 @@ class FN125(FNPortalBaseModel):
     sex = models.CharField(max_length=2, blank=True, null=True, db_index=True)
     mat = models.CharField(max_length=2, blank=True, null=True, db_index=True)
     gon = models.CharField(max_length=4, blank=True, null=True, db_index=True)
+    gonwt = models.FloatField(blank=True, null=True)
     noda = models.CharField(max_length=20, blank=True, null=True)
     nodc = models.CharField(max_length=20, blank=True, null=True)
 

@@ -43,6 +43,9 @@ class FN126ReadOnlyList(generics.ListAPIView):
             "food",
             "taxon",
             "fdcnt",
+            "fdmes",
+            "fdval",
+            "lf",
             "comment6",
             "slug",
         )

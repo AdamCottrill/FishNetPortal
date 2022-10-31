@@ -60,6 +60,7 @@ class FN125(FNBase):
     sex: Optional[SexEnum]
     mat: Optional[MatEnum]
     gon: Optional[constr(regex=gon_regex)]
+    gonwt: Optional[confloat(gt=0)] = None
     clipc: Optional[str]
     clipa: Optional[str]
     nodc: Optional[str]
@@ -111,7 +112,7 @@ class FN125(FNBase):
         (lenght=41, rwt=0.1)"""
         rwt = values.get("rwt")
         if rwt is not None and v is not None:
-            k = 100000 * rwt / (v ** 3)
+            k = 100000 * rwt / (v**3)
             if k > 3.5:
                 msg = f"FLEN/TLEN ({v}) is too short for the round weight (RWT={rwt}) (K={k:.3f})"
                 raise ValueError(msg)

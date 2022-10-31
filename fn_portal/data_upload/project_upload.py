@@ -185,7 +185,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         vessel_cache = get_id_cache(Vessel, ["abbrev"])
         stmt = fetch.get_fn121trawl_stmt()
         rs = fetch.execute_select(src_con, stmt)
-        fn121trawl = prep.fn121trawl(rs, FN121Trawl, "trawl", fn121_cache, vessel_cache)
+        fn121trawl = prep.fn121trawl(rs, fn121_cache, vessel_cache)
         # fn121trawl = prep.fn121trawl(rs, fn121_cache)
         if fn121trawl.get("errors"):
             return {"status": "error", "errors": fn121trawl.get("errors")}
@@ -359,11 +359,6 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             updates = {}
 
             for item in [x for x in data if x["slug"] in create_slugs + update_slugs]:
-
-                # split compound fields
-                # agedec = item.pop("agedec")
-                # item["agedec1"] = agedec[0]
-                # item["agedec2"] = None if len(agedec) == 1 else agedec[1]
 
                 spcmrk = item.pop("spcmrk")
                 item["spcmrk1"] = spcmrk[0]
@@ -577,6 +572,7 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
             data = [x.dict() for x in fn122["data"]]
             filters = {"sample__project__prj_cd__in": PRJ_CDs}
+
             create_update_delete(
                 data, Fnp.FN122, filters, "sample_id", fn121_map, fn121_inverse
             )

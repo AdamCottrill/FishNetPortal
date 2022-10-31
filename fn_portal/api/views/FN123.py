@@ -41,6 +41,8 @@ class CatchCountList(generics.ListAPIView):
             "catcnt",
             "catwt",
             "biocnt",
+            "subwt",
+            "subcnt",
             "comment3",
             "slug",
         )

@@ -52,7 +52,10 @@ class FN127ReadOnlyList(generics.ListAPIView):
             "conf",
             "nca",
             "edge",
-            "agest",
+            "agestrm",
+            "agelake",
+            "spawnchkcnt",
+            "age_fail",
             "comment7",
             "slug",
         )

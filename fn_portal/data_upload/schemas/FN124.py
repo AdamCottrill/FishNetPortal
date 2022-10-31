@@ -12,6 +12,7 @@ class FN124(FNBase):
     catch_id: PositiveInt
     siz: conint(ge=10)
     sizcnt: PositiveInt
+    comment4: Optional[str]
 
     class Config:
         validate_assignment = True
