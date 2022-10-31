@@ -1,7 +1,13 @@
-from _pytest.recwarn import deprecated_call
 import factory
 
-from ...models import Gear, Gear2SubGear, GearFamily, SubGear, GearEffortProcessType
+from ...models import (
+    Gear,
+    Gear2SubGear,
+    GearEffortProcessType,
+    GearFamily,
+    ProjectGearProcessType,
+    SubGear,
+)
 
 
 class GearFamilyFactory(factory.django.DjangoModelFactory):

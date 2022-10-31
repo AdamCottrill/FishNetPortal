@@ -22,5 +22,9 @@ from .FN125Tag import FN125TagReadOnlyList
 from .FN126 import FN126ReadOnlyList
 from .FN127 import FN127ReadOnlyList
 from .FNProtocol import FNProtocolListView
-from .gear_views import GearEffortProcessTypeListView, GearListView
+from .gear_views import (
+    GearEffortProcessTypeListView,
+    GearListView,
+    ProjectGearEffortProcessTypeListView,
+)
 from .ProjectWizard import project_wizard

@@ -97,7 +97,7 @@ class ProjectGearProcessTypeFactory(factory.django.DjangoModelFactory):
 
     project = factory.SubFactory(FN011Factory)
     gear = factory.SubFactory(GearFactory)
-    process_type = 1
+    process_type = "1"
 
 
 class FN012Factory(factory.django.DjangoModelFactory):

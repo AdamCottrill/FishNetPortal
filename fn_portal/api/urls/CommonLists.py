@@ -7,6 +7,7 @@ from django.urls import path, re_path
 
 from ..views import (
     FNProtocolListView,
+    ProjectGearEffortProcessTypeListView,
     GearEffortProcessTypeListView,
     GearListView,
     LakeExtentListView,
@@ -16,10 +17,6 @@ from ..views import (
 )
 
 # from rest_framework import routers
-
-
-PRJ_CD_REGEX = settings.PRJ_CD_URL_REGEX
-
 
 urlpatterns = [
     # path("", include(router.urls)),
@@ -32,6 +29,11 @@ urlpatterns = [
         "gear_effort_process_types/",
         GearEffortProcessTypeListView.as_view(),
         name="gear_eff_process_types_list",
+    ),
+    path(
+        "gear_effort_process_types/<slug:slug>/",
+        ProjectGearEffortProcessTypeListView.as_view(),
+        name="project_gear_eff_process_types",
     ),
     path("lakes/", LakeExtentListView.as_view(), name="lake_extent_list"),
     path("protocols/", FNProtocolListView.as_view(), name="protocol_list"),

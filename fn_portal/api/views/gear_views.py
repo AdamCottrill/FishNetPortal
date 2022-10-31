@@ -1,11 +1,14 @@
 """Views for gear api endpoints - gear, sub-gearsm, and process types,."""
 
+import operator
+from functools import reduce
+from django.db.models import Q
+from fn_portal.models import Gear, GearEffortProcessType, ProjectGearProcessType
 from rest_framework import generics
-from fn_portal.models import Gear, GearEffortProcessType
 
-from ...filters import GearFilter, GearEffortProcessTypeFilter
+from ...filters import GearEffortProcessTypeFilter, GearFilter
 from ..permissions import ReadOnly
-from ..serializers import GearSerializer, GearEffortProcessTypeSerializer
+from ..serializers import GearEffortProcessTypeSerializer, GearSerializer
 
 
 class GearEffortProcessTypeListView(generics.ListAPIView):
@@ -57,6 +60,42 @@ class GearEffortProcessTypeListView(generics.ListAPIView):
                 depreciated = depreciated.lower() in ("yes", "true", "t", "1")
                 queryset = queryset.filter(gear__depreciated=depreciated)
         return queryset
+
+
+class ProjectGearEffortProcessTypeListView(generics.ListAPIView):
+    """
+    The ProjectGearEffortProcessTypeList endpoint should return a
+    list of the gears, process types, and efforts for each gear type
+    associated with a single project.
+
+    """
+
+    pagination_class = None
+    serializer_class = GearEffortProcessTypeSerializer
+    permission_classes = [ReadOnly]
+    filterset_class = GearEffortProcessTypeFilter
+
+    def get_queryset(self):
+        """Given our project code, fetch gear and process types for that project
+        and use those to filter the gear effort process types
+        associated with each of them."""
+
+        project_slug = self.kwargs.get("slug")
+
+        gear_process_types = ProjectGearProcessType.objects.filter(
+            project__slug=project_slug
+        )
+
+        filter_list = []
+        for gpt in gear_process_types:
+            # qs = qs.filter(Q(gear=gpt.gear) & Q(process_type=gpt.process_type))
+            filter_list.append(Q(gear=gpt.gear) & Q(process_type=gpt.process_type))
+
+        qs = GearEffortProcessType.objects.select_related("gear").filter(
+            reduce(operator.or_, filter_list)
+        )
+
+        return qs
 
 
 class GearListView(generics.ListAPIView):

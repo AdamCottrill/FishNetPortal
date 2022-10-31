@@ -28,6 +28,7 @@ class ProjectGearProcessType(FNPortalBaseModel):
     project = models.ForeignKey(
         FN011, related_name="gear_process_types", on_delete=models.CASCADE
     )
+
     gear = models.ForeignKey(
         Gear, related_name="project_process_types", on_delete=models.CASCADE
     )
