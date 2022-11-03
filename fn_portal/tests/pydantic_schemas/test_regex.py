@@ -1,7 +1,7 @@
 import pytest
 import re
 
-from fn_portal.data_upload.schemas.FN012Base import (
+from fn_portal.data_upload.schemas.regular_expressions import (
     SPCMRK_REGEX,
     AGEST_REGEX,
     FDSAM_REGEX,

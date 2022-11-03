@@ -21,9 +21,37 @@
 
 import pytest
 from pydantic import ValidationError
-from datetime import datetime
 
-from fn_portal.data_upload.schemas import FN012Protocol
+
+from fn_portal.data_upload.schemas import FN012ProtocolFactory
+
+
+@pytest.fixture()
+def choices():
+
+    return {
+        "agest_choices": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "M",
+            "T",
+            "V",
+            "X",
+        ]
+    }
 
 
 @pytest.fixture()
@@ -57,13 +85,14 @@ def data():
     return data
 
 
-def test_valid_base_data(data):
+def test_valid_base_data(data, choices):
     """
 
     Arguments:
     - `data`:
     """
 
+    FN012Protocol = FN012ProtocolFactory(**choices)
     item = FN012Protocol(**data)
 
     assert item.slug == data["slug"]
@@ -97,7 +126,7 @@ required_fields = [
 
 
 @pytest.mark.parametrize("fld", required_fields)
-def test_required_fields(data, fld):
+def test_required_fields(data, choices, fld):
     """Verify that the required fields without custome error message
     raise the default messge if they are not provided.
 
@@ -107,7 +136,7 @@ def test_required_fields(data, fld):
     """
 
     data[fld] = None
-
+    FN012Protocol = FN012ProtocolFactory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN012Protocol(**data)
 
@@ -130,7 +159,7 @@ biosam_required_fields = [
 
 
 @pytest.mark.parametrize("fld", biosam_required_fields)
-def test_biosam_required_fields_biosam_0(data, fld):
+def test_biosam_required_fields_biosam_0(data, choices, fld):
     """The biological constriant fields are only required if BIOSAM<>0.
     If biosam is 0, they can be null.
     """
@@ -138,6 +167,7 @@ def test_biosam_required_fields_biosam_0(data, fld):
     data[fld] = None
     data["biosam"] = "0"
 
+    FN012Protocol = FN012ProtocolFactory(**choices)
     item = FN012Protocol(**data)
 
     assert item.slug == data["slug"]
@@ -147,7 +177,7 @@ def test_biosam_required_fields_biosam_0(data, fld):
 
 
 @pytest.mark.parametrize("fld", biosam_required_fields)
-def test_biosam_required_fields_biosam_1(data, fld):
+def test_biosam_required_fields_biosam_1(data, choices, fld):
     """The biological constriant fields are only required if BIOSAM<>0. If
     biosam is something other than one, these fields should be
     populated.
@@ -157,6 +187,7 @@ def test_biosam_required_fields_biosam_1(data, fld):
     data[fld] = None
     data["biosam"] = "1"
 
+    FN012Protocol = FN012ProtocolFactory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN012Protocol(**data)
 
@@ -329,7 +360,7 @@ error_list = [
 
 
 @pytest.mark.parametrize("fld,value,msg", error_list)
-def test_invalid_data(data, fld, value, msg):
+def test_invalid_data(data, choices, fld, value, msg):
     """
 
     Arguments:
@@ -337,6 +368,7 @@ def test_invalid_data(data, fld, value, msg):
     """
 
     data[fld] = value
+    FN012Protocol = FN012ProtocolFactory(**choices)
 
     with pytest.raises(ValidationError) as excinfo:
         FN012Protocol(**data)
@@ -348,13 +380,14 @@ flen_list = ["FLEN", "flen", "fLEn"]
 
 
 @pytest.mark.parametrize("flen", flen_list)
-def test_sizatt_case_insensitive(data, flen):
+def test_sizatt_case_insensitive(data, choices, flen):
     """sizatt shouldbe converted to uppercase by the validator so that
     users don't have to work about it.  FLEN, flen, and FlEn should
     all produce the same result.
 
     """
     data["sizatt"] = flen
+    FN012Protocol = FN012ProtocolFactory(**choices)
     item = FN012Protocol(**data)
     assert item.sizatt == "FLEN"
 
@@ -369,7 +402,7 @@ sizsam_attrs = [
 
 
 @pytest.mark.parametrize("sizsam,valid,fld,msg", sizsam_attrs)
-def test_sizatt_case_insensitive(data, sizsam, valid, fld, msg):
+def test_sizatt_case_insensitive(data, choices, sizsam, valid, fld, msg):
     """sizatt and sizint are required only if sizsam is one of the choices
     that requires FN124 data - in which case we need to know how big
     the bins are and what is being measured.  The pydantic schema
@@ -379,7 +412,7 @@ def test_sizatt_case_insensitive(data, sizsam, valid, fld, msg):
     """
     data["sizsam"] = sizsam
     data[fld] = None
-
+    FN012Protocol = FN012ProtocolFactory(**choices)
     if valid:
         item = FN012Protocol(**data)
         assert item.sizsam == sizsam

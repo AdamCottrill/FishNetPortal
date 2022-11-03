@@ -30,7 +30,66 @@
 import pytest
 from pydantic import ValidationError
 
-from fn_portal.data_upload.schemas import FN125Tags
+from fn_portal.data_upload.schemas import FN125TagsFactory
+
+
+@pytest.fixture()
+def choices():
+
+    tag_type_choices = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "x",
+        "P",
+        "E",
+    ]
+    tag_position_choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+    tag_agency_choices = [
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12",
+        "13",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "98",
+        "99",
+    ]
+
+    tag_colour_choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+    return {
+        "tag_type_choices": tag_type_choices,
+        "tag_position_choices": tag_position_choices,
+        "tag_agency_choices": tag_agency_choices,
+        "tag_colour_choices": tag_colour_choices,
+    }
 
 
 @pytest.fixture()
@@ -48,13 +107,14 @@ def data():
     return data
 
 
-def test_valid_data(data):
+def test_valid_data(data, choices):
     """
 
     Arguments:
     - `data`:
     """
 
+    FN125Tags = FN125TagsFactory(**choices)
     item = FN125Tags(**data)
 
     assert item.fish_id == data["fish_id"]
@@ -71,7 +131,7 @@ required_fields = [
 
 
 @pytest.mark.parametrize("fld", required_fields)
-def test_required_fields(data, fld):
+def test_required_fields(data, choices, fld):
     """Verify that the required fields without custome error message
     raise the default messge if they are not provided.
 
@@ -82,7 +142,7 @@ def test_required_fields(data, fld):
     """
 
     data[fld] = None
-
+    FN125Tags = FN125TagsFactory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125Tags(**data)
     msg = "none is not an allowed value"
@@ -93,7 +153,7 @@ optional_fields = ["cwtseq", "comment_tag"]
 
 
 @pytest.mark.parametrize("fld", optional_fields)
-def test_optional_fields(data, fld):
+def test_optional_fields(data, choices, fld):
     """Verify that the FN125Tags item is created without error if an optional field is omitted
 
     Arguments:
@@ -101,6 +161,7 @@ def test_optional_fields(data, fld):
 
     """
     data[fld] = None
+    FN125Tags = FN125TagsFactory(**choices)
     item = FN125Tags(**data)
     assert item.slug == data["slug"]
 
@@ -112,7 +173,7 @@ mode_list = [
 
 
 @pytest.mark.parametrize("fld,value_in,value_out", mode_list)
-def test_valid_alternatives(data, fld, value_in, value_out):
+def test_valid_alternatives(data, choices, fld, value_in, value_out):
     """When the pydanic model is created, it should transform some fo the
     fields.  GRP should be a two letter code made from uppercase
     letters or digits.  The pydantic model should convert any letters
@@ -124,6 +185,7 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
     """
     data[fld] = value_in
+    FN125Tags = FN125TagsFactory(**choices)
     item = FN125Tags(**data)
     item_dict = item.dict()
     assert item_dict[fld] == value_out
@@ -139,11 +201,15 @@ error_list = [
     ("tagdoc", "X", "ensure this value has at least 5 characters"),
     ("tagdoc", "1234567", "ensure this value has at most 5 characters"),
     ("tagdoc", "1234*", 'string does not match regex "^([A-Z0-9]{5})$"'),
+    ("tagdoc", "Z1234", "Unknown tag_type code (Z) found in TAGDOC (Z1234)"),
+    ("tagdoc", "0Z234", "Unknown tag_position code (Z) found in TAGDOC (0Z234)"),
+    ("tagdoc", "01ZZ4", "Unknown tag_agency code (ZZ) found in TAGDOC (01ZZ4)"),
+    ("tagdoc", "0123Z", "Unknown tag_colour code (Z) found in TAGDOC (0123Z)"),
 ]
 
 
 @pytest.mark.parametrize("fld,value,msg", error_list)
-def test_invalid_data(data, fld, value, msg):
+def test_invalid_data(data, choices, fld, value, msg):
     """
 
     Arguments:
@@ -151,6 +217,7 @@ def test_invalid_data(data, fld, value, msg):
     """
 
     data[fld] = value
+    FN125Tags = FN125TagsFactory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125Tags(**data)
 
@@ -170,7 +237,7 @@ valid_combinations = [
 
 
 @pytest.mark.parametrize("fld_values", valid_combinations)
-def test_valid_field_combinations(data, fld_values):
+def test_valid_field_combinations(data, choices, fld_values):
     """
 
     Arguments:
@@ -178,6 +245,7 @@ def test_valid_field_combinations(data, fld_values):
     """
 
     data.update(fld_values)
+    FN125Tags = FN125TagsFactory(**choices)
     item = FN125Tags(**data)
 
     assert item.fish_id == data["fish_id"]
@@ -185,13 +253,13 @@ def test_valid_field_combinations(data, fld_values):
 
 
 invalid_combinations = [
-    # tag stat can be N if tag is is empy and tagdoc starts with 6 or p
+    # tag stat can only be "N" if tagid is is empty and tagdoc starts with 6 or p
     [
         {"tagstat": "N", "tagid": 1234, "tagdoc": "P1234"},
         "TAGSTAT cannot be 'N' if TAGID is populated (TAGID='1234')",
     ],
     [
-        {"tagstat": "N", "tagid": 1234, "tagdoc": "21234"},
+        {"tagstat": "N", "tagid": None, "tagdoc": "21234"},
         "TAGSTAT='N' is only allowed if TAGTYPE is 6 (CWT) or P (PIT).",
     ],
     [
@@ -202,7 +270,7 @@ invalid_combinations = [
 
 
 @pytest.mark.parametrize("fld_values,msg", invalid_combinations)
-def test_invalid_combinations(data, fld_values, msg):
+def test_invalid_combinations(data, choices, fld_values, msg):
     """
 
     Arguments:
@@ -210,6 +278,7 @@ def test_invalid_combinations(data, fld_values, msg):
     """
     data.update(fld_values)
 
+    FN125Tags = FN125TagsFactory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125Tags(**data)
 

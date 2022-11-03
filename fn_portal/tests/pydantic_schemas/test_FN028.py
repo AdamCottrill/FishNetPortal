@@ -31,7 +31,31 @@ import pytest
 from pydantic import ValidationError
 from datetime import time
 
-from fn_portal.data_upload.schemas import FN028
+from fn_portal.data_upload.schemas import FN028Factory
+
+
+@pytest.fixture
+def choices():
+
+    orient = {
+        "perpendicular": "1",
+        "paralell": "2",
+        "other": "3",
+        "upstream": "U",
+        "downstream": "D",
+        "unknown": "9",
+    }
+
+    gruse = {
+        "bottom_set": 1,
+        "canned": 2,
+        "kyted": 3,
+        "thermocline": 4,
+        "midwater": 5,
+        "surface": 6,
+        "unknown": 9,
+    }
+    return {"gruse_choices": gruse, "orient_choices": orient}
 
 
 @pytest.fixture()
@@ -52,12 +76,14 @@ def data():
     return data
 
 
-def test_valid_data(data):
+def test_valid_data(data, choices):
     """
 
     Arguments:
     - `data`:
     """
+
+    FN028 = FN028Factory(**choices)
 
     item = FN028(**data)
 
@@ -78,7 +104,7 @@ required_fields = [
 
 
 @pytest.mark.parametrize("fld", required_fields)
-def test_required_fields(data, fld):
+def test_required_fields(data, choices, fld):
     """Verify that the required fields without custome error message
     raise the default messge if they are not provided.
 
@@ -90,6 +116,8 @@ def test_required_fields(data, fld):
 
     data[fld] = None
 
+    FN028 = FN028Factory(**choices)
+
     with pytest.raises(ValidationError) as excinfo:
         FN028(**data)
     msg = "none is not an allowed value"
@@ -100,13 +128,16 @@ optional_fields = ["mode_des", "effdur_ge", "effdur_lt", "efftm0_ge", "efftm0_lt
 
 
 @pytest.mark.parametrize("fld", optional_fields)
-def test_optional_fields(data, fld):
+def test_optional_fields(data, choices, fld):
     """Verify that the FN028 item is created without error if an optional field is omitted
 
     Arguments:
     - `data`:
 
     """
+
+    FN028 = FN028Factory(**choices)
+
     data[fld] = None
     item = FN028(**data)
     assert item.project_id == data["project_id"]
@@ -143,7 +174,7 @@ mode_list = [
 
 
 @pytest.mark.parametrize("fld,value_in,value_out", mode_list)
-def test_valid_alternatives(data, fld, value_in, value_out):
+def test_valid_alternatives(data, choices, fld, value_in, value_out):
     """When the pydanic model is created, it should transform some fo the
     fields.  Mode should be a two letter code made from uppercase
     letters or digits.  The pydantic model should convert any letters
@@ -155,6 +186,9 @@ def test_valid_alternatives(data, fld, value_in, value_out):
     - `data`:
 
     """
+
+    FN028 = FN028Factory(**choices)
+
     data[fld] = value_in
     item = FN028(**data)
     item_dict = item.dict()
@@ -205,12 +239,14 @@ error_list = [
 
 
 @pytest.mark.parametrize("fld,value,msg", error_list)
-def test_invalid_data(data, fld, value, msg):
+def test_invalid_data(data, choices, fld, value, msg):
     """
 
     Arguments:
     - `data`:
     """
+
+    FN028 = FN028Factory(**choices)
 
     data[fld] = value
     with pytest.raises(ValidationError) as excinfo:

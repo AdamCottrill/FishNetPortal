@@ -30,7 +30,21 @@
 import pytest
 from pydantic import ValidationError
 
-from fn_portal.data_upload.schemas import FN127
+from fn_portal.data_upload.schemas import FN127Factory
+
+
+@pytest.fixture()
+def choices():
+
+    agest_choices = "01234567ABCDEFGMKT"
+    ageprep1_choices = "0123456789CKT"
+    ageprep2_choices = "12349"
+
+    return {
+        "agest_choices": agest_choices,
+        "ageprep1_choices": ageprep1_choices,
+        "ageprep2_choices": ageprep2_choices,
+    }
 
 
 @pytest.fixture()
@@ -50,13 +64,14 @@ def data():
     return data
 
 
-def test_valid_data(data):
+def test_valid_data(data, choices):
     """
 
     Arguments:
     - `data`:
     """
 
+    FN127 = FN127Factory(**choices)
     item = FN127(**data)
 
     assert item.fish_id == data["fish_id"]
@@ -73,7 +88,7 @@ required_fields = [
 
 
 @pytest.mark.parametrize("fld", required_fields)
-def test_required_fields(data, fld):
+def test_required_fields(data, choices, fld):
     """Verify that the required fields without custome error message
     raise the default messge if they are not provided.
 
@@ -85,6 +100,8 @@ def test_required_fields(data, fld):
 
     data[fld] = None
 
+    FN127 = FN127Factory(**choices)
+
     with pytest.raises(ValidationError) as excinfo:
         FN127(**data)
     msg = "none is not an allowed value"
@@ -95,7 +112,7 @@ optional_fields = ["agea", "edge", "conf", "nca", "comment7"]
 
 
 @pytest.mark.parametrize("fld", optional_fields)
-def test_optional_fields(data, fld):
+def test_optional_fields(data, choices, fld):
     """Verify that the FN127 item is created without error if an optional field is omitted
 
     Arguments:
@@ -103,6 +120,7 @@ def test_optional_fields(data, fld):
 
     """
     data[fld] = None
+    FN127 = FN127Factory(**choices)
     item = FN127(**data)
     assert item.slug == data["slug"]
 
@@ -120,7 +138,7 @@ mode_list = [
 
 
 @pytest.mark.parametrize("fld,value_in,value_out", mode_list)
-def test_valid_alternatives(data, fld, value_in, value_out):
+def test_valid_alternatives(data, choices, fld, value_in, value_out):
     """When the pydanic model is created, it should transform some fo the
     fields.  GRP should be a two letter code made from uppercase
     letters or digits.  The pydantic model should convert any letters
@@ -132,6 +150,7 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
     """
     data[fld] = value_in
+    FN127 = FN127Factory(**choices)
     item = FN127(**data)
     item_dict = item.dict()
     assert item_dict[fld] == value_out
@@ -175,7 +194,7 @@ error_list = [
 
 
 @pytest.mark.parametrize("fld,value,msg", error_list)
-def test_invalid_data(data, fld, value, msg):
+def test_invalid_data(data, choices, fld, value, msg):
     """
 
     Arguments:
@@ -183,6 +202,8 @@ def test_invalid_data(data, fld, value, msg):
     """
 
     data[fld] = value
+    FN127 = FN127Factory(**choices)
+
     with pytest.raises(ValidationError) as excinfo:
         FN127(**data)
 

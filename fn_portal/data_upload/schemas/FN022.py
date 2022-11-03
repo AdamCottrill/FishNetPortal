@@ -2,7 +2,7 @@ from datetime import date
 
 from pydantic import validator, constr
 
-from .utils import not_specified, to_uppercase, yr_to_year
+from .utils import not_specified, yr_to_year
 from .FNBase import FNBase
 
 
@@ -15,7 +15,7 @@ class FN022(FNBase):
 
     slug: str
     project_id: int
-    ssn: constr(regex="^([A-Z0-9]{2})$", max_length=2)
+    ssn: constr(regex="^([A-Z0-9]{2})$", max_length=2, to_upper=True)
     ssn_des: str
     ssn_date0: date
     ssn_date1: date
@@ -23,7 +23,6 @@ class FN022(FNBase):
     class Config:
         validate_assignment = True
 
-    _to_uppercase = validator("ssn", allow_reuse=True, pre=True)(to_uppercase)
     _not_specified = validator("ssn_des", allow_reuse=True, pre=True)(not_specified)
 
     @validator("ssn_date0")

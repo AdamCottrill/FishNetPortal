@@ -1,5 +1,5 @@
 from datetime import time
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import PositiveFloat, confloat, constr, validator
 
@@ -13,7 +13,7 @@ class FN122(FNBase):
     slug: str
     sample_id: int
 
-    eff: constr(regex="^([A-Z0-9]{1,3})$", max_length=3)
+    eff: constr(regex="^([A-Z0-9]{1,3})$", to_upper=True, max_length=3)
 
     effdst: Optional[PositiveFloat] = None
     grdep0: Optional[PositiveFloat] = None

@@ -14,6 +14,8 @@ attrs==19.3.0
     # via pytest
 babel==2.9.1
     # via sphinx
+build==0.9.0
+    # via pip-tools
 certifi==2020.4.5.1
     # via requests
 chardet==3.0.4
@@ -22,6 +24,7 @@ click==7.1.2
     # via pip-tools
 colorama==0.4.3
     # via
+    #   build
     #   pytest
     #   sphinx
     #   sphinx-autobuild
@@ -40,6 +43,7 @@ django==3.2.12
     #   django-debug-toolbar
     #   django-extensions
     #   django-filter
+    #   django-treebeard
     #   djangorestframework
     #   drf-yasg
     #   sphinxcontrib-django2
@@ -51,6 +55,8 @@ django-extensions==3.1.5
     # via -r local.in
 django-filter==21.1
     # via -r base.in
+django-treebeard==4.5.1
+    # via -r base.in
 djangorestframework==3.13.1
     # via
     #   -r base.in
@@ -61,6 +67,8 @@ docutils==0.17.1
     #   sphinx
 drf-yasg==1.20.0
     # via -r base.in
+execnet==1.9.0
+    # via pytest-xdist
 factory-boy==3.2.1
     # via -r local.in
 faker==4.1.0
@@ -91,12 +99,13 @@ markupsafe==1.1.1
     # via jinja2
 packaging==20.4
     # via
+    #   build
     #   drf-yasg
     #   pytest
     #   sphinx
 pep517==0.11.0
-    # via pip-tools
-pip-tools==6.5.1
+    # via build
+pip-tools==6.9.0
     # via -r local.in
 pluggy==0.13.1
     # via pytest
@@ -105,8 +114,10 @@ pprintpp==0.4.0
 psycopg2==2.9.3
     # via -r base.in
 py==1.10.0
-    # via pytest
-pydantic==1.9.0
+    # via
+    #   pytest
+    #   pytest-forked
+pydantic==1.10.2
     # via -r base.in
 pygments==2.11.2
     # via sphinx
@@ -119,9 +130,15 @@ pytest==7.1.1
     #   -r local.in
     #   pytest-cov
     #   pytest-django
+    #   pytest-forked
+    #   pytest-xdist
 pytest-cov==3.0.0
     # via -r local.in
 pytest-django==4.5.2
+    # via -r local.in
+pytest-forked==1.4.0
+    # via pytest-xdist
+pytest-xdist==2.5.0
     # via -r local.in
 python-dateutil==2.8.1
     # via faker
@@ -174,11 +191,12 @@ toml==0.10.2
     # via coverage
 tomli==1.2.1
     # via
+    #   build
     #   pep517
     #   pytest
 tornado==6.1
     # via livereload
-typing-extensions==3.10.0.2
+typing-extensions==4.4.0
     # via pydantic
 uritemplate==3.0.1
     # via

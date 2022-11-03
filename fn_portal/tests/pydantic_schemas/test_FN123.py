@@ -120,6 +120,7 @@ mode_list = [
     ("catwt", "", None),
     ("subcnt", "", None),
     ("subwt", "", None),
+    ("grp", "1a", "1A"),
     ("grp", "1", "1"),
     ("grp", "12", "12"),
     ("grp", "2 ", "2"),

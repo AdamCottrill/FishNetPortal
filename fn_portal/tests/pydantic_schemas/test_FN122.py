@@ -120,6 +120,7 @@ def test_optional_fields(data, fld):
 
 mode_list = [
     # field, input, output
+    ("eff", "abc", "ABC"),
     ("effdst", "", None),
     ("grdep0", "", None),
     ("grdep1", "", None),

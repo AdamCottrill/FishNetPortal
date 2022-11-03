@@ -30,7 +30,16 @@
 import pytest
 from pydantic import ValidationError
 
-from fn_portal.data_upload.schemas import FN125
+from fn_portal.data_upload.schemas import FN125Factory
+
+
+@pytest.fixture()
+def choices():
+
+    tissue_choices = "123456789ABCDEHKNV"
+    clip_choices = "01234567ABCDEFG"
+
+    return {"tissue_choices": tissue_choices, "clip_choices": clip_choices}
 
 
 @pytest.fixture()
@@ -38,7 +47,7 @@ def data():
     data = {
         "slug": "lha_ia19_002-1-001-091-00-1",
         "catch_id": 1,
-        "fish": 2,
+        "fish": "2",
         "rwt": 1100,
         "eviswt": 900,
         "flen": 440,
@@ -63,13 +72,14 @@ def data():
     return data
 
 
-def test_valid_data(data):
+def test_valid_data(data, choices):
     """
 
     Arguments:
     - `data`:
     """
 
+    FN125 = FN125Factory(**choices)
     item = FN125(**data)
 
     assert item.catch_id == data["catch_id"]
@@ -80,7 +90,7 @@ required_fields = ["slug", "catch_id", "fish"]
 
 
 @pytest.mark.parametrize("fld", required_fields)
-def test_required_fields(data, fld):
+def test_required_fields(data, choices, fld):
     """Verify that the required fields without custome error message
     raise the default messge if they are not provided.
 
@@ -91,7 +101,7 @@ def test_required_fields(data, fld):
     """
 
     data[fld] = None
-
+    FN125 = FN125Factory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125(**data)
     msg = "none is not an allowed value"
@@ -123,7 +133,7 @@ optional_fields = [
 
 
 @pytest.mark.parametrize("fld", optional_fields)
-def test_optional_fields(data, fld):
+def test_optional_fields(data, choices, fld):
     """Verify that the FN125 item is created without error if an optional field is omitted
 
     Arguments:
@@ -131,6 +141,7 @@ def test_optional_fields(data, fld):
 
     """
     data[fld] = None
+    FN125 = FN125Factory(**choices)
     item = FN125(**data)
     assert item.slug == data["slug"]
 
@@ -145,11 +156,13 @@ mode_list = [
     ("tissue", "18D", "18D"),
     ("agest", "24amv", "24AMV"),
     ("tissue", "18d", "18D"),
+    ("fish", 10, "10"),
+    ("fish", "10l", "10L"),
 ]
 
 
 @pytest.mark.parametrize("fld,value_in,value_out", mode_list)
-def test_valid_alternatives(data, fld, value_in, value_out):
+def test_valid_alternatives(data, choices, fld, value_in, value_out):
     """When the pydanic model is created, it should transform some fo the
     fields.  GRP should be a two letter code made from uppercase
     letters or digits.  The pydantic model should convert any letters
@@ -161,6 +174,7 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
     """
     data[fld] = value_in
+    FN125 = FN125Factory(**choices)
     item = FN125(**data)
     item_dict = item.dict()
     assert item_dict[fld] == value_out
@@ -191,6 +205,16 @@ error_list = [
         "sex",
         8,
         "value is not a valid enumeration member;",
+    ),
+    (
+        "fish",
+        "123_",
+        "string does not match regex",
+    ),
+    (
+        "fish",
+        "12345AB",
+        "ensure this value has at most 6 characters",
     ),
     (
         "gon",
@@ -280,7 +304,7 @@ error_list = [
 
 
 @pytest.mark.parametrize("fld,value,msg", error_list)
-def test_invalid_data(data, fld, value, msg):
+def test_invalid_data(data, choices, fld, value, msg):
     """
 
     Arguments:
@@ -288,13 +312,14 @@ def test_invalid_data(data, fld, value, msg):
     """
 
     data[fld] = value
+    FN125 = FN125Factory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125(**data)
 
     assert msg in str(excinfo.value)
 
 
-def test_rwt_between_0_and_1(data):
+def test_rwt_between_0_and_1(data, choices):
     """The original validator required rwt to be a constrained integer, >
     0, which meant that very small larval fish could not be captured. 0.25
     grams was converted to 0 (invalid) or 1 valid but wrong.
@@ -310,6 +335,7 @@ def test_rwt_between_0_and_1(data):
     data["eviswt"] = None
     data["flen"] = None
     data["tlen"] = None
+    FN125 = FN125Factory(**choices)
     item = FN125(**data)
 
     assert item.rwt == rwt
@@ -378,7 +404,7 @@ valid_gon_codes = [
 
 
 @pytest.mark.parametrize("value", valid_gon_codes)
-def test_valid_gonad_codes(data, value):
+def test_valid_gonad_codes(data, choices, value):
     """This test verified that valid gonad codes from real samples are
     recognized as valid by our gonad code regex.
 
@@ -388,6 +414,7 @@ def test_valid_gonad_codes(data, value):
     """
 
     data["gon"] = value
+    FN125 = FN125Factory(**choices)
     item = FN125(**data)
     item_dict = item.dict()
     assert item_dict["gon"] == value
@@ -422,7 +449,7 @@ invalid_gon_codes = [
 
 
 @pytest.mark.parametrize("code", invalid_gon_codes)
-def test_invalid_gon_data(data, code):
+def test_invalid_gon_data(data, choices, code):
     """This test verifies that actual invalid gonad codes from our
     database are trapped by the gonad code regular expression.
 
@@ -431,6 +458,7 @@ def test_invalid_gon_data(data, code):
 
     """
     data["gon"] = code
+    FN125 = FN125Factory(**choices)
     with pytest.raises(ValidationError) as excinfo:
         FN125(**data)
 

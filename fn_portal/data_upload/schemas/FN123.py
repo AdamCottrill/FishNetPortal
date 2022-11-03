@@ -19,7 +19,7 @@ class FN123(FNBase):
     effort_id: int
     species_id: int
 
-    grp: constr(regex="^([A-Z0-9]{1,2})$", max_length=2)
+    grp: constr(regex="^([A-Z0-9]{1,2})$", max_length=2, to_upper=True)
 
     catcnt: Optional[conint(ge=0)] = None
     biocnt: Optional[conint(ge=0)] = None

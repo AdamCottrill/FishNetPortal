@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import confloat, PositiveFloat, validator, constr
 
 from .FNBase import FNBase
-from .utils import not_specified, string_to_float, to_uppercase, strip_0
+from .utils import not_specified, string_to_float, strip_0
 
 
 class FN026(FNBase):
@@ -11,7 +11,7 @@ class FN026(FNBase):
     slug: str
     project_id: int
 
-    space: constr(regex="^([A-Z0-9]{2})$", max_length=2)
+    space: constr(regex="^([A-Z0-9]{2})$", max_length=2, to_upper=True)
     space_des: constr(strip_whitespace=True)
     grdep_ge: Optional[confloat(ge=0)] = None
     grdep_lt: Optional[PositiveFloat] = None
@@ -24,8 +24,6 @@ class FN026(FNBase):
 
     class Config:
         validate_assignment = True
-
-    _to_uppercase = validator("space", allow_reuse=True, pre=True)(to_uppercase)
 
     _to_titlecase = validator("space_des", allow_reuse=True, pre=True)(not_specified)
 

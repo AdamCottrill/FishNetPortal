@@ -19,26 +19,19 @@ from pydantic.error_wrappers import ValidationError
 
 from .schemas import (
     FN011,
-    FN012,
     FN022,
     FN026,
     FN026Subspace,
-    FN028,
     FN121,
-    # FN121Limno,
     FN121Trawl,
     FN121Trapnet,
-    # FN121Weather,
     FN122,
     FN122Transect,
     FN123,
     FN123NonFish,
     FN124,
-    FN125,
-    FN125Tags,
     FN125Lamprey,
     FN126,
-    FN127,
 )
 
 from .upload_utils import is_empty
@@ -65,7 +58,7 @@ def fn011(data, lake_cache, protocol_cache, user_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn012(data, fn011_cache, species_cache):
+def fn012(data, FN012, fn011_cache, species_cache):
     """pop off prj_cd and replace it with project_id, and pop off spc and
     use it to get the species_id"""
 
@@ -154,7 +147,7 @@ def fn026subspace(data, fn026_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn028(data, fn011_cache, gear_cache):
+def fn028(data, FN028, fn011_cache, gear_cache):
 
     valid = []
     errors = []
@@ -430,7 +423,7 @@ def fn124(data, fn123_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn125(data, fn123_cache):
+def fn125(data, FN125, fn123_cache):
 
     valid = []
     errors = []
@@ -454,7 +447,7 @@ def fn125(data, fn123_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn125tags(data, fn125_cache):
+def fn125tags(data, FN125Tags, fn125_cache):
 
     valid = []
     errors = []
@@ -529,7 +522,7 @@ def fn126(data, fn125_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn127(data, fn125_cache):
+def fn127(data, FN127, fn125_cache):
 
     valid = []
     errors = []

@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import validator, constr
 
-from .utils import to_titlecase, yr_to_year
+from .utils import to_titlecase, to_uppercase, yr_to_year
 
 from .FNBase import FNBase, prj_cd_regex
 
@@ -23,7 +23,7 @@ class FN011(FNBase):
     protocol_id: int
     prj_ldr_id: int
     slug: str
-    prj_cd: constr(regex=prj_cd_regex)
+    prj_cd: constr(regex=prj_cd_regex, to_upper=True)
     year: int
     prj_nm: str
     prj_date0: date
