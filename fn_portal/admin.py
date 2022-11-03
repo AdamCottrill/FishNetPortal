@@ -211,7 +211,7 @@ class Admin_FN012Protocol(admin.ModelAdmin):
             return redirect("..")
         form = CsvImportForm()
         payload = {"form": form}
-        return render(request, "admin/csv_form.html", payload)
+        return render(request, "admin/fn012_csv_form.html", payload)
 
     def get_protocol(self, obj):
         return obj.protocol_abbrev
