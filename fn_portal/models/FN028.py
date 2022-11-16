@@ -5,6 +5,8 @@ from .BaseModel import FNPortalBaseModel
 from .FN011 import FN011
 from .Gear import Gear
 
+from .choices import ORIENT_CHOICES
+
 
 class FN028(FNPortalBaseModel):
     """
@@ -35,15 +37,6 @@ class FN028(FNPortalBaseModel):
         choices=GRUSE_CHOICES,
         default="1",
     )
-
-    ORIENT_CHOICES = [
-        ("1", "Perpendicular"),
-        ("2", "Paralell"),
-        ("3", "Other"),
-        ("9", "Unknown"),
-        ("U", "Upstream"),
-        ("D", "Downstream"),
-    ]
 
     orient = models.CharField(
         help_text="Gear Orientation",

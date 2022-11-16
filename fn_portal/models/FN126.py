@@ -41,13 +41,16 @@ class FN126(FNPortalBaseModel):
 
     LIFESTAGE_CHOICES = (
         (None, "No Data"),
-        ("10", "10"),
-        ("20", "20"),
-        ("30", "30"),
-        ("40", "40"),
-        ("50", "50"),
-        ("60", "60"),
+        ("00", "Multiple"),
+        ("10", "Egg"),
+        ("20", "Larvae/Nauplii"),
+        ("30", "Pupa"),
+        ("40", "Nymph"),
+        ("50", "Juvenile/Adult"),
+        ("60", "Remains"),
+        ("99", "Unknown"),
     )
+
     lf = models.CharField(
         help_text="Life Stage",
         max_length=2,

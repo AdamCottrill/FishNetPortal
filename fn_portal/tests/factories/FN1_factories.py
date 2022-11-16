@@ -7,6 +7,7 @@ from ...models import (
     FN121Weather,
     FN121Trapnet,
     FN121Trawl,
+    FN121ElectroFishing,
     FN122,
     FN122Transect,
     FN123,
@@ -137,6 +138,28 @@ class FN121TrawlFactory(factory.django.DjangoModelFactory):
     vessel_speed = 3.2
     vessel_direction = 2
     warp = 45.1
+
+
+class FN121ElectroFishingFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121Electrofishing objects - electrofishing
+    settings or parameters associated with a single electrofishing
+    deployment.
+
+    """
+
+    class Meta:
+        model = FN121ElectroFishing
+        django_get_or_create = ("sample",)
+
+    sample = factory.SubFactory(FN121Factory)
+
+    shock_sec = 600
+    volts_mean = 120
+    freq = 60
+    duty_cycle = 90
+    waveform = "PDC"
+    anodes = 1
+    num_netters = 3
 
 
 class FN122TransectFactory(factory.django.DjangoModelFactory):

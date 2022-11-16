@@ -29,6 +29,7 @@ from .FN1_factories import (
     FN121WeatherFactory,
     FN121TrapnetFactory,
     FN121TrawlFactory,
+    FN121ElectroFishingFactory,
     FN122Factory,
     FN122TransectFactory,
     FN123Factory,

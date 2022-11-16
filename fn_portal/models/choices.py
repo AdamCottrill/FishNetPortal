@@ -34,30 +34,6 @@ VEGETATION_CHOICES = [
     (4, "Dense (>75%)"),
 ]
 
-# COVER_CHOICES = [
-#     ("BO", "Boulder"),
-#     ("CO", "Combination"),
-#     ("LT", "Log & Tree"),
-#     ("MA", "Macrophytes"),
-#     ("NC", "No Cover"),
-#     ("OD", "Organic Debris"),
-#     ("OT", "Other"),
-#     ("UB", "Undercut Bank"),
-# ]
-
-# BOTTOM_CHOICES = [
-#     ("BO", "Boulder (>25 cm)"),
-#     ("BR", "Bedrock or Rock"),
-#     ("CL", "Clay"),
-#     ("DE", "Detritus"),
-#     ("GP", "Gravel/Pebble (0.2-8 cm)"),
-#     ("MA", "Marl"),
-#     ("MU", "Muck"),
-#     ("RC", "Rubble/Cobble (8-25 cm)"),
-#     ("SA", "Sand"),
-#     ("SI", "Silt"),
-# ]
-
 VESSEL_DIRECTION_CHOICES = [
     (0, "Variable"),
     (1, "Northeast"),
@@ -69,4 +45,15 @@ VESSEL_DIRECTION_CHOICES = [
     (7, "Northwest"),
     (8, "North"),
     (9, "Not Definable"),
+]
+
+
+# Move this to common as a lookup
+ORIENT_CHOICES = [
+    ("1", "Perpendicular"),
+    ("2", "Paralell"),
+    ("3", "Other"),
+    ("9", "Unknown"),
+    ("U", "Upstream"),
+    ("D", "Downstream"),
 ]
