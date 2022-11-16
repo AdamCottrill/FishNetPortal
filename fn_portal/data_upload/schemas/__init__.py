@@ -12,6 +12,8 @@ from .FN121Limno import FN121Limno
 from .FN121Trapnet import FN121Trapnet
 from .FN121Trawl import FN121Trawl
 from .FN121Weather import FN121Weather
+
+from .FN121ElectroFishing import FN121ElectroFishingFactory
 from .FN122 import FN122
 from .FN122Transect import FN122Transect
 from .FN123 import FN123
