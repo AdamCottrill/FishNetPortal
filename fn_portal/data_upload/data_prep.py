@@ -288,6 +288,34 @@ def fn121trawl(data, fn121_cache, vessel_cache):
     return {"data": valid, "errors": errors}
 
 
+def fn121electrofishing(data, FN121ElectroFishing, fn121_cache):
+    """give an array of Fn121 electrofishing data - use the supplied
+    validator to convert each data element into a pydantic
+    fn121electrofishing object. fn121_cache it issed to ensure that
+    each electrofishing element has an associated gear deployment."""
+
+    valid = []
+    errors = []
+
+    for item in data:
+        prj_cd = item.pop("prj_cd")
+        sam = item.pop("sam")
+
+        fn121_key = f"{prj_cd}-{sam}".lower()
+        slug = f"{prj_cd}-{sam}-electrofishing".lower()
+
+        if not is_empty(item):
+            item["sample_id"] = fn121_cache.get(fn121_key)
+            item["slug"] = slug
+            try:
+
+                tmp = FN121ElectroFishing(**item)
+                valid.append(tmp)
+            except ValidationError as err:
+                errors.append([item.get("slug"), err])
+    return {"data": valid, "errors": errors}
+
+
 # def fn121weather(data, fn121_cache):
 
 #     valid = []

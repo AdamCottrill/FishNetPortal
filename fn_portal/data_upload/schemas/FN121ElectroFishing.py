@@ -30,14 +30,14 @@ def FN121ElectroFishingFactory(waveform_choices):
         sample_id: int
 
         shock_sec: Optional[conint(ge=0, le=3000)] = None
-        volts_minimum: Optional[confloat(ge=0, le=1200)] = None
-        volts_maximum: Optional[confloat(ge=0, le=1200)] = None
+        volts_min: Optional[confloat(ge=0, le=1200)] = None
+        volts_max: Optional[confloat(ge=0, le=1200)] = None
         volts_mean: Optional[confloat(ge=0, le=1200)] = None
-        amps_minimum: Optional[confloat(ge=0, le=80)] = None
-        amps_maximum: Optional[confloat(ge=0, le=80)] = None
+        amps_min: Optional[confloat(ge=0, le=80)] = None
+        amps_max: Optional[confloat(ge=0, le=80)] = None
         amps_mean: Optional[confloat(ge=0, le=80)] = None
-        power_minimum: Optional[confloat(ge=0, le=15000)] = None
-        power_maximum: Optional[confloat(ge=0, le=15000)] = None
+        power_min: Optional[confloat(ge=0, le=15000)] = None
+        power_max: Optional[confloat(ge=0, le=15000)] = None
         power_mean: Optional[confloat(ge=0, le=15000)] = None
         conduct: Optional[confloat(ge=0, le=2000)] = None
         turbidity: Optional[confloat(ge=0, le=400)] = None
@@ -45,7 +45,7 @@ def FN121ElectroFishingFactory(waveform_choices):
         pulse_dur: Optional[confloat(ge=0)] = None
         pulse_pattern: Optional[str]
         duty_cycle: Optional[confloat(ge=0, le=100)] = None
-        waveform: WaveFormEnum
+        waveform: Optional[WaveFormEnum]
         anodes: Optional[conint(ge=1, le=2)] = None
         num_netters: Optional[conint(ge=0, le=8)] = None
         comment: Optional[str]
@@ -54,14 +54,14 @@ def FN121ElectroFishingFactory(waveform_choices):
             validate_assignment = True
 
         _string_to_float = validator(
-            "volts_minimum",
-            "volts_maximum",
+            "volts_min",
+            "volts_max",
             "volts_mean",
-            "amps_minimum",
-            "amps_maximum",
+            "amps_min",
+            "amps_max",
             "amps_mean",
-            "power_minimum",
-            "power_maximum",
+            "power_min",
+            "power_max",
             "power_mean",
             "conduct",
             "turbidity",

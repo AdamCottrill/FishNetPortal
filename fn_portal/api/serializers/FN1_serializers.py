@@ -230,6 +230,34 @@ class FN121WeatherReadOnlySerializer(serializers.Serializer):
     slug = serializers.CharField(read_only=True)
 
 
+class FN121ElectroFishingReadOnlySerializer(serializers.Serializer):
+    """A read-only serializer for FN121Electrofishing data. Used by
+    get_fn121_electrofishing endpoint."""
+
+    prj_cd = serializers.CharField(read_only=True)
+    sam = serializers.CharField(read_only=True)
+    shock_sec = serializers.IntegerField(read_only=True)
+    waveform = serializers.CharField(read_only=True)
+    volts_min = serializers.FloatField(read_only=True)
+    volts_max = serializers.FloatField(read_only=True)
+    volts_mean = serializers.FloatField(read_only=True)
+    amps_min = serializers.FloatField(read_only=True)
+    amps_max = serializers.FloatField(read_only=True)
+    amps_mean = serializers.FloatField(read_only=True)
+    power_min = serializers.FloatField(read_only=True)
+    power_max = serializers.FloatField(read_only=True)
+    power_mean = serializers.FloatField(read_only=True)
+    conduct = serializers.FloatField(read_only=True)
+    turbidity = serializers.FloatField(read_only=True)
+    pulse_dur = serializers.FloatField(read_only=True)
+    pulse_pattern = serializers.CharField(read_only=True)
+    freq = serializers.IntegerField(read_only=True)
+    anodes = serializers.IntegerField(read_only=True)
+    num_netters = serializers.IntegerField(read_only=True)
+    comment = serializers.CharField(read_only=True)
+    slug = serializers.CharField(read_only=True)
+
+
 class FN122ReadOnlySerializer(serializers.Serializer):
     """A read-only serializer for FN122 objects. Used by get_fn122 endpoint."""
 

@@ -31,13 +31,13 @@ class FN121ElectroFishing(FNPortalBaseModel):
         validators=[MinValueValidator(0), MaxValueValidator(3000)],
     )
 
-    volts_minimum = models.FloatField(
+    volts_min = models.FloatField(
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(1200)],
     )
 
-    volts_maximum = models.FloatField(
+    volts_max = models.FloatField(
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(1200)],
@@ -48,13 +48,13 @@ class FN121ElectroFishing(FNPortalBaseModel):
         validators=[MinValueValidator(0), MaxValueValidator(1200)],
     )
 
-    amps_minimum = models.FloatField(
+    amps_min = models.FloatField(
         "Minimum current observed a sample or transect.",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(80)],
     )
-    amps_maximum = models.FloatField(
+    amps_max = models.FloatField(
         "Maximum current observed a sample or transect.",
         blank=True,
         null=True,
@@ -67,14 +67,14 @@ class FN121ElectroFishing(FNPortalBaseModel):
         validators=[MinValueValidator(0), MaxValueValidator(80)],
     )
 
-    power_minimum = models.FloatField(
+    power_min = models.FloatField(
         "Minimum power output during an electrofishing sample.",
         blank=True,
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(15000)],
     )
 
-    power_maximum = models.FloatField(
+    power_max = models.FloatField(
         "Maximum power output during an electrofishing sample.",
         blank=True,
         null=True,

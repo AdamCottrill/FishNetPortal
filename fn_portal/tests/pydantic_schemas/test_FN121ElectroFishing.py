@@ -107,14 +107,14 @@ def test_required_fields(data, choices, fld):
 
 
 optional_fields = [
-    "volts_minimum",
-    "volts_maximum",
+    "volts_min",
+    "volts_max",
     "volts_mean",
-    "amps_minimum",
-    "amps_maximum",
+    "amps_min",
+    "amps_max",
     "amps_mean",
-    "power_minimum",
-    "power_maximum",
+    "power_min",
+    "power_max",
     "power_mean",
     "conduct",
     "turbidity",
@@ -180,15 +180,15 @@ def test_valid_alternatives(data, choices, fld, value_in, value_out):
 
 
 error_list = [
-    ("volts_minimum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("volts_min", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "volts_minimum",
+        "volts_min",
         1201,
         "ensure this value is less than or equal to 1200",
     ),
-    ("volts_maximum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("volts_max", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "volts_maximum",
+        "volts_max",
         1201,
         "ensure this value is less than or equal to 1200",
     ),
@@ -198,15 +198,15 @@ error_list = [
         1201,
         "ensure this value is less than or equal to 1200",
     ),
-    ("amps_minimum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("amps_min", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "amps_minimum",
+        "amps_min",
         81,
         "ensure this value is less than or equal to 80",
     ),
-    ("amps_maximum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("amps_max", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "amps_maximum",
+        "amps_max",
         81,
         "ensure this value is less than or equal to 80",
     ),
@@ -216,15 +216,15 @@ error_list = [
         80.1,
         "ensure this value is less than or equal to 80",
     ),
-    ("power_minimum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("power_min", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "power_minimum",
+        "power_min",
         15001,
         "ensure this value is less than or equal to 15000",
     ),
-    ("power_maximum", -0.1, "ensure this value is greater than or equal to 0"),
+    ("power_max", -0.1, "ensure this value is greater than or equal to 0"),
     (
-        "power_maximum",
+        "power_max",
         15001,
         "ensure this value is less than or equal to 15000",
     ),

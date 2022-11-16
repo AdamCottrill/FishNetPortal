@@ -11,6 +11,7 @@ DESCRIPTION:
 
 # import argparse
 
+
 import logging
 import os
 
@@ -34,10 +35,12 @@ from .choices import (
     tag_position_choices,
     tag_type_choices,
     tissue_choices,
+    waveform_choices,
 )
 from .schemas import (
     FN012Factory,
     FN028Factory,
+    FN121ElectroFishingFactory,
     FN121Limno,
     FN121Weather,
     FN125Factory,
@@ -210,6 +213,21 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn121weather = prep.fn121_extension(rs, FN121Weather, "weather", fn121_cache)
         if fn121weather.get("errors"):
             return {"status": "error", "errors": fn121weather.get("errors")}
+
+        logger.debug("Fetching FN121ELECTROFISHING records")
+
+        stmt = fetch.get_fn121electrofishing_stmt()
+        rs = fetch.execute_select(src_con, stmt)
+        FN121EFishing_validator = FN121ElectroFishingFactory(
+            waveform_choices=waveform_choices
+        )
+        fn121electrofishing = prep.fn121electrofishing(
+            rs,
+            FN121EFishing_validator,
+            fn121_cache,
+        )
+        if fn121electrofishing.get("errors"):
+            return {"status": "error", "errors": fn121electrofishing.get("errors")}
 
         logger.debug("Fetching FN122 records")
         stmt = fetch.get_fn122_stmt()
@@ -550,6 +568,22 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
 
             Fnp.FN121Weather.objects.bulk_create(to_be_created)
             batch_update_model(Fnp.FN121Weather, update_slugs, updates)
+
+            # =========================
+            #        FN121Electrofishing
+
+            logger.debug("Inserting and Updating FN121Electrofishing records")
+
+            data = [x.dict() for x in fn121electrofishing["data"]]
+            filters = {"sample__project__prj_cd__in": PRJ_CDs}
+            create_update_delete(
+                data,
+                Fnp.FN121ElectroFishing,
+                filters,
+                "sample_id",
+                fn121_map,
+                fn121_inverse,
+            )
 
             # =========================
             #        FN122

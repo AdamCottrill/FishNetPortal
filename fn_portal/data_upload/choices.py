@@ -42,6 +42,17 @@ gruse_choices = {
     "unknown": 9,
 }
 
+
+waveform_choices = {
+    "Smooth DC": "SDC",
+    "Pulsed DC": "PDC",
+    "Burst of Pulses DC": "BPDC",
+    "Alternating Current (AC)": "AC",
+    "Pulsed AC": "PAC",
+    "Rectangular Wave DC": "RDC",
+    "Rectangular Wave Burst DC": "RBDC",
+}
+
 tag_type_choices = [
     "0",
     "1",

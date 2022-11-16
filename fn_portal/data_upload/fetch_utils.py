@@ -295,6 +295,36 @@ def get_fn121weather_stmt():
     return stmt
 
 
+def get_fn121electrofishing_stmt():
+    """Fetch the weaterh fields from fn121electrofishing table"""
+
+    stmt = """select
+                PRJ_CD,
+                SAM,
+                SHOCK_SEC,
+                VOLTS_MIN,
+                VOLTS_MAX,
+                VOLTS_MEAN,
+                AMPS_MIN,
+                AMPS_MAX,
+                AMPS_MEAN,
+                POWER_MIN,
+                POWER_MAX,
+                POWER_MEAN,
+                CONDUCT,
+                TURBIDITY,
+                FREQ,
+                PULSE_DUR,
+                DUTY_CYCLE,
+                WAVEFORM,
+                ANODES,
+                NUM_NETTERS,
+                COMMENT_EFISH as comment
+                FROM FN121_Electrofishing;
+    """
+    return stmt
+
+
 def get_fn122_stmt():
 
     stmt = """select

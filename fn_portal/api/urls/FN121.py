@@ -9,6 +9,7 @@ from ..views import (  # readonly endpoints:; FN011ViewSet,; CRUD Endpoints:
     FN121TrapnetList,
     FN121TrawlList,
     FN121WeatherList,
+    FN121ElectroFishingList,
     NetSetList,
 )
 
@@ -23,4 +24,9 @@ urlpatterns = [
     path("fn121trapnet/", FN121TrapnetList.as_view(), name="fn121trapnet_list"),
     path("fn121trawl/", FN121TrawlList.as_view(), name="fn121trawl_list"),
     path("fn121weather/", FN121WeatherList.as_view(), name="fn121weather_list"),
+    path(
+        "fn121electrofishing/",
+        FN121ElectroFishingList.as_view(),
+        name="fn121electrofishing_list",
+    ),
 ]
