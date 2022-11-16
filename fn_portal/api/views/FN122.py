@@ -33,8 +33,6 @@ class EffortList(generics.ListAPIView):
             "grdep1",
             "grtem0",
             "grtem1",
-            "efftm0",
-            "efftm1",
             "waterhaul",
             "comment2",
             "slug",

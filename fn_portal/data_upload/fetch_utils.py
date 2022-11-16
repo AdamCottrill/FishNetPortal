@@ -336,8 +336,6 @@ def get_fn122_stmt():
                 GRDEP1,
                 GRTEM0,
                 GRTEM1,
-                EFFTM0,
-                EFFTM1,
                 WATERHAUL,
                 COMMENT2
          from FN122;"""

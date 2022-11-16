@@ -45,8 +45,6 @@ def data():
         "grdep1": 12.5,
         "grtem0": 12.2,
         "grtem1": 13.1,
-        "efftm0": "12:00",
-        "efftm1": "12:30",
         "waterhaul": False,
         "comment2": "best effort yet",
     }
@@ -98,8 +96,6 @@ optional_fields = [
     "grdep1",
     "grtem0",
     "grtem1",
-    "efftm0",
-    "efftm1",
     "comment2",
     "waterhaul",
 ]
@@ -130,8 +126,6 @@ mode_list = [
     ("eff", "12", "12"),
     ("eff", "2 ", "2"),
     ("eff", " 2", "2"),
-    ("efftm0", "", None),
-    ("efftm1", "", None),
     ("waterhaul", None, False),
 ]
 
@@ -190,16 +184,6 @@ error_list = [
         "grtem1",
         31.6,
         "ensure this value is less than or equal to 30",
-    ),
-    (
-        "efftm0",
-        "foobar",
-        "validation error for FN122\nefftm0\n  invalid time format",
-    ),
-    (
-        "efftm1",
-        "foobar",
-        "validation error for FN122\nefftm1\n  invalid time format",
     ),
 ]
 

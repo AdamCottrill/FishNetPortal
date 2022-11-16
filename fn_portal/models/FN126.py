@@ -51,7 +51,7 @@ class FN126(FNPortalBaseModel):
         ("99", "Unknown"),
     )
 
-    lf = models.CharField(
+    lifestage = models.CharField(
         help_text="Life Stage",
         max_length=2,
         blank=True,

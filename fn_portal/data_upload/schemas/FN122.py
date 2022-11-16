@@ -21,9 +21,6 @@ class FN122(FNBase):
     grtem0: Optional[confloat(ge=-30, le=30)] = None
     grtem1: Optional[confloat(ge=-30, le=30)] = None
 
-    efftm0: Optional[time]
-    efftm1: Optional[time]
-
     waterhaul: bool = False
     comment2: Optional[str]
 
@@ -37,5 +34,3 @@ class FN122(FNBase):
     _string_to_float = validator(
         "effdst", "grdep0", "grdep1", "grtem0", "grtem1", allow_reuse=True, pre=True
     )(string_to_float)
-
-    _strip_date = validator("efftm0", "efftm1", allow_reuse=True, pre=True)(strip_date)

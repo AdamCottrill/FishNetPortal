@@ -14,6 +14,10 @@ class FN126Filter(FishAttrFilters):
     taxon = ValueInFilter(field_name="taxon")
     taxon__not = ValueInFilter(field_name="taxon", exclude=True)
 
+    lifestage_like = ValueInFilter(field_name="lifestage", lookup_expr="icontains")
+    lifestage = ValueInFilter(field_name="lifestage")
+    lifestage__not = ValueInFilter(field_name="lifestage", exclude=True)
+
     fdcnt = django_filters.NumberFilter(field_name="fdcnt")
     fdcnt__gte = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="gte")
     fdcnt__lte = django_filters.NumberFilter(field_name="fdcnt", lookup_expr="lte")

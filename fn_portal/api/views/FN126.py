@@ -45,7 +45,7 @@ class FN126ReadOnlyList(generics.ListAPIView):
             "fdcnt",
             "fdmes",
             "fdval",
-            "lf",
+            "lifestage",
             "comment6",
             "slug",
         )

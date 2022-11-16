@@ -210,8 +210,8 @@ class FN121TrawlReadOnlySerializer(serializers.Serializer):
 
 
 class FN121WeatherReadOnlySerializer(serializers.Serializer):
-    """A read-only serializer for FN121Trawl data. Used by
-    get_fn121_trawl endpoint."""
+    """A read-only serializer for FN121Weather data. Used by
+    get_fn121_weather endpoint."""
 
     prj_cd = serializers.CharField(read_only=True)
     sam = serializers.CharField(read_only=True)
@@ -270,8 +270,6 @@ class FN122ReadOnlySerializer(serializers.Serializer):
     grdep1 = serializers.FloatField(read_only=True)
     grtem0 = serializers.FloatField(read_only=True)
     grtem1 = serializers.FloatField(read_only=True)
-    efftm0 = serializers.TimeField(read_only=True)
-    efftm1 = serializers.TimeField(read_only=True)
     waterhaul = serializers.BooleanField(read_only=True)
     comment2 = serializers.CharField(read_only=True)
     slug = serializers.CharField(read_only=True)
@@ -296,8 +294,6 @@ class FN122Serializer(serializers.ModelSerializer):
             "grdep1",
             "grtem0",
             "grtem1",
-            "efftm0",
-            "efftm1",
             "waterhaul",
             "comment2",
             "slug",
@@ -739,7 +735,7 @@ class FN126Serializer(serializers.ModelSerializer):
             "fdcnt",
             "fdmes",
             "fdval",
-            "lf",
+            "lifestage",
             "comment6",
             "slug",
         )
