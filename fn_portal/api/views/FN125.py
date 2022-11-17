@@ -82,6 +82,7 @@ class BioSampleList(generics.ListAPIView):
             "fate",
             "age",
             # "lamijc",
+            "stom_contents_wt",
             "comment5",
             "slug",
         )

@@ -67,7 +67,7 @@ def FN125Factory(clip_choices, tissue_choices):
         tissue: Optional[str]
         agest: Optional[str]
         fate: FateEnum = FateEnum.killed
-
+        stom_contents_wt: Optional[confloat(gt=0)] = None
         stom_flag: Optional[StomFlagEnum]
 
         comment5: Optional[str]
@@ -79,7 +79,9 @@ def FN125Factory(clip_choices, tissue_choices):
             string_to_int
         )
 
-        _string_to_float = validator("rwt", allow_reuse=True, pre=True)(string_to_float)
+        _string_to_float = validator(
+            "rwt", "eviswt", "gonwt", "stom_contents_wt", allow_reuse=True, pre=True
+        )(string_to_float)
 
         _to_uppercase = validator(
             "agest", "tissue", "clipc", "clipa", allow_reuse=True, pre=True

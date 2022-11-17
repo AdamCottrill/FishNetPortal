@@ -14,24 +14,42 @@ class FN125(FNPortalBaseModel):
 
     catch = models.ForeignKey(FN123, related_name="fish", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=100, unique=True)
-    fish = models.CharField(max_length=6)
-    flen = models.IntegerField(blank=True, null=True)
-    tlen = models.IntegerField(blank=True, null=True)
-    rwt = models.FloatField(blank=True, null=True)
-    eviswt = models.FloatField(blank=True, null=True)
-    girth = models.IntegerField(blank=True, null=True)
-    clipa = models.CharField(max_length=20, blank=True, null=True)
-    clipc = models.CharField(max_length=20, blank=True, null=True)
-    sex = models.CharField(max_length=2, blank=True, null=True, db_index=True)
-    mat = models.CharField(max_length=2, blank=True, null=True, db_index=True)
-    gon = models.CharField(max_length=4, blank=True, null=True, db_index=True)
-    gonwt = models.FloatField(blank=True, null=True)
-    noda = models.CharField(max_length=20, blank=True, null=True)
-    nodc = models.CharField(max_length=20, blank=True, null=True)
+    fish = models.CharField("Fish Id", max_length=6)
+    flen = models.IntegerField("Fork Length(mm)", blank=True, null=True)
+    tlen = models.IntegerField("Total Length(mm)", blank=True, null=True)
+    rwt = models.FloatField("Round Weight (g)", blank=True, null=True)
+    eviswt = models.FloatField("Eviscerated Weight(g)", blank=True, null=True)
+    girth = models.IntegerField("Girth (mm)", blank=True, null=True)
+    clipa = models.CharField("Clips applied", max_length=20, blank=True, null=True)
+    clipc = models.CharField("Clips on capture", max_length=20, blank=True, null=True)
+    sex = models.CharField(
+        "A code identifying the sex of a fish.",
+        max_length=2,
+        blank=True,
+        null=True,
+        db_index=True,
+    )
+    mat = models.CharField(
+        "Maturity", max_length=2, blank=True, null=True, db_index=True
+    )
+    gon = models.CharField(
+        "Gonad Condition", max_length=4, blank=True, null=True, db_index=True
+    )
+    gonwt = models.FloatField("Gonad Weigth (g)", blank=True, null=True)
+    noda = models.CharField("Nodules applied", max_length=20, blank=True, null=True)
+    nodc = models.CharField(
+        "Nodules present on caputure", max_length=20, blank=True, null=True
+    )
 
-    tissue = models.CharField(max_length=20, blank=True, null=True)
-    agest = models.CharField(max_length=20, blank=True, null=True)
-    fate = models.CharField(max_length=2, blank=True, null=True)
+    stom_contents_wt = models.FloatField(
+        "Stomach contents weight (g)", blank=True, null=True
+    )
+
+    tissue = models.CharField("Tissues Sampled", max_length=20, blank=True, null=True)
+    agest = models.CharField(
+        "Age Structures Sampled", max_length=20, blank=True, null=True
+    )
+    fate = models.CharField("Fish Fate Code", max_length=2, blank=True, null=True)
 
     STOM_FLAG_CHOICES = (
         ("0", "Not Collected"),
@@ -44,11 +62,6 @@ class FN125(FNPortalBaseModel):
         default=0,
         choices=STOM_FLAG_CHOICES,
     )
-
-    # These are disappearing:
-    age_flag = models.BooleanField(default=False)
-    lam_flag = models.BooleanField(default=False)
-    tag_flag = models.BooleanField(default=False)
 
     comment5 = models.CharField(max_length=500, blank=True, null=True)
 

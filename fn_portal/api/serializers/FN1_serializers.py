@@ -480,9 +480,8 @@ class FN125ReadOnlySerializer(serializers.Serializer):
     fate = serializers.CharField(read_only=True)
     age = serializers.IntegerField(read_only=True)
     tissue = serializers.CharField(read_only=True)
+    stom_contents_wt = serializers.CharField(read_only=True)
     stom_flag = serializers.CharField(read_only=True)
-    lam_flag = serializers.CharField(read_only=True)
-    tag_flag = serializers.CharField(read_only=True)
     comment5 = serializers.CharField(read_only=True)
     slug = serializers.CharField(read_only=True)
 
@@ -532,6 +531,8 @@ class FN125Serializer(serializers.ModelSerializer):
             "lamprey_marks",
             "age_estimates",
             "diet_data",
+            "stom_flag",
+            "stom_contents_wt",
             "comment5",
             "slug",
         )

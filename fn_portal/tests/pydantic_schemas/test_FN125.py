@@ -56,6 +56,7 @@ def data():
         "sex": "1",
         "mat": "2",
         "gon": "20",
+        "gonwt": 10.2,
         "clipc": "5",
         "clipa": None,
         "nodc": None,
@@ -63,10 +64,8 @@ def data():
         "tissue": "B",
         "agest": "14A",
         "fate": "K",
-        "age_flag": True,
-        "lam_flag": True,
         "stom_flag": "0",
-        "tag_flag": True,
+        "stom_contents_wt": 5.5,
         "comment5": "fn125 comment",
     }
     return data
@@ -124,10 +123,8 @@ optional_fields = [
     "tissue",
     "agest",
     "fate",
-    "age_flag",
-    "lam_flag",
+    "stom_contents_wt",
     "stom_flag",
-    "tag_flag",
     "comment5",
 ]
 
@@ -158,6 +155,13 @@ mode_list = [
     ("tissue", "18d", "18D"),
     ("fish", 10, "10"),
     ("fish", "10l", "10L"),
+    ("rwt", "1100.1", 1100.1),
+    ("eviswt", "900.1", 900.1),
+    ("gonwt", "10.1", 10.1),
+    ("stom_contents_wt", "10.1", 10.1),
+    ("eviswt", "", None),
+    ("gonwt", "", None),
+    ("stom_contents_wt", "", None),
 ]
 
 
