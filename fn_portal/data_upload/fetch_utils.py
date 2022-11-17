@@ -342,7 +342,7 @@ def get_fn122_stmt():
     return stmt
 
 
-def get_fn122transect_stmt():
+def get_fn121gpstrack_stmt():
 
     stmt = """select
                 PRJ_CD,
@@ -352,7 +352,7 @@ def get_fn122transect_stmt():
                 DD_LAT,
                 DD_LON,
                 SIDEP
-         from FN121_Transects"""
+         from FN121_GPS_Tracks"""
     return stmt
 
 

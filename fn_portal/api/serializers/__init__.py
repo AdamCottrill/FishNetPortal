@@ -41,7 +41,7 @@ from .FN1_serializers import (
     FN121ElectroFishingReadOnlySerializer,
     FN122Serializer,
     FN122ReadOnlySerializer,
-    FN122TransectReadOnlySerializer,
+    FN121GpsTrackReadOnlySerializer,
     FN123Serializer,
     FN123NonFishReadOnlySerializer,
     FN124Serializer,

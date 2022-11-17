@@ -7,10 +7,10 @@ from .FNBase import FNBase
 from .utils import string_to_float, string_to_int
 
 
-class FN122Transect(FNBase):
-    """A pydandic schema model to validate FN122Transect objects.
+class FN121GpsTrack(FNBase):
+    """A pydandic schema model to validate FN121GpsTrack objects.
     slug and sample_id are required, the other fields represent
-    transect points. They can be null, but must be
+    gps track points. They can be null, but must be
     constrained to plausible values.
 
     """

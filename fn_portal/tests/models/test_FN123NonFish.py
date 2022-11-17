@@ -12,7 +12,7 @@ def test_FN123NonFish_str(taxon_list):
     is the project code followed by the sample number, effort number
     and itis code all separated with a dash.
 
-    e.g. - LHA_IA00_123-001-TRANSECT
+    e.g. - LHA_IA00_123-001-NONFISH
 
     """
 
@@ -34,7 +34,7 @@ def test_FN123NonFish_str(taxon_list):
 def test_FN123NonFish_fn_keys(taxon_list):
     """Verify that the fishnet keys and object slug are comprised of
     the project code followed by the sample number, followed by
-    effort, followed by transect code, all separated by a dash:
+    effort, followed by taxon code, all separated by a dash:
 
     e.g. - lha_ia00_123-001-1
 

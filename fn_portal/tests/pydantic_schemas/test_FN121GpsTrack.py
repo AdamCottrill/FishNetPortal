@@ -1,10 +1,10 @@
 """=============================================================
- ~/fn_portal/fn_portal/tests/pydantic_schemas/test_FN122Transect.py
+ ~/fn_portal/fn_portal/tests/pydantic_schemas/test_FN121GpsTrack.py
  Created: 27 May 2022 11:52:44
 
  DESCRIPTION:
 
-  A suite of unit tests to ensure that the Pydantic model for FN122Transect
+  A suite of unit tests to ensure that the Pydantic model for FN121GpsTrack
   objects validate as expected.
 
   The script includes:
@@ -30,7 +30,7 @@ from datetime import datetime
 import pytest
 from pydantic import ValidationError
 
-from fn_portal.data_upload.schemas import FN122Transect
+from fn_portal.data_upload.schemas import FN121GpsTrack
 
 
 @pytest.fixture()
@@ -55,7 +55,7 @@ def test_valid_data(data):
     - `data`:
     """
 
-    item = FN122Transect(**data)
+    item = FN121GpsTrack(**data)
 
     assert item.sample_id == data["sample_id"]
     assert item.slug == data["slug"]
@@ -84,7 +84,7 @@ def test_required_fields(data, fld):
     data[fld] = None
 
     with pytest.raises(ValidationError) as excinfo:
-        FN122Transect(**data)
+        FN121GpsTrack(**data)
     msg = "none is not an allowed value"
     assert msg in str(excinfo.value)
 
@@ -94,7 +94,7 @@ optional_fields = ["sidep", "timestamp", "comment"]
 
 @pytest.mark.parametrize("fld", optional_fields)
 def test_optional_fields(data, fld):
-    """Verify that the FN122Transect item is created without error if
+    """Verify that the FN121GpsTrack item is created without error if
     an optional field is omitted
 
     Arguments:
@@ -102,7 +102,7 @@ def test_optional_fields(data, fld):
 
     """
     data[fld] = None
-    item = FN122Transect(**data)
+    item = FN121GpsTrack(**data)
     assert item.sample_id == data["sample_id"]
 
 
@@ -127,7 +127,7 @@ def test_valid_alternatives(data, fld, value_in, value_out):
 
     """
     data[fld] = value_in
-    item = FN122Transect(**data)
+    item = FN121GpsTrack(**data)
     item_dict = item.dict()
     assert item_dict[fld] == value_out
 
@@ -161,6 +161,6 @@ def test_invalid_data(data, fld, value, msg):
 
     data[fld] = value
     with pytest.raises(ValidationError) as excinfo:
-        FN122Transect(**data)
+        FN121GpsTrack(**data)
 
     assert msg in str(excinfo.value)

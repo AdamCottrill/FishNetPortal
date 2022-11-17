@@ -31,7 +31,7 @@ from .FN1_factories import (
     FN121TrawlFactory,
     FN121ElectroFishingFactory,
     FN122Factory,
-    FN122TransectFactory,
+    FN121GpsTrackFactory,
     FN123Factory,
     FN123NonFishFactory,
     FN124Factory,

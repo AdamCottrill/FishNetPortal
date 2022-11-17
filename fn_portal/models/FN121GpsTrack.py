@@ -9,7 +9,7 @@ from .BaseModel import FNPortalBaseModel
 from .FN121 import FN121
 
 
-class FN122Transect(FNPortalBaseModel):
+class FN121GpsTrack(FNPortalBaseModel):
     """A table to hold information points associated with gps logs
     that represent transects associated with a sample.  Examples
     include trawls or electrofishing passes.
@@ -19,7 +19,7 @@ class FN122Transect(FNPortalBaseModel):
     id = models.AutoField(primary_key=True)
 
     sample = models.ForeignKey(
-        FN121, related_name="transect_points", on_delete=models.CASCADE
+        FN121, related_name="gps_track_points", on_delete=models.CASCADE
     )
     track_id = models.IntegerField(validators=[MinValueValidator(0)])
 
@@ -52,7 +52,7 @@ class FN122Transect(FNPortalBaseModel):
     timestamp = models.DateTimeField(blank=True, null=True)
 
     geom = models.PointField(
-        "Transect Point",
+        "GPS Track Point",
         srid=4326,
         help_text="Represented as (longitude, latitude)",
         spatial_index=True,
@@ -88,4 +88,4 @@ class FN122Transect(FNPortalBaseModel):
         if self.dd_lat and self.dd_lon:
             self.geom = Point(self.dd_lon, self.dd_lat, srid="4326")
         self.full_clean()
-        super(FN122Transect, self).save(*args, **kwargs)
+        super(FN121GpsTrack, self).save(*args, **kwargs)

@@ -9,7 +9,7 @@ from ...models import (
     FN121Trawl,
     FN121ElectroFishing,
     FN122,
-    FN122Transect,
+    FN121GpsTrack,
     FN123,
     FN123NonFish,
     FN124,
@@ -162,16 +162,16 @@ class FN121ElectroFishingFactory(factory.django.DjangoModelFactory):
     num_netters = 3
 
 
-class FN122TransectFactory(factory.django.DjangoModelFactory):
-    """A factory for FN121Transect objects - individual points that
+class FN121GpsTrackFactory(factory.django.DjangoModelFactory):
+    """A factory for FN121GpsTrack objects - individual points that
     comprise a smapling event.  Most appropriate for trawling and
-    electrofishing sampling events.  Transect attributes may or may
-    not be collected depending on the project.
+    electrofishing sampling events.  GPS track attributes may or
+    may not be collected depending on the project.
 
     """
 
     class Meta:
-        model = FN122Transect
+        model = FN121GpsTrack
         django_get_or_create = ("sample", "track_id")
 
     sample = factory.SubFactory(FN121Factory)

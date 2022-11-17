@@ -26,7 +26,7 @@ from .schemas import (
     FN121Trawl,
     FN121Trapnet,
     FN122,
-    FN122Transect,
+    FN121GpsTrack,
     FN123,
     FN123NonFish,
     FN124,
@@ -357,7 +357,7 @@ def fn122(data, fn121_cache):
     return {"data": valid, "errors": errors}
 
 
-def fn122transect(data, fn121_cache):
+def fn121gpstrack(data, fn121_cache):
 
     valid = []
     errors = []
@@ -371,7 +371,7 @@ def fn122transect(data, fn121_cache):
         item["sample_id"] = fn121_cache.get(fn121_key)
         item["slug"] = slug
         try:
-            tmp = FN122Transect(**item)
+            tmp = FN121GpsTrack(**item)
             valid.append(tmp)
         except ValidationError as err:
             errors.append([item.get("slug"), err])

@@ -239,12 +239,12 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
         fn122_inverse = {v: k for k, v in fn122_cache.items()}
 
         # TO DO: trasect data here
-        logger.debug("Fetching FN122TRANSECT records")
-        stmt = fetch.get_fn122transect_stmt()
+        logger.debug("Fetching FN121 GPS Track records")
+        stmt = fetch.get_fn121gpstrack_stmt()
         rs = fetch.execute_select(src_con, stmt)
-        fn122transect = prep.fn122transect(rs, fn121_cache)
-        if fn122transect.get("errors"):
-            return {"status": "error", "errors": fn122transect.get("errors")}
+        fn121gpstrack = prep.fn121gpstrack(rs, fn121_cache)
+        if fn121gpstrack.get("errors"):
+            return {"status": "error", "errors": fn121gpstrack.get("errors")}
 
         logger.debug("Fetching FN123 records")
         stmt = fetch.get_fn123_stmt()
@@ -600,16 +600,16 @@ def process_accdb_upload(SRC_DIR: str, SRC_DB: str):
             fn122_map = get_id_cache(Fnp.FN122, filters=filters)
 
             # =========================
-            #        FN122Transect
+            #        FN121GpsTrack
 
-            logger.debug("Inserting and Updating FN122Transect records")
+            logger.debug("Inserting and Updating FN121GpsTrack records")
 
-            data = [x.dict() for x in fn122transect["data"]]
+            data = [x.dict() for x in fn121gpstrack["data"]]
             filters = {"sample__project__prj_cd__in": PRJ_CDs}
             create_update_delete(
-                data, Fnp.FN122Transect, filters, "sample_id", fn121_map, fn121_inverse
+                data, Fnp.FN121GpsTrack, filters, "sample_id", fn121_map, fn121_inverse
             )
-            # no inverse map for fn122Transect because it has no children
+            # no inverse map for fn121gpstrack because it has no children
 
             # =========================
             #        FN123
