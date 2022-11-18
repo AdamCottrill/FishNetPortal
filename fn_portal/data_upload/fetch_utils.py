@@ -268,7 +268,8 @@ def get_fn121trapnet_stmt():
                 COVER,
                 LEAD_ANGLE,
                 LEADUSE,
-                DISTOFF
+                DISTOFF,
+                VEGETATION
          from FN121"""
     return stmt
 
@@ -486,7 +487,7 @@ def get_fn126_stmt():
                 FDCNT,
                 FDMES,
                 FDVAL,
-                LF,
+                LIFESTAGE,
                 COMMENT6
          from FN126"""
     return stmt

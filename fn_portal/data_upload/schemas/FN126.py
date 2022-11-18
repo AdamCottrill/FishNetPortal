@@ -20,12 +20,14 @@ class FN126(FNBase):
     slug: str
     food: int
     taxon: str
-    fdcnt: confloat(ge=0) = 0
+    fdcnt: Optional[confloat(ge=0)]
     fdmes: Optional[FdMesEnum]
     fdval: Optional[PositiveFloat]
-    lf: Optional[PositiveInt]
+    lifestage: Optional[PositiveInt]
     comment6: Optional[str]
 
-    _string_to_float = validator("fdval", allow_reuse=True, pre=True)(string_to_float)
-    _string_to_int = validator("lf", allow_reuse=True, pre=True)(string_to_int)
+    _string_to_float = validator("fdval", "fdcnt", allow_reuse=True, pre=True)(
+        string_to_float
+    )
+    _string_to_int = validator("lifestage", allow_reuse=True, pre=True)(string_to_int)
     _empty_to_none = validator("fdmes", allow_reuse=True, pre=True)(empty_to_none)

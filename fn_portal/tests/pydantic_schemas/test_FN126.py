@@ -43,7 +43,7 @@ def data():
         "fdcnt": 12,
         "fdmes": "L",
         "fdval": None,
-        "lf": None,
+        "lifestage": None,
         "comment6": "A diet item.",
     }
     return data
@@ -62,7 +62,7 @@ def test_valid_data(data):
     assert item.slug == data["slug"]
 
 
-required_fields = ["slug", "fish_id", "food", "taxon", "fdcnt"]
+required_fields = ["slug", "fish_id", "food", "taxon"]
 
 
 @pytest.mark.parametrize("fld", required_fields)
@@ -84,7 +84,7 @@ def test_required_fields(data, fld):
     assert msg in str(excinfo.value)
 
 
-optional_fields = ["fdmes", "fdval", "lf", "comment6"]
+optional_fields = ["fdcnt", "fdmes", "fdval", "lifestage", "comment6"]
 
 
 @pytest.mark.parametrize("fld", optional_fields)
@@ -102,8 +102,9 @@ def test_optional_fields(data, fld):
 
 mode_list = [
     # field, input, output
+    ("fdcnt", "", None),
     ("fdval", "", None),
-    ("lf", "", None),
+    ("lifestage", "", None),
 ]
 
 
@@ -132,7 +133,7 @@ error_list = [
         "ensure this value is greater than or equal to 0",
     ),
     (
-        "lf",
+        "lifestage",
         -4,
         "ensure this value is greater than 0",
     ),
