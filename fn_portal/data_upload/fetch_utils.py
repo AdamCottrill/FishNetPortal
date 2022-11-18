@@ -428,6 +428,7 @@ def get_fn125_stmt():
                 TISSUE,
                 AGEST,
                 FATE,
+                STOM_CONTENTS_WT,
                 STOM_FLAG,
                 COMMENT5
          from FN125"""

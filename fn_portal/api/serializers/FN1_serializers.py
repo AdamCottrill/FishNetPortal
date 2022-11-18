@@ -480,7 +480,7 @@ class FN125ReadOnlySerializer(serializers.Serializer):
     fate = serializers.CharField(read_only=True)
     age = serializers.IntegerField(read_only=True)
     tissue = serializers.CharField(read_only=True)
-    stom_contents_wt = serializers.CharField(read_only=True)
+    stom_contents_wt = serializers.FloatField(read_only=True)
     stom_flag = serializers.CharField(read_only=True)
     comment5 = serializers.CharField(read_only=True)
     slug = serializers.CharField(read_only=True)
