@@ -6,8 +6,30 @@ from .FN125 import FN125
 
 
 class FN126(FNPortalBaseModel):
-    """
-    a table for diet data collected in the field.
+    """A table for diet data collected in the field.
+
+    The FN126 table is used to store data collected from diet analysis
+    studies. The FOOD field, when combined with other primary key fields,
+    is used to uniquely identify each record in the table. The FN126 table
+    is unique in that there are two 'indication' fields used to validate
+    whether a sample should be expected: the FDSAM field in the FN012
+    table and the STOM_FLAG field in the FN125 table. The specific
+    combinations of each indicator field and how they relate to the FN126
+    table are indicated below.
+
+    A species with FDSAM == 0 in the FN012 table must have STOM_FLAG
+    == 0 in the FN125 table and no records in the FN126 table.
+
+    A species with FDSAM == 1 in the FN012 table can have any
+    STOM_FLAG value (0-2) in the FN125 table. If STOM_FLAG == 0 or
+    STOM_FLAG == 1 no records should exist in the FN126 table. If
+    STOM_FLAG == 2 a record must exist in the FN126 table.
+
+    A species with FDSAM == 2 in the FN012 table can have any
+    STOM_FLAG value (0-2) in the FN125 table. This FDSAM value
+    indicates that diet data is stored outside of GLIS, so no records
+    should exist in the FN126 table.
+
     """
 
     id = models.AutoField(primary_key=True)

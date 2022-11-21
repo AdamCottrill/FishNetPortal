@@ -42,7 +42,7 @@ def data():
         "taxon": "F121",
         "fdcnt": 12,
         "fdmes": "L",
-        "fdval": None,
+        "fdval": 100,
         "lifestage": None,
         "comment6": "A diet item.",
     }
@@ -84,7 +84,7 @@ def test_required_fields(data, fld):
     assert msg in str(excinfo.value)
 
 
-optional_fields = ["fdcnt", "fdmes", "fdval", "lifestage", "comment6"]
+optional_fields = ["fdcnt", "lifestage", "comment6"]
 
 
 @pytest.mark.parametrize("fld", optional_fields)
@@ -100,10 +100,28 @@ def test_optional_fields(data, fld):
     assert item.slug == data["slug"]
 
 
+paired_field_list = [
+    ("fdmes", "fdval", None, None),
+]
+
+
+@pytest.mark.parametrize("fld1,fld2,val1,val2", paired_field_list)
+def test_paired_fields(data, fld1, fld2, val1, val2):
+    """Fdmes and fdval are optional fields, but only if they are both
+    null.  Otherwise, they are both required.  Arguments: - `data`:
+
+    """
+    data[fld1] = val1
+    data[fld2] = val2
+
+    item = FN126(**data)
+    assert item.slug == data["slug"]
+
+
 mode_list = [
     # field, input, output
     ("fdcnt", "", None),
-    ("fdval", "", None),
+    # ("fdval", "", None),
     ("lifestage", "", None),
 ]
 
@@ -146,6 +164,26 @@ error_list = [
         "fdmes",
         "foo",
         "value is not a valid enumeration member;",
+    ),
+    (
+        "fdval",
+        None,
+        "fdval must be populated if fdmes is provided.",
+    ),
+    (
+        "fdmes",
+        None,
+        "fdmes must be populated if fdval is provided.",
+    ),
+    (
+        "fdval",
+        "",
+        "fdval must be populated if fdmes is provided.",
+    ),
+    (
+        "fdmes",
+        "",
+        "fdmes must be populated if fdval is provided.",
     ),
 ]
 

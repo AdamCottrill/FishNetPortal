@@ -31,3 +31,14 @@ class FN126(FNBase):
     )
     _string_to_int = validator("lifestage", allow_reuse=True, pre=True)(string_to_int)
     _empty_to_none = validator("fdmes", allow_reuse=True, pre=True)(empty_to_none)
+
+    # fdmes and fdval should both be populated or both be null:
+    @validator("fdval")
+    def fdmes_and_fdval(cls, v, values):
+        fdmes = values.get("fdmes")
+        if v and fdmes:
+            return v
+        if v and fdmes is None:
+            raise ValueError("fdmes must be populated if fdval is provided.")
+        if v is None and fdmes:
+            raise ValueError("fdval must be populated if fdmes is provided.")
